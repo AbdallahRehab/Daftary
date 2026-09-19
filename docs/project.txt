@@ -1,0 +1,1394 @@
+# MASTER PRODUCT & ENGINEERING PROMPT
+## Build a Production-Ready Egyptian Personal Finance & Social Money Management App
+
+You are going to act as a complete **Senior Product & Engineering Team**, not as a simple coding assistant.
+
+I want you to help me transform the following raw idea into a **serious, scalable, production-ready mobile product** built with **Flutter for Android and iOS**.
+
+You must think like a team of senior professionals working together:
+
+- Senior Product Owner
+- Senior Product Manager
+- Senior Business Analyst
+- Senior UX Researcher
+- Senior UI/UX Designer
+- Senior FinTech Product Specialist
+- Senior Mobile Architect
+- Senior Flutter Engineer
+- Senior Backend/API Architect
+- Senior Database Engineer
+- Senior AI Engineer
+- Senior OCR Engineer
+- Senior Security Engineer
+- Senior QA Engineer
+- Senior DevOps/CI-CD Engineer
+- Senior Growth/Product Marketing Specialist
+
+Do NOT immediately start coding.
+
+First understand the problem deeply, challenge the assumptions, improve the idea, identify risks, research alternatives, and design the strongest possible product.
+
+---
+
+# 1. THE RAW PRODUCT IDEA
+
+I want to build a mobile application for the Egyptian market.
+
+The first major problem the application should solve is managing money exchanged between people.
+
+In Egypt, there are social occasions and situations where people give each other money, gifts, contributions, or financial amounts. There are also situations where I may give someone money and expect it back, or someone gives me money and I need to remember that I owe them.
+
+Examples:
+
+- Someone gave me 2,000 EGP.
+- I gave someone 1,500 EGP.
+- Someone still owes me 1,000 EGP.
+- I still owe someone 700 EGP.
+- During a wedding/engagement/birthday/social occasion, I received money from several people.
+- During another occasion, I gave money to several people.
+- I want to know exactly who gave me money, how much, when, why, and whether the amount was settled.
+- I want to know who I gave money to and whether they still owe me.
+- I want a complete history for every person.
+
+The user should be able to create a person/contact and record transactions against them.
+
+For example:
+
+Ahmed
+- Gave me: 2,000 EGP
+- I gave him: 500 EGP
+- Net: Ahmed owes me 1,500 EGP
+
+Another example:
+
+Mohamed
+- I gave him: 3,000 EGP
+- He returned: 1,000 EGP
+- Remaining: 2,000 EGP
+
+The application should make these relationships extremely easy to understand.
+
+---
+
+# 2. IMPORTANT FEATURE — OCCASIONS / SOCIAL MONEY
+
+I also want a dedicated concept for Egyptian social occasions.
+
+The exact terminology should NOT be assumed.
+
+Research and understand Egyptian concepts around:
+
+- weddings
+- engagement
+- birthday
+- newborn / السبوع
+- condolences
+- celebrations
+- family occasions
+- social contributions
+- gifts
+- cash envelopes
+- money received/given during occasions
+
+The product should allow the user to create an:
+
+## Occasion
+
+Example:
+
+"Ahmed's Wedding"
+
+Date:
+15 September 2026
+
+People:
+
+Ahmed — 2,000 EGP received
+Mohamed — 1,000 EGP received
+Mahmoud — 500 EGP received
+Omar — 1,500 EGP received
+
+Total received:
+5,000 EGP
+
+Another occasion:
+
+"Fatma's Wedding"
+
+Money given:
+
+Ahmed — 1,000 EGP
+Mohamed — 500 EGP
+Omar — 2,000 EGP
+
+Total:
+3,500 EGP
+
+The user should be able to see:
+
+- Total received
+- Total given
+- People involved
+- Date
+- Occasion type
+- Notes
+- Settlement status
+- Attachments/photos
+- Transaction history
+
+Think carefully about whether this should be a separate module or part of a broader transaction system.
+
+---
+
+# 3. PAPER / IMAGE → AUTOMATIC TRANSACTION ENTRY
+
+This is a very important feature.
+
+Sometimes the user may have a physical paper containing records such as:
+
+Ahmed — 1000
+Mohamed — 500
+Mahmoud — 2000
+Omar — 750
+
+The user should be able to:
+
+1. Take a photo.
+2. Upload an existing image.
+3. Crop/rotate/enhance the image.
+4. OCR extracts the text.
+5. AI understands the structure.
+6. Detect:
+   - Person name
+   - Amount
+   - Direction
+   - Date if available
+   - Occasion if available
+   - Notes if available
+7. Show a REVIEW screen.
+8. User confirms/corrects the extracted data.
+9. Transactions are saved.
+
+IMPORTANT:
+
+Never automatically save financial transactions from OCR without user confirmation.
+
+The user must be able to correct:
+
+Ahmed → Ahmed Ali
+1000 → 1,000 EGP
+Received → Given
+
+The system should display confidence levels where appropriate.
+
+---
+
+# 4. PERSONAL FINANCE MODULE
+
+The second major pillar is personal/family finance.
+
+I want the application to help me understand:
+
+## Income
+
+Examples:
+
+- Salary
+- Freelance
+- Business
+- Bonus
+- Gift
+- Other income
+
+## Expenses
+
+Examples:
+
+- Rent
+- Electricity
+- Water
+- Internet
+- Phone
+- Groceries
+- Transportation
+- Fuel
+- Medical
+- Education
+- Entertainment
+- Shopping
+- Restaurants
+- Subscriptions
+- Family
+- Other
+
+The categories should be customizable.
+
+---
+
+# 5. HOME BUDGET
+
+I want the application to help me manage my household budget.
+
+For example:
+
+Monthly income:
+
+30,000 EGP
+
+Budget:
+
+Rent: 7,000
+Food: 6,000
+Transportation: 3,000
+Bills: 2,500
+Entertainment: 2,000
+Savings: 5,000
+Other: 4,500
+
+The app should show:
+
+- Planned
+- Actual
+- Remaining
+- Percentage used
+- Over-budget warnings
+- Spending trends
+
+The UX must make this understandable for normal users, not only finance professionals.
+
+---
+
+# 6. SAVINGS
+
+Create a strong savings system.
+
+Examples:
+
+Goal:
+"Emergency Fund"
+
+Target:
+100,000 EGP
+
+Current:
+35,000 EGP
+
+Remaining:
+65,000 EGP
+
+Monthly contribution:
+5,000 EGP
+
+Estimated completion:
+13 months
+
+Other goals:
+
+- New car
+- Wedding
+- Vacation
+- New phone
+- Home furniture
+- Emergency fund
+- Education
+
+The app should help users understand:
+
+"How much do I need to save every month?"
+
+"What happens if I increase my monthly saving by 1,000 EGP?"
+
+"How long until I reach my goal?"
+
+---
+
+# 7. FINANCIAL AI ASSISTANT
+
+I want AI to be an important part of the application.
+
+But DO NOT add AI just because it sounds cool.
+
+AI should solve real user problems.
+
+Potential capabilities:
+
+### AI Financial Assistant
+
+The user can ask:
+
+"أنا صرفت كام على الأكل الشهر ده؟"
+
+"أنا بصرف أكتر فلوسي فين؟"
+
+"هل أنا زودت مصاريفي عن الشهر اللي فات؟"
+
+"أقدر أوفر كام الشهر ده؟"
+
+"لو عايز أوفر 50 ألف جنيه خلال سنة أعمل إيه؟"
+
+"مين لسه عليه فلوس ليا؟"
+
+"أنا لسه عليا فلوس لمين؟"
+
+"إيه أكتر حاجة مصاريفي زادت فيها؟"
+
+"اعمللي ملخص مالي للشهر."
+
+AI should answer based on the user's actual application data.
+
+---
+
+# 8. AI SHOULD ALSO PROACTIVELY HELP
+
+Potential intelligent insights:
+
+"You spent 18% more on restaurants this month."
+
+"Your transportation expenses increased compared with last month."
+
+"You are close to exceeding your shopping budget."
+
+"You can reach your savings goal 2 months earlier if you save an additional 750 EGP/month."
+
+But be careful:
+
+The AI must NOT pretend to know things that are not available in the user's data.
+
+All financial calculations should preferably be deterministic and validated by the application/backend rather than relying solely on an LLM.
+
+---
+
+# 9. INVESTMENT FEATURE
+
+I am interested in helping users understand how they can grow their savings and potentially invest.
+
+However, this is sensitive financial information.
+
+Design this carefully.
+
+The application may eventually provide:
+
+- Financial education
+- Saving strategies
+- Investment concepts
+- Risk explanations
+- General information
+- Calculators
+- Scenario simulations
+
+Do NOT blindly provide personalized investment recommendations.
+
+Research the Egyptian regulatory and financial environment before designing this part.
+
+If investment functionality introduces regulatory or legal risks, propose a safer MVP alternative such as:
+
+"Financial Education & Wealth Planning"
+
+instead of directly acting as an investment advisor.
+
+---
+
+# 10. CONTACT / PEOPLE SYSTEM
+
+Design a strong people management system.
+
+Each person may have:
+
+- Name
+- Phone number
+- Avatar
+- Tags
+- Notes
+- Relationship
+- Transactions
+- Total received
+- Total given
+- Net balance
+- Occasions
+- Attachments
+- Settlement history
+
+Possible relationships:
+
+- Family
+- Friend
+- Colleague
+- Customer
+- Supplier
+- Other
+
+But allow customization.
+
+---
+
+# 11. TRANSACTION MODEL
+
+Do not create a simplistic transaction model.
+
+Design a robust financial transaction domain.
+
+Think about:
+
+- Income
+- Expense
+- Money received from person
+- Money given to person
+- Debt
+- Repayment
+- Partial repayment
+- Transfer
+- Gift
+- Occasion contribution
+- Refund
+- Adjustment
+
+Each transaction may have:
+
+- ID
+- Amount
+- Currency
+- Date
+- Direction
+- Type
+- Person
+- Category
+- Occasion
+- Note
+- Attachment
+- CreatedAt
+- UpdatedAt
+- Source
+- OCR metadata
+- AI extraction confidence
+- Settlement status
+
+Make the model extensible.
+
+---
+
+# 12. DASHBOARD
+
+Design a powerful but simple home dashboard.
+
+Potential sections:
+
+### Financial Snapshot
+
+Balance
+
+Income
+
+Expenses
+
+Savings
+
+Money owed to me
+
+Money I owe
+
+### Quick Actions
+
++ Add Expense
++ Add Income
++ Add Person
++ Add Money Received
++ Add Money Given
++ Add Occasion
++ Scan Paper
+
+### Insights
+
+AI-generated insights
+
+### Upcoming
+
+Upcoming bills
+Savings goals
+Unsettled balances
+
+Do not overload the dashboard.
+
+Use progressive disclosure.
+
+---
+
+# 13. UX/UI
+
+Act as a world-class Senior Product Designer.
+
+The UI must be:
+
+- Modern
+- Premium
+- Clean
+- Simple
+- Fast
+- Accessible
+- RTL-first for Arabic
+- LTR for English
+- Responsive
+- Consistent
+- Production-quality
+
+Support:
+
+Arabic
+English
+
+The application should feel appropriate for Egyptian users.
+
+Do not simply translate English UI into Arabic.
+
+Design proper Arabic UX.
+
+---
+
+# 14. DESIGN SYSTEM
+
+Create a complete design system:
+
+- Typography
+- Color system
+- Spacing
+- Radius
+- Shadows
+- Icons
+- Buttons
+- Inputs
+- Cards
+- Bottom sheets
+- Dialogs
+- Empty states
+- Loading states
+- Error states
+- Success states
+- Skeletons
+- Charts
+- Bottom navigation
+- Navigation patterns
+
+Define reusable components.
+
+---
+
+# 15. SECURITY
+
+This application handles financial data.
+
+Treat security as a first-class requirement.
+
+Consider:
+
+- Local encryption
+- Secure storage
+- Biometric authentication
+- PIN
+- Session management
+- API security
+- Authentication
+- Authorization
+- Encryption in transit
+- Encryption at rest
+- Screenshot protection where appropriate
+- Sensitive-data masking
+- Secure logging
+- No financial information in logs
+- Device compromise considerations
+- Backup security
+- Data deletion
+- Account deletion
+- Privacy controls
+
+Perform a realistic threat model.
+
+---
+
+# 16. PRIVACY
+
+Design privacy from the beginning.
+
+Consider:
+
+- What data is stored?
+- What data is sent to the backend?
+- What data is sent to OCR services?
+- What data is sent to AI providers?
+- Can users delete their data?
+- Can users export their data?
+- How are photos stored?
+- How long are OCR images retained?
+- How can users disable AI features?
+
+Do not send sensitive data to an AI provider unnecessarily.
+
+---
+
+# 17. FLUTTER ARCHITECTURE
+
+The mobile application must be designed for:
+
+Android + iOS.
+
+Use modern Flutter architecture.
+
+Preferred:
+
+- Flutter
+- Dart
+- Clean Architecture
+- Feature-first modular structure
+- SOLID
+- Dependency Injection
+- Repository pattern
+- BLoC/Cubit or another well-justified state management solution
+- Dio or equivalent networking layer
+- Local database/cache
+- Secure storage
+- Proper error handling
+- Analytics
+- Crash reporting
+- Testing
+- CI/CD
+
+Do NOT over-engineer.
+
+Architecture should be scalable but practical.
+
+---
+
+# 18. OFFLINE-FIRST THINKING
+
+The app should work even when the user has poor/no internet.
+
+Think carefully about:
+
+- Local database
+- Offline transactions
+- Sync queue
+- Conflict resolution
+- Retry mechanism
+- Idempotency
+- Sync status
+- Pending transactions
+- Server reconciliation
+
+Financial records must not be duplicated during synchronization.
+
+---
+
+# 19. OCR ARCHITECTURE
+
+Compare possible approaches:
+
+- Google ML Kit
+- Apple Vision
+- Cloud OCR
+- Backend OCR
+- AI vision models
+- Hybrid architecture
+
+Evaluate:
+
+- Arabic handwriting
+- Arabic printed text
+- English text
+- Mixed Arabic/English
+- Numbers
+- Egyptian names
+- Accuracy
+- Cost
+- Privacy
+- Offline capability
+
+Recommend the architecture that makes the most sense.
+
+---
+
+# 20. AI ARCHITECTURE
+
+Design the AI architecture.
+
+Potential architecture:
+
+Flutter App
+→ Backend
+→ Financial Data Service
+→ AI Orchestrator
+→ LLM
+
+Think about:
+
+- RAG
+- Tool calling
+- Function calling
+- Structured outputs
+- Financial calculators
+- User context
+- Prompt injection
+- Data leakage
+- Hallucinations
+- Cost
+- Rate limits
+- Caching
+
+IMPORTANT:
+
+The LLM should NOT directly perform critical financial calculations when deterministic code can do them.
+
+Example:
+
+Instead of asking an LLM:
+
+"How much does Ahmed owe me?"
+
+Use a deterministic financial calculation service and provide the result to the AI.
+
+---
+
+# 21. BUSINESS MODEL
+
+Think like a Senior Product Manager.
+
+Propose possible monetization models:
+
+- Free
+- Freemium
+- Premium
+- AI subscription
+- Family plan
+- Cloud backup
+- Advanced analytics
+- OCR limits
+- AI limits
+
+Do not force monetization into MVP.
+
+Identify what should remain free to establish user trust.
+
+---
+
+# 22. MARKET ANALYSIS
+
+Research the current market.
+
+Look for:
+
+- Personal finance apps
+- Expense trackers
+- Debt tracking apps
+- Shared money apps
+- Gift/occasion tracking apps
+- OCR finance apps
+- Egyptian finance apps
+- Arabic finance apps
+
+Compare:
+
+- Features
+- UX
+- Pricing
+- Reviews
+- Weaknesses
+- Opportunities
+- Differentiation
+
+Do not blindly copy competitors.
+
+Find a clear product positioning.
+
+---
+
+# 23. PRODUCT DIFFERENTIATION
+
+Find the strongest unique positioning.
+
+Potential direction:
+
+"Your Personal Financial Memory"
+
+or
+
+"Your complete money relationship + personal finance assistant."
+
+But do NOT accept these slogans blindly.
+
+Develop better positioning options.
+
+The product should solve a real problem that existing expense trackers do not solve well.
+
+---
+
+# 24. MVP
+
+Define a realistic MVP.
+
+Separate:
+
+### Must Have
+### Should Have
+### Nice to Have
+### Future
+
+Do not put everything into V1.
+
+The MVP must be launchable.
+
+---
+
+# 25. V2 / V3 ROADMAP
+
+Create a roadmap.
+
+Example:
+
+V1:
+Money tracking + people + expenses
+
+V1.5:
+OCR + occasions
+
+V2:
+AI assistant + advanced insights
+
+V3:
+Family/shared finances + advanced financial planning
+
+But create your own roadmap based on research.
+
+---
+
+# 26. USER JOURNEYS
+
+Create detailed journeys for:
+
+1. First-time user
+2. Add person
+3. Record money received
+4. Record money given
+5. Record repayment
+6. Create occasion
+7. Scan paper
+8. Correct OCR results
+9. Add expense
+10. Create budget
+11. Create saving goal
+12. Ask AI
+13. Settle a debt
+14. Export data
+15. Delete account
+
+---
+
+# 27. EDGE CASES
+
+Think deeply about edge cases.
+
+Examples:
+
+- Same person with different names
+- Duplicate contacts
+- Partial repayment
+- Multiple currencies
+- Negative balance
+- Wrong OCR
+- Duplicate scanned paper
+- Deleted person with transactions
+- Deleted transaction
+- Offline transaction
+- Sync conflict
+- User changes phone
+- User loses device
+- User changes currency
+- Very large amounts
+- Decimal amounts
+- Arabic numerals
+- English numerals
+- Arabic names
+- Handwritten names
+- Shared family finances
+
+---
+
+# 28. ANALYTICS
+
+Define product analytics events.
+
+Examples:
+
+- app_open
+- onboarding_completed
+- person_created
+- money_received
+- money_given
+- expense_created
+- occasion_created
+- document_scanned
+- ocr_completed
+- ocr_corrected
+- ai_question_asked
+- saving_goal_created
+- budget_created
+- transaction_settled
+
+Do not track sensitive financial values unnecessarily.
+
+---
+
+# 29. TESTING
+
+Create a serious QA strategy.
+
+Include:
+
+- Unit tests
+- Widget tests
+- Integration tests
+- Golden tests where useful
+- OCR testing
+- AI response testing
+- Offline testing
+- Sync testing
+- Security testing
+- Accessibility testing
+- RTL testing
+- Localization testing
+- Performance testing
+
+---
+
+# 30. PERFORMANCE
+
+Design for:
+
+- Fast startup
+- Smooth animations
+- Large transaction lists
+- Efficient database queries
+- Pagination
+- Lazy loading
+- Image compression
+- OCR optimization
+- Memory management
+- Battery efficiency
+
+Target excellent UX on mid-range Android devices as well as modern iPhones.
+
+---
+
+# 31. BACKEND
+
+Recommend a backend architecture.
+
+Evaluate options such as:
+
+- Firebase
+- Supabase
+- Custom backend
+- Node.js
+- NestJS
+- .NET
+- Other appropriate technologies
+
+Consider:
+
+- Authentication
+- Database
+- APIs
+- Sync
+- Storage
+- Notifications
+- AI integration
+- OCR
+- Analytics
+- Scalability
+- Cost
+
+Choose based on product requirements, not personal preference.
+
+---
+
+# 32. DATABASE
+
+Design the database schema.
+
+Potential entities:
+
+User
+Person
+Transaction
+TransactionCategory
+Occasion
+OccasionParticipant
+Budget
+BudgetCategory
+SavingGoal
+Attachment
+OCRDocument
+OCRExtraction
+AIConversation
+AIMessage
+Notification
+SyncQueue
+
+But improve this model if necessary.
+
+Provide relationships and explain them.
+
+---
+
+# 33. API
+
+Design the initial API contract.
+
+Examples:
+
+POST /auth
+GET /people
+POST /people
+GET /transactions
+POST /transactions
+PATCH /transactions/:id
+DELETE /transactions/:id
+GET /balances
+GET /occasions
+POST /occasions
+POST /ocr
+POST /ai/chat
+GET /budgets
+POST /budgets
+GET /saving-goals
+POST /saving-goals
+
+Improve the API design where appropriate.
+
+---
+
+# 34. PROJECT STRUCTURE
+
+Create a recommended Flutter project structure.
+
+Example:
+
+lib/
+  core/
+  features/
+    auth/
+    dashboard/
+    people/
+    transactions/
+    occasions/
+    expenses/
+    budgets/
+    savings/
+    ocr/
+    ai/
+    settings/
+
+But improve it based on your architecture decision.
+
+---
+
+# 35. UI SCREEN INVENTORY
+
+Create the complete screen list.
+
+For every screen define:
+
+- Purpose
+- Main user goal
+- Components
+- Actions
+- Navigation
+- Empty state
+- Loading state
+- Error state
+- Success state
+
+Include:
+
+Splash
+Onboarding
+Authentication
+Home
+People
+Person Details
+Add Transaction
+Transaction Details
+Occasions
+Occasion Details
+Expenses
+Budgets
+Savings
+OCR Scanner
+OCR Review
+AI Assistant
+Reports
+Settings
+Security
+Privacy
+Data Export
+
+---
+
+# 36. DESIGN THE MOST IMPORTANT SCREENS
+
+Before coding, produce detailed UX specifications for at least:
+
+1. Home Dashboard
+2. Person Details
+3. Add Money Transaction
+4. Occasion Details
+5. Expense Entry
+6. Budget
+7. Savings Goal
+8. OCR Scanner
+9. OCR Review
+10. AI Assistant
+
+For each screen explain exactly how it should look and behave.
+
+---
+
+# 37. PRODUCT NAMING
+
+Suggest at least 20 potential names.
+
+Names should work for:
+
+- Egyptian users
+- Arabic users
+- English branding
+- App Store
+- Google Play
+- Domain
+- Future expansion outside Egypt
+
+Avoid names that are too generic.
+
+Also suggest:
+
+- Tagline
+- Brand personality
+- Logo concept
+
+---
+
+# 38. IMPORTANT PRODUCT PRINCIPLE
+
+Do not make this app feel like an accounting application.
+
+The target user may have no financial/accounting background.
+
+The app should feel like:
+
+"Someone who remembers my money for me."
+
+Simple.
+
+Friendly.
+
+Trustworthy.
+
+Private.
+
+Intelligent.
+
+Fast.
+
+---
+
+# 39. CRITICAL THINKING
+
+I do NOT want you to blindly agree with my idea.
+
+Challenge it.
+
+Tell me:
+
+- What is weak?
+- What is confusing?
+- What could fail?
+- What features should be removed?
+- What features are unnecessary?
+- What is the strongest core problem?
+- What should the MVP NOT contain?
+- What could make people uninstall it?
+- What could create privacy concerns?
+- What could create financial/legal/regulatory problems?
+- What could make the product difficult to maintain?
+
+Then improve the concept.
+
+---
+
+# 40. WORKING MODE
+
+Work in phases.
+
+Do NOT jump directly into implementation.
+
+Use this sequence:
+
+## PHASE 1 — Discovery
+Understand the problem.
+
+## PHASE 2 — Market & Competitor Research
+Research current products and Egyptian context.
+
+## PHASE 3 — Product Strategy
+Define target users, problems, value proposition, positioning.
+
+## PHASE 4 — Feature Architecture
+Define modules and MVP.
+
+## PHASE 5 — UX Research
+Define personas and journeys.
+
+## PHASE 6 — UX/UI
+Create information architecture and screen specifications.
+
+## PHASE 7 — Technical Architecture
+Flutter + backend + database + OCR + AI.
+
+## PHASE 8 — Security & Privacy
+Threat model and privacy architecture.
+
+## PHASE 9 — Implementation Plan
+Break everything into epics, features, stories and tasks.
+
+## PHASE 10 — Development
+Only after the above is approved, start implementation.
+
+---
+
+# 41. VERY IMPORTANT — ACT LIKE A REAL SENIOR TEAM
+
+Whenever you make a recommendation, explain:
+
+1. Why?
+2. Alternative options?
+3. Advantages?
+4. Disadvantages?
+5. Cost/complexity?
+6. Scalability?
+7. Security/privacy implications?
+8. Recommendation?
+
+Do not over-engineer.
+
+Prefer the simplest architecture that can scale.
+
+---
+
+# 42. USE AVAILABLE DESIGN/ENGINEERING SKILLS
+
+If your environment provides skills such as:
+
+- designer-skill
+- frontend/mobile development skills
+- architecture skills
+- UX research skills
+- product management skills
+
+USE THEM.
+
+Especially use the **designer skill** to improve:
+
+- UX
+- visual hierarchy
+- interaction design
+- design system
+- mobile patterns
+- accessibility
+- Arabic RTL experience
+
+Do not merely mention the skill.
+
+Actually apply its principles.
+
+---
+
+# 43. OUTPUT FORMAT
+
+Start with:
+
+# PRODUCT DISCOVERY
+
+Then provide:
+
+1. Product Summary
+2. Problem Statement
+3. Target Users
+4. Core Use Cases
+5. Product Vision
+6. Product Differentiation
+7. Competitor Analysis
+8. Risks
+9. MVP
+10. V2
+11. V3
+12. User Journeys
+13. Feature Architecture
+14. UX Architecture
+15. UI Design System
+16. Technical Architecture
+17. Database Model
+18. API Architecture
+19. OCR Architecture
+20. AI Architecture
+21. Security
+22. Privacy
+23. Analytics
+24. Testing
+25. Flutter Project Structure
+26. Development Roadmap
+27. Product Backlog
+28. Recommended Team Structure
+29. Estimated Complexity
+30. Final Product Recommendation
+
+---
+
+# 44. DO NOT CODE YET
+
+The first response must NOT be a huge code dump.
+
+First give me the complete product strategy and architecture.
+
+At the end, provide:
+
+## DECISIONS REQUIRED FROM ME
+
+List only the decisions that genuinely require my input.
+
+For everything else, make the best senior-level decision yourself.
+
+After I approve the product direction, continue to:
+
+UX/UI → Architecture → Database → APIs → Flutter implementation → Testing → Release.
+
+---
+
+# FINAL GOAL
+
+I don't want a simple "money tracker."
+
+I want us to explore whether we can build a **high-quality Egyptian Personal Finance + Money Relationships + Social Occasions + OCR + AI Assistant platform** that could eventually become a serious consumer product.
+
+Think like you are responsible for launching it commercially.
+
+Challenge my assumptions.
+
+Research where necessary.
+
+Make the UX extremely simple.
+
+Make the architecture scalable.
+
+Make the financial calculations reliable.
+
+Make privacy and security first-class.
+
+Make Arabic/RTL excellent.
+
+And make the final product something that feels like a **real startup product**, not a demo project.

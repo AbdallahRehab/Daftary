@@ -40,7 +40,7 @@ Each scenario maps directly to a spec acceptance scenario; use them as a scripte
 3. Try to save an amount of `0` or `-100`.
    - **Expect**: save is rejected with an explanation; no transaction is created.
 4. Turn on airplane mode, record a transaction.
-   - **Expect**: it saves instantly and is visibly marked as not-yet-synced/pending (even though there is no backend to sync to — the marking still communicates "recorded, not yet reconciled" per FR-021).
+   - **Expect**: it saves instantly and durably on-device, without blocking the UI — this feature has no network dependency, so there is no separate "synced" state to reach (FR-021).
 
 ### 2. View balance and history (User Story 2)
 1. Open Ahmed's profile.

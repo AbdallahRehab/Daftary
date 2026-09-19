@@ -24,7 +24,7 @@ Let a single device's user create people/contacts and record money given to or r
 
 **Project Type**: mobile-app (Flutter, feature-first clean architecture)
 
-**Performance Goals**: Overview totals correct and rendered in <2s across 500 people / 10,000 combined transactions (SC-005); person history scrolls smoothly with no jank on mid-range Android hardware (User Story 2, Acceptance Scenario 4); first person + first transaction completable in <60s (SC-001)
+**Performance Goals**: Overview totals correct and rendered in <2s across 500 people / 10,000 combined transactions (SC-005); person history scrolling on mid-range Android hardware sustains ~60fps with no single frame exceeding 32ms (User Story 2, Acceptance Scenario 4's measurable threshold); first person + first transaction completable in <60s (SC-001)
 
 **Constraints**: Fully offline-capable (no network dependency at all for this feature); money MUST be stored/computed as integer minor units (piastres), never floating point (constitution Principle VIII); every save is idempotent — a rapid double-tap or retried save MUST never create more than one transaction (FR-020, SC-006); every transaction edit/deletion MUST remain traceable (what changed, when) per SC-007 and the constitution's Financial Domain Override; full Arabic (RTL) and English (LTR) UI and numeral support (FR-022, FR-023)
 
@@ -47,7 +47,7 @@ Let a single device's user create people/contacts and record money given to or r
 | IX. AI Isolation | Not applicable — no AI integration in this feature | PASS (N/A) |
 | X. OCR Human-in-the-Loop | Not applicable — no OCR in this feature | PASS (N/A) |
 | XI. Offline Resilience & Idempotent Sync | Feature is local-only (no network), so "offline" is the permanent default; idempotency enforced via a client-generated idempotency key with a DB unique constraint, not network sync/reconciliation | PASS |
-| XII. Security & Secrets | No secrets/API keys in this feature; local DB holds only the user's own data (name, phone, amounts); no sensitive values in logs | PASS |
+| XII. Security & Secrets | No secrets/API keys in this feature; local DB holds only the user's own data (name, phone, amounts), protected at rest via OS-level sandboxed-storage protection rather than app-level DB encryption — explicit decision and justification in research.md Decision 11 (single-user/single-device, no credentials stored); no sensitive values in logs | PASS |
 | XIII. Localization & RTL/LTR | `gen_l10n` ARB files for `ar`/`en` from the start; `intl` currency/number formatting; Arabic-Indic digit parsing utility in `core/` | PASS |
 | XIV. Dependency Injection | `get_it`/`injectable` wires DB, repositories, use cases, Cubits; nothing self-instantiated in widgets/Cubits | PASS |
 | XV. Design System | Reuses/extends a minimal `core/design_system` (tokens + `AppButton`/`AppTextField`/`AppCard`/`AppEmptyView`) rather than hardcoded values; new shared widgets only promoted to `core/` once used by both features | PASS |

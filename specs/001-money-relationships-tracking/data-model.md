@@ -73,7 +73,7 @@ Computed on demand from a `Person`'s non-deleted `MoneyTransaction` rows.
 | Field | Type | Derivation |
 |---|---|---|
 | `personId` | `String` | — |
-| `netMinorUnits` | `int` | `SUM(amountMinorUnits WHERE direction = received) − SUM(amountMinorUnits WHERE direction = given)`, over non-deleted rows. Positive ⇒ they owe you; negative ⇒ you owe them; zero ⇒ settled (FR-008) |
+| `netMinorUnits` | `int` | `SUM(amountMinorUnits WHERE direction = given) − SUM(amountMinorUnits WHERE direction = received)`, over non-deleted rows. Positive ⇒ they owe you; negative ⇒ you owe them; zero ⇒ settled (FR-008). Verified against spec.md's worked examples (US2 AC1: given 2,000, received 500 ⇒ net +1,500 ⇒ "Ahmed owes you 1,500") |
 | `status` | enum `theyOweYou` \| `youOweThem` \| `settled` | Derived solely from `netMinorUnits`'s sign (FR-009) — no independent "mark as settled" state exists (Assumptions) |
 
 **Rule**: Never stored as a mutable column on `Person` — always recomputed from source `MoneyTransaction` rows (Key Entities), which is what guarantees SC-002 (zero discrepancy vs. full history, including for people with 50+ transactions).

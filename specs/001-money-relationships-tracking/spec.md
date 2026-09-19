@@ -33,7 +33,7 @@ A user wants to make sure they never forget a money exchange with someone they k
 2. **Given** an existing person "Ahmed", **When** the user records that Ahmed gave them 2,000 EGP, **Then** the transaction is saved with direction "received from Ahmed", amount 2,000 EGP, and today's date by default.
 3. **Given** an existing person "Ahmed", **When** the user records that they gave Ahmed 500 EGP, **Then** the transaction is saved with direction "given to Ahmed" and Ahmed's net balance updates immediately to reflect it.
 4. **Given** the user is entering a transaction, **When** they attempt to save an amount of zero or a negative number, **Then** the system rejects the save and explains that a valid positive amount is required.
-5. **Given** the user has no internet connection, **When** they record a transaction, **Then** the transaction is saved immediately on the device and clearly marked as not-yet-synced, without blocking the user.
+5. **Given** the user has no internet connection, **When** they record a transaction, **Then** the transaction is saved immediately and durably on the device, without blocking the user (this feature has no network dependency, so there is no separate "synced" state to reach).
 
 ---
 
@@ -50,7 +50,7 @@ A user wants to open a specific person and instantly understand the state of the
 1. **Given** Ahmed has been given 2,000 EGP and received 500 EGP from the user, **When** the user opens Ahmed's profile, **Then** it shows "Ahmed owes you 1,500 EGP" and lists both transactions in chronological order.
 2. **Given** Mohamed was given 3,000 EGP by the user and later returned 1,000 EGP, **When** the user opens Mohamed's profile, **Then** it shows "Mohamed owes you 2,000 EGP" and both transactions are visible.
 3. **Given** a person's total given equals their total received, **When** the user opens that person's profile, **Then** the relationship is clearly labeled as "Settled" rather than showing an owing direction.
-4. **Given** a person has many transactions, **When** the user scrolls their history, **Then** transactions load smoothly without the app becoming slow or unresponsive.
+4. **Given** a person has many transactions (up to the 10,000-combined-transaction ceiling in SC-005), **When** the user scrolls their history, **Then** the list is lazily rendered with no perceptible stutter — target: sustained 60fps with no single frame exceeding 32ms during a scripted scroll — and the app never becomes unresponsive.
 
 ---
 
@@ -142,7 +142,7 @@ A user wants to fix a transaction they entered incorrectly (wrong amount, wrong 
 - **FR-005**: The system MUST reject transactions with a zero or negative amount and explain why.
 - **FR-006**: The system MUST support decimal amounts (at minimum to the smallest standard currency subunit) with no rounding drift across repeated calculations.
 - **FR-007**: The system MUST default to Egyptian Pounds (EGP) as the transaction currency for this feature.
-- **FR-008**: The system MUST automatically compute and display each person's current net balance as the sum of all money received from them minus all money given to them (or the equivalent inverse), without requiring the user to do any manual math.
+- **FR-008**: The system MUST automatically compute and display each person's current net balance as the sum of all money given to them minus all money received from them — a positive result means they owe the user, a negative result means the user owes them, zero means settled — without requiring the user to do any manual math.
 - **FR-009**: The system MUST classify and clearly label each person's relationship status as one of: "They owe you," "You owe them," or "Settled," based solely on their current computed net balance.
 - **FR-010**: Users MUST be able to view a person's complete transaction history in chronological order, with each entry showing its type, amount, direction, date, and note.
 - **FR-011**: Users MUST be able to record a repayment transaction that reduces an existing outstanding balance, including a repayment smaller than the full outstanding amount (partial repayment).
@@ -155,7 +155,7 @@ A user wants to fix a transaction they entered incorrectly (wrong amount, wrong 
 - **FR-018**: Users MUST be able to view, search, and restore archived people separately from their active people list.
 - **FR-019**: Users MUST be able to search and filter their people list by name and by relationship status (they owe you / you owe them / settled).
 - **FR-020**: The system MUST ensure that a single user-initiated save action (including a rapid repeated tap or a retried background sync) never results in more than one recorded transaction.
-- **FR-021**: Users MUST be able to record and view money transactions and balances while offline; entries made offline MUST be preserved locally and clearly marked pending until reconciled, and reconciliation MUST NOT create duplicate transactions.
+- **FR-021**: This feature has no network dependency at all (see Assumptions: single-device, local-only). Users MUST be able to record and view money transactions and balances regardless of device connectivity; every entry MUST be durably saved to the local device the instant it is recorded, and no connectivity state, app restart, or retried save MUST ever cause a transaction to be recorded more than once (see FR-020).
 - **FR-022**: The system MUST display all people, transactions, amounts, and dates correctly in both Arabic (right-to-left) and English (left-to-right), according to the user's selected language.
 - **FR-023**: The system MUST accept numeric input in both Arabic-Indic and Western numeral forms as equivalent values.
 - **FR-024**: Archived people with a non-zero balance MUST continue to be included in the overview's totals and groupings (User Story 4) until their balance reaches zero; archiving a person MUST NOT remove their outstanding balance from the user's overall money-exposure picture.
@@ -164,7 +164,7 @@ A user wants to fix a transaction they entered incorrectly (wrong amount, wrong 
 
 - **Person**: An individual the user has a money relationship with. Holds identifying details (name, optional phone number, avatar, relationship tag, notes), an archived/active state, and a computed net balance and status derived from their transactions. A person is never truly deleted once they have transaction history — only archived.
 - **Money Transaction**: A single recorded event of money moving between the user and one Person. Holds an amount, direction (given to / received from), transaction kind (initial exchange or repayment), date, optional note, creation/edit timestamps, and edit history. Every transaction belongs to exactly one Person and is the atomic, immutable-by-default unit of financial truth — edits and deletions are explicit, confirmed, and traceable rather than silent.
-- **Person Balance** *(derived, not independently editable)*: The net financial position between the user and a Person at any point in time, computed entirely from that Person's Money Transactions (sum of received minus given, adjusted by repayments). Always recalculated from source transactions rather than stored as an independently editable value, so it can never silently drift out of sync with the underlying history.
+- **Person Balance** *(derived, not independently editable)*: The net financial position between the user and a Person at any point in time, computed entirely from that Person's Money Transactions (sum of given minus received, adjusted by repayments — see FR-008 for the authoritative formula and sign convention). Always recalculated from source transactions rather than stored as an independently editable value, so it can never silently drift out of sync with the underlying history.
 
 ## Success Criteria *(mandatory)*
 

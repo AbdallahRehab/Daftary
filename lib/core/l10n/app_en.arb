@@ -1,0 +1,113 @@
+{
+  "@@locale": "en",
+  "appTitle": "Daftary",
+  "@appTitle": {},
+
+  "commonSave": "Save",
+  "commonCancel": "Cancel",
+  "commonDelete": "Delete",
+  "commonEdit": "Edit",
+  "commonArchive": "Archive",
+  "commonRestore": "Restore",
+  "commonConfirm": "Confirm",
+  "commonRetry": "Retry",
+  "commonSearch": "Search",
+  "commonOk": "OK",
+  "commonError": "Something went wrong",
+  "errorCache": "A local storage error occurred. Please try again.",
+  "errorNotFound": "This item could not be found.",
+  "errorValidation": "Please check your input and try again.",
+  "errorUnknown": "An unexpected error occurred. Please try again.",
+
+  "peopleListTitle": "People",
+  "searchPeopleHint": "Search people",
+  "filterAll": "All",
+  "filterTheyOweYou": "They owe you",
+  "filterYouOweThem": "You owe them",
+  "filterSettled": "Settled",
+  "emptyPeopleTitle": "No people yet",
+  "emptyPeopleMessage": "Add a person to start tracking money you give or receive with them.",
+  "archivedPeopleAction": "Archived people",
+  "addPersonAction": "Add person",
+
+  "personFormCreateTitle": "New person",
+  "personFormEditTitle": "Edit person",
+  "nameLabel": "Name",
+  "nameRequiredError": "Name is required",
+  "phoneLabel": "Phone number (optional)",
+  "relationshipTagLabel": "Relationship (optional)",
+  "notesLabel": "Notes (optional)",
+  "deletePersonAction": "Delete person",
+  "deleteBlockedTitle": "Can't delete this person",
+  "deleteBlockedMessage": "This person has recorded transactions. Archive them instead to keep their history.",
+  "archiveInsteadAction": "Archive instead",
+
+  "relationshipFamily": "Family",
+  "relationshipFriend": "Friend",
+  "relationshipColleague": "Colleague",
+  "relationshipCustomer": "Customer",
+  "relationshipSupplier": "Supplier",
+  "relationshipOther": "Other",
+
+  "duplicateWarningTitle": "Possible duplicate",
+  "duplicateWarningMessage": "This name looks similar to someone you already know.",
+  "duplicateUseExisting": "Use existing person",
+  "duplicateCreateNew": "Create new person anyway",
+
+  "transactionFormCreateTitle": "Record transaction",
+  "transactionFormEditTitle": "Edit transaction",
+  "amountLabel": "Amount (EGP)",
+  "amountInvalidError": "Enter a valid amount greater than zero",
+  "directionGiven": "I gave",
+  "directionReceived": "I received",
+  "dateLabel": "Date",
+  "noteLabel": "Note (optional)",
+  "personLabel": "Person",
+  "createPersonInlineAction": "Create new person",
+  "savedConfirmation": "Saved",
+  "editedLabel": "Edited",
+  "repaymentLabel": "Repayment",
+
+  "repaymentFormTitle": "Record repayment",
+  "recordRepaymentAction": "Record repayment",
+
+  "personDetailTheyOweYou": "{name} owes you {amount}",
+  "@personDetailTheyOweYou": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+  "personDetailYouOweThem": "You owe {name} {amount}",
+  "@personDetailYouOweThem": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+  "personDetailSettled": "Settled",
+  "historyEmptyTitle": "No transactions yet",
+  "historyEmptyMessage": "Record a transaction with {name} to start tracking your balance.",
+  "@historyEmptyMessage": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "recordTransactionAction": "Record transaction",
+  "deleteTransactionConfirmTitle": "Delete this transaction?",
+  "deleteTransactionConfirmMessage": "This action cannot be undone.",
+
+  "overviewTitle": "Overview",
+  "overviewTotalOwedToYou": "Total owed to you",
+  "overviewTotalYouOwe": "Total you owe",
+  "overviewSectionTheyOweYou": "They owe you",
+  "overviewSectionYouOweThem": "You owe them",
+  "overviewAllSettledTitle": "Everything is settled",
+  "overviewAllSettledMessage": "You have no outstanding balances with anyone right now.",
+
+  "archivedLabel": "Archived",
+  "archivedPeopleTitle": "Archived people",
+  "archivedEmptyTitle": "No archived people",
+  "archivedEmptyMessage": "People you archive will appear here, with their history intact.",
+  "restoreAction": "Restore"
+}

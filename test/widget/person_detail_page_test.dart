@@ -1,0 +1,128 @@
+import 'package:daftary/core/di/injection.dart';
+import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/money.dart';
+import 'package:daftary/features/people/domain/entities/person.dart';
+import 'package:daftary/features/people/domain/repositories/people_repository.dart';
+import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
+import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
+import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
+import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/get_person_history.dart';
+import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
+import 'package:daftary/features/transactions/presentation/pages/person_detail_page.dart';
+import 'package:daftary/features/transactions/presentation/widgets/transaction_list_tile.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockPeopleRepository extends Mock implements PeopleRepository {}
+
+class MockTransactionsRepository extends Mock
+    implements TransactionsRepository {}
+
+void main() {
+  late MockPeopleRepository peopleRepository;
+  late MockTransactionsRepository transactionsRepository;
+
+  final now = DateTime(2026, 1, 1);
+  final ahmed = Person(
+    id: 'p1',
+    name: 'Ahmed',
+    isArchived: false,
+    createdAt: now,
+    updatedAt: now,
+  );
+
+  setUp(() {
+    peopleRepository = MockPeopleRepository();
+    transactionsRepository = MockTransactionsRepository();
+
+    getIt.registerFactory<PersonDetailCubit>(
+      () => PersonDetailCubit(
+        peopleRepository,
+        GetPersonBalance(transactionsRepository),
+        GetPersonHistory(transactionsRepository),
+        DeleteTransaction(transactionsRepository),
+      ),
+    );
+  });
+
+  tearDown(() => getIt.reset());
+
+  Widget wrap(Widget child) {
+    return MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    );
+  }
+
+  testWidgets(
+    'renders the balance headline and lists transactions in chronological order',
+    (tester) async {
+      final older = MoneyTransaction(
+        id: 't1',
+        idempotencyKey: 'k1',
+        personId: 'p1',
+        amount: const Money.fromMinorUnits(200000),
+        direction: TransactionDirection.given,
+        kind: TransactionKind.initialExchange,
+        date: DateTime(2026, 1, 1),
+        createdAt: DateTime(2026, 1, 1),
+      );
+      final newer = MoneyTransaction(
+        id: 't2',
+        idempotencyKey: 'k2',
+        personId: 'p1',
+        amount: const Money.fromMinorUnits(50000),
+        direction: TransactionDirection.received,
+        kind: TransactionKind.initialExchange,
+        date: DateTime(2026, 1, 2),
+        createdAt: DateTime(2026, 1, 2),
+      );
+
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(150000)),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => Right([older, newer]));
+
+      await tester.pumpWidget(wrap(const PersonDetailPage(personId: 'p1')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ahmed owes you 1,500.00 EGP'), findsOneWidget);
+
+      final tiles = tester.widgetList<TransactionListTile>(
+        find.byType(TransactionListTile),
+      );
+      expect(tiles.map((t) => t.transaction.id), ['t1', 't2']);
+    },
+  );
+
+  testWidgets('shows "Settled" when the net balance is zero', (tester) async {
+    when(
+      () => peopleRepository.getPersonById('p1'),
+    ).thenAnswer((_) async => Right(ahmed));
+    when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+      (_) async => const Right(
+        PersonBalance(personId: 'p1', net: Money.fromMinorUnits(0)),
+      ),
+    );
+    when(
+      () => transactionsRepository.getPersonHistory('p1'),
+    ).thenAnswer((_) async => const Right([]));
+
+    await tester.pumpWidget(wrap(const PersonDetailPage(personId: 'p1')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Settled'), findsWidgets);
+  });
+}

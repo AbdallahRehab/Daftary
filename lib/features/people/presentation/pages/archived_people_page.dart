@@ -1,0 +1,99 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/tokens.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/l10n/app_localizations.dart';
+import '../cubit/archived_people_cubit.dart';
+import '../cubit/archived_people_state.dart';
+import '../widgets/relationship_tag_chip.dart';
+
+/// Searchable list of archived people with a "Restore" action per person,
+/// linking into their full history (FR-018, Acceptance Scenario 4).
+class ArchivedPeoplePage extends StatelessWidget {
+  const ArchivedPeoplePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<ArchivedPeopleCubit>()..load(),
+      child: const _ArchivedPeopleView(),
+    );
+  }
+}
+
+class _ArchivedPeopleView extends StatelessWidget {
+  const _ArchivedPeopleView();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.archivedPeopleTitle)),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: AppTextField(
+              label: l10n.searchPeopleHint,
+              suffixIcon: const Icon(Icons.search),
+              onChanged: (query) =>
+                  context.read<ArchivedPeopleCubit>().nameQueryChanged(query),
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<ArchivedPeopleCubit, ArchivedPeopleState>(
+              builder: (context, state) {
+                if (state.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (state.status == ArchivedPeopleStatus.failure) {
+                  return AppEmptyView(
+                    icon: Icons.error_outline,
+                    title: l10n.commonError,
+                    message: state.errorMessage ?? l10n.errorUnknown,
+                    actionLabel: l10n.commonRetry,
+                    onAction: () => context.read<ArchivedPeopleCubit>().load(),
+                  );
+                }
+                if (state.people.isEmpty) {
+                  return AppEmptyView(
+                    icon: Icons.inventory_2_outlined,
+                    title: l10n.archivedEmptyTitle,
+                    message: l10n.archivedEmptyMessage,
+                  );
+                }
+                return ListView.builder(
+                  itemCount: state.people.length,
+                  itemBuilder: (context, index) {
+                    final person = state.people[index];
+                    final tag = person.relationshipTag;
+                    return ListTile(
+                      title: Text(person.name),
+                      subtitle: tag != null && tag.trim().isNotEmpty
+                          ? Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: RelationshipTagChip(tag: tag),
+                            )
+                          : null,
+                      onTap: () => context.push('/people/${person.id}'),
+                      trailing: TextButton(
+                        onPressed: () => context
+                            .read<ArchivedPeopleCubit>()
+                            .restore(person.id),
+                        child: Text(l10n.restoreAction),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

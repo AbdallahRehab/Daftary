@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
@@ -27,10 +28,9 @@ class TransactionListTile extends StatelessWidget {
     final isGiven = transaction.direction == TransactionDirection.given;
     final isRepayment = transaction.kind == TransactionKind.repayment;
     final amountColor = isGiven ? AppColors.negative : AppColors.positive;
-    final formatter = EgpFormatter();
-    final date = transaction.date;
-    final dateLabel =
-        '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    final locale = Localizations.localeOf(context).languageCode;
+    final formatter = EgpFormatter(locale: locale);
+    final dateLabel = AppDateFormatter(locale: locale).format(transaction.date);
 
     return ListTile(
       onTap: onTap,

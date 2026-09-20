@@ -341,6 +341,7 @@ Task: "Add PossibleDuplicateFailure in lib/features/people/domain/entities/peopl
 ### Parallel Team Strategy
 
 With multiple developers, after Setup + Foundational:
+
 - Developer A: US1 → US2 (sequential, P1 first).
 - Developer B: joins after US1's `PeopleRepository`/`TransactionsRepository` interfaces exist (T029/T030) to start US5's people-management work.
 - Once US1-US4 are done, Developer A/B split US5/US6 in parallel (different feature subfolders).

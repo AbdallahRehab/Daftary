@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
@@ -118,7 +119,9 @@ class _DateField extends StatelessWidget {
           ),
         ),
         child: Text(
-          '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}',
+          AppDateFormatter(
+            locale: Localizations.localeOf(context).languageCode,
+          ).format(date),
         ),
       ),
     );

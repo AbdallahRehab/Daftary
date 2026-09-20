@@ -31,6 +31,16 @@ import '../../features/people/presentation/cubit/person_form_cubit.dart'
     as _i668;
 import '../../features/people/presentation/cubit/person_list_cubit.dart'
     as _i1018;
+import '../../features/settings/data/datasources/settings_dao.dart' as _i586;
+import '../../features/settings/data/repositories/settings_repository_impl.dart'
+    as _i955;
+import '../../features/settings/domain/repositories/settings_repository.dart'
+    as _i674;
+import '../../features/settings/domain/usecases/change_language.dart' as _i90;
+import '../../features/settings/domain/usecases/get_language_preference.dart'
+    as _i1032;
+import '../../features/settings/presentation/cubit/settings_cubit.dart'
+    as _i792;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
@@ -59,6 +69,7 @@ import '../../features/transactions/presentation/cubit/repayment_form_cubit.dart
 import '../../features/transactions/presentation/cubit/transaction_form_cubit.dart'
     as _i593;
 import '../database/app_database.dart' as _i982;
+import '../device/device_locale_provider.dart' as _i933;
 import '../money/egp_formatter.dart' as _i999;
 import 'register_module.dart' as _i291;
 
@@ -75,7 +86,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
+    gh.lazySingleton<_i933.DeviceLocaleProvider>(
+      () => _i933.DeviceLocaleProviderImpl(),
+    );
     gh.factory<_i735.PeopleDao>(() => _i735.PeopleDao(gh<_i982.AppDatabase>()));
+    gh.factory<_i586.SettingsDao>(
+      () => _i586.SettingsDao(gh<_i982.AppDatabase>()),
+    );
     gh.factory<_i684.TransactionsDao>(
       () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
     );
@@ -91,6 +108,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i684.TransactionsDao>(),
         gh<_i982.AppDatabase>(),
       ),
+    );
+    gh.lazySingleton<_i674.SettingsRepository>(
+      () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
@@ -153,6 +173,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
+    gh.factory<_i90.ChangeLanguage>(
+      () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
+    );
+    gh.factory<_i1032.GetLanguagePreference>(
+      () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
+    );
     gh.factory<_i992.PersonDetailCubit>(
       () => _i992.PersonDetailCubit(
         gh<_i646.PeopleRepository>(),
@@ -175,6 +201,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i101.EditPerson>(),
         gh<_i221.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
+      ),
+    );
+    gh.lazySingleton<_i792.SettingsCubit>(
+      () => _i792.SettingsCubit(
+        gh<_i1032.GetLanguagePreference>(),
+        gh<_i90.ChangeLanguage>(),
+        gh<_i933.DeviceLocaleProvider>(),
       ),
     );
     return this;

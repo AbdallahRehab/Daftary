@@ -55,7 +55,7 @@ class _PersonDetailView extends StatelessWidget {
         leading: Navigator.canPop(context)
             ? null
             : IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const BackButtonIcon(),
                 tooltip: l10n.peopleListTitle,
                 onPressed: () => context.go('/people'),
               ),
@@ -99,7 +99,9 @@ class _PersonDetailView extends StatelessWidget {
 
           final person = state.person!;
           final balance = state.balance!;
-          final formatter = EgpFormatter();
+          final formatter = EgpFormatter(
+            locale: Localizations.localeOf(context).languageCode,
+          );
           final headline = switch (balance.status) {
             RelationshipStatus.theyOweYou => l10n.personDetailTheyOweYou(
               person.name,

@@ -264,4 +264,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get restoreAction => 'استعادة';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get languageSectionTitle => 'اللغة';
+
+  @override
+  String get languageEnglish => 'الإنجليزية';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get settingsSaveFailed =>
+      'تعذر حفظ اختيار اللغة. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.';
+
+  @override
+  String get themeSectionTitle => 'المظهر';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
+
+  @override
+  String get themeSystemDefault => 'افتراضي النظام';
+
+  @override
+  String get themeSaveFailed =>
+      'تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.';
 }

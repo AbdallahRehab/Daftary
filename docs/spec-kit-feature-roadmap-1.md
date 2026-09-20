@@ -18,13 +18,13 @@ This roadmap splits the requested work into independent Spec Kit features. Each 
 
 ---
 
-# R1 — Arabic / English Localization + Language Switch
+## R1 — Arabic / English Localization + Language Switch
 
-## Goal
+### Goal
 
 Make Arabic and English first-class application languages and allow the user to switch between them from the app.
 
-## Requirements
+### Requirements
 
 1. Support:
    - Arabic
@@ -65,7 +65,7 @@ Make Arabic and English first-class application languages and allow the user to 
    - numbers
    - currency
 
-## Investigation
+### Investigation
 
 Inspect before coding:
 
@@ -79,7 +79,7 @@ Inspect before coding:
 
 Do not replace the current architecture without evidence.
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [ ] Arabic ↔ English switch works.
 - [ ] UI updates immediately or through the smallest justified refresh.
@@ -93,13 +93,13 @@ Do not replace the current architecture without evidence.
 
 ---
 
-# R2 — Dark Mode / Theme Switching
+## R2 — Dark Mode / Theme Switching
 
-## Goal
+### Goal
 
 Add production-quality Dark Mode and allow the user to switch between Light and Dark themes.
 
-## Requirements
+### Requirements
 
 1. Support:
    - Light
@@ -139,7 +139,7 @@ Add production-quality Dark Mode and allow the user to switch between Light and 
 
 8. Financial values must remain clearly readable in both themes.
 
-## Investigation
+### Investigation
 
 Inspect:
 
@@ -152,7 +152,7 @@ Inspect:
 - loading/error/success components
 - settings persistence
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [ ] Light/Dark switching works.
 - [ ] Preference persists.
@@ -165,19 +165,19 @@ Inspect:
 
 ---
 
-# R3 — Fix Stale State After Adding Money / Transactions
+## R3 — Fix Stale State After Adding Money / Transactions
 
-## Problem
+### Problem
 
 On a person's details page, after adding a new money transaction such as money received or money given, the newly created transaction sometimes does not appear immediately.
 
 The user currently has to reload/reopen the app before the new transaction becomes visible.
 
-## Goal
+### Goal
 
 After a successful transaction creation, Person Details must immediately reflect the new transaction and all affected totals.
 
-## Required Investigation
+### Required Investigation
 
 Trace the real flow:
 
@@ -221,7 +221,7 @@ Inspect:
 - cache invalidation
 - synchronization
 
-## Required Behavior
+### Required Behavior
 
 After successful creation:
 
@@ -239,25 +239,25 @@ After successful creation:
 7. Do not create duplicate transactions.
 8. Handle failure without corrupting state.
 
-## Allowed Implementation Strategies
+### Allowed Implementation Strategies
 
 After inspecting the architecture, choose the smallest correct approach:
 
-### Option A — Targeted Immutable State Update
+#### Option A — Targeted Immutable State Update
 
 If the create operation returns the complete domain transaction, update the current state using immutable data and `copyWith()`.
 
-### Option B — Targeted Refresh
+#### Option B — Targeted Refresh
 
 After success, invoke the Person Details refresh/use case.
 
-### Option C — Shared State Coordination
+#### Option C — Shared State Coordination
 
 Only if multiple screens genuinely require coordinated transaction state, introduce a clean shared-state/invalidation mechanism.
 
 Do not introduce unnecessary global state.
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [ ] Adding money received updates Person Details immediately.
 - [ ] Adding money given updates Person Details immediately.
@@ -271,7 +271,7 @@ Do not introduce unnecessary global state.
 - [ ] `copyWith()` is used where appropriate.
 - [ ] Regression tests reproduce and prevent the original bug.
 
-## Regression Tests
+### Regression Tests
 
 - Existing person → add received → verify transaction and balance.
 - Existing person → add given → verify transaction and balance.
@@ -281,19 +281,19 @@ Do not introduce unnecessary global state.
 
 ---
 
-# R4 — Fix Archive / Unarchive Stale State
+## R4 — Fix Archive / Unarchive Stale State
 
-## Problem
+### Problem
 
 On the initial people/list screen, when a person is archived and then removed from the archive/unarchived, the person does not immediately appear in the active list.
 
 The user has to reload or reopen the app.
 
-## Goal
+### Goal
 
 Archive/unarchive must immediately update the visible people state.
 
-## Required Investigation
+### Required Investigation
 
 Trace:
 
@@ -330,7 +330,7 @@ Inspect:
 - synchronization
 - optimistic updates
 
-## Required Behavior
+### Required Behavior
 
 After successful unarchive:
 
@@ -343,7 +343,7 @@ After successful unarchive:
 7. Do not create duplicates.
 8. Handle failures consistently.
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [ ] Unarchiving immediately makes the person visible in the correct active list.
 - [ ] Archived list updates immediately.
@@ -354,7 +354,7 @@ After successful unarchive:
 - [ ] State is immutable.
 - [ ] Regression tests cover archive/unarchive.
 
-## Regression Tests
+### Regression Tests
 
 - Archive active person → active list updates.
 - Unarchive archived person → active list updates immediately.
@@ -365,15 +365,15 @@ After successful unarchive:
 
 ---
 
-# R5 — Onboarding / Intro Screens
+## R5 — Onboarding / Intro Screens
 
-## Goal
+### Goal
 
 Create a short, premium onboarding experience that explains the application before the user enters the main product.
 
 The onboarding should make the product understandable to a normal user and should not feel like accounting software.
 
-## Core Message
+### Core Message
 
 The product helps users organize:
 
@@ -386,31 +386,31 @@ The product helps users organize:
 - scanned records
 - financial insights
 
-## Suggested Screens
+### Suggested Screens
 
-### Screen 1 — Know Your Money
+#### Screen 1 — Know Your Money
 
 Explain that the app helps users understand income, expenses, savings, and financial activity.
 
-### Screen 2 — Remember Money Between People
+#### Screen 2 — Remember Money Between People
 
 Explain that users can record who gave them money, who they gave money to, and what remains unsettled.
 
-### Screen 3 — Remember Social Occasions
+#### Screen 3 — Remember Social Occasions
 
 Explain that weddings, birthdays, engagements, newborn occasions, gifts, and similar events can be recorded and remembered.
 
-### Screen 4 — Scan and Organize
+#### Screen 4 — Scan and Organize
 
 Explain that users can scan paper records and review extracted names/amounts before saving.
 
-### Screen 5 — Understand Your Finances
+#### Screen 5 — Understand Your Finances
 
 Explain that the AI assistant can answer questions using the user's actual application data.
 
 Do not make unsupported financial promises.
 
-## UX Requirements
+### UX Requirements
 
 - Short and easy to understand.
 - Clear progress indicator.
@@ -424,7 +424,7 @@ Do not make unsupported financial promises.
 - Accessible text and touch targets.
 - No unnecessary technical terminology.
 
-## Persistence
+### Persistence
 
 ```text
 App launch
@@ -434,7 +434,7 @@ App launch
  → next launch goes to normal entry flow
 ```
 
-## Acceptance Criteria
+### Acceptance Criteria
 
 - [ ] New user sees onboarding.
 - [ ] User can navigate all onboarding screens.
@@ -449,9 +449,9 @@ App launch
 
 ---
 
-# Recommended Execution Order
+## Recommended Execution Order
 
-## R1 — Localization
+### R1 — Localization
 
 ```text
 /speckit-specify
@@ -464,35 +464,35 @@ App launch
 /speckit-converge
 ```
 
-## R2 — Dark Mode
+### R2 — Dark Mode
 
 Run the same cycle after R1 is stable.
 
-## R3 — Transaction State Refresh
+### R3 — Transaction State Refresh
 
 Treat this as an independently testable bug. Diagnose the root cause before changing code.
 
-## R4 — Archive State Refresh
+### R4 — Archive State Refresh
 
 Treat this as another independent bug. If it shares the exact root cause with R3, document that finding and use the smallest shared architectural fix.
 
-## R5 — Onboarding
+### R5 — Onboarding
 
 Implement after localization/theme foundations are available.
 
 ---
 
-# Priority
+## Priority
 
 | ID | Feature | Priority | Dependency |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | R1 | Arabic/English + language switch | P0 | Existing app foundation |
 | R2 | Dark Mode | P0 | R1 recommended |
 | R3 | Transaction state refresh | P0 | Existing transaction architecture |
 | R4 | Archive/unarchive state refresh | P0 | Existing people architecture |
 | R5 | Onboarding | P1 | R1 + R2 recommended |
 
-# Final Verification
+## Final Verification
 
 Verify:
 

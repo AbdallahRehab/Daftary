@@ -91,5 +91,16 @@
   "archivedPeopleTitle": "الأشخاص المؤرشفون",
   "archivedEmptyTitle": "لا يوجد أشخاص مؤرشفون",
   "archivedEmptyMessage": "الأشخاص الذين تقوم بأرشفتهم سيظهرون هنا، مع الاحتفاظ الكامل بسجلهم.",
-  "restoreAction": "استعادة"
+  "restoreAction": "استعادة",
+
+  "settingsTitle": "الإعدادات",
+  "languageSectionTitle": "اللغة",
+  "languageEnglish": "الإنجليزية",
+  "languageArabic": "العربية",
+  "settingsSaveFailed": "تعذر حفظ اختيار اللغة. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.",
+  "themeSectionTitle": "المظهر",
+  "themeLight": "فاتح",
+  "themeDark": "داكن",
+  "themeSystemDefault": "افتراضي النظام",
+  "themeSaveFailed": "تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة."
 }

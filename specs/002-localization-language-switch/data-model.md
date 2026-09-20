@@ -7,7 +7,7 @@ Derived from the spec's Key Entities section, the Clarifications session, and th
 The user's currently selected app display language. Single value scoped to the app installation on the device (spec Assumptions: no per-account profile system) — there is exactly one row, ever.
 
 | Field | Type | Rules |
-|---|---|---|
+| --- | --- | --- |
 | `id` | `String` | Primary key, fixed constant value (e.g. `'singleton'`) — enforces the "single value" rule at the schema level; there is never more than one row |
 | `languageCode` | `String` | `'en'` or `'ar'` only (stored as the domain `AppLanguage` enum's wire value) |
 | `updatedAt` | `int` (epoch millis) | Set on every write — not user-facing, but useful for support/debugging ("when did the user last change this") |
@@ -15,6 +15,7 @@ The user's currently selected app display language. Single value scoped to the a
 **Domain representation**: `AppLanguage` (Domain, Flutter-free enum: `english`, `arabic`), with a `code` getter (`'en'`/`'ar'`) used at the Data-layer boundary only — Domain and Presentation code refer to `AppLanguage.english`/`AppLanguage.arabic`, never to raw strings.
 
 **Validation rules**:
+
 - Only `'en'`/`'ar'` are ever written; the Data-layer mapper is the single place a raw string is parsed into `AppLanguage`, and an unrecognized value there is treated as "no valid preference" (falls back to first-launch default resolution, Decision 4) rather than a crash — this can only happen from external DB tampering, never from normal app writes, but the constitution's "no raw exceptions to the UI" rule still applies to it.
 - No app code ever leaves the row `null`/absent to mean "English" or "Arabic" implicitly — **absence of the row** is the only representation of "no explicit choice yet" (drives FR-009's first-launch default), and once the user changes the language even once, the row always exists from then on.
 

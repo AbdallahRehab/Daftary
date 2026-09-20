@@ -109,5 +109,16 @@
   "archivedPeopleTitle": "Archived people",
   "archivedEmptyTitle": "No archived people",
   "archivedEmptyMessage": "People you archive will appear here, with their history intact.",
-  "restoreAction": "Restore"
+  "restoreAction": "Restore",
+
+  "settingsTitle": "Settings",
+  "languageSectionTitle": "Language",
+  "languageEnglish": "English",
+  "languageArabic": "Arabic",
+  "settingsSaveFailed": "Couldn't save your language choice. It's still active for this session — we'll keep trying.",
+  "themeSectionTitle": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystemDefault": "System Default",
+  "themeSaveFailed": "Couldn't save your theme choice. It's still active for this session — we'll keep trying."
 }

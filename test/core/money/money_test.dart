@@ -92,4 +92,25 @@ void main() {
       expect(() => formatter.parse(''), throwsFormatException);
     });
   });
+
+  group('EgpFormatter under the ar locale (FR-011)', () {
+    final formatter = EgpFormatter(locale: 'ar');
+
+    test('formats with Western digits, never Arabic-Indic glyphs', () {
+      final formatted = formatter.format(const Money.fromMinorUnits(15050));
+      expect(formatted, '150.50');
+      expect(RegExp(r'[٠-٩]').hasMatch(formatted), isFalse);
+    });
+
+    test(
+      'formats a grouped amount with Western digits and correct grouping',
+      () {
+        final formatted = formatter.format(
+          const Money.fromMinorUnits(500000000),
+        );
+        expect(formatted, contains('5,000,000'));
+        expect(RegExp(r'[٠-٩]').hasMatch(formatted), isFalse);
+      },
+    );
+  });
 }

@@ -1,13 +1,16 @@
 import 'package:intl/intl.dart';
 
+import '../l10n/numeral_locale.dart';
 import 'money.dart';
+import 'numeral_parser.dart';
 
 /// Converts [Money] to/from decimal EGP strings at the UI boundary. Both
 /// directions are exact: parsing walks the decimal string digit-by-digit
 /// instead of going through a `double`, so there is no floating-point
 /// rounding step between what the user types and what is stored (FR-006).
 class EgpFormatter {
-  EgpFormatter({String locale = 'en'}) : _majorFormat = _formatFor(locale);
+  EgpFormatter({String locale = 'en'})
+    : _majorFormat = _formatFor(numeralLocaleFor(locale));
 
   final NumberFormat _majorFormat;
 
@@ -18,22 +21,26 @@ class EgpFormatter {
   // time (T107 — this was a measurable contributor to scroll jank).
   static final Map<String, NumberFormat> _cache = {};
 
-  static NumberFormat _formatFor(String locale) => _cache.putIfAbsent(
-    locale,
-    () => NumberFormat.decimalPattern(locale)
+  static NumberFormat _formatFor(String resolvedLocale) => _cache.putIfAbsent(
+    resolvedLocale,
+    () => NumberFormat.decimalPattern(resolvedLocale)
       ..minimumFractionDigits = 0
       ..maximumFractionDigits = 0,
   );
 
   /// Formats [money] as a locale-grouped decimal string, e.g. `15050`
-  /// piastres -> `150.50`.
+  /// piastres -> `150.50`. Always Western digits (0-9), even under Arabic
+  /// (FR-011) — see `AppDateFormatter.format`'s doc comment for why this
+  /// is guaranteed via post-processing rather than trusted to the
+  /// `_u_nu_latn` locale extension alone.
   String format(Money money) {
     final isNegative = money.minorUnits < 0;
     final absMinor = money.minorUnits.abs();
     final major = absMinor ~/ Money.minorUnitsPerMajorUnit;
     final minor = absMinor % Money.minorUnitsPerMajorUnit;
     final sign = isNegative ? '-' : '';
-    return '$sign${_majorFormat.format(major)}.${minor.toString().padLeft(2, '0')}';
+    final majorText = NumeralParser.toWesternDigits(_majorFormat.format(major));
+    return '$sign$majorText.${minor.toString().padLeft(2, '0')}';
   }
 
   /// Formats [money] with the "EGP" currency suffix, e.g. `150.50 EGP`.

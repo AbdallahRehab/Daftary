@@ -35,7 +35,7 @@ Let the user pick Arabic or English from a new Settings tab and have the entire 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 | Principle | Gate | Status |
-|---|---|---|
+| --- | --- | --- |
 | I. Clean Architecture Layering | New `settings` feature split into `data/domain/presentation`; `SettingsCubit` never touches `drift` directly, only `SettingsRepository`; `MainShell` (bottom nav) is a pure Presentation/routing widget with no business logic | PASS |
 | II. Feature-First Modularity | New code lives under `lib/features/settings/`; the bottom-nav shell and locale-aware formatter changes live in `lib/core/routing/` and `lib/core/money/`/`lib/core/date/` respectively — genuinely cross-feature concerns, not a new catch-all folder | PASS |
 | III. BLoC/Cubit Mandate | `SettingsCubit` is a `flutter_bloc` `Cubit`, same as every other Cubit in the app — no second state-management paradigm. It is root-scoped (provided once above `MaterialApp.router`) rather than per-screen, which is a lifetime choice, not a different pattern; documented in research.md | PASS |

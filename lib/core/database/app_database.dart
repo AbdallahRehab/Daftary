@@ -59,18 +59,46 @@ class TransactionAuditEntries extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// The user's language preference. Single-row table (data-model.md): the
+/// app always reads/writes the fixed `id` `'singleton'` — there is never
+/// more than one row.
+class AppSettings extends Table {
+  TextColumn get id => text()();
+  TextColumn get languageCode => text()();
+  TextColumn get themeMode => text().nullable()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
 /// feature is fully local-only.
-@DriftDatabase(tables: [People, MoneyTransactions, TransactionAuditEntries])
+@DriftDatabase(
+  tables: [People, MoneyTransactions, TransactionAuditEntries, AppSettings],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(appSettings);
+      }
+      if (from < 3) {
+        await m.addColumn(appSettings, appSettings.themeMode);
+      }
+    },
+  );
 }
 
 LazyDatabase _openConnection() {

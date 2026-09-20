@@ -21,7 +21,7 @@ abstract class SettingsRepository {
 
 ---
 
-# Contract: DeviceLocaleProvider
+## Contract: DeviceLocaleProvider
 
 A thin, injectable, Flutter-framework-touching abstraction (lives in `core/device/`, not in `settings/domain/`) so `SettingsCubit`'s first-launch-default branch (FR-009) stays unit-testable without a real Flutter binding (research.md Decision 4).
 

@@ -264,4 +264,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get restoreAction => 'Restore';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get languageSectionTitle => 'Language';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageArabic => 'Arabic';
+
+  @override
+  String get settingsSaveFailed =>
+      'Couldn\'t save your language choice. It\'s still active for this session — we\'ll keep trying.';
+
+  @override
+  String get themeSectionTitle => 'Theme';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystemDefault => 'System Default';
+
+  @override
+  String get themeSaveFailed =>
+      'Couldn\'t save your theme choice. It\'s still active for this session — we\'ll keep trying.';
 }

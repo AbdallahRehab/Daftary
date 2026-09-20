@@ -122,7 +122,9 @@ class _PersonSummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final formatter = EgpFormatter();
+    final formatter = EgpFormatter(
+      locale: Localizations.localeOf(context).languageCode,
+    );
     final color = summary.net.isPositive
         ? AppColors.positive
         : AppColors.negative;

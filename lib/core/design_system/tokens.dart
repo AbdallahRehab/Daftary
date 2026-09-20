@@ -64,11 +64,11 @@ class AppTypography {
     height: 1.3,
   );
   static const TextStyle body = TextStyle(fontSize: 15, height: 1.4);
-  static const TextStyle bodyMuted = TextStyle(
-    fontSize: 13,
-    height: 1.4,
-    color: AppColors.onSurfaceMuted,
-  );
+
+  /// No hardcoded color — a `static const TextStyle` can't vary by theme
+  /// (research.md Decision 8). Call sites append
+  /// `.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)`.
+  static const TextStyle bodyMuted = TextStyle(fontSize: 13, height: 1.4);
   static const TextStyle amount = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,

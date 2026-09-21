@@ -250,6 +250,17 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, bool>> hasAnyTransaction() async {
+    try {
+      return Right(await _dao.hasAnyTransaction());
+    } catch (e) {
+      return Left(
+        CacheFailure('Failed to check for existing transactions: $e'),
+      );
+    }
+  }
+
   Future<void> _writeCreatedAuditEntry(String transactionId) {
     return _dao.insertAuditEntry(
       db.TransactionAuditEntriesCompanion.insert(

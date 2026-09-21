@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/app_button.dart';
@@ -96,11 +95,7 @@ class _TransactionFormView extends StatelessWidget {
               ..hideCurrentSnackBar()
               ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
             final savedTransaction = state.savedTransaction;
-            if (savedTransaction != null) {
-              context.go('/people/${savedTransaction.personId}');
-            } else {
-              Navigator.of(context).pop();
-            }
+            Navigator.of(context).pop(savedTransaction);
           } else if (state.status == TransactionFormStatus.failure) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()

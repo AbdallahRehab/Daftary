@@ -65,12 +65,24 @@ class PersonListCubit extends Cubit<PersonListState> {
   }
 
   /// Archives [personId] (FR-017/FR-018) and reloads so it drops out of the
-  /// active list immediately.
+  /// active list immediately. A no-op re-entrancy guard while an archive
+  /// call for the same [personId] is already in flight (FR-006).
   Future<void> archive(String personId) async {
+    if (state.processingPersonId == personId) return;
+    emit(state.copyWith(processingPersonId: personId));
+
     final result = await _archivePerson(personId);
     await result.match(
-      (failure) async => emit(state.copyWith(errorMessage: failure.message)),
-      (_) => load(),
+      (failure) async => emit(
+        state.copyWith(
+          errorMessage: failure.message,
+          clearProcessingPersonId: true,
+        ),
+      ),
+      (_) async {
+        await load();
+        emit(state.copyWith(clearProcessingPersonId: true));
+      },
     );
   }
 }

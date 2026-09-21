@@ -66,4 +66,9 @@ abstract class PeopleRepository {
   });
 
   Future<Either<Failure, Person>> getPersonById(String personId);
+
+  /// FR-010a: whether at least one Person record exists at all — active
+  /// OR archived (unlike [searchActivePeople], which excludes archived).
+  /// An archived-only install still proves prior real use.
+  Future<Either<Failure, bool>> hasAnyPerson();
 }

@@ -111,4 +111,29 @@ void main() {
       );
     });
   });
+
+  group('hasAnyPerson (006-onboarding-screens FR-010a)', () {
+    test('returns Right(false) with no people', () async {
+      final result = await repository.hasAnyPerson();
+      expect(result, const Right<Object, bool>(false));
+    });
+
+    test('returns Right(true) with an active person', () async {
+      await repository.createPerson(name: 'Ahmed');
+      final result = await repository.hasAnyPerson();
+      expect(result, const Right<Object, bool>(true));
+    });
+
+    test('returns Right(true) with only an archived person', () async {
+      final created = await repository.createPerson(name: 'Ahmed');
+      final personId = created
+          .getOrElse((_) => throw StateError('expected Right'))
+          .id;
+      await repository.archivePerson(personId);
+
+      final result = await repository.hasAnyPerson();
+
+      expect(result, const Right<Object, bool>(true));
+    });
+  });
 }

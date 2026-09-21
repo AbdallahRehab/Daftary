@@ -296,4 +296,59 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get themeSaveFailed =>
       'تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.';
+
+  @override
+  String onboardingStepProgress(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get onboardingUnderstandingMoneyTitle =>
+      'افهم وضعك المالي بنظرة واحدة';
+
+  @override
+  String get onboardingUnderstandingMoneyDescription =>
+      'شاهد من يدين لك، ومن تدين له، والوضع العام كله في مكان واحد.';
+
+  @override
+  String get onboardingMoneyBetweenPeopleTitle =>
+      'تتبّع الأموال بينك وبين الأشخاص';
+
+  @override
+  String get onboardingMoneyBetweenPeopleDescription =>
+      'أضف شخصًا، سجّل ما أعطيته أو استلمته، ويحتفظ دفتري بالمجموع الجاري نيابة عنك.';
+
+  @override
+  String get onboardingSocialOccasionsTitle =>
+      'حافظ على وضوح التبادلات الاجتماعية';
+
+  @override
+  String get onboardingSocialOccasionsDescription =>
+      'إقراض صديق نقودًا، أو تقاسم هدية، أو تغطية شخص في مناسبة — دوّنها حتى لا تُنسى.';
+
+  @override
+  String get onboardingScanningRecordsTitle => 'راجع سجلك وقتما احتجت';
+
+  @override
+  String get onboardingScanningRecordsDescription =>
+      'يُحفظ كل إدخال بتاريخه، لذا يمكنك مراجعة سجلك الكامل مع أي شخص في أي وقت.';
+
+  @override
+  String get onboardingAiAssistantTitle => 'احصل على مساعدة لفهم كل شيء';
+
+  @override
+  String get onboardingAiAssistantDescription =>
+      'يمكن لمساعد الذكاء الاصطناعي مساعدتك في مراجعة وتنظيم ما سجّلته — وهو لا يقدّم استشارات مالية ولا يضمن أي نتائج.';
+
+  @override
+  String get onboardingBackAction => 'رجوع';
+
+  @override
+  String get onboardingNextAction => 'التالي';
+
+  @override
+  String get onboardingGetStartedAction => 'ابدأ الآن';
+
+  @override
+  String get onboardingSkipAction => 'تخطي';
 }

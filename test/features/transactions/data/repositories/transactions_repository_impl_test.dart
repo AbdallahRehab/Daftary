@@ -380,4 +380,43 @@ void main() {
       expect(row.editedAt, editedEntries.last.changedAt);
     });
   });
+
+  group('hasAnyTransaction (006-onboarding-screens FR-010a)', () {
+    test('returns Right(false) with no transactions', () async {
+      final result = await repository.hasAnyTransaction();
+      expect(result.getOrElse((_) => true), isFalse);
+    });
+
+    test('returns Right(true) with an active transaction', () async {
+      await repository.addTransaction(
+        idempotencyKey: 'key-1',
+        personId: personId,
+        amount: const Money.fromMinorUnits(200000),
+        direction: TransactionDirection.received,
+        date: DateTime(2026, 1, 1),
+      );
+
+      final result = await repository.hasAnyTransaction();
+
+      expect(result.getOrElse((_) => false), isTrue);
+    });
+
+    test('returns Right(true) with only a soft-deleted transaction', () async {
+      final added = await repository.addTransaction(
+        idempotencyKey: 'key-1',
+        personId: personId,
+        amount: const Money.fromMinorUnits(200000),
+        direction: TransactionDirection.received,
+        date: DateTime(2026, 1, 1),
+      );
+      final txId = added
+          .getOrElse((_) => throw StateError('expected Right'))
+          .id;
+      await repository.deleteTransaction(txId);
+
+      final result = await repository.hasAnyTransaction();
+
+      expect(result.getOrElse((_) => false), isTrue);
+    });
+  });
 }

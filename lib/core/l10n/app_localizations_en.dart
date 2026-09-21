@@ -296,4 +296,58 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get themeSaveFailed =>
       'Couldn\'t save your theme choice. It\'s still active for this session — we\'ll keep trying.';
+
+  @override
+  String onboardingStepProgress(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get onboardingUnderstandingMoneyTitle =>
+      'Understand your money at a glance';
+
+  @override
+  String get onboardingUnderstandingMoneyDescription =>
+      'See who owes you, who you owe, and how things stand overall — all in one place.';
+
+  @override
+  String get onboardingMoneyBetweenPeopleTitle =>
+      'Track money between you and people';
+
+  @override
+  String get onboardingMoneyBetweenPeopleDescription =>
+      'Add someone, record what you gave or received, and Daftary keeps the running total for you.';
+
+  @override
+  String get onboardingSocialOccasionsTitle => 'Keep social exchanges straight';
+
+  @override
+  String get onboardingSocialOccasionsDescription =>
+      'Lending a friend cash, splitting a gift, or covering someone at a gathering — jot it down so nothing gets forgotten.';
+
+  @override
+  String get onboardingScanningRecordsTitle => 'Look back whenever you need to';
+
+  @override
+  String get onboardingScanningRecordsDescription =>
+      'Every entry is saved with its date, so you can scan your full history with any person at any time.';
+
+  @override
+  String get onboardingAiAssistantTitle => 'Get help making sense of it all';
+
+  @override
+  String get onboardingAiAssistantDescription =>
+      'An AI assistant can help you review and organize what you\'ve recorded — it does not give financial advice or guarantee outcomes.';
+
+  @override
+  String get onboardingBackAction => 'Back';
+
+  @override
+  String get onboardingNextAction => 'Next';
+
+  @override
+  String get onboardingGetStartedAction => 'Get Started';
+
+  @override
+  String get onboardingSkipAction => 'Skip';
 }

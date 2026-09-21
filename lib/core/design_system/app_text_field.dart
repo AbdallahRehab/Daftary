@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'tokens.dart';
-
 /// The app's single text-input style. Always shows its own label and
 /// (optionally) an inline validation error, never relying on placeholder
 /// text alone to convey what's required.
@@ -45,16 +43,6 @@ class AppTextField extends StatelessWidget {
         labelText: label,
         errorText: errorText,
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: AppColors.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(color: AppColors.divider),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppRadius.md),
-          borderSide: BorderSide(color: AppColors.divider),
-        ),
       ),
     );
   }

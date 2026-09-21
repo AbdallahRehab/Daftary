@@ -77,4 +77,14 @@ class TransactionsDao {
 
   Future<Map<String, int>> netBalanceMinorUnitsForAllPeople() =>
       _db.netBalanceMinorUnitsForAllPeople();
+
+  /// FR-010a: whether at least one `MoneyTransaction` row exists at all —
+  /// including soft-deleted rows (`deletedAt IS NOT NULL`). A cheap
+  /// `LIMIT 1` existence check, never a full list fetch.
+  Future<bool> hasAnyTransaction() async {
+    final row = await (_db.select(
+      _db.moneyTransactions,
+    )..limit(1)).getSingleOrNull();
+    return row != null;
+  }
 }

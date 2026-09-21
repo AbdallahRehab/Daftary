@@ -1,3 +1,4 @@
+import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/money/money.dart';
@@ -53,6 +54,7 @@ void main() {
 
   Widget wrap(Widget child) {
     return MaterialApp(
+      theme: buildLightTheme(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: child,

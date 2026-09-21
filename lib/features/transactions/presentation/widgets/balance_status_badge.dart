@@ -20,23 +20,24 @@ class BalanceStatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final financeColors = context.financeColors;
     final (label, background, foreground, icon) = switch (status) {
       RelationshipStatus.theyOweYou => (
         l10n.filterTheyOweYou,
-        AppColors.positiveSurface,
-        AppColors.positive,
+        financeColors.positiveSurface,
+        financeColors.positive,
         Icons.arrow_downward,
       ),
       RelationshipStatus.youOweThem => (
         l10n.filterYouOweThem,
-        AppColors.negativeSurface,
-        AppColors.negative,
+        financeColors.negativeSurface,
+        financeColors.negative,
         Icons.arrow_upward,
       ),
       RelationshipStatus.settled => (
         l10n.filterSettled,
-        AppColors.neutralSurface,
-        AppColors.neutral,
+        financeColors.neutralSurface,
+        financeColors.neutral,
         Icons.check_circle_outline,
       ),
     };

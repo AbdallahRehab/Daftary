@@ -71,21 +71,36 @@ class _ArchivedPeopleView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final person = state.people[index];
                     final tag = person.relationshipTag;
-                    return ListTile(
-                      title: Text(person.name),
-                      subtitle: tag != null && tag.trim().isNotEmpty
-                          ? Align(
-                              alignment: AlignmentDirectional.centerStart,
-                              child: RelationshipTagChip(tag: tag),
-                            )
-                          : null,
-                      onTap: () => context.push('/people/${person.id}'),
-                      trailing: TextButton(
-                        onPressed: () => context
-                            .read<ArchivedPeopleCubit>()
-                            .restore(person.id),
-                        child: Text(l10n.restoreAction),
-                      ),
+                    return BlocSelector<
+                      ArchivedPeopleCubit,
+                      ArchivedPeopleState,
+                      String?
+                    >(
+                      selector: (state) => state.processingPersonId,
+                      builder: (context, processingPersonId) {
+                        final isRestoring = processingPersonId == person.id;
+                        return ListTile(
+                          title: Text(person.name),
+                          subtitle: tag != null && tag.trim().isNotEmpty
+                              ? Align(
+                                  alignment: AlignmentDirectional.centerStart,
+                                  child: RelationshipTagChip(tag: tag),
+                                )
+                              : null,
+                          // 005-archive-state-refresh Decision 1: this
+                          // call site previously never reloaded the
+                          // archived list on return from Person Detail.
+                          onTap: () => _openPersonDetail(context, person.id),
+                          trailing: TextButton(
+                            onPressed: isRestoring
+                                ? null
+                                : () => context
+                                      .read<ArchivedPeopleCubit>()
+                                      .restore(person.id),
+                            child: Text(l10n.restoreAction),
+                          ),
+                        );
+                      },
                     );
                   },
                 );
@@ -95,5 +110,12 @@ class _ArchivedPeopleView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _openPersonDetail(BuildContext context, String personId) async {
+    await context.push('/people/$personId');
+    if (context.mounted) {
+      await context.read<ArchivedPeopleCubit>().load();
+    }
   }
 }

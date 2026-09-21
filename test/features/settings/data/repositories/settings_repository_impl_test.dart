@@ -2,6 +2,7 @@ import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/features/settings/data/datasources/settings_dao.dart';
 import 'package:daftary/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
+import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -22,6 +23,57 @@ void main() {
 
     expect(result, const Right<Object, AppLanguage?>(null));
   });
+
+  test('getThemeModePreference returns null when no row exists yet', () async {
+    final result = await repository.getThemeModePreference();
+
+    expect(result, const Right<Object, AppThemeMode?>(null));
+  });
+
+  test('getThemeModePreference returns null when the column is NULL on an '
+      'existing row (upgraded from schemaVersion 2)', () async {
+    await repository.setLanguagePreference(AppLanguage.english);
+
+    final result = await repository.getThemeModePreference();
+
+    expect(result, const Right<Object, AppThemeMode?>(null));
+  });
+
+  test('persists then reads back a theme mode preference '
+      '(restart-persistence)', () async {
+    final setResult = await repository.setThemeModePreference(
+      AppThemeMode.dark,
+    );
+    expect(setResult.isRight(), isTrue);
+
+    final getResult = await repository.getThemeModePreference();
+
+    expect(getResult.getOrElse((_) => null), AppThemeMode.dark);
+  });
+
+  test(
+    'a theme-only write does not clobber a previously persisted language',
+    () async {
+      await repository.setLanguagePreference(AppLanguage.arabic);
+      await repository.setThemeModePreference(AppThemeMode.dark);
+
+      final language = await repository.getLanguagePreference();
+
+      expect(language.getOrElse((_) => null), AppLanguage.arabic);
+    },
+  );
+
+  test(
+    'a language-only write does not clobber a previously persisted theme',
+    () async {
+      await repository.setThemeModePreference(AppThemeMode.dark);
+      await repository.setLanguagePreference(AppLanguage.arabic);
+
+      final theme = await repository.getThemeModePreference();
+
+      expect(theme.getOrElse((_) => null), AppThemeMode.dark);
+    },
+  );
 
   test(
     'persists then reads back a language preference (restart-persistence)',

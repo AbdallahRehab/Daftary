@@ -31,7 +31,12 @@ class DuplicateWarningSheet extends StatelessWidget {
         children: [
           Text(l10n.duplicateWarningTitle, style: AppTypography.title),
           const SizedBox(height: AppSpacing.xs),
-          Text(l10n.duplicateWarningMessage, style: AppTypography.bodyMuted),
+          Text(
+            l10n.duplicateWarningMessage,
+            style: AppTypography.bodyMuted.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AppSpacing.md),
           ...matches.map(
             (person) => Card(

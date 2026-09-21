@@ -76,7 +76,11 @@ class _PersonFormView extends StatelessWidget {
               matches: state.duplicateMatches,
               onPickExisting: (person) {
                 context.read<PersonFormCubit>().dismissDuplicateWarning();
-                context.go('/people/${person.id}');
+                if (context.canPop()) {
+                  Navigator.of(context).pop(person);
+                } else {
+                  context.go('/people/${person.id}');
+                }
               },
               onCreateNewAnyway: () => context
                   .read<PersonFormCubit>()
@@ -90,10 +94,16 @@ class _PersonFormView extends StatelessWidget {
                 ..hideCurrentSnackBar()
                 ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
               final saved = state.savedPerson;
-              if (saved != null) {
+              // 004-transaction-state-refresh research.md documented this
+              // same context.go()-vs-push() defect here too; fixed by
+              // 005-archive-state-refresh the same way: pop with a result
+              // (mirroring transaction_form_page.dart) so the caller's own
+              // `await push(...); refresh();` idiom reliably fires,
+              // falling back to go() only when there is nothing to pop.
+              if (context.canPop()) {
+                Navigator.of(context).pop(saved);
+              } else if (saved != null) {
                 context.go('/people/${saved.id}');
-              } else if (context.canPop()) {
-                context.pop();
               }
             case PersonFormStatus.deleted:
             case PersonFormStatus.archived:
@@ -137,7 +147,12 @@ class _PersonFormView extends StatelessWidget {
                   onChanged: cubit.phoneNumberChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),
-                Text(l10n.relationshipTagLabel, style: AppTypography.bodyMuted),
+                Text(
+                  l10n.relationshipTagLabel,
+                  style: AppTypography.bodyMuted.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.xs),
                 Wrap(
                   spacing: AppSpacing.xs,

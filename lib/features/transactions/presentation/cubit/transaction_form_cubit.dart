@@ -214,6 +214,13 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
             note: state.note,
           );
 
+    // The form may have been popped (e.g. the user navigated away) while
+    // the save was still in flight — the mutation itself already went
+    // through exactly once above, so there is nothing to lose, but this
+    // cubit no longer has a listener to tell, and `emit` after `close()`
+    // throws.
+    if (isClosed) return;
+
     result.match(
       (failure) => emit(
         state.copyWith(

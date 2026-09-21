@@ -62,6 +62,72 @@ void main() {
   );
 
   blocTest<ArchivedPeopleCubit, ArchivedPeopleState>(
+    'load() re-reads the current nameQuery rather than resetting it on a '
+    'second call (005-archive-state-refresh research.md Decision 4)',
+    build: buildCubit,
+    seed: () => const ArchivedPeopleState(nameQuery: 'Ahm'),
+    setUp: () {
+      when(
+        () => repository.searchArchivedPeople(nameQuery: 'Ahm'),
+      ).thenAnswer((_) async => Right([ahmed]));
+    },
+    act: (cubit) => cubit.load(),
+    verify: (cubit) {
+      verify(() => repository.searchArchivedPeople(nameQuery: 'Ahm')).called(1);
+      expect(cubit.state.nameQuery, 'Ahm');
+      expect(cubit.state.people, [ahmed]);
+    },
+  );
+
+  blocTest<ArchivedPeopleCubit, ArchivedPeopleState>(
+    'restore(id) is a no-op re-entrancy guard while already processing the '
+    'same id (FR-006)',
+    build: buildCubit,
+    seed: () => const ArchivedPeopleState(
+      status: ArchivedPeopleStatus.success,
+      processingPersonId: 'p1',
+    ),
+    act: (cubit) => cubit.restore('p1'),
+    verify: (_) {
+      verifyNever(() => repository.restorePerson(any()));
+    },
+  );
+
+  blocTest<ArchivedPeopleCubit, ArchivedPeopleState>(
+    'a failed restore() leaves the person in the archived list, sets an '
+    'error message, and clears processingPersonId so the control is '
+    'tappable again (FR-007)',
+    build: buildCubit,
+    seed: () => ArchivedPeopleState(
+      status: ArchivedPeopleStatus.success,
+      people: [ahmed],
+    ),
+    setUp: () {
+      when(
+        () => repository.restorePerson('p1'),
+      ).thenAnswer((_) async => const Left(CacheFailure('DB unavailable')));
+    },
+    act: (cubit) => cubit.restore('p1'),
+    expect: () => [
+      isA<ArchivedPeopleState>().having(
+        (s) => s.processingPersonId,
+        'processingPersonId',
+        'p1',
+      ),
+      isA<ArchivedPeopleState>()
+          .having((s) => s.errorMessage, 'errorMessage', 'DB unavailable')
+          .having((s) => s.processingPersonId, 'processingPersonId', isNull)
+          .having((s) => s.people, 'people', [ahmed]),
+    ],
+    verify: (_) {
+      verifyNever(
+        () =>
+            repository.searchArchivedPeople(nameQuery: any(named: 'nameQuery')),
+      );
+    },
+  );
+
+  blocTest<ArchivedPeopleCubit, ArchivedPeopleState>(
     'restoring a person moves it back into the active list, dropping it '
     'from this archived list on reload (FR-018)',
     build: buildCubit,

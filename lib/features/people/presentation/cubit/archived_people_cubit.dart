@@ -41,16 +41,26 @@ class ArchivedPeopleCubit extends Cubit<ArchivedPeopleState> {
   }
 
   /// Restores [personId] and refreshes the archived list so it disappears
-  /// immediately (FR-018, Acceptance Scenario 4).
+  /// immediately (FR-018, Acceptance Scenario 4). A no-op re-entrancy guard
+  /// while a restore call for the same [personId] is already in flight
+  /// (FR-006).
   Future<bool> restore(String personId) async {
+    if (state.processingPersonId == personId) return false;
+    emit(state.copyWith(processingPersonId: personId));
+
     final result = await _restorePerson(personId);
     return result.match(
       (failure) {
-        emit(state.copyWith(errorMessage: failure.message));
+        emit(
+          state.copyWith(
+            errorMessage: failure.message,
+            clearProcessingPersonId: true,
+          ),
+        );
         return false;
       },
       (_) {
-        load();
+        load().then((_) => emit(state.copyWith(clearProcessingPersonId: true)));
         return true;
       },
     );

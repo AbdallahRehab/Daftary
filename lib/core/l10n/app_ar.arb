@@ -102,5 +102,21 @@
   "themeLight": "فاتح",
   "themeDark": "داكن",
   "themeSystemDefault": "افتراضي النظام",
-  "themeSaveFailed": "تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة."
+  "themeSaveFailed": "تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.",
+
+  "onboardingStepProgress": "الخطوة {current} من {total}",
+  "onboardingUnderstandingMoneyTitle": "افهم وضعك المالي بنظرة واحدة",
+  "onboardingUnderstandingMoneyDescription": "شاهد من يدين لك، ومن تدين له، والوضع العام كله في مكان واحد.",
+  "onboardingMoneyBetweenPeopleTitle": "تتبّع الأموال بينك وبين الأشخاص",
+  "onboardingMoneyBetweenPeopleDescription": "أضف شخصًا، سجّل ما أعطيته أو استلمته، ويحتفظ دفتري بالمجموع الجاري نيابة عنك.",
+  "onboardingSocialOccasionsTitle": "حافظ على وضوح التبادلات الاجتماعية",
+  "onboardingSocialOccasionsDescription": "إقراض صديق نقودًا، أو تقاسم هدية، أو تغطية شخص في مناسبة — دوّنها حتى لا تُنسى.",
+  "onboardingScanningRecordsTitle": "راجع سجلك وقتما احتجت",
+  "onboardingScanningRecordsDescription": "يُحفظ كل إدخال بتاريخه، لذا يمكنك مراجعة سجلك الكامل مع أي شخص في أي وقت.",
+  "onboardingAiAssistantTitle": "احصل على مساعدة لفهم كل شيء",
+  "onboardingAiAssistantDescription": "يمكن لمساعد الذكاء الاصطناعي مساعدتك في مراجعة وتنظيم ما سجّلته — وهو لا يقدّم استشارات مالية ولا يضمن أي نتائج.",
+  "onboardingBackAction": "رجوع",
+  "onboardingNextAction": "التالي",
+  "onboardingGetStartedAction": "ابدأ الآن",
+  "onboardingSkipAction": "تخطي"
 }

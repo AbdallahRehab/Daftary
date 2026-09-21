@@ -23,13 +23,14 @@ class AppEmptyView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: AppColors.onSurfaceMuted),
+            Icon(icon, size: 48, color: onSurfaceVariant),
             const SizedBox(height: AppSpacing.md),
             Text(
               title,
@@ -39,7 +40,7 @@ class AppEmptyView extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               message,
-              style: AppTypography.bodyMuted,
+              style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
               textAlign: TextAlign.center,
             ),
             if (actionLabel != null && onAction != null) ...[

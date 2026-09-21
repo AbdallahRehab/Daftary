@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
+import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
@@ -11,6 +14,7 @@ import '../../features/transactions/presentation/pages/person_detail_page.dart';
 import '../../features/transactions/presentation/pages/repayment_form_page.dart';
 import '../../features/transactions/presentation/pages/transaction_edit_page.dart';
 import '../../features/transactions/presentation/pages/transaction_form_page.dart';
+import '../di/injection.dart';
 import 'main_shell.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(
@@ -32,7 +36,28 @@ final GlobalKey<NavigatorState> _settingsBranchNavigatorKey =
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
+  // FR-001/FR-010a: `OnboardingCubit.initialize()` is awaited in main.dart
+  // before `runApp`, so its state is already settled by the time any
+  // redirect runs — no `refreshListenable`/async redirect is needed
+  // (research.md Decision 1).
+  redirect: (context, state) {
+    final onboarding = getIt<OnboardingCubit>().state;
+    final onOnboardingRoute = state.matchedLocation == '/onboarding';
+    if (onboarding.status == OnboardingLoadStatus.showOnboarding &&
+        !onOnboardingRoute) {
+      return '/onboarding';
+    }
+    if (onboarding.status == OnboardingLoadStatus.mainApp &&
+        onOnboardingRoute) {
+      return '/';
+    }
+    return null;
+  },
   routes: [
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingPage(),
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
           MainShell(navigationShell: navigationShell),

@@ -13,6 +13,16 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/onboarding/data/datasources/onboarding_dao.dart'
+    as _i360;
+import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
+    as _i452;
+import '../../features/onboarding/domain/repositories/onboarding_repository.dart'
+    as _i430;
+import '../../features/onboarding/domain/usecases/resolve_onboarding_status.dart'
+    as _i791;
+import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart'
+    as _i807;
 import '../../features/people/data/datasources/people_dao.dart' as _i735;
 import '../../features/people/data/repositories/people_repository_impl.dart'
     as _i1029;
@@ -37,8 +47,11 @@ import '../../features/settings/data/repositories/settings_repository_impl.dart'
 import '../../features/settings/domain/repositories/settings_repository.dart'
     as _i674;
 import '../../features/settings/domain/usecases/change_language.dart' as _i90;
+import '../../features/settings/domain/usecases/change_theme_mode.dart' as _i46;
 import '../../features/settings/domain/usecases/get_language_preference.dart'
     as _i1032;
+import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
+    as _i333;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
     as _i792;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
@@ -88,6 +101,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
+    );
+    gh.factory<_i360.OnboardingDao>(
+      () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i735.PeopleDao>(() => _i735.PeopleDao(gh<_i982.AppDatabase>()));
     gh.factory<_i586.SettingsDao>(
@@ -173,11 +189,36 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
+    gh.lazySingleton<_i430.OnboardingRepository>(
+      () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
+    );
+    gh.factory<_i791.ResolveOnboardingStatus>(
+      () => _i791.ResolveOnboardingStatus(
+        gh<_i430.OnboardingRepository>(),
+        gh<_i646.PeopleRepository>(),
+        gh<_i956.TransactionsRepository>(),
+      ),
+    );
     gh.factory<_i90.ChangeLanguage>(
       () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
     );
+    gh.factory<_i46.ChangeThemeMode>(
+      () => _i46.ChangeThemeMode(gh<_i674.SettingsRepository>()),
+    );
     gh.factory<_i1032.GetLanguagePreference>(
       () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
+    );
+    gh.factory<_i333.GetThemeModePreference>(
+      () => _i333.GetThemeModePreference(gh<_i674.SettingsRepository>()),
+    );
+    gh.lazySingleton<_i792.SettingsCubit>(
+      () => _i792.SettingsCubit(
+        gh<_i1032.GetLanguagePreference>(),
+        gh<_i90.ChangeLanguage>(),
+        gh<_i933.DeviceLocaleProvider>(),
+        gh<_i333.GetThemeModePreference>(),
+        gh<_i46.ChangeThemeMode>(),
+      ),
     );
     gh.factory<_i992.PersonDetailCubit>(
       () => _i992.PersonDetailCubit(
@@ -194,6 +235,12 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
+    gh.lazySingleton<_i807.OnboardingCubit>(
+      () => _i807.OnboardingCubit(
+        gh<_i791.ResolveOnboardingStatus>(),
+        gh<_i430.OnboardingRepository>(),
+      ),
+    );
     gh.factory<_i668.PersonFormCubit>(
       () => _i668.PersonFormCubit(
         gh<_i646.PeopleRepository>(),
@@ -201,13 +248,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i101.EditPerson>(),
         gh<_i221.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
-      ),
-    );
-    gh.lazySingleton<_i792.SettingsCubit>(
-      () => _i792.SettingsCubit(
-        gh<_i1032.GetLanguagePreference>(),
-        gh<_i90.ChangeLanguage>(),
-        gh<_i933.DeviceLocaleProvider>(),
       ),
     );
     return this;

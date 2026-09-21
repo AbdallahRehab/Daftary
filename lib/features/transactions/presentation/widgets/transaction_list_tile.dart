@@ -27,7 +27,11 @@ class TransactionListTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isGiven = transaction.direction == TransactionDirection.given;
     final isRepayment = transaction.kind == TransactionKind.repayment;
-    final amountColor = isGiven ? AppColors.negative : AppColors.positive;
+    final financeColors = context.financeColors;
+    final amountColor = isGiven
+        ? financeColors.negative
+        : financeColors.positive;
+    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     final locale = Localizations.localeOf(context).languageCode;
     final formatter = EgpFormatter(locale: locale);
     final dateLabel = AppDateFormatter(locale: locale).format(transaction.date);
@@ -57,7 +61,7 @@ class TransactionListTile extends StatelessWidget {
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: AppColors.neutralSurface,
+                color: financeColors.neutralSurface,
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Text(l10n.repaymentLabel, style: AppTypography.label),
@@ -65,7 +69,10 @@ class TransactionListTile extends StatelessWidget {
           ],
           if (transaction.isEdited) ...[
             const SizedBox(width: AppSpacing.xs),
-            Text('(${l10n.editedLabel})', style: AppTypography.bodyMuted),
+            Text(
+              '(${l10n.editedLabel})',
+              style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
+            ),
           ],
         ],
       ),

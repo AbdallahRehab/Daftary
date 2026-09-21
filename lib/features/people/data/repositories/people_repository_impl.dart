@@ -228,4 +228,13 @@ class PeopleRepositoryImpl implements PeopleRepository {
       return Left(CacheFailure('Failed to load person: $e'));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> hasAnyPerson() async {
+    try {
+      return Right(await _dao.hasAnyPerson());
+    } catch (e) {
+      return Left(CacheFailure('Failed to check for existing people: $e'));
+    }
+  }
 }

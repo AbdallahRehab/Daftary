@@ -112,4 +112,11 @@ class PeopleDao {
 
   Future<void> deletePerson(String id) =>
       (_db.delete(_db.people)..where((p) => p.id.equals(id))).go();
+
+  /// FR-010a: whether at least one `Person` row exists at all — active or
+  /// archived. A cheap `LIMIT 1` existence check, never a full list fetch.
+  Future<bool> hasAnyPerson() async {
+    final row = await (_db.select(_db.people)..limit(1)).getSingleOrNull();
+    return row != null;
+  }
 }

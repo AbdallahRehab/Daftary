@@ -7,7 +7,9 @@ import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../transactions/domain/entities/money_transaction.dart';
 import '../../../transactions/domain/entities/person_balance.dart';
+import '../../domain/entities/person.dart';
 import '../cubit/person_list_cubit.dart';
 import '../cubit/person_list_state.dart';
 import '../widgets/person_list_tile.dart';
@@ -48,7 +50,7 @@ class _PeopleListView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
             tooltip: l10n.archivedPeopleAction,
-            onPressed: () => context.push('/people/archived'),
+            onPressed: () => _openArchivedList(context),
           ),
         ],
       ),
@@ -154,11 +156,22 @@ class _PeopleListView extends StatelessWidget {
                     itemCount: state.items.length,
                     itemBuilder: (context, index) {
                       final item = state.items[index];
-                      return PersonListTile(
-                        person: item.person,
-                        balance: item.balance,
-                        onTap: () => context.push('/people/${item.person.id}'),
-                        onArchive: () => _archive(context, item.person.id),
+                      return BlocSelector<
+                        PersonListCubit,
+                        PersonListState,
+                        String?
+                      >(
+                        selector: (state) => state.processingPersonId,
+                        builder: (context, processingPersonId) {
+                          return PersonListTile(
+                            person: item.person,
+                            balance: item.balance,
+                            isArchiving: processingPersonId == item.person.id,
+                            onTap: () =>
+                                _openPersonDetail(context, item.person.id),
+                            onArchive: () => _archive(context, item.person.id),
+                          );
+                        },
                       );
                     },
                   ),
@@ -181,15 +194,46 @@ class _PeopleListView extends StatelessWidget {
     );
   }
 
+  // This call site follows the reload-on-return convention fixed by
+  // feature 005-archive-state-refresh — do not omit on new pushes from
+  // this screen.
   Future<void> _addPerson(BuildContext context) async {
-    await context.push('/people/new');
+    final result = await context.push<Person?>('/people/new');
+    if (context.mounted) {
+      await context.read<PersonListCubit>().load();
+    }
+    if (result != null && context.mounted) {
+      await context.push('/people/${result.id}');
+    }
+  }
+
+  // This call site follows the reload-on-return convention fixed by
+  // feature 005-archive-state-refresh — do not omit on new pushes from
+  // this screen.
+  Future<void> _recordTransaction(BuildContext context) async {
+    final result = await context.push<MoneyTransaction?>('/transactions/new');
+    if (context.mounted) {
+      await context.read<PersonListCubit>().load();
+    }
+    if (result != null && context.mounted) {
+      await context.push('/people/${result.personId}');
+    }
+  }
+
+  // Root-cause call site for the originally reported bug
+  // (005-archive-state-refresh research.md Decision 1): unarchiving from
+  // the archived list previously never reloaded this list on return.
+  Future<void> _openArchivedList(BuildContext context) async {
+    await context.push('/people/archived');
     if (context.mounted) {
       await context.read<PersonListCubit>().load();
     }
   }
 
-  Future<void> _recordTransaction(BuildContext context) async {
-    await context.push('/transactions/new');
+  // 005-archive-state-refresh Decision 1: an archive/edit triggered from
+  // Person Detail must also be reflected here on return.
+  Future<void> _openPersonDetail(BuildContext context, String personId) async {
+    await context.push('/people/$personId');
     if (context.mounted) {
       await context.read<PersonListCubit>().load();
     }

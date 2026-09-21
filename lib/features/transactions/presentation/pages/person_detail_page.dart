@@ -43,15 +43,14 @@ class _PersonDetailView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        // TransactionFormPage/RepaymentFormPage land here via `context.go`
-        // on success, which — with no ShellRoute wrapping this app's
-        // routes — replaces the whole navigation stack rather than
-        // pushing, so there is sometimes nothing left to pop back to.
-        // Without this, a user who just recorded their first transaction
-        // would be stranded on this page with no way back to their people
-        // list. When something IS poppable (e.g. reached by tapping a row
-        // in `PeopleListPage`/`OverviewPage`), the default back button
-        // still applies so "back" returns to that originating screen.
+        // The global-FAB "record transaction" flow (`PeopleListPage`) can
+        // land here via `context.push('/people/$id')` after the form pops
+        // with no bound personId, which is always poppable — but this page
+        // can in principle be reached with nothing to pop back to, so the
+        // fallback keeps a user from being stranded. When something IS
+        // poppable (e.g. reached by tapping a row in `PeopleListPage`/
+        // `OverviewPage`), the default back button still applies so "back"
+        // returns to that originating screen.
         leading: Navigator.canPop(context)
             ? null
             : IconButton(
@@ -175,7 +174,9 @@ class _PersonDetailView extends StatelessWidget {
   }
 
   Future<void> _recordTransaction(BuildContext context) async {
-    await context.push('/transactions/new?personId=$personId');
+    await context.push<MoneyTransaction?>(
+      '/transactions/new?personId=$personId',
+    );
     if (context.mounted) {
       await context.read<PersonDetailCubit>().refresh();
     }
@@ -200,7 +201,7 @@ class _PersonDetailView extends StatelessWidget {
     MoneyTransaction transaction,
     Person person,
   ) async {
-    await context.push(
+    await context.push<MoneyTransaction?>(
       '/transactions/${transaction.id}/edit',
       extra: TransactionEditArgs(transaction: transaction, person: person),
     );

@@ -2007,6 +2007,280 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   }
 }
 
+class $OnboardingStatusTable extends OnboardingStatus
+    with TableInfo<$OnboardingStatusTable, OnboardingStatusData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OnboardingStatusTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isCompleteMeta = const VerificationMeta(
+    'isComplete',
+  );
+  @override
+  late final GeneratedColumn<bool> isComplete = GeneratedColumn<bool>(
+    'is_complete',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_complete" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<int> completedAt = GeneratedColumn<int>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, isComplete, completedAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'onboarding_status';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OnboardingStatusData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('is_complete')) {
+      context.handle(
+        _isCompleteMeta,
+        isComplete.isAcceptableOrUnknown(data['is_complete']!, _isCompleteMeta),
+      );
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OnboardingStatusData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OnboardingStatusData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      isComplete: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_complete'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_at'],
+      ),
+    );
+  }
+
+  @override
+  $OnboardingStatusTable createAlias(String alias) {
+    return $OnboardingStatusTable(attachedDatabase, alias);
+  }
+}
+
+class OnboardingStatusData extends DataClass
+    implements Insertable<OnboardingStatusData> {
+  final String id;
+  final bool isComplete;
+  final int? completedAt;
+  const OnboardingStatusData({
+    required this.id,
+    required this.isComplete,
+    this.completedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['is_complete'] = Variable<bool>(isComplete);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<int>(completedAt);
+    }
+    return map;
+  }
+
+  OnboardingStatusCompanion toCompanion(bool nullToAbsent) {
+    return OnboardingStatusCompanion(
+      id: Value(id),
+      isComplete: Value(isComplete),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+    );
+  }
+
+  factory OnboardingStatusData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OnboardingStatusData(
+      id: serializer.fromJson<String>(json['id']),
+      isComplete: serializer.fromJson<bool>(json['isComplete']),
+      completedAt: serializer.fromJson<int?>(json['completedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'isComplete': serializer.toJson<bool>(isComplete),
+      'completedAt': serializer.toJson<int?>(completedAt),
+    };
+  }
+
+  OnboardingStatusData copyWith({
+    String? id,
+    bool? isComplete,
+    Value<int?> completedAt = const Value.absent(),
+  }) => OnboardingStatusData(
+    id: id ?? this.id,
+    isComplete: isComplete ?? this.isComplete,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+  );
+  OnboardingStatusData copyWithCompanion(OnboardingStatusCompanion data) {
+    return OnboardingStatusData(
+      id: data.id.present ? data.id.value : this.id,
+      isComplete: data.isComplete.present
+          ? data.isComplete.value
+          : this.isComplete,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OnboardingStatusData(')
+          ..write('id: $id, ')
+          ..write('isComplete: $isComplete, ')
+          ..write('completedAt: $completedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, isComplete, completedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OnboardingStatusData &&
+          other.id == this.id &&
+          other.isComplete == this.isComplete &&
+          other.completedAt == this.completedAt);
+}
+
+class OnboardingStatusCompanion extends UpdateCompanion<OnboardingStatusData> {
+  final Value<String> id;
+  final Value<bool> isComplete;
+  final Value<int?> completedAt;
+  final Value<int> rowid;
+  const OnboardingStatusCompanion({
+    this.id = const Value.absent(),
+    this.isComplete = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OnboardingStatusCompanion.insert({
+    required String id,
+    this.isComplete = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<OnboardingStatusData> custom({
+    Expression<String>? id,
+    Expression<bool>? isComplete,
+    Expression<int>? completedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isComplete != null) 'is_complete': isComplete,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OnboardingStatusCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? isComplete,
+    Value<int?>? completedAt,
+    Value<int>? rowid,
+  }) {
+    return OnboardingStatusCompanion(
+      id: id ?? this.id,
+      isComplete: isComplete ?? this.isComplete,
+      completedAt: completedAt ?? this.completedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (isComplete.present) {
+      map['is_complete'] = Variable<bool>(isComplete.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<int>(completedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OnboardingStatusCompanion(')
+          ..write('id: $id, ')
+          ..write('isComplete: $isComplete, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2016,6 +2290,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TransactionAuditEntriesTable transactionAuditEntries =
       $TransactionAuditEntriesTable(this);
   late final $AppSettingsTable appSettings = $AppSettingsTable(this);
+  late final $OnboardingStatusTable onboardingStatus = $OnboardingStatusTable(
+    this,
+  );
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -2037,6 +2314,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     moneyTransactions,
     transactionAuditEntries,
     appSettings,
+    onboardingStatus,
     idxPeopleNormalizedName,
     idxTransactionsPersonId,
     idxAuditTransactionId,
@@ -3548,6 +3826,182 @@ typedef $$AppSettingsTableProcessedTableManager =
       AppSetting,
       PrefetchHooks Function()
     >;
+typedef $$OnboardingStatusTableCreateCompanionBuilder =
+    OnboardingStatusCompanion Function({
+      required String id,
+      Value<bool> isComplete,
+      Value<int?> completedAt,
+      Value<int> rowid,
+    });
+typedef $$OnboardingStatusTableUpdateCompanionBuilder =
+    OnboardingStatusCompanion Function({
+      Value<String> id,
+      Value<bool> isComplete,
+      Value<int?> completedAt,
+      Value<int> rowid,
+    });
+
+class $$OnboardingStatusTableFilterComposer
+    extends Composer<_$AppDatabase, $OnboardingStatusTable> {
+  $$OnboardingStatusTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isComplete => $composableBuilder(
+    column: $table.isComplete,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$OnboardingStatusTableOrderingComposer
+    extends Composer<_$AppDatabase, $OnboardingStatusTable> {
+  $$OnboardingStatusTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isComplete => $composableBuilder(
+    column: $table.isComplete,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OnboardingStatusTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OnboardingStatusTable> {
+  $$OnboardingStatusTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get isComplete => $composableBuilder(
+    column: $table.isComplete,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$OnboardingStatusTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OnboardingStatusTable,
+          OnboardingStatusData,
+          $$OnboardingStatusTableFilterComposer,
+          $$OnboardingStatusTableOrderingComposer,
+          $$OnboardingStatusTableAnnotationComposer,
+          $$OnboardingStatusTableCreateCompanionBuilder,
+          $$OnboardingStatusTableUpdateCompanionBuilder,
+          (
+            OnboardingStatusData,
+            BaseReferences<
+              _$AppDatabase,
+              $OnboardingStatusTable,
+              OnboardingStatusData
+            >,
+          ),
+          OnboardingStatusData,
+          PrefetchHooks Function()
+        > {
+  $$OnboardingStatusTableTableManager(
+    _$AppDatabase db,
+    $OnboardingStatusTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OnboardingStatusTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OnboardingStatusTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OnboardingStatusTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> isComplete = const Value.absent(),
+                Value<int?> completedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OnboardingStatusCompanion(
+                id: id,
+                isComplete: isComplete,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> isComplete = const Value.absent(),
+                Value<int?> completedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OnboardingStatusCompanion.insert(
+                id: id,
+                isComplete: isComplete,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$OnboardingStatusTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OnboardingStatusTable,
+      OnboardingStatusData,
+      $$OnboardingStatusTableFilterComposer,
+      $$OnboardingStatusTableOrderingComposer,
+      $$OnboardingStatusTableAnnotationComposer,
+      $$OnboardingStatusTableCreateCompanionBuilder,
+      $$OnboardingStatusTableUpdateCompanionBuilder,
+      (
+        OnboardingStatusData,
+        BaseReferences<
+          _$AppDatabase,
+          $OnboardingStatusTable,
+          OnboardingStatusData
+        >,
+      ),
+      OnboardingStatusData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3563,4 +4017,6 @@ class $AppDatabaseManager {
       );
   $$AppSettingsTableTableManager get appSettings =>
       $$AppSettingsTableTableManager(_db, _db.appSettings);
+  $$OnboardingStatusTableTableManager get onboardingStatus =>
+      $$OnboardingStatusTableTableManager(_db, _db.onboardingStatus);
 }

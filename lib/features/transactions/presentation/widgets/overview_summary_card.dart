@@ -23,6 +23,7 @@ class OverviewSummaryCard extends StatelessWidget {
     final formatter = EgpFormatter(
       locale: Localizations.localeOf(context).languageCode,
     );
+    final financeColors = context.financeColors;
     return AppCard(
       child: Row(
         children: [
@@ -30,15 +31,19 @@ class OverviewSummaryCard extends StatelessWidget {
             child: _Figure(
               label: l10n.overviewTotalOwedToYou,
               amountText: formatter.formatWithSymbol(totalOwedToUser),
-              color: AppColors.positive,
+              color: financeColors.positive,
             ),
           ),
-          Container(width: 1, height: 40, color: AppColors.divider),
+          Container(
+            width: 1,
+            height: 40,
+            color: Theme.of(context).colorScheme.outlineVariant,
+          ),
           Expanded(
             child: _Figure(
               label: l10n.overviewTotalYouOwe,
               amountText: formatter.formatWithSymbol(totalUserOwes),
-              color: AppColors.negative,
+              color: financeColors.negative,
             ),
           ),
         ],
@@ -65,7 +70,9 @@ class _Figure extends StatelessWidget {
       children: [
         Text(
           label,
-          style: AppTypography.bodyMuted,
+          style: AppTypography.bodyMuted.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppSpacing.xs),

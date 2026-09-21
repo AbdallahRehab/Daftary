@@ -26,13 +26,15 @@ class SettingsDao {
     required int updatedAt,
   }) async {
     final existing = await getPreference();
-    return _db
+    await _db
         .into(_db.appSettings)
         .insertOnConflictUpdate(
           AppSettingsCompanion.insert(
             id: _singletonId,
             languageCode:
-                languageCode ?? existing?.languageCode ?? AppLanguage.english.code,
+                languageCode ??
+                existing?.languageCode ??
+                AppLanguage.english.code,
             themeMode: Value(themeMode ?? existing?.themeMode),
             updatedAt: updatedAt,
           ),

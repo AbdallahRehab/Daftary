@@ -649,6 +649,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t save your theme choice. It\'s still active for this session — we\'ll keep trying.'**
   String get themeSaveFailed;
+
+  /// No description provided for @onboardingStepProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepProgress(int current, int total);
+
+  /// No description provided for @onboardingUnderstandingMoneyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand your money at a glance'**
+  String get onboardingUnderstandingMoneyTitle;
+
+  /// No description provided for @onboardingUnderstandingMoneyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'See who owes you, who you owe, and how things stand overall — all in one place.'**
+  String get onboardingUnderstandingMoneyDescription;
+
+  /// No description provided for @onboardingMoneyBetweenPeopleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track money between you and people'**
+  String get onboardingMoneyBetweenPeopleTitle;
+
+  /// No description provided for @onboardingMoneyBetweenPeopleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add someone, record what you gave or received, and Daftary keeps the running total for you.'**
+  String get onboardingMoneyBetweenPeopleDescription;
+
+  /// No description provided for @onboardingSocialOccasionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep social exchanges straight'**
+  String get onboardingSocialOccasionsTitle;
+
+  /// No description provided for @onboardingSocialOccasionsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Lending a friend cash, splitting a gift, or covering someone at a gathering — jot it down so nothing gets forgotten.'**
+  String get onboardingSocialOccasionsDescription;
+
+  /// No description provided for @onboardingScanningRecordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Look back whenever you need to'**
+  String get onboardingScanningRecordsTitle;
+
+  /// No description provided for @onboardingScanningRecordsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Every entry is saved with its date, so you can scan your full history with any person at any time.'**
+  String get onboardingScanningRecordsDescription;
+
+  /// No description provided for @onboardingAiAssistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get help making sense of it all'**
+  String get onboardingAiAssistantTitle;
+
+  /// No description provided for @onboardingAiAssistantDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'An AI assistant can help you review and organize what you\'ve recorded — it does not give financial advice or guarantee outcomes.'**
+  String get onboardingAiAssistantDescription;
+
+  /// No description provided for @onboardingBackAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBackAction;
+
+  /// No description provided for @onboardingNextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNextAction;
+
+  /// No description provided for @onboardingGetStartedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get onboardingGetStartedAction;
+
+  /// No description provided for @onboardingSkipAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkipAction;
 }
 
 class _AppLocalizationsDelegate

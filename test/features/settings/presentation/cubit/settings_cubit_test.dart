@@ -2,9 +2,12 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/device/device_locale_provider.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
+import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:daftary/features/settings/domain/repositories/settings_repository.dart';
 import 'package:daftary/features/settings/domain/usecases/change_language.dart';
+import 'package:daftary/features/settings/domain/usecases/change_theme_mode.dart';
 import 'package:daftary/features/settings/domain/usecases/get_language_preference.dart';
+import 'package:daftary/features/settings/domain/usecases/get_theme_mode_preference.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_state.dart';
 import 'package:flutter/widgets.dart';
@@ -22,17 +25,29 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(AppLanguage.english);
+    registerFallbackValue(AppThemeMode.system);
   });
 
   setUp(() {
     settingsRepository = MockSettingsRepository();
     deviceLocaleProvider = MockDeviceLocaleProvider();
+    when(
+      () => settingsRepository.getThemeModePreference(),
+    ).thenAnswer((_) async => const Right(null));
+    when(
+      () => settingsRepository.getLanguagePreference(),
+    ).thenAnswer((_) async => const Right(null));
+    when(
+      () => deviceLocaleProvider.currentLocale(),
+    ).thenReturn(const Locale('en'));
   });
 
   SettingsCubit buildCubit() => SettingsCubit(
     GetLanguagePreference(settingsRepository),
     ChangeLanguage(settingsRepository),
     deviceLocaleProvider,
+    GetThemeModePreference(settingsRepository),
+    ChangeThemeMode(settingsRepository),
   );
 
   group('changeLanguage', () {
@@ -168,6 +183,102 @@ void main() {
       },
       act: (cubit) => cubit.initialize(),
       expect: () => [const SettingsState(language: AppLanguage.english)],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'resolves persisted AppThemeMode.dark exactly',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.getThemeModePreference(),
+        ).thenAnswer((_) async => const Right(AppThemeMode.dark));
+      },
+      act: (cubit) => cubit.initialize(),
+      expect: () => [const SettingsState(themeMode: AppThemeMode.dark)],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'resolves persisted AppThemeMode.light exactly',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.getThemeModePreference(),
+        ).thenAnswer((_) async => const Right(AppThemeMode.light));
+      },
+      act: (cubit) => cubit.initialize(),
+      expect: () => [const SettingsState(themeMode: AppThemeMode.light)],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'resolves to AppThemeMode.system when nothing is persisted (FR-011)',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.getThemeModePreference(),
+        ).thenAnswer((_) async => const Right(null));
+      },
+      act: (cubit) => cubit.initialize(),
+      expect: () => [const SettingsState()],
+    );
+  });
+
+  group('changeThemeMode', () {
+    blocTest<SettingsCubit, SettingsState>(
+      'synchronously emits the new theme mode',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.setThemeModePreference(any()),
+        ).thenAnswer((_) async => const Right(unit));
+      },
+      act: (cubit) => cubit.changeThemeMode(AppThemeMode.dark),
+      expect: () => [const SettingsState(themeMode: AppThemeMode.dark)],
+      verify: (_) {
+        verify(
+          () => settingsRepository.setThemeModePreference(AppThemeMode.dark),
+        ).called(1);
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'sets isThemeModePersistFailing only after the retried write also fails',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.setThemeModePreference(any()),
+        ).thenAnswer((_) async => const Left(CacheFailure('disk full')));
+      },
+      act: (cubit) => cubit.changeThemeMode(AppThemeMode.dark),
+      expect: () => [
+        const SettingsState(themeMode: AppThemeMode.dark),
+        const SettingsState(
+          themeMode: AppThemeMode.dark,
+          isThemeModePersistFailing: true,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => settingsRepository.setThemeModePreference(AppThemeMode.dark),
+        ).called(2);
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'does not flag isThemeModePersistFailing when the retry succeeds',
+      build: buildCubit,
+      setUp: () {
+        var callCount = 0;
+        when(() => settingsRepository.setThemeModePreference(any())).thenAnswer(
+          (_) async {
+            callCount++;
+            return callCount == 1
+                ? const Left(CacheFailure('transient'))
+                : const Right(unit);
+          },
+        );
+      },
+      act: (cubit) => cubit.changeThemeMode(AppThemeMode.dark),
+      expect: () => [const SettingsState(themeMode: AppThemeMode.dark)],
     );
   });
 }

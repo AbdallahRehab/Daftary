@@ -14,12 +14,18 @@ class PersonListTile extends StatelessWidget {
     super.key,
     this.onTap,
     this.onArchive,
+    this.isArchiving = false,
   });
 
   final Person person;
   final PersonBalance balance;
   final VoidCallback? onTap;
   final VoidCallback? onArchive;
+
+  /// True while an `archive()` call for this row's [person] is already in
+  /// flight (FR-006) — disables the archive control instead of hiding it,
+  /// so a rapid double-tap can't fire a second call.
+  final bool isArchiving;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,7 @@ class PersonListTile extends StatelessWidget {
           if (onArchive != null)
             IconButton(
               icon: const Icon(Icons.archive_outlined),
-              onPressed: onArchive,
+              onPressed: isArchiving ? null : onArchive,
             ),
         ],
       ),

@@ -26,6 +26,7 @@ class PersonListState extends Equatable {
     this.nameQuery = '',
     this.statusFilter,
     this.errorMessage,
+    this.processingPersonId,
   });
 
   final PersonListStatus status;
@@ -33,6 +34,13 @@ class PersonListState extends Equatable {
   final String nameQuery;
   final RelationshipStatus? statusFilter;
   final String? errorMessage;
+
+  /// Non-null while an `archive()` call is in flight for that person id;
+  /// `archive()` is a no-op re-entrancy guard when called again with the
+  /// same id while it is already set (FR-006). Cleared once the use case
+  /// call (success or failure) completes and, on success, the subsequent
+  /// `load()` has emitted.
+  final String? processingPersonId;
 
   bool get isLoading => status == PersonListStatus.loading;
 
@@ -43,6 +51,8 @@ class PersonListState extends Equatable {
     RelationshipStatus? statusFilter,
     bool clearStatusFilter = false,
     String? errorMessage,
+    String? processingPersonId,
+    bool clearProcessingPersonId = false,
   }) {
     return PersonListState(
       status: status ?? this.status,
@@ -52,6 +62,9 @@ class PersonListState extends Equatable {
           ? null
           : (statusFilter ?? this.statusFilter),
       errorMessage: errorMessage,
+      processingPersonId: clearProcessingPersonId
+          ? null
+          : (processingPersonId ?? this.processingPersonId),
     );
   }
 
@@ -62,5 +75,6 @@ class PersonListState extends Equatable {
     nameQuery,
     statusFilter,
     errorMessage,
+    processingPersonId,
   ];
 }

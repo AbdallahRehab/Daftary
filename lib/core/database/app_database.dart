@@ -72,12 +72,31 @@ class AppSettings extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Whether the user has finished the onboarding sequence. Single-row table
+/// (data-model.md): the app always reads/writes the fixed `id`
+/// `'singleton'` — there is never more than one row, same pattern as
+/// [AppSettings].
+class OnboardingStatus extends Table {
+  TextColumn get id => text()();
+  BoolColumn get isComplete => boolean().withDefault(const Constant(false))();
+  IntColumn get completedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
 /// feature is fully local-only.
 @DriftDatabase(
-  tables: [People, MoneyTransactions, TransactionAuditEntries, AppSettings],
+  tables: [
+    People,
+    MoneyTransactions,
+    TransactionAuditEntries,
+    AppSettings,
+    OnboardingStatus,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -85,7 +104,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -96,6 +115,9 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.addColumn(appSettings, appSettings.themeMode);
+      }
+      if (from < 4) {
+        await m.createTable(onboardingStatus);
       }
     },
   );

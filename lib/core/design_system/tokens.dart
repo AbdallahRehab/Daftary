@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
-/// Centralized color palette (constitution Principle XV — no hardcoded
-/// colors scattered across feature widgets). Status colors never stand
-/// alone as the only signal (accessibility: never convey meaning by color
-/// alone) — every status is always paired with text/an icon.
+/// Seed values only (constitution Principle XV): the two themes' seed
+/// colors and `AppFinanceColors.light`'s concrete values are defined here,
+/// but this class is no longer imported or referenced directly by any file
+/// outside this one — every other call site reads
+/// `Theme.of(context).colorScheme.*` or `context.financeColors.*` instead
+/// (contracts/theme_tokens.md), since a `static const Color` cannot vary by
+/// theme.
 class AppColors {
   const AppColors._();
 
@@ -26,6 +29,9 @@ class AppColors {
   /// Settled.
   static const Color neutral = Color(0xFF6B6B6B);
   static const Color neutralSurface = Color(0xFFEDEDEA);
+
+  static const Color warning = Color(0xFFB3730C);
+  static const Color warningSurface = Color(0xFFFCEFDB);
 
   static const Color error = Color(0xFFB3261E);
 }
@@ -81,22 +87,193 @@ class AppTypography {
   );
 }
 
-/// The app's Material theme, built entirely from the tokens above.
-ThemeData buildAppTheme() {
+/// Finance-domain color roles Material's `ColorScheme` has no equivalent
+/// for (data-model.md Entity 2 Part B, contracts/theme_tokens.md). Never
+/// read directly via `Theme.of(context).extension<...>()` — use the
+/// `context.financeColors` extension below.
+class AppFinanceColors extends ThemeExtension<AppFinanceColors> {
+  const AppFinanceColors({
+    required this.positive,
+    required this.positiveSurface,
+    required this.negative,
+    required this.negativeSurface,
+    required this.neutral,
+    required this.neutralSurface,
+    required this.success,
+    required this.successSurface,
+    required this.warning,
+    required this.warningSurface,
+    required this.chartPositive,
+    required this.chartNegative,
+    required this.chartNeutral,
+  });
+
+  final Color positive;
+  final Color positiveSurface;
+  final Color negative;
+  final Color negativeSurface;
+  final Color neutral;
+  final Color neutralSurface;
+  final Color success;
+  final Color successSurface;
+  final Color warning;
+  final Color warningSurface;
+  final Color chartPositive;
+  final Color chartNegative;
+  final Color chartNeutral;
+
+  static const light = AppFinanceColors(
+    positive: AppColors.positive,
+    positiveSurface: AppColors.positiveSurface,
+    negative: AppColors.negative,
+    negativeSurface: AppColors.negativeSurface,
+    neutral: AppColors.neutral,
+    neutralSurface: AppColors.neutralSurface,
+    success: AppColors.positive,
+    successSurface: AppColors.positiveSurface,
+    warning: AppColors.warning,
+    warningSurface: AppColors.warningSurface,
+    chartPositive: AppColors.positive,
+    chartNegative: AppColors.negative,
+    chartNeutral: AppColors.neutral,
+  );
+
+  static const dark = AppFinanceColors(
+    positive: Color(0xFF4ADE93),
+    positiveSurface: Color(0xFF1C3B2C),
+    negative: Color(0xFFFF6B57),
+    negativeSurface: Color(0xFF40201C),
+    neutral: Color(0xFFB0B0AE),
+    neutralSurface: Color(0xFF2A2A28),
+    success: Color(0xFF4ADE93),
+    successSurface: Color(0xFF1C3B2C),
+    warning: Color(0xFFF2B84B),
+    warningSurface: Color(0xFF3B2E13),
+    chartPositive: Color(0xFF4ADE93),
+    chartNegative: Color(0xFFFF6B57),
+    chartNeutral: Color(0xFFB0B0AE),
+  );
+
+  @override
+  AppFinanceColors copyWith({
+    Color? positive,
+    Color? positiveSurface,
+    Color? negative,
+    Color? negativeSurface,
+    Color? neutral,
+    Color? neutralSurface,
+    Color? success,
+    Color? successSurface,
+    Color? warning,
+    Color? warningSurface,
+    Color? chartPositive,
+    Color? chartNegative,
+    Color? chartNeutral,
+  }) {
+    return AppFinanceColors(
+      positive: positive ?? this.positive,
+      positiveSurface: positiveSurface ?? this.positiveSurface,
+      negative: negative ?? this.negative,
+      negativeSurface: negativeSurface ?? this.negativeSurface,
+      neutral: neutral ?? this.neutral,
+      neutralSurface: neutralSurface ?? this.neutralSurface,
+      success: success ?? this.success,
+      successSurface: successSurface ?? this.successSurface,
+      warning: warning ?? this.warning,
+      warningSurface: warningSurface ?? this.warningSurface,
+      chartPositive: chartPositive ?? this.chartPositive,
+      chartNegative: chartNegative ?? this.chartNegative,
+      chartNeutral: chartNeutral ?? this.chartNeutral,
+    );
+  }
+
+  @override
+  AppFinanceColors lerp(ThemeExtension<AppFinanceColors>? other, double t) {
+    if (other is! AppFinanceColors) return this;
+    return AppFinanceColors(
+      positive: Color.lerp(positive, other.positive, t)!,
+      positiveSurface: Color.lerp(positiveSurface, other.positiveSurface, t)!,
+      negative: Color.lerp(negative, other.negative, t)!,
+      negativeSurface: Color.lerp(negativeSurface, other.negativeSurface, t)!,
+      neutral: Color.lerp(neutral, other.neutral, t)!,
+      neutralSurface: Color.lerp(neutralSurface, other.neutralSurface, t)!,
+      success: Color.lerp(success, other.success, t)!,
+      successSurface: Color.lerp(successSurface, other.successSurface, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      warningSurface: Color.lerp(warningSurface, other.warningSurface, t)!,
+      chartPositive: Color.lerp(chartPositive, other.chartPositive, t)!,
+      chartNegative: Color.lerp(chartNegative, other.chartNegative, t)!,
+      chartNeutral: Color.lerp(chartNeutral, other.chartNeutral, t)!,
+    );
+  }
+}
+
+/// Ergonomic accessor so call sites never write
+/// `Theme.of(context).extension<AppFinanceColors>()!` directly.
+extension AppThemeContext on BuildContext {
+  AppFinanceColors get financeColors =>
+      Theme.of(this).extension<AppFinanceColors>()!;
+}
+
+ThemeData _buildTheme({
+  required Brightness brightness,
+  required AppFinanceColors financeColors,
+}) {
   final colorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.primary,
-    surface: AppColors.surface,
+    brightness: brightness,
     error: AppColors.error,
   );
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
-    scaffoldBackgroundColor: AppColors.background,
-    dividerColor: AppColors.divider,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.background,
-      foregroundColor: AppColors.onSurface,
+    scaffoldBackgroundColor: colorScheme.surface,
+    dividerColor: colorScheme.outlineVariant,
+    appBarTheme: AppBarTheme(
+      backgroundColor: colorScheme.surface,
+      foregroundColor: colorScheme.onSurface,
       elevation: 0,
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: colorScheme.surface,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderSide: BorderSide(color: colorScheme.outlineVariant),
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: colorScheme.surface,
+      surfaceTintColor: colorScheme.surfaceTint,
+    ),
+    dialogTheme: DialogThemeData(backgroundColor: colorScheme.surface),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: colorScheme.surface,
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: colorScheme.surface,
+      indicatorColor: colorScheme.secondaryContainer,
+    ),
+    extensions: [financeColors],
+  );
+}
+
+/// The app's Light Material theme, built from `AppColors` + `AppFinanceColors.light`.
+ThemeData buildLightTheme() {
+  return _buildTheme(
+    brightness: Brightness.light,
+    financeColors: AppFinanceColors.light,
+  );
+}
+
+/// The app's Dark Material theme, built from `AppColors` + `AppFinanceColors.dark`.
+ThemeData buildDarkTheme() {
+  return _buildTheme(
+    brightness: Brightness.dark,
+    financeColors: AppFinanceColors.dark,
   );
 }

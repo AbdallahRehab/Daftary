@@ -120,5 +120,27 @@
   "themeLight": "Light",
   "themeDark": "Dark",
   "themeSystemDefault": "System Default",
-  "themeSaveFailed": "Couldn't save your theme choice. It's still active for this session — we'll keep trying."
+  "themeSaveFailed": "Couldn't save your theme choice. It's still active for this session — we'll keep trying.",
+
+  "onboardingStepProgress": "Step {current} of {total}",
+  "@onboardingStepProgress": {
+    "placeholders": {
+      "current": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "onboardingUnderstandingMoneyTitle": "Understand your money at a glance",
+  "onboardingUnderstandingMoneyDescription": "See who owes you, who you owe, and how things stand overall — all in one place.",
+  "onboardingMoneyBetweenPeopleTitle": "Track money between you and people",
+  "onboardingMoneyBetweenPeopleDescription": "Add someone, record what you gave or received, and Daftary keeps the running total for you.",
+  "onboardingSocialOccasionsTitle": "Keep social exchanges straight",
+  "onboardingSocialOccasionsDescription": "Lending a friend cash, splitting a gift, or covering someone at a gathering — jot it down so nothing gets forgotten.",
+  "onboardingScanningRecordsTitle": "Look back whenever you need to",
+  "onboardingScanningRecordsDescription": "Every entry is saved with its date, so you can scan your full history with any person at any time.",
+  "onboardingAiAssistantTitle": "Get help making sense of it all",
+  "onboardingAiAssistantDescription": "An AI assistant can help you review and organize what you've recorded — it does not give financial advice or guarantee outcomes.",
+  "onboardingBackAction": "Back",
+  "onboardingNextAction": "Next",
+  "onboardingGetStartedAction": "Get Started",
+  "onboardingSkipAction": "Skip"
 }

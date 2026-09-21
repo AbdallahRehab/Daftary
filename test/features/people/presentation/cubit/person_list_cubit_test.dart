@@ -128,6 +128,133 @@ void main() {
   );
 
   blocTest<PersonListCubit, PersonListState>(
+    'load() re-reads the current nameQuery/statusFilter rather than '
+    'resetting them on a second call (005-archive-state-refresh research.md '
+    'Decision 4)',
+    build: buildCubit,
+    seed: () => const PersonListState(
+      nameQuery: 'Sara',
+      statusFilter: RelationshipStatus.youOweThem,
+    ),
+    setUp: () {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: 'Sara',
+          statusFilter: RelationshipStatus.youOweThem,
+        ),
+      ).thenAnswer((_) async => Right([sara]));
+      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
+        ),
+      );
+    },
+    act: (cubit) => cubit.load(),
+    verify: (cubit) {
+      verify(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: 'Sara',
+          statusFilter: RelationshipStatus.youOweThem,
+        ),
+      ).called(1);
+      expect(cubit.state.nameQuery, 'Sara');
+      expect(cubit.state.statusFilter, RelationshipStatus.youOweThem);
+      expect(cubit.state.items.single.person.id, 'p2');
+    },
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'archive(id) is a no-op re-entrancy guard while already processing the '
+    'same id (FR-006)',
+    build: buildCubit,
+    seed: () => const PersonListState(
+      status: PersonListStatus.success,
+      processingPersonId: 'p1',
+    ),
+    act: (cubit) => cubit.archive('p1'),
+    verify: (_) {
+      verifyNever(() => peopleRepository.archivePerson(any()));
+    },
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'archive(id) sets processingPersonId while in flight, reloads on '
+    'success, and clears it once the reload has emitted',
+    build: buildCubit,
+    seed: () =>
+        const PersonListState(status: PersonListStatus.success, items: []),
+    setUp: () {
+      when(
+        () => peopleRepository.archivePerson('p1'),
+      ).thenAnswer((_) async => const Right(unit));
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([sara]));
+      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
+        ),
+      );
+    },
+    act: (cubit) => cubit.archive('p1'),
+    expect: () => [
+      isA<PersonListState>().having(
+        (s) => s.processingPersonId,
+        'processingPersonId',
+        'p1',
+      ),
+      isA<PersonListState>().having(
+        (s) => s.status,
+        'status',
+        PersonListStatus.loading,
+      ),
+      isA<PersonListState>()
+          .having((s) => s.status, 'status', PersonListStatus.success)
+          .having((s) => s.processingPersonId, 'processingPersonId', 'p1'),
+      isA<PersonListState>().having(
+        (s) => s.processingPersonId,
+        'processingPersonId',
+        isNull,
+      ),
+    ],
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'a failed archive() leaves the person in the list, sets an error '
+    'message, and clears processingPersonId so the control is tappable '
+    'again (FR-007)',
+    build: buildCubit,
+    seed: () => const PersonListState(status: PersonListStatus.success),
+    setUp: () {
+      when(
+        () => peopleRepository.archivePerson('p1'),
+      ).thenAnswer((_) async => const Left(CacheFailure('DB unavailable')));
+    },
+    act: (cubit) => cubit.archive('p1'),
+    expect: () => [
+      isA<PersonListState>().having(
+        (s) => s.processingPersonId,
+        'processingPersonId',
+        'p1',
+      ),
+      isA<PersonListState>()
+          .having((s) => s.errorMessage, 'errorMessage', 'DB unavailable')
+          .having((s) => s.processingPersonId, 'processingPersonId', isNull),
+    ],
+    verify: (_) {
+      verifyNever(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      );
+    },
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
     'surfaces a failure when the repository call fails',
     build: buildCubit,
     setUp: () {

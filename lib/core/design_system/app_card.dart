@@ -13,12 +13,13 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final content = Container(
       padding: padding ?? const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: child,
     );

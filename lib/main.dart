@@ -6,6 +6,8 @@ import 'core/design_system/tokens.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
+import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
+import 'features/settings/domain/entities/app_theme_mode.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 
@@ -16,6 +18,10 @@ Future<void> main() async {
   // first-launch-default language, rather than SettingsCubit's hardcoded
   // AppLanguage.english initial state (T025).
   await getIt<SettingsCubit>().initialize();
+  // Resolved before the first frame so appRouter's redirect (FR-001/
+  // FR-010a) already has a settled OnboardingCubit state on the very
+  // first navigation — no async redirect/refreshListenable needed.
+  await getIt<OnboardingCubit>().initialize();
   runApp(const DaftaryApp());
 }
 
@@ -24,14 +30,23 @@ class DaftaryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SettingsCubit>.value(
-      value: getIt<SettingsCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SettingsCubit>.value(value: getIt<SettingsCubit>()),
+        BlocProvider<OnboardingCubit>.value(value: getIt<OnboardingCubit>()),
+      ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, state) {
           return MaterialApp.router(
             onGenerateTitle: (context) =>
                 AppLocalizations.of(context)!.appTitle,
-            theme: buildAppTheme(),
+            theme: buildLightTheme(),
+            darkTheme: buildDarkTheme(),
+            themeMode: switch (state.themeMode) {
+              AppThemeMode.light => ThemeMode.light,
+              AppThemeMode.dark => ThemeMode.dark,
+              AppThemeMode.system => ThemeMode.system,
+            },
             routerConfig: appRouter,
             localizationsDelegates: const [
               AppLocalizations.delegate,

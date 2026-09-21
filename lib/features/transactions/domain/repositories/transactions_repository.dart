@@ -66,4 +66,9 @@ abstract class TransactionsRepository {
   /// (FR-013, FR-014; Clarifications: archived people with a non-zero
   /// balance are included).
   Future<Either<Failure, OverviewSummary>> getOverview();
+
+  /// FR-010a: whether at least one MoneyTransaction record exists at all —
+  /// including soft-deleted rows (`deletedAt IS NOT NULL`). A since-deleted
+  /// transaction still proves the app was previously used.
+  Future<Either<Failure, bool>> hasAnyTransaction();
 }

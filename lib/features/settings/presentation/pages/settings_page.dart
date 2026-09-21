@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../domain/entities/app_language.dart';
+import '../../domain/entities/app_theme_mode.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
 
@@ -22,11 +23,16 @@ class SettingsPage extends StatelessWidget {
       appBar: AppBar(title: Text(l10n.settingsTitle)),
       body: BlocConsumer<SettingsCubit, SettingsState>(
         listenWhen: (previous, current) =>
-            !previous.isPersistFailing && current.isPersistFailing,
+            (!previous.isPersistFailing && current.isPersistFailing) ||
+            (!previous.isThemeModePersistFailing &&
+                current.isThemeModePersistFailing),
         listener: (context, state) {
+          final message = state.isThemeModePersistFailing
+              ? l10n.themeSaveFailed
+              : l10n.settingsSaveFailed;
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(l10n.settingsSaveFailed)));
+            ..showSnackBar(SnackBar(content: Text(message)));
         },
         builder: (context, state) {
           return ListView(
@@ -58,6 +64,37 @@ class SettingsPage extends StatelessWidget {
                     RadioListTile<AppLanguage>(
                       title: Text(l10n.languageArabic),
                       value: AppLanguage.arabic,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.md,
+                  AppSpacing.xs,
+                ),
+                child: Text(l10n.themeSectionTitle, style: AppTypography.label),
+              ),
+              RadioGroup<AppThemeMode>(
+                groupValue: state.themeMode,
+                onChanged: (mode) => mode == null
+                    ? null
+                    : context.read<SettingsCubit>().changeThemeMode(mode),
+                child: Column(
+                  children: [
+                    RadioListTile<AppThemeMode>(
+                      title: Text(l10n.themeLight),
+                      value: AppThemeMode.light,
+                    ),
+                    RadioListTile<AppThemeMode>(
+                      title: Text(l10n.themeDark),
+                      value: AppThemeMode.dark,
+                    ),
+                    RadioListTile<AppThemeMode>(
+                      title: Text(l10n.themeSystemDefault),
+                      value: AppThemeMode.system,
                     ),
                   ],
                 ),

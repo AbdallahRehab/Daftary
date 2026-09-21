@@ -43,7 +43,7 @@ class RelationshipTagChip extends StatelessWidget {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.neutralSurface,
+        color: context.financeColors.neutralSurface,
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Text(relationshipTagLabel(l10n, tag), style: AppTypography.label),

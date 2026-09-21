@@ -126,8 +126,8 @@ class _PersonSummaryRow extends StatelessWidget {
       locale: Localizations.localeOf(context).languageCode,
     );
     final color = summary.net.isPositive
-        ? AppColors.positive
-        : AppColors.negative;
+        ? context.financeColors.positive
+        : context.financeColors.negative;
     return Card(
       margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: ListTile(

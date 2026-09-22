@@ -112,12 +112,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i684.TransactionsDao>(
       () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
     );
-    gh.lazySingleton<_i646.PeopleRepository>(
-      () => _i1029.PeopleRepositoryImpl(
-        gh<_i735.PeopleDao>(),
-        gh<_i769.FindPossibleDuplicatePerson>(),
-        gh<_i982.AppDatabase>(),
-      ),
+    gh.lazySingleton<_i430.OnboardingRepository>(
+      () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
     );
     gh.lazySingleton<_i956.TransactionsRepository>(
       () => _i373.TransactionsRepositoryImpl(
@@ -125,8 +121,37 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i982.AppDatabase>(),
       ),
     );
+    gh.lazySingleton<_i646.PeopleRepository>(
+      () => _i1029.PeopleRepositoryImpl(
+        gh<_i735.PeopleDao>(),
+        gh<_i769.FindPossibleDuplicatePerson>(),
+        gh<_i982.AppDatabase>(),
+      ),
+    );
     gh.lazySingleton<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
+    );
+    gh.factory<_i791.ResolveOnboardingStatus>(
+      () => _i791.ResolveOnboardingStatus(
+        gh<_i430.OnboardingRepository>(),
+        gh<_i646.PeopleRepository>(),
+        gh<_i956.TransactionsRepository>(),
+      ),
+    );
+    gh.factory<_i221.ArchivePerson>(
+      () => _i221.ArchivePerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i789.CreatePerson>(
+      () => _i789.CreatePerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i907.DeletePerson>(
+      () => _i907.DeletePerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i101.EditPerson>(
+      () => _i101.EditPerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i49.RestorePerson>(
+      () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
@@ -149,29 +174,54 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i426.RecordRepayment>(
       () => _i426.RecordRepayment(gh<_i956.TransactionsRepository>()),
     );
-    gh.factory<_i305.OverviewCubit>(
-      () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
+    gh.factory<_i90.ChangeLanguage>(
+      () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
     );
-    gh.factory<_i221.ArchivePerson>(
-      () => _i221.ArchivePerson(gh<_i646.PeopleRepository>()),
+    gh.factory<_i46.ChangeThemeMode>(
+      () => _i46.ChangeThemeMode(gh<_i674.SettingsRepository>()),
     );
-    gh.factory<_i789.CreatePerson>(
-      () => _i789.CreatePerson(gh<_i646.PeopleRepository>()),
+    gh.factory<_i1032.GetLanguagePreference>(
+      () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
     );
-    gh.factory<_i907.DeletePerson>(
-      () => _i907.DeletePerson(gh<_i646.PeopleRepository>()),
+    gh.factory<_i333.GetThemeModePreference>(
+      () => _i333.GetThemeModePreference(gh<_i674.SettingsRepository>()),
     );
-    gh.factory<_i101.EditPerson>(
-      () => _i101.EditPerson(gh<_i646.PeopleRepository>()),
-    );
-    gh.factory<_i49.RestorePerson>(
-      () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
+    gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
+      (personId, _) => _i34.RepaymentFormCubit(
+        gh<_i426.RecordRepayment>(),
+        gh<_i999.EgpFormatter>(),
+        personId,
+      ),
     );
     gh.factory<_i1018.PersonListCubit>(
       () => _i1018.PersonListCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i750.GetPersonBalance>(),
         gh<_i221.ArchivePerson>(),
+      ),
+    );
+    gh.lazySingleton<_i807.OnboardingCubit>(
+      () => _i807.OnboardingCubit(
+        gh<_i791.ResolveOnboardingStatus>(),
+        gh<_i430.OnboardingRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i792.SettingsCubit>(
+      () => _i792.SettingsCubit(
+        gh<_i1032.GetLanguagePreference>(),
+        gh<_i90.ChangeLanguage>(),
+        gh<_i933.DeviceLocaleProvider>(),
+        gh<_i333.GetThemeModePreference>(),
+        gh<_i46.ChangeThemeMode>(),
+      ),
+    );
+    gh.factory<_i668.PersonFormCubit>(
+      () => _i668.PersonFormCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i789.CreatePerson>(),
+        gh<_i101.EditPerson>(),
+        gh<_i221.ArchivePerson>(),
+        gh<_i907.DeletePerson>(),
       ),
     );
     gh.factory<_i593.TransactionFormCubit>(
@@ -189,37 +239,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
-    gh.lazySingleton<_i430.OnboardingRepository>(
-      () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
-    );
-    gh.factory<_i791.ResolveOnboardingStatus>(
-      () => _i791.ResolveOnboardingStatus(
-        gh<_i430.OnboardingRepository>(),
-        gh<_i646.PeopleRepository>(),
-        gh<_i956.TransactionsRepository>(),
-      ),
-    );
-    gh.factory<_i90.ChangeLanguage>(
-      () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
-    );
-    gh.factory<_i46.ChangeThemeMode>(
-      () => _i46.ChangeThemeMode(gh<_i674.SettingsRepository>()),
-    );
-    gh.factory<_i1032.GetLanguagePreference>(
-      () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
-    );
-    gh.factory<_i333.GetThemeModePreference>(
-      () => _i333.GetThemeModePreference(gh<_i674.SettingsRepository>()),
-    );
-    gh.lazySingleton<_i792.SettingsCubit>(
-      () => _i792.SettingsCubit(
-        gh<_i1032.GetLanguagePreference>(),
-        gh<_i90.ChangeLanguage>(),
-        gh<_i933.DeviceLocaleProvider>(),
-        gh<_i333.GetThemeModePreference>(),
-        gh<_i46.ChangeThemeMode>(),
-      ),
-    );
     gh.factory<_i992.PersonDetailCubit>(
       () => _i992.PersonDetailCubit(
         gh<_i646.PeopleRepository>(),
@@ -228,27 +247,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i645.DeleteTransaction>(),
       ),
     );
-    gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
-      (personId, _) => _i34.RepaymentFormCubit(
-        gh<_i426.RecordRepayment>(),
-        gh<_i999.EgpFormatter>(),
-        personId,
-      ),
-    );
-    gh.lazySingleton<_i807.OnboardingCubit>(
-      () => _i807.OnboardingCubit(
-        gh<_i791.ResolveOnboardingStatus>(),
-        gh<_i430.OnboardingRepository>(),
-      ),
-    );
-    gh.factory<_i668.PersonFormCubit>(
-      () => _i668.PersonFormCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i789.CreatePerson>(),
-        gh<_i101.EditPerson>(),
-        gh<_i221.ArchivePerson>(),
-        gh<_i907.DeletePerson>(),
-      ),
+    gh.factory<_i305.OverviewCubit>(
+      () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
     );
     return this;
   }

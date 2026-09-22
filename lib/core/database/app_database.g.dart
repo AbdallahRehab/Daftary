@@ -2358,10 +2358,7 @@ final class $$PeopleTableReferences
   _moneyTransactionsRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.moneyTransactions,
-        aliasName: $_aliasNameGenerator(
-          db.people.id,
-          db.moneyTransactions.personId,
-        ),
+        aliasName: 'people__id__money_transactions__person_id',
       );
 
   $$MoneyTransactionsTableProcessedTableManager get moneyTransactionsRefs {
@@ -2680,8 +2677,10 @@ class $$PeopleTableTableManager
               ),
           withReferenceMapper: (p0) => p0
               .map(
-                (e) =>
-                    (e.readTable(table), $$PeopleTableReferences(db, table, e)),
+                (e) => (
+                  e.readTable<$PeopleTable, PeopleData>(table),
+                  $$PeopleTableReferences(db, table, e),
+                ),
               )
               .toList(),
           prefetchHooksCallback: ({moneyTransactionsRefs = false}) {
@@ -2777,9 +2776,8 @@ final class $$MoneyTransactionsTableReferences
     super.$_typedResult,
   );
 
-  static $PeopleTable _personIdTable(_$AppDatabase db) => db.people.createAlias(
-    $_aliasNameGenerator(db.moneyTransactions.personId, db.people.id),
-  );
+  static $PeopleTable _personIdTable(_$AppDatabase db) =>
+      db.people.createAlias('money_transactions__person_id__people__id');
 
   $$PeopleTableProcessedTableManager get personId {
     final $_column = $_itemColumn<String>('person_id')!;
@@ -2802,10 +2800,8 @@ final class $$MoneyTransactionsTableReferences
   _transactionAuditEntriesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.transactionAuditEntries,
-        aliasName: $_aliasNameGenerator(
-          db.moneyTransactions.id,
-          db.transactionAuditEntries.transactionId,
-        ),
+        aliasName:
+            'money_transactions__id__transaction_audit_entries__transaction_id',
       );
 
   $$TransactionAuditEntriesTableProcessedTableManager
@@ -3203,7 +3199,7 @@ class $$MoneyTransactionsTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<$MoneyTransactionsTable, MoneyTransaction>(table),
                   $$MoneyTransactionsTableReferences(db, table, e),
                 ),
               )
@@ -3328,10 +3324,7 @@ final class $$TransactionAuditEntriesTableReferences
 
   static $MoneyTransactionsTable _transactionIdTable(_$AppDatabase db) =>
       db.moneyTransactions.createAlias(
-        $_aliasNameGenerator(
-          db.transactionAuditEntries.transactionId,
-          db.moneyTransactions.id,
-        ),
+        'transaction_audit_entries__transaction_id__money_transactions__id',
       );
 
   $$MoneyTransactionsTableProcessedTableManager get transactionId {
@@ -3577,7 +3570,10 @@ class $$TransactionAuditEntriesTableTableManager
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable(table),
+                  e.readTable<
+                    $TransactionAuditEntriesTable,
+                    TransactionAuditEntry
+                  >(table),
                   $$TransactionAuditEntriesTableReferences(db, table, e),
                 ),
               )
@@ -3802,7 +3798,16 @@ class $$AppSettingsTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$AppSettingsTable, AppSetting>(table),
+                  BaseReferences<_$AppDatabase, $AppSettingsTable, AppSetting>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),
@@ -3974,7 +3979,18 @@ class $$OnboardingStatusTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable<$OnboardingStatusTable, OnboardingStatusData>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $OnboardingStatusTable,
+                    OnboardingStatusData
+                  >(db, table, e),
+                ),
+              )
               .toList(),
           prefetchHooksCallback: null,
         ),

@@ -86,17 +86,23 @@ class _PersonPickerFieldState extends State<PersonPickerField> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (final person in widget.results)
-                  ListTile(
-                    title: Text(person.name),
-                    onTap: () => widget.onPersonSelected(person),
+                  Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      title: Text(person.name),
+                      onTap: () => widget.onPersonSelected(person),
+                    ),
                   ),
                 if (showCreateAffordance)
-                  ListTile(
-                    leading: const Icon(Icons.person_add_alt_1),
-                    title: Text(
-                      '${l10n.createPersonInlineAction} "${widget.query}"',
+                  Material(
+                    color: Colors.transparent,
+                    child: ListTile(
+                      leading: const Icon(Icons.person_add_alt_1),
+                      title: Text(
+                        '${l10n.createPersonInlineAction} "${widget.query}"',
+                      ),
+                      onTap: () => widget.onCreateNew(widget.query),
                     ),
-                    onTap: () => widget.onCreateNew(widget.query),
                   ),
               ],
             ),

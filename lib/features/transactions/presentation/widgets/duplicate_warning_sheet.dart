@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../people/domain/entities/person.dart';
@@ -23,48 +24,72 @@ class DuplicateWarningSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(l10n.duplicateWarningTitle, style: AppTypography.title),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            l10n.duplicateWarningMessage,
-            style: AppTypography.bodyMuted.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.duplicateWarningTitle, style: AppTypography.title),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              l10n.duplicateWarningMessage,
+              style: AppTypography.bodyMuted.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          ...matches.map(
-            (person) => Card(
-              margin: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-              child: ListTile(
-                title: Text(person.name),
-                subtitle: person.phoneNumber != null
-                    ? Text(person.phoneNumber!)
-                    : null,
-                trailing: TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    onPickExisting(person);
-                  },
-                  child: Text(l10n.duplicateUseExisting),
+            const SizedBox(height: AppSpacing.md),
+            ...matches.map(
+              (person) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: AppCard(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(person.name, style: AppTypography.body),
+                            if (person.phoneNumber != null)
+                              Text(
+                                person.phoneNumber!,
+                                style: AppTypography.bodyMuted.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          onPickExisting(person);
+                        },
+                        child: Text(l10n.duplicateUseExisting),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          AppSecondaryButton(
-            label: l10n.duplicateCreateNew,
-            onPressed: () {
-              Navigator.of(context).pop();
-              onCreateNewAnyway();
-            },
-          ),
-        ],
+            const SizedBox(height: AppSpacing.md),
+            AppSecondaryButton(
+              label: l10n.duplicateCreateNew,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onCreateNewAnyway();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

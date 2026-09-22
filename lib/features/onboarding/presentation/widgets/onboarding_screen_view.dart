@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/app_icon_badge.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../onboarding_content.dart';
 
@@ -14,13 +15,12 @@ class OnboardingScreenView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSpacing.xl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(content.icon, size: 96, color: colorScheme.primary),
+          AppIconBadge(icon: content.icon),
           const SizedBox(height: AppSpacing.lg),
           Text(
             content.title,
@@ -31,7 +31,7 @@ class OnboardingScreenView extends StatelessWidget {
           Text(
             content.description,
             style: AppTypography.bodyMuted.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

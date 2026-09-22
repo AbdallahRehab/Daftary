@@ -37,15 +37,14 @@ class _PeopleListView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.peopleListTitle),
+        // Overview already has its own bottom-navigation destination, so
+        // surfacing it again here would just be a second path to the same
+        // screen — this app bar keeps only the actions unique to People.
         actions: [
           IconButton(
             icon: const Icon(Icons.person_add_alt_1),
             tooltip: l10n.addPersonAction,
             onPressed: () => _addPerson(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.pie_chart_outline),
-            onPressed: () => context.push('/overview'),
           ),
           IconButton(
             icon: const Icon(Icons.inventory_2_outlined),
@@ -152,8 +151,14 @@ class _PeopleListView extends StatelessWidget {
                 }
                 return RefreshIndicator(
                   onRefresh: () => context.read<PersonListCubit>().load(),
-                  child: ListView.builder(
+                  child: ListView.separated(
                     itemCount: state.items.length,
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      indent: AppSpacing.md,
+                      endIndent: AppSpacing.md,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                     itemBuilder: (context, index) {
                       final item = state.items[index];
                       return BlocSelector<

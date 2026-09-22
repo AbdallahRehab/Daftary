@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
@@ -128,19 +129,37 @@ class _PersonSummaryRow extends StatelessWidget {
     final color = summary.net.isPositive
         ? context.financeColors.positive
         : context.financeColors.negative;
-    return Card(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: ListTile(
-        title: Text(summary.name),
-        subtitle: summary.isArchived ? Text(l10n.archivedLabel) : null,
-        trailing: Text(
-          formatter.formatWithSymbol(summary.net.abs()),
-          style: AppTypography.body.copyWith(
-            color: color,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: AppCard(
         onTap: () => context.push('/people/${summary.personId}'),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(summary.name, style: AppTypography.body),
+                  if (summary.isArchived)
+                    Text(
+                      l10n.archivedLabel,
+                      style: AppTypography.bodyMuted.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            Text(
+              formatter.formatWithSymbol(summary.net.abs()),
+              style: AppTypography.body.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

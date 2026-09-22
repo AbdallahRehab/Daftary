@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
@@ -70,7 +70,11 @@ class _RepaymentFormView extends StatelessWidget {
                   onChanged: cubit.amountChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),
-                _DateField(date: state.date, onDateChanged: cubit.dateChanged),
+                AppDateField(
+                  label: l10n.dateLabel,
+                  date: state.date,
+                  onDateChanged: cubit.dateChanged,
+                ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.noteLabel,
@@ -87,42 +91,6 @@ class _RepaymentFormView extends StatelessWidget {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  const _DateField({required this.date, required this.onDateChanged});
-
-  final DateTime date;
-  final ValueChanged<DateTime> onDateChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return InkWell(
-      onTap: () async {
-        final picked = await showDatePicker(
-          context: context,
-          initialDate: date,
-          firstDate: DateTime(2000),
-          lastDate: DateTime.now().add(const Duration(days: 1)),
-        );
-        if (picked != null) onDateChanged(picked);
-      },
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: l10n.dateLabel,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-          ),
-        ),
-        child: Text(
-          AppDateFormatter(
-            locale: Localizations.localeOf(context).languageCode,
-          ).format(date),
-        ),
       ),
     );
   }

@@ -112,6 +112,15 @@ class _PersonDetailView extends StatelessWidget {
             ),
             RelationshipStatus.settled => l10n.personDetailSettled,
           };
+          // The headline is the single most important number on this
+          // screen — color it the same way its amount is colored
+          // everywhere else (Overview rows, the balance badge, transaction
+          // amounts) instead of leaving it in the default text color.
+          final headlineColor = switch (balance.status) {
+            RelationshipStatus.theyOweYou => context.financeColors.positive,
+            RelationshipStatus.youOweThem => context.financeColors.negative,
+            RelationshipStatus.settled => null,
+          };
 
           return Column(
             children: [
@@ -120,7 +129,12 @@ class _PersonDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(headline, style: AppTypography.headline),
+                    Text(
+                      headline,
+                      style: AppTypography.headline.copyWith(
+                        color: headlineColor,
+                      ),
+                    ),
                     const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
@@ -146,10 +160,16 @@ class _PersonDetailView extends StatelessWidget {
                         actionLabel: l10n.recordTransactionAction,
                         onAction: () => _recordTransaction(context),
                       )
-                    : ListView.builder(
+                    : ListView.separated(
                         // Oldest first — FR-010 and US2's acceptance
                         // scenarios both require chronological order.
                         itemCount: state.history.length,
+                        separatorBuilder: (context, index) => Divider(
+                          height: 1,
+                          indent: AppSpacing.md,
+                          endIndent: AppSpacing.md,
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
                         itemBuilder: (context, index) {
                           final transaction = state.history[index];
                           return TransactionListTile(

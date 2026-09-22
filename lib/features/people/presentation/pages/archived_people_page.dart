@@ -66,8 +66,14 @@ class _ArchivedPeopleView extends StatelessWidget {
                     message: l10n.archivedEmptyMessage,
                   );
                 }
-                return ListView.builder(
+                return ListView.separated(
                   itemCount: state.people.length,
+                  separatorBuilder: (context, index) => Divider(
+                    height: 1,
+                    indent: AppSpacing.md,
+                    endIndent: AppSpacing.md,
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
                   itemBuilder: (context, index) {
                     final person = state.people[index];
                     final tag = person.relationshipTag;

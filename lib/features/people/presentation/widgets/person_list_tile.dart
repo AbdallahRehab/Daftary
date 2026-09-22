@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/tokens.dart';
+import '../../../../core/money/egp_formatter.dart';
 import '../../../transactions/domain/entities/person_balance.dart';
 import '../../../transactions/presentation/widgets/balance_status_badge.dart';
 import '../../domain/entities/person.dart';
 import 'relationship_tag_chip.dart';
 
-/// One row in the active-people list: name, relationship tag,
+/// One row in the active-people list: name, relationship tag, net amount +
 /// [BalanceStatusBadge] (T053), and an archive action.
 class PersonListTile extends StatelessWidget {
   const PersonListTile({
@@ -30,6 +32,11 @@ class PersonListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tag = person.relationshipTag;
+    final isSettled = balance.status == RelationshipStatus.settled;
+    final financeColors = context.financeColors;
+    final amountColor = balance.status == RelationshipStatus.theyOweYou
+        ? financeColors.positive
+        : financeColors.negative;
     return ListTile(
       onTap: onTap,
       title: Text(person.name),
@@ -42,7 +49,27 @@ class PersonListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          BalanceStatusBadge(status: balance.status, dense: true),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Settled rows already read as "settled" from the badge
+              // alone; a "0.00 EGP" amount above it would only add noise.
+              if (!isSettled) ...[
+                Text(
+                  EgpFormatter(
+                    locale: Localizations.localeOf(context).languageCode,
+                  ).formatWithSymbol(balance.net.abs()),
+                  style: AppTypography.body.copyWith(
+                    color: amountColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+              ],
+              BalanceStatusBadge(status: balance.status, dense: true),
+            ],
+          ),
           if (onArchive != null)
             IconButton(
               icon: const Icon(Icons.archive_outlined),

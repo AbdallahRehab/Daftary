@@ -13,6 +13,34 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/finance/data/datasources/finance_dao.dart' as _i443;
+import '../../features/finance/data/repositories/category_repository_impl.dart'
+    as _i816;
+import '../../features/finance/data/repositories/finance_repository_impl.dart'
+    as _i250;
+import '../../features/finance/domain/repositories/category_repository.dart'
+    as _i228;
+import '../../features/finance/domain/repositories/finance_repository.dart'
+    as _i137;
+import '../../features/finance/domain/usecases/add_finance_entry.dart' as _i159;
+import '../../features/finance/domain/usecases/create_category.dart' as _i24;
+import '../../features/finance/domain/usecases/delete_finance_entry.dart'
+    as _i1065;
+import '../../features/finance/domain/usecases/edit_category.dart' as _i611;
+import '../../features/finance/domain/usecases/edit_finance_entry.dart'
+    as _i416;
+import '../../features/finance/domain/usecases/get_categories.dart' as _i1;
+import '../../features/finance/domain/usecases/get_category_breakdown.dart'
+    as _i853;
+import '../../features/finance/domain/usecases/get_finance_history.dart'
+    as _i27;
+import '../../features/finance/domain/usecases/get_finance_summary.dart'
+    as _i844;
+import '../../features/finance/domain/usecases/remove_category.dart' as _i490;
+import '../../features/finance/domain/usecases/restore_finance_entry.dart'
+    as _i1008;
+import '../../features/finance/domain/usecases/seed_default_categories.dart'
+    as _i717;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -102,6 +130,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
     );
+    gh.factory<_i443.FinanceDao>(
+      () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
+    );
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
     );
@@ -121,12 +152,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i982.AppDatabase>(),
       ),
     );
+    gh.lazySingleton<_i137.FinanceRepository>(
+      () => _i250.FinanceRepositoryImpl(gh<_i443.FinanceDao>()),
+    );
     gh.lazySingleton<_i646.PeopleRepository>(
       () => _i1029.PeopleRepositoryImpl(
         gh<_i735.PeopleDao>(),
         gh<_i769.FindPossibleDuplicatePerson>(),
         gh<_i982.AppDatabase>(),
       ),
+    );
+    gh.lazySingleton<_i228.CategoryRepository>(
+      () => _i816.CategoryRepositoryImpl(gh<_i443.FinanceDao>()),
     );
     gh.lazySingleton<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
@@ -199,6 +236,42 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i750.GetPersonBalance>(),
         gh<_i221.ArchivePerson>(),
       ),
+    );
+    gh.factory<_i24.CreateCategory>(
+      () => _i24.CreateCategory(gh<_i228.CategoryRepository>()),
+    );
+    gh.factory<_i611.EditCategory>(
+      () => _i611.EditCategory(gh<_i228.CategoryRepository>()),
+    );
+    gh.factory<_i1.GetCategories>(
+      () => _i1.GetCategories(gh<_i228.CategoryRepository>()),
+    );
+    gh.factory<_i490.RemoveCategory>(
+      () => _i490.RemoveCategory(gh<_i228.CategoryRepository>()),
+    );
+    gh.factory<_i717.SeedDefaultCategories>(
+      () => _i717.SeedDefaultCategories(gh<_i228.CategoryRepository>()),
+    );
+    gh.factory<_i159.AddFinanceEntry>(
+      () => _i159.AddFinanceEntry(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i1065.DeleteFinanceEntry>(
+      () => _i1065.DeleteFinanceEntry(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i416.EditFinanceEntry>(
+      () => _i416.EditFinanceEntry(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i853.GetCategoryBreakdown>(
+      () => _i853.GetCategoryBreakdown(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i27.GetFinanceHistory>(
+      () => _i27.GetFinanceHistory(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i844.GetFinanceSummary>(
+      () => _i844.GetFinanceSummary(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i1008.RestoreFinanceEntry>(
+      () => _i1008.RestoreFinanceEntry(gh<_i137.FinanceRepository>()),
     );
     gh.lazySingleton<_i807.OnboardingCubit>(
       () => _i807.OnboardingCubit(

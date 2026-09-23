@@ -2281,6 +2281,1200 @@ class OnboardingStatusCompanion extends UpdateCompanion<OnboardingStatusData> {
   }
 }
 
+class $FinanceCategoriesTable extends FinanceCategories
+    with TableInfo<$FinanceCategoriesTable, FinanceCategory> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FinanceCategoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _normalizedNameMeta = const VerificationMeta(
+    'normalizedName',
+  );
+  @override
+  late final GeneratedColumn<String> normalizedName = GeneratedColumn<String>(
+    'normalized_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isDefaultMeta = const VerificationMeta(
+    'isDefault',
+  );
+  @override
+  late final GeneratedColumn<bool> isDefault = GeneratedColumn<bool>(
+    'is_default',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_default" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    normalizedName,
+    type,
+    icon,
+    isDefault,
+    isArchived,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'finance_categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FinanceCategory> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('normalized_name')) {
+      context.handle(
+        _normalizedNameMeta,
+        normalizedName.isAcceptableOrUnknown(
+          data['normalized_name']!,
+          _normalizedNameMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_normalizedNameMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_iconMeta);
+    }
+    if (data.containsKey('is_default')) {
+      context.handle(
+        _isDefaultMeta,
+        isDefault.isAcceptableOrUnknown(data['is_default']!, _isDefaultMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FinanceCategory map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FinanceCategory(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      normalizedName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}normalized_name'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      )!,
+      isDefault: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_default'],
+      )!,
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FinanceCategoriesTable createAlias(String alias) {
+    return $FinanceCategoriesTable(attachedDatabase, alias);
+  }
+}
+
+class FinanceCategory extends DataClass implements Insertable<FinanceCategory> {
+  final String id;
+  final String name;
+
+  /// Trimmed, whitespace-collapsed, lowercased copy of [name], indexed with
+  /// [type] for the FR-008 duplicate check — same precedent as
+  /// [People.normalizedName].
+  final String normalizedName;
+
+  /// `'income'` | `'expense'`. Immutable after creation (data-model.md).
+  final String type;
+
+  /// A key into `CategoryIconRegistry`, never a raw icon codepoint or hex
+  /// color (research.md Decision 10).
+  final String icon;
+  final bool isDefault;
+  final bool isArchived;
+  final int createdAt;
+  final int updatedAt;
+  const FinanceCategory({
+    required this.id,
+    required this.name,
+    required this.normalizedName,
+    required this.type,
+    required this.icon,
+    required this.isDefault,
+    required this.isArchived,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['name'] = Variable<String>(name);
+    map['normalized_name'] = Variable<String>(normalizedName);
+    map['type'] = Variable<String>(type);
+    map['icon'] = Variable<String>(icon);
+    map['is_default'] = Variable<bool>(isDefault);
+    map['is_archived'] = Variable<bool>(isArchived);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  FinanceCategoriesCompanion toCompanion(bool nullToAbsent) {
+    return FinanceCategoriesCompanion(
+      id: Value(id),
+      name: Value(name),
+      normalizedName: Value(normalizedName),
+      type: Value(type),
+      icon: Value(icon),
+      isDefault: Value(isDefault),
+      isArchived: Value(isArchived),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory FinanceCategory.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FinanceCategory(
+      id: serializer.fromJson<String>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      normalizedName: serializer.fromJson<String>(json['normalizedName']),
+      type: serializer.fromJson<String>(json['type']),
+      icon: serializer.fromJson<String>(json['icon']),
+      isDefault: serializer.fromJson<bool>(json['isDefault']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'name': serializer.toJson<String>(name),
+      'normalizedName': serializer.toJson<String>(normalizedName),
+      'type': serializer.toJson<String>(type),
+      'icon': serializer.toJson<String>(icon),
+      'isDefault': serializer.toJson<bool>(isDefault),
+      'isArchived': serializer.toJson<bool>(isArchived),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  FinanceCategory copyWith({
+    String? id,
+    String? name,
+    String? normalizedName,
+    String? type,
+    String? icon,
+    bool? isDefault,
+    bool? isArchived,
+    int? createdAt,
+    int? updatedAt,
+  }) => FinanceCategory(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    normalizedName: normalizedName ?? this.normalizedName,
+    type: type ?? this.type,
+    icon: icon ?? this.icon,
+    isDefault: isDefault ?? this.isDefault,
+    isArchived: isArchived ?? this.isArchived,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  FinanceCategory copyWithCompanion(FinanceCategoriesCompanion data) {
+    return FinanceCategory(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      normalizedName: data.normalizedName.present
+          ? data.normalizedName.value
+          : this.normalizedName,
+      type: data.type.present ? data.type.value : this.type,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      isDefault: data.isDefault.present ? data.isDefault.value : this.isDefault,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceCategory(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('normalizedName: $normalizedName, ')
+          ..write('type: $type, ')
+          ..write('icon: $icon, ')
+          ..write('isDefault: $isDefault, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    name,
+    normalizedName,
+    type,
+    icon,
+    isDefault,
+    isArchived,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FinanceCategory &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.normalizedName == this.normalizedName &&
+          other.type == this.type &&
+          other.icon == this.icon &&
+          other.isDefault == this.isDefault &&
+          other.isArchived == this.isArchived &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class FinanceCategoriesCompanion extends UpdateCompanion<FinanceCategory> {
+  final Value<String> id;
+  final Value<String> name;
+  final Value<String> normalizedName;
+  final Value<String> type;
+  final Value<String> icon;
+  final Value<bool> isDefault;
+  final Value<bool> isArchived;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const FinanceCategoriesCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.normalizedName = const Value.absent(),
+    this.type = const Value.absent(),
+    this.icon = const Value.absent(),
+    this.isDefault = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FinanceCategoriesCompanion.insert({
+    required String id,
+    required String name,
+    required String normalizedName,
+    required String type,
+    required String icon,
+    this.isDefault = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       name = Value(name),
+       normalizedName = Value(normalizedName),
+       type = Value(type),
+       icon = Value(icon),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<FinanceCategory> custom({
+    Expression<String>? id,
+    Expression<String>? name,
+    Expression<String>? normalizedName,
+    Expression<String>? type,
+    Expression<String>? icon,
+    Expression<bool>? isDefault,
+    Expression<bool>? isArchived,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (normalizedName != null) 'normalized_name': normalizedName,
+      if (type != null) 'type': type,
+      if (icon != null) 'icon': icon,
+      if (isDefault != null) 'is_default': isDefault,
+      if (isArchived != null) 'is_archived': isArchived,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FinanceCategoriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? name,
+    Value<String>? normalizedName,
+    Value<String>? type,
+    Value<String>? icon,
+    Value<bool>? isDefault,
+    Value<bool>? isArchived,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return FinanceCategoriesCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      normalizedName: normalizedName ?? this.normalizedName,
+      type: type ?? this.type,
+      icon: icon ?? this.icon,
+      isDefault: isDefault ?? this.isDefault,
+      isArchived: isArchived ?? this.isArchived,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (normalizedName.present) {
+      map['normalized_name'] = Variable<String>(normalizedName.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
+    if (isDefault.present) {
+      map['is_default'] = Variable<bool>(isDefault.value);
+    }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceCategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('normalizedName: $normalizedName, ')
+          ..write('type: $type, ')
+          ..write('icon: $icon, ')
+          ..write('isDefault: $isDefault, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $FinanceEntriesTable extends FinanceEntries
+    with TableInfo<$FinanceEntriesTable, FinanceEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FinanceEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES finance_categories (id)',
+    ),
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMinorUnitsMeta = const VerificationMeta(
+    'amountMinorUnits',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinorUnits = GeneratedColumn<int>(
+    'amount_minor_units',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _noteMeta = const VerificationMeta('note');
+  @override
+  late final GeneratedColumn<String> note = GeneratedColumn<String>(
+    'note',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<int> editedAt = GeneratedColumn<int>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    categoryId,
+    type,
+    amountMinorUnits,
+    date,
+    note,
+    createdAt,
+    editedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'finance_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FinanceEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('amount_minor_units')) {
+      context.handle(
+        _amountMinorUnitsMeta,
+        amountMinorUnits.isAcceptableOrUnknown(
+          data['amount_minor_units']!,
+          _amountMinorUnitsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountMinorUnitsMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+        _noteMeta,
+        note.isAcceptableOrUnknown(data['note']!, _noteMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FinanceEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FinanceEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      amountMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor_units'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      note: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}note'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}edited_at'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $FinanceEntriesTable createAlias(String alias) {
+    return $FinanceEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
+  final String id;
+  final String idempotencyKey;
+  final String categoryId;
+
+  /// `'income'` | `'expense'`. Always equal to the referenced category's
+  /// `type` (enforced in the repository, not only by the schema).
+  final String type;
+  final int amountMinorUnits;
+  final int date;
+  final String? note;
+  final int createdAt;
+  final int? editedAt;
+  final int? deletedAt;
+  const FinanceEntry({
+    required this.id,
+    required this.idempotencyKey,
+    required this.categoryId,
+    required this.type,
+    required this.amountMinorUnits,
+    required this.date,
+    this.note,
+    required this.createdAt,
+    this.editedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['category_id'] = Variable<String>(categoryId);
+    map['type'] = Variable<String>(type);
+    map['amount_minor_units'] = Variable<int>(amountMinorUnits);
+    map['date'] = Variable<int>(date);
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<int>(editedAt);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  FinanceEntriesCompanion toCompanion(bool nullToAbsent) {
+    return FinanceEntriesCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      categoryId: Value(categoryId),
+      type: Value(type),
+      amountMinorUnits: Value(amountMinorUnits),
+      date: Value(date),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      createdAt: Value(createdAt),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory FinanceEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FinanceEntry(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      categoryId: serializer.fromJson<String>(json['categoryId']),
+      type: serializer.fromJson<String>(json['type']),
+      amountMinorUnits: serializer.fromJson<int>(json['amountMinorUnits']),
+      date: serializer.fromJson<int>(json['date']),
+      note: serializer.fromJson<String?>(json['note']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      editedAt: serializer.fromJson<int?>(json['editedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'categoryId': serializer.toJson<String>(categoryId),
+      'type': serializer.toJson<String>(type),
+      'amountMinorUnits': serializer.toJson<int>(amountMinorUnits),
+      'date': serializer.toJson<int>(date),
+      'note': serializer.toJson<String?>(note),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'editedAt': serializer.toJson<int?>(editedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  FinanceEntry copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? categoryId,
+    String? type,
+    int? amountMinorUnits,
+    int? date,
+    Value<String?> note = const Value.absent(),
+    int? createdAt,
+    Value<int?> editedAt = const Value.absent(),
+    Value<int?> deletedAt = const Value.absent(),
+  }) => FinanceEntry(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    categoryId: categoryId ?? this.categoryId,
+    type: type ?? this.type,
+    amountMinorUnits: amountMinorUnits ?? this.amountMinorUnits,
+    date: date ?? this.date,
+    note: note.present ? note.value : this.note,
+    createdAt: createdAt ?? this.createdAt,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  FinanceEntry copyWithCompanion(FinanceEntriesCompanion data) {
+    return FinanceEntry(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      type: data.type.present ? data.type.value : this.type,
+      amountMinorUnits: data.amountMinorUnits.present
+          ? data.amountMinorUnits.value
+          : this.amountMinorUnits,
+      date: data.date.present ? data.date.value : this.date,
+      note: data.note.present ? data.note.value : this.note,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceEntry(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('type: $type, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('date: $date, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    categoryId,
+    type,
+    amountMinorUnits,
+    date,
+    note,
+    createdAt,
+    editedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FinanceEntry &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.categoryId == this.categoryId &&
+          other.type == this.type &&
+          other.amountMinorUnits == this.amountMinorUnits &&
+          other.date == this.date &&
+          other.note == this.note &&
+          other.createdAt == this.createdAt &&
+          other.editedAt == this.editedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> categoryId;
+  final Value<String> type;
+  final Value<int> amountMinorUnits;
+  final Value<int> date;
+  final Value<String?> note;
+  final Value<int> createdAt;
+  final Value<int?> editedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const FinanceEntriesCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.type = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    this.date = const Value.absent(),
+    this.note = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FinanceEntriesCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String categoryId,
+    required String type,
+    required int amountMinorUnits,
+    required int date,
+    this.note = const Value.absent(),
+    required int createdAt,
+    this.editedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       categoryId = Value(categoryId),
+       type = Value(type),
+       amountMinorUnits = Value(amountMinorUnits),
+       date = Value(date),
+       createdAt = Value(createdAt);
+  static Insertable<FinanceEntry> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? categoryId,
+    Expression<String>? type,
+    Expression<int>? amountMinorUnits,
+    Expression<int>? date,
+    Expression<String>? note,
+    Expression<int>? createdAt,
+    Expression<int>? editedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (categoryId != null) 'category_id': categoryId,
+      if (type != null) 'type': type,
+      if (amountMinorUnits != null) 'amount_minor_units': amountMinorUnits,
+      if (date != null) 'date': date,
+      if (note != null) 'note': note,
+      if (createdAt != null) 'created_at': createdAt,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FinanceEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? categoryId,
+    Value<String>? type,
+    Value<int>? amountMinorUnits,
+    Value<int>? date,
+    Value<String?>? note,
+    Value<int>? createdAt,
+    Value<int?>? editedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return FinanceEntriesCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      categoryId: categoryId ?? this.categoryId,
+      type: type ?? this.type,
+      amountMinorUnits: amountMinorUnits ?? this.amountMinorUnits,
+      date: date ?? this.date,
+      note: note ?? this.note,
+      createdAt: createdAt ?? this.createdAt,
+      editedAt: editedAt ?? this.editedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (amountMinorUnits.present) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<int>(editedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('type: $type, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('date: $date, ')
+          ..write('note: $note, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2293,6 +3487,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $OnboardingStatusTable onboardingStatus = $OnboardingStatusTable(
     this,
   );
+  late final $FinanceCategoriesTable financeCategories =
+      $FinanceCategoriesTable(this);
+  late final $FinanceEntriesTable financeEntries = $FinanceEntriesTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -2305,6 +3502,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_audit_transaction_id',
     'CREATE INDEX idx_audit_transaction_id ON transaction_audit_entries (transaction_id)',
   );
+  late final Index idxFinanceCategoriesNormalizedName = Index(
+    'idx_finance_categories_normalized_name',
+    'CREATE INDEX idx_finance_categories_normalized_name ON finance_categories (normalized_name, type)',
+  );
+  late final Index idxFinanceEntriesCategoryId = Index(
+    'idx_finance_entries_category_id',
+    'CREATE INDEX idx_finance_entries_category_id ON finance_entries (category_id, deleted_at)',
+  );
+  late final Index idxFinanceEntriesDate = Index(
+    'idx_finance_entries_date',
+    'CREATE INDEX idx_finance_entries_date ON finance_entries (date, deleted_at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2315,9 +3524,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     transactionAuditEntries,
     appSettings,
     onboardingStatus,
+    financeCategories,
+    financeEntries,
     idxPeopleNormalizedName,
     idxTransactionsPersonId,
     idxAuditTransactionId,
+    idxFinanceCategoriesNormalizedName,
+    idxFinanceEntriesCategoryId,
+    idxFinanceEntriesDate,
   ];
 }
 
@@ -4018,6 +5232,828 @@ typedef $$OnboardingStatusTableProcessedTableManager =
       OnboardingStatusData,
       PrefetchHooks Function()
     >;
+typedef $$FinanceCategoriesTableCreateCompanionBuilder =
+    FinanceCategoriesCompanion Function({
+      required String id,
+      required String name,
+      required String normalizedName,
+      required String type,
+      required String icon,
+      Value<bool> isDefault,
+      Value<bool> isArchived,
+      required int createdAt,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$FinanceCategoriesTableUpdateCompanionBuilder =
+    FinanceCategoriesCompanion Function({
+      Value<String> id,
+      Value<String> name,
+      Value<String> normalizedName,
+      Value<String> type,
+      Value<String> icon,
+      Value<bool> isDefault,
+      Value<bool> isArchived,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$FinanceCategoriesTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $FinanceCategoriesTable,
+          FinanceCategory
+        > {
+  $$FinanceCategoriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$FinanceEntriesTable, List<FinanceEntry>>
+  _financeEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.financeEntries,
+    aliasName: 'finance_categories__id__finance_entries__category_id',
+  );
+
+  $$FinanceEntriesTableProcessedTableManager get financeEntriesRefs {
+    final manager = $$FinanceEntriesTableTableManager(
+      $_db,
+      $_db.financeEntries,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_financeEntriesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$FinanceCategoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $FinanceCategoriesTable> {
+  $$FinanceCategoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get normalizedName => $composableBuilder(
+    column: $table.normalizedName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isDefault => $composableBuilder(
+    column: $table.isDefault,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> financeEntriesRefs(
+    Expression<bool> Function($$FinanceEntriesTableFilterComposer f) f,
+  ) {
+    final $$FinanceEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.financeEntries,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.financeEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FinanceCategoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $FinanceCategoriesTable> {
+  $$FinanceCategoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get normalizedName => $composableBuilder(
+    column: $table.normalizedName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isDefault => $composableBuilder(
+    column: $table.isDefault,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$FinanceCategoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FinanceCategoriesTable> {
+  $$FinanceCategoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get normalizedName => $composableBuilder(
+    column: $table.normalizedName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDefault =>
+      $composableBuilder(column: $table.isDefault, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> financeEntriesRefs<T extends Object>(
+    Expression<T> Function($$FinanceEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$FinanceEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.financeEntries,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.financeEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$FinanceCategoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FinanceCategoriesTable,
+          FinanceCategory,
+          $$FinanceCategoriesTableFilterComposer,
+          $$FinanceCategoriesTableOrderingComposer,
+          $$FinanceCategoriesTableAnnotationComposer,
+          $$FinanceCategoriesTableCreateCompanionBuilder,
+          $$FinanceCategoriesTableUpdateCompanionBuilder,
+          (FinanceCategory, $$FinanceCategoriesTableReferences),
+          FinanceCategory,
+          PrefetchHooks Function({bool financeEntriesRefs})
+        > {
+  $$FinanceCategoriesTableTableManager(
+    _$AppDatabase db,
+    $FinanceCategoriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FinanceCategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FinanceCategoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FinanceCategoriesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> normalizedName = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<String> icon = const Value.absent(),
+                Value<bool> isDefault = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceCategoriesCompanion(
+                id: id,
+                name: name,
+                normalizedName: normalizedName,
+                type: type,
+                icon: icon,
+                isDefault: isDefault,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String name,
+                required String normalizedName,
+                required String type,
+                required String icon,
+                Value<bool> isDefault = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceCategoriesCompanion.insert(
+                id: id,
+                name: name,
+                normalizedName: normalizedName,
+                type: type,
+                icon: icon,
+                isDefault: isDefault,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FinanceCategoriesTable, FinanceCategory>(table),
+                  $$FinanceCategoriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({financeEntriesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (financeEntriesRefs) db.financeEntries,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (financeEntriesRefs)
+                    await $_getPrefetchedData<
+                      FinanceCategory,
+                      $FinanceCategoriesTable,
+                      FinanceEntry
+                    >(
+                      currentTable: table,
+                      referencedTable: $$FinanceCategoriesTableReferences
+                          ._financeEntriesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$FinanceCategoriesTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).financeEntriesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.categoryId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$FinanceCategoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FinanceCategoriesTable,
+      FinanceCategory,
+      $$FinanceCategoriesTableFilterComposer,
+      $$FinanceCategoriesTableOrderingComposer,
+      $$FinanceCategoriesTableAnnotationComposer,
+      $$FinanceCategoriesTableCreateCompanionBuilder,
+      $$FinanceCategoriesTableUpdateCompanionBuilder,
+      (FinanceCategory, $$FinanceCategoriesTableReferences),
+      FinanceCategory,
+      PrefetchHooks Function({bool financeEntriesRefs})
+    >;
+typedef $$FinanceEntriesTableCreateCompanionBuilder =
+    FinanceEntriesCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String categoryId,
+      required String type,
+      required int amountMinorUnits,
+      required int date,
+      Value<String?> note,
+      required int createdAt,
+      Value<int?> editedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$FinanceEntriesTableUpdateCompanionBuilder =
+    FinanceEntriesCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> categoryId,
+      Value<String> type,
+      Value<int> amountMinorUnits,
+      Value<int> date,
+      Value<String?> note,
+      Value<int> createdAt,
+      Value<int?> editedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$FinanceEntriesTableReferences
+    extends BaseReferences<_$AppDatabase, $FinanceEntriesTable, FinanceEntry> {
+  $$FinanceEntriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $FinanceCategoriesTable _categoryIdTable(_$AppDatabase db) => db
+      .financeCategories
+      .createAlias('finance_entries__category_id__finance_categories__id');
+
+  $$FinanceCategoriesTableProcessedTableManager get categoryId {
+    final $_column = $_itemColumn<String>('category_id')!;
+
+    final manager = $$FinanceCategoriesTableTableManager(
+      $_db,
+      $_db.financeCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$FinanceEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $FinanceEntriesTable> {
+  $$FinanceEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FinanceCategoriesTableFilterComposer get categoryId {
+    final $$FinanceCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.financeCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.financeCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinanceEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $FinanceEntriesTable> {
+  $$FinanceEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get note => $composableBuilder(
+    column: $table.note,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FinanceCategoriesTableOrderingComposer get categoryId {
+    final $$FinanceCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.financeCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.financeCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinanceEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FinanceEntriesTable> {
+  $$FinanceEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get note =>
+      $composableBuilder(column: $table.note, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get editedAt =>
+      $composableBuilder(column: $table.editedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$FinanceCategoriesTableAnnotationComposer get categoryId {
+    final $$FinanceCategoriesTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.categoryId,
+          referencedTable: $db.financeCategories,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinanceCategoriesTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financeCategories,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$FinanceEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FinanceEntriesTable,
+          FinanceEntry,
+          $$FinanceEntriesTableFilterComposer,
+          $$FinanceEntriesTableOrderingComposer,
+          $$FinanceEntriesTableAnnotationComposer,
+          $$FinanceEntriesTableCreateCompanionBuilder,
+          $$FinanceEntriesTableUpdateCompanionBuilder,
+          (FinanceEntry, $$FinanceEntriesTableReferences),
+          FinanceEntry,
+          PrefetchHooks Function({bool categoryId})
+        > {
+  $$FinanceEntriesTableTableManager(
+    _$AppDatabase db,
+    $FinanceEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FinanceEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FinanceEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FinanceEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<int> amountMinorUnits = const Value.absent(),
+                Value<int> date = const Value.absent(),
+                Value<String?> note = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> editedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceEntriesCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                categoryId: categoryId,
+                type: type,
+                amountMinorUnits: amountMinorUnits,
+                date: date,
+                note: note,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String categoryId,
+                required String type,
+                required int amountMinorUnits,
+                required int date,
+                Value<String?> note = const Value.absent(),
+                required int createdAt,
+                Value<int?> editedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceEntriesCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                categoryId: categoryId,
+                type: type,
+                amountMinorUnits: amountMinorUnits,
+                date: date,
+                note: note,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FinanceEntriesTable, FinanceEntry>(table),
+                  $$FinanceEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.categoryId,
+                                referencedTable: $$FinanceEntriesTableReferences
+                                    ._categoryIdTable(db),
+                                referencedColumn:
+                                    $$FinanceEntriesTableReferences
+                                        ._categoryIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$FinanceEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FinanceEntriesTable,
+      FinanceEntry,
+      $$FinanceEntriesTableFilterComposer,
+      $$FinanceEntriesTableOrderingComposer,
+      $$FinanceEntriesTableAnnotationComposer,
+      $$FinanceEntriesTableCreateCompanionBuilder,
+      $$FinanceEntriesTableUpdateCompanionBuilder,
+      (FinanceEntry, $$FinanceEntriesTableReferences),
+      FinanceEntry,
+      PrefetchHooks Function({bool categoryId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4035,4 +6071,8 @@ class $AppDatabaseManager {
       $$AppSettingsTableTableManager(_db, _db.appSettings);
   $$OnboardingStatusTableTableManager get onboardingStatus =>
       $$OnboardingStatusTableTableManager(_db, _db.onboardingStatus);
+  $$FinanceCategoriesTableTableManager get financeCategories =>
+      $$FinanceCategoriesTableTableManager(_db, _db.financeCategories);
+  $$FinanceEntriesTableTableManager get financeEntries =>
+      $$FinanceEntriesTableTableManager(_db, _db.financeEntries);
 }

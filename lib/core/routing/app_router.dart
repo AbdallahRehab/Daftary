@@ -147,9 +147,7 @@ final GoRouter appRouter = GoRouter(
                 // income category rather than silently defaulting away.
                 initialType: state.extra is CategoryType
                     ? state.extra! as CategoryType
-                    : _financeEntryTypeFrom(
-                        state.uri.queryParameters['type'],
-                      ),
+                    : _financeEntryTypeFrom(state.uri.queryParameters['type']),
               ),
             ),
             GoRoute(

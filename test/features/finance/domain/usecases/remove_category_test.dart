@@ -74,26 +74,23 @@ void main() {
     expect(groceries.isArchived, isTrue);
   });
 
-  test(
-    'a soft-deleted entry still counts as a reference, so the category is '
-    'archived rather than deleted',
-    () async {
-      // A soft-deleted entry can be restored within the undo window
-      // (research.md Decision 8) and has to find its category again — so it
-      // must keep the category alive exactly like a live entry does.
-      await insertEntry(
-        id: 'e1',
-        categoryId: 'seed_groceries',
-        deletedAt: DateTime(2026, 2, 6),
-      );
+  test('a soft-deleted entry still counts as a reference, so the category is '
+      'archived rather than deleted', () async {
+    // A soft-deleted entry can be restored within the undo window
+    // (research.md Decision 8) and has to find its category again — so it
+    // must keep the category alive exactly like a live entry does.
+    await insertEntry(
+      id: 'e1',
+      categoryId: 'seed_groceries',
+      deletedAt: DateTime(2026, 2, 6),
+    );
 
-      await removeCategory('seed_groceries');
+    await removeCategory('seed_groceries');
 
-      final all = await expenseCategories();
-      final groceries = all.firstWhere((c) => c.id == 'seed_groceries');
-      expect(groceries.isArchived, isTrue);
-    },
-  );
+    final all = await expenseCategories();
+    final groceries = all.firstWhere((c) => c.id == 'seed_groceries');
+    expect(groceries.isArchived, isTrue);
+  });
 
   test('removing an already-archived referenced category keeps it', () async {
     await insertEntry(id: 'e1', categoryId: 'seed_groceries');

@@ -23,9 +23,7 @@ class FinanceMonthSummaryCubit extends Cubit<FinanceMonthSummaryState> {
     final result = await _getFinanceSummary(DateRange.thisMonth());
     if (isClosed) return;
     result.match(
-      (_) => emit(
-        state.copyWith(status: FinanceMonthSummaryStatus.failure),
-      ),
+      (_) => emit(state.copyWith(status: FinanceMonthSummaryStatus.failure)),
       (summary) => emit(
         FinanceMonthSummaryState(
           status: FinanceMonthSummaryStatus.success,

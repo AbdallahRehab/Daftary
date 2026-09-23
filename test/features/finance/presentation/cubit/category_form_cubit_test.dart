@@ -42,10 +42,8 @@ void main() {
     repository = MockCategoryRepository();
   });
 
-  CategoryFormCubit buildCubit() => CategoryFormCubit(
-    CreateCategory(repository),
-    EditCategory(repository),
-  );
+  CategoryFormCubit buildCubit() =>
+      CategoryFormCubit(CreateCategory(repository), EditCategory(repository));
 
   group('create mode', () {
     blocTest<CategoryFormCubit, CategoryFormState>(
@@ -234,9 +232,8 @@ void main() {
             icon: 'shopping',
           ),
         ).thenAnswer(
-          (_) async => Right(
-            groceries.copyWith(name: 'Supermarket', icon: 'shopping'),
-          ),
+          (_) async =>
+              Right(groceries.copyWith(name: 'Supermarket', icon: 'shopping')),
         );
       },
       act: (cubit) async {

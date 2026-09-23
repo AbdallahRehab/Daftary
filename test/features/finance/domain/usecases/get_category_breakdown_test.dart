@@ -31,55 +31,63 @@ void main() {
       useCase = GetCategoryBreakdown(repository);
     });
 
-    test('returns per-category totals descending, each with its share',
-        () async {
-      final period = DateRange.thisMonth(DateTime(2026, 3, 31));
-      const items = [
-        CategoryBreakdownItem(
-          categoryId: 'seed_rent',
-          categoryName: 'Rent',
-          icon: 'rent',
-          total: Money.fromMinorUnits(600000),
-          shareOfPeriod: 0.6,
-        ),
-        CategoryBreakdownItem(
-          categoryId: 'seed_groceries',
-          categoryName: 'Groceries',
-          icon: 'groceries',
-          total: Money.fromMinorUnits(300000),
-          shareOfPeriod: 0.3,
-        ),
-        CategoryBreakdownItem(
-          categoryId: 'seed_fuel',
-          categoryName: 'Fuel',
-          icon: 'fuel',
-          total: Money.fromMinorUnits(100000),
-          shareOfPeriod: 0.1,
-        ),
-      ];
-      when(
-        () => repository.getCategoryBreakdown(any(), type: any(named: 'type')),
-      ).thenAnswer((_) async => const Right(items));
+    test(
+      'returns per-category totals descending, each with its share',
+      () async {
+        final period = DateRange.thisMonth(DateTime(2026, 3, 31));
+        const items = [
+          CategoryBreakdownItem(
+            categoryId: 'seed_rent',
+            categoryName: 'Rent',
+            icon: 'rent',
+            total: Money.fromMinorUnits(600000),
+            shareOfPeriod: 0.6,
+          ),
+          CategoryBreakdownItem(
+            categoryId: 'seed_groceries',
+            categoryName: 'Groceries',
+            icon: 'groceries',
+            total: Money.fromMinorUnits(300000),
+            shareOfPeriod: 0.3,
+          ),
+          CategoryBreakdownItem(
+            categoryId: 'seed_fuel',
+            categoryName: 'Fuel',
+            icon: 'fuel',
+            total: Money.fromMinorUnits(100000),
+            shareOfPeriod: 0.1,
+          ),
+        ];
+        when(
+          () =>
+              repository.getCategoryBreakdown(any(), type: any(named: 'type')),
+        ).thenAnswer((_) async => const Right(items));
 
-      final result = await useCase(period, type: FinanceEntryType.expense);
+        final result = await useCase(period, type: FinanceEntryType.expense);
 
-      final breakdown = result.toNullable()!;
-      expect(
-        breakdown.map((i) => i.categoryId),
-        ['seed_rent', 'seed_groceries', 'seed_fuel'],
-      );
-      expect(breakdown.map((i) => i.total.minorUnits), [600000, 300000, 100000]);
-      expect(
-        breakdown.fold<double>(0, (sum, i) => sum + i.shareOfPeriod),
-        closeTo(1.0, 1e-9),
-      );
-      verify(
-        () => repository.getCategoryBreakdown(
-          period,
-          type: FinanceEntryType.expense,
-        ),
-      ).called(1);
-    });
+        final breakdown = result.toNullable()!;
+        expect(breakdown.map((i) => i.categoryId), [
+          'seed_rent',
+          'seed_groceries',
+          'seed_fuel',
+        ]);
+        expect(breakdown.map((i) => i.total.minorUnits), [
+          600000,
+          300000,
+          100000,
+        ]);
+        expect(
+          breakdown.fold<double>(0, (sum, i) => sum + i.shareOfPeriod),
+          closeTo(1.0, 1e-9),
+        );
+        verify(
+          () => repository.getCategoryBreakdown(
+            period,
+            type: FinanceEntryType.expense,
+          ),
+        ).called(1);
+      },
+    );
 
     test('surfaces a repository failure as a Left', () async {
       when(
@@ -124,48 +132,45 @@ void main() {
       expect(result.isRight(), isTrue, reason: 'failed to seed $key');
     }
 
-    test('the GROUP BY aggregate orders largest-first and shares sum to 1',
-        () async {
-      await add('seed_groceries', FinanceEntryType.expense, 15000, 'g1');
-      await add('seed_groceries', FinanceEntryType.expense, 5000, 'g2');
-      await add('seed_rent', FinanceEntryType.expense, 500000, 'r1');
-      await add('seed_fuel', FinanceEntryType.expense, 7500, 'f1');
+    test(
+      'the GROUP BY aggregate orders largest-first and shares sum to 1',
+      () async {
+        await add('seed_groceries', FinanceEntryType.expense, 15000, 'g1');
+        await add('seed_groceries', FinanceEntryType.expense, 5000, 'g2');
+        await add('seed_rent', FinanceEntryType.expense, 500000, 'r1');
+        await add('seed_fuel', FinanceEntryType.expense, 7500, 'f1');
 
-      final breakdown =
-          (await useCase(
-            DateRange.thisMonth(),
-            type: FinanceEntryType.expense,
-          )).toNullable()!;
+        final breakdown = (await useCase(
+          DateRange.thisMonth(),
+          type: FinanceEntryType.expense,
+        )).toNullable()!;
 
-      expect(
-        breakdown.map((i) => i.categoryId),
-        ['seed_rent', 'seed_groceries', 'seed_fuel'],
-      );
-      expect(breakdown.first.total.minorUnits, 500000);
-      // Groceries' two entries are one grouped row of 200.00 EGP.
-      expect(breakdown[1].total.minorUnits, 20000);
-      expect(breakdown[1].categoryName, 'Groceries');
-      expect(breakdown[1].icon, 'groceries');
-      expect(
-        breakdown.fold<double>(0, (sum, i) => sum + i.shareOfPeriod),
-        closeTo(1.0, 1e-9),
-      );
-      expect(
-        breakdown.first.shareOfPeriod,
-        closeTo(500000 / 527500, 1e-9),
-      );
-    });
+        expect(breakdown.map((i) => i.categoryId), [
+          'seed_rent',
+          'seed_groceries',
+          'seed_fuel',
+        ]);
+        expect(breakdown.first.total.minorUnits, 500000);
+        // Groceries' two entries are one grouped row of 200.00 EGP.
+        expect(breakdown[1].total.minorUnits, 20000);
+        expect(breakdown[1].categoryName, 'Groceries');
+        expect(breakdown[1].icon, 'groceries');
+        expect(
+          breakdown.fold<double>(0, (sum, i) => sum + i.shareOfPeriod),
+          closeTo(1.0, 1e-9),
+        );
+        expect(breakdown.first.shareOfPeriod, closeTo(500000 / 527500, 1e-9));
+      },
+    );
 
-    test('the type argument narrows the breakdown to one direction',
-        () async {
+    test('the type argument narrows the breakdown to one direction', () async {
       await add('seed_groceries', FinanceEntryType.expense, 20000, 'e1');
       await add('seed_salary', FinanceEntryType.income, 1000000, 'i1');
 
-      final incomeOnly =
-          (await useCase(
-            DateRange.thisMonth(),
-            type: FinanceEntryType.income,
-          )).toNullable()!;
+      final incomeOnly = (await useCase(
+        DateRange.thisMonth(),
+        type: FinanceEntryType.income,
+      )).toNullable()!;
       expect(incomeOnly.map((i) => i.categoryId), ['seed_salary']);
 
       final both = (await useCase(DateRange.thisMonth())).toNullable()!;

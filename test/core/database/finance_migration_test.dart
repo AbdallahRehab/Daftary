@@ -151,20 +151,17 @@ void main() {
     expect(ids, hasLength(categories.length));
   });
 
-  test(
-    'seeding is idempotent — re-running it over a populated table inserts '
-    'nothing',
-    () async {
-      final raw = createV4Database();
-      final db = openUpgraded(raw);
+  test('seeding is idempotent — re-running it over a populated table inserts '
+      'nothing', () async {
+    final raw = createV4Database();
+    final db = openUpgraded(raw);
 
-      final afterMigration = await db.select(db.financeCategories).get();
-      await seedDefaultFinanceCategories(db);
-      final afterSecondCall = await db.select(db.financeCategories).get();
+    final afterMigration = await db.select(db.financeCategories).get();
+    await seedDefaultFinanceCategories(db);
+    final afterSecondCall = await db.select(db.financeCategories).get();
 
-      expect(afterSecondCall, hasLength(afterMigration.length));
-    },
-  );
+    expect(afterSecondCall, hasLength(afterMigration.length));
+  });
 
   test('v4 -> v5 leaves every pre-existing row untouched (FR-023)', () async {
     final raw = createV4Database();

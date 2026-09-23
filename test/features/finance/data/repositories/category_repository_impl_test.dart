@@ -78,25 +78,22 @@ void main() {
       }, (_) => fail('expected a DuplicateCategoryFailure'));
     });
 
-    test(
-      'the same name under a different type is allowed — "Gift" can be both '
-      'an income source and an expense',
-      () async {
-        // 'Gift' ships as an income category; creating an expense one is a
-        // legitimate, distinct category, not a near-duplicate.
-        final result = await repository.createCategory(
-          name: 'Gift',
-          type: CategoryType.expense,
-          icon: 'gift',
-        );
+    test('the same name under a different type is allowed — "Gift" can be both '
+        'an income source and an expense', () async {
+      // 'Gift' ships as an income category; creating an expense one is a
+      // legitimate, distinct category, not a near-duplicate.
+      final result = await repository.createCategory(
+        name: 'Gift',
+        type: CategoryType.expense,
+        icon: 'gift',
+      );
 
-        expect(result.isRight(), isTrue);
-        final expenses = await categoriesOf(CategoryType.expense);
-        final income = await categoriesOf(CategoryType.income);
-        expect(expenses.where((c) => c.name == 'Gift'), hasLength(1));
-        expect(income.where((c) => c.name == 'Gift'), hasLength(1));
-      },
-    );
+      expect(result.isRight(), isTrue);
+      final expenses = await categoriesOf(CategoryType.expense);
+      final income = await categoriesOf(CategoryType.income);
+      expect(expenses.where((c) => c.name == 'Gift'), hasLength(1));
+      expect(income.where((c) => c.name == 'Gift'), hasLength(1));
+    });
 
     test('a name freed by archiving can be taken again', () async {
       // Archiving retires a name from active use; it does not reserve it
@@ -139,7 +136,10 @@ void main() {
       );
 
       expect(result.isLeft(), isTrue);
-      expect(await categoriesOf(CategoryType.expense), hasLength(before.length));
+      expect(
+        await categoriesOf(CategoryType.expense),
+        hasLength(before.length),
+      );
     });
   });
 
@@ -172,22 +172,25 @@ void main() {
       );
     });
 
-    test('an archived category drops out of the entry picker (FR-011)', () async {
-      await insertEntry(
-        id: 'e1',
-        categoryId: 'seed_salary',
-        type: FinanceEntryType.income,
-      );
-      await repository.removeCategory('seed_salary');
+    test(
+      'an archived category drops out of the entry picker (FR-011)',
+      () async {
+        await insertEntry(
+          id: 'e1',
+          categoryId: 'seed_salary',
+          type: FinanceEntryType.income,
+        );
+        await repository.removeCategory('seed_salary');
 
-      final picker = await categoriesOf(
-        CategoryType.income,
-        includeArchived: false,
-      );
-      final management = await categoriesOf(CategoryType.income);
+        final picker = await categoriesOf(
+          CategoryType.income,
+          includeArchived: false,
+        );
+        final management = await categoriesOf(CategoryType.income);
 
-      expect(picker.where((c) => c.id == 'seed_salary'), isEmpty);
-      expect(management.where((c) => c.id == 'seed_salary'), hasLength(1));
-    });
+        expect(picker.where((c) => c.id == 'seed_salary'), isEmpty);
+        expect(management.where((c) => c.id == 'seed_salary'), hasLength(1));
+      },
+    );
   });
 }

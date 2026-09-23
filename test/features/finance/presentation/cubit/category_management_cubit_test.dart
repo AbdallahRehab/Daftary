@@ -35,11 +35,7 @@ void main() {
   final groceries = category('seed_groceries', 'Groceries');
   final rent = category('seed_rent', 'Rent');
   final oldFuel = category('seed_fuel', 'Fuel', isArchived: true);
-  final salary = category(
-    'seed_salary',
-    'Salary',
-    type: CategoryType.income,
-  );
+  final salary = category('seed_salary', 'Salary', type: CategoryType.income);
 
   setUpAll(() => registerFallbackValue(CategoryType.expense));
 
@@ -150,9 +146,7 @@ void main() {
           type: CategoryType.expense,
           includeArchived: true,
         ),
-      ).thenAnswer(
-        (_) async => Right(removed ? [rent] : [groceries, rent]),
-      );
+      ).thenAnswer((_) async => Right(removed ? [rent] : [groceries, rent]));
       when(() => repository.removeCategory('seed_groceries')).thenAnswer((
         _,
       ) async {
@@ -189,9 +183,9 @@ void main() {
               : [groceries, rent],
         ),
       );
-      when(
-        () => repository.removeCategory('seed_groceries'),
-      ).thenAnswer((_) async {
+      when(() => repository.removeCategory('seed_groceries')).thenAnswer((
+        _,
+      ) async {
         removed = true;
         return const Right(unit);
       });

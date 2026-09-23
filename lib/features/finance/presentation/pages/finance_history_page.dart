@@ -22,6 +22,18 @@ import '../widgets/period_selector.dart';
 /// The finance history screen (US3): summary, per-category breakdown, and
 /// the filtered entry list for one selected period — all three driven by a
 /// single Cubit so they can never disagree about which period they show.
+/// Navigates to [location] and reloads the history once it pops.
+///
+/// Every one of this screen's destinations can change what the screen
+/// shows — a new entry, an edited amount, a renamed or archived category —
+/// and `context.push` alone leaves the list, the totals, and the breakdown
+/// showing pre-navigation data until something else happens to reload them.
+Future<void> _pushAndReload(BuildContext context, String location) async {
+  final cubit = context.read<FinanceHistoryCubit>();
+  await context.push<void>(location);
+  if (!cubit.isClosed) await cubit.load();
+}
+
 class FinanceHistoryPage extends StatelessWidget {
   const FinanceHistoryPage({super.key});
 
@@ -47,7 +59,7 @@ class _FinanceHistoryView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.category_outlined),
             tooltip: l10n.financeManageCategoriesAction,
-            onPressed: () => context.push('/finance/categories'),
+            onPressed: () => _pushAndReload(context, '/finance/categories'),
           ),
         ],
       ),
@@ -75,7 +87,8 @@ class _FinanceHistoryView extends StatelessWidget {
               title: l10n.financeEmptyTitle,
               message: l10n.financeEmptyMessage,
               actionLabel: l10n.financeAddFirstEntryAction,
-              onAction: () => context.push('/finance/entries/new?type=expense'),
+              onAction: () =>
+                  _pushAndReload(context, '/finance/entries/new?type=expense'),
             );
           }
 
@@ -123,8 +136,10 @@ class _FinanceHistoryView extends StatelessWidget {
                       ? l10n.financeCategoryOther
                       : categoryDisplayName(l10n, category),
                   categoryIconKey: category?.icon ?? 'other',
-                  onEdit: () =>
-                      context.push('/finance/entries/${entry.id}/edit'),
+                  onEdit: () => _pushAndReload(
+                    context,
+                    '/finance/entries/${entry.id}/edit',
+                  ),
                   onDelete: () => _confirmDelete(context, entry),
                 );
               },
@@ -325,13 +340,15 @@ class _AddEntryActions extends StatelessWidget {
         FloatingActionButton.small(
           heroTag: 'finance-add-income',
           tooltip: l10n.financeAddIncomeAction,
-          onPressed: () => context.push('/finance/entries/new?type=income'),
+          onPressed: () =>
+              _pushAndReload(context, '/finance/entries/new?type=income'),
           child: const Icon(Icons.arrow_downward),
         ),
         const SizedBox(height: AppSpacing.sm),
         FloatingActionButton.extended(
           heroTag: 'finance-add-expense',
-          onPressed: () => context.push('/finance/entries/new?type=expense'),
+          onPressed: () =>
+              _pushAndReload(context, '/finance/entries/new?type=expense'),
           icon: const Icon(Icons.add),
           label: Text(l10n.financeAddExpenseAction),
         ),

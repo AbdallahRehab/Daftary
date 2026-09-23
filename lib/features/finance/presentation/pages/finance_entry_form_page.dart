@@ -61,8 +61,9 @@ class FinanceEntryFormPage extends StatelessWidget {
   ) async {
     final entryResult = await getIt<FinanceRepository>().getEntryById(entryId);
     await entryResult.match((_) async {}, (entry) async {
-      final categoryResult = await getIt<CategoryRepository>()
-          .getCategoryById(entry.categoryId);
+      final categoryResult = await getIt<CategoryRepository>().getCategoryById(
+        entry.categoryId,
+      );
       categoryResult.match(
         (_) {},
         (category) => cubit.loadForEdit(entry, category),

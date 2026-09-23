@@ -42,12 +42,7 @@ Category _category(
 /// `category_display_name`'s own resolution and would make an Arabic-locale
 /// text lookup here assert the wrong thing.
 final _rent = _category('c1', 'إيجار', icon: 'rent');
-final _archivedFuel = _category(
-  'c2',
-  'بنزين',
-  icon: 'fuel',
-  isArchived: true,
-);
+final _archivedFuel = _category('c2', 'بنزين', icon: 'fuel', isArchived: true);
 
 GoRouter _buildRouter() => GoRouter(
   initialLocation: '/finance/categories',
@@ -191,8 +186,9 @@ void main() {
 }
 
 double _relativeLuminance(Color color) {
-  double channel(double value) =>
-      value <= 0.03928 ? value / 12.92 : math.pow((value + 0.055) / 1.055, 2.4).toDouble();
+  double channel(double value) => value <= 0.03928
+      ? value / 12.92
+      : math.pow((value + 0.055) / 1.055, 2.4).toDouble();
   return 0.2126 * channel(color.r) +
       0.7152 * channel(color.g) +
       0.0722 * channel(color.b);

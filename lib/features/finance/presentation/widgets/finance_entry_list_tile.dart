@@ -83,9 +83,14 @@ class FinanceEntryListTile extends StatelessWidget {
           ),
           if (entry.isEdited) ...[
             const SizedBox(width: AppSpacing.xs),
-            Text(
-              '(${l10n.editedLabel})',
-              style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
+            Flexible(
+              child: Text(
+                '(${l10n.editedLabel})',
+                style: AppTypography.bodyMuted.copyWith(
+                  color: onSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ],
@@ -95,6 +100,9 @@ class FinanceEntryListTile extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
+      // Amount plus, at most, one overflow button. Two inline icon buttons
+      // made `trailing` wide enough to squeeze the title to ~70px, which
+      // overflowed the row and left the category name unreadable anyway.
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -105,20 +113,42 @@ class FinanceEntryListTile extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          if (onEdit != null)
-            IconButton(
+          if (onEdit != null || onDelete != null)
+            PopupMenuButton<_EntryAction>(
               tooltip: l10n.commonEdit,
-              icon: const Icon(Icons.edit_outlined),
-              onPressed: onEdit,
-            ),
-          if (onDelete != null)
-            IconButton(
-              tooltip: l10n.commonDelete,
-              icon: const Icon(Icons.delete_outline),
-              onPressed: onDelete,
+              onSelected: (action) => switch (action) {
+                _EntryAction.edit => onEdit?.call(),
+                _EntryAction.delete => onDelete?.call(),
+              },
+              itemBuilder: (context) => [
+                if (onEdit != null)
+                  PopupMenuItem(
+                    value: _EntryAction.edit,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.edit_outlined, size: 20),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(l10n.commonEdit),
+                      ],
+                    ),
+                  ),
+                if (onDelete != null)
+                  PopupMenuItem(
+                    value: _EntryAction.delete,
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete_outline, size: 20),
+                        const SizedBox(width: AppSpacing.sm),
+                        Text(l10n.commonDelete),
+                      ],
+                    ),
+                  ),
+              ],
             ),
         ],
       ),
     );
   }
 }
+
+enum _EntryAction { edit, delete }

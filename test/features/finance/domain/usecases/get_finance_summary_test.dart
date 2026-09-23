@@ -41,24 +41,26 @@ void main() {
           period: period,
         );
 
-    test('passes "this month" through as an inclusive day-granular range',
-        () async {
-      final period = DateRange.thisMonth(DateTime(2026, 3, 18));
-      when(
-        () => repository.getSummary(any()),
-      ).thenAnswer((_) async => Right(summaryFor(period, 500000, 123456)));
+    test(
+      'passes "this month" through as an inclusive day-granular range',
+      () async {
+        final period = DateRange.thisMonth(DateTime(2026, 3, 18));
+        when(
+          () => repository.getSummary(any()),
+        ).thenAnswer((_) async => Right(summaryFor(period, 500000, 123456)));
 
-      final result = await useCase(period);
+        final result = await useCase(period);
 
-      expect(result.isRight(), isTrue);
-      final summary = result.toNullable()!;
-      expect(summary.period.start, DateTime(2026, 3, 1));
-      expect(summary.period.end, DateTime(2026, 3, 18));
-      expect(summary.totalIncome, const Money.fromMinorUnits(500000));
-      expect(summary.totalExpense, const Money.fromMinorUnits(123456));
-      expect(summary.net, const Money.fromMinorUnits(376544));
-      verify(() => repository.getSummary(period)).called(1);
-    });
+        expect(result.isRight(), isTrue);
+        final summary = result.toNullable()!;
+        expect(summary.period.start, DateTime(2026, 3, 1));
+        expect(summary.period.end, DateTime(2026, 3, 18));
+        expect(summary.totalIncome, const Money.fromMinorUnits(500000));
+        expect(summary.totalExpense, const Money.fromMinorUnits(123456));
+        expect(summary.net, const Money.fromMinorUnits(376544));
+        verify(() => repository.getSummary(period)).called(1);
+      },
+    );
 
     test('"last month" is the full previous calendar month', () async {
       final period = DateRange.lastMonth(DateTime(2026, 3, 18));
@@ -192,8 +194,7 @@ void main() {
       expect(summary.net.minorUnits, expectedIncome - expectedExpense);
     });
 
-    test('excludes entries outside the period and soft-deleted ones',
-        () async {
+    test('excludes entries outside the period and soft-deleted ones', () async {
       final today = DateTime.now();
       final inPeriod = DateTime(today.year, today.month, today.day);
       final lastMonthDay = DateTime(today.year, today.month - 1, 15);

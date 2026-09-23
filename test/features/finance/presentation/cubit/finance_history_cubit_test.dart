@@ -154,7 +154,11 @@ void main() {
       ),
       isA<FinanceHistoryState>()
           .having((s) => s.status, 'status', FinanceHistoryStatus.success)
-          .having((s) => s.periodPreset, 'preset', FinancePeriodPreset.thisMonth)
+          .having(
+            (s) => s.periodPreset,
+            'preset',
+            FinancePeriodPreset.thisMonth,
+          )
           .having((s) => s.period, 'period', DateRange.thisMonth())
           .having((s) => s.summary, 'summary', summary)
           .having((s) => s.breakdown, 'breakdown', breakdown)
@@ -169,7 +173,9 @@ void main() {
           .having((s) => s.isNoMatch, 'isNoMatch', isFalse),
     ],
     verify: (_) {
-      verify(() => financeRepository.getSummary(DateRange.thisMonth())).called(1);
+      verify(
+        () => financeRepository.getSummary(DateRange.thisMonth()),
+      ).called(1);
       verify(
         () => financeRepository.getCategoryBreakdown(
           DateRange.thisMonth(),
@@ -197,7 +203,9 @@ void main() {
     verify: (cubit) {
       expect(cubit.state.periodPreset, FinancePeriodPreset.lastMonth);
       expect(cubit.state.period, DateRange.lastMonth());
-      verify(() => financeRepository.getSummary(DateRange.lastMonth())).called(1);
+      verify(
+        () => financeRepository.getSummary(DateRange.lastMonth()),
+      ).called(1);
       verify(
         () => financeRepository.getCategoryBreakdown(
           DateRange.lastMonth(),

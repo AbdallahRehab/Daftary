@@ -49,6 +49,11 @@ abstract class FinanceRepository {
   /// soft-deleted — defensive against a stale or duplicate undo tap.
   Future<Either<Failure, FinanceEntry>> restoreEntry(String entryId);
 
+  /// One entry by id, soft-deleted or not — what the edit form resolves the
+  /// entry it was opened on. Soft-deleted rows are included so a restore
+  /// flow can read back what it is restoring.
+  Future<Either<Failure, FinanceEntry>> getEntryById(String entryId);
+
   /// Filtered, paginated history (FR-012/FR-013), newest date first,
   /// soft-deleted rows excluded.
   Future<Either<Failure, List<FinanceEntry>>> getHistory({

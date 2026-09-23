@@ -64,16 +64,21 @@ void main() {
     end: DateTime(2026, 12, 31),
   );
 
-  test('getSummary over $entryCount entries stays well inside budget', () async {
-    final stopwatch = Stopwatch()..start();
-    final result = await repository.getSummary(wholeYear);
-    stopwatch.stop();
+  test(
+    'getSummary over $entryCount entries stays well inside budget',
+    () async {
+      final stopwatch = Stopwatch()..start();
+      final result = await repository.getSummary(wholeYear);
+      stopwatch.stop();
 
-    final summary = result.getOrElse((f) => throw StateError(f.message));
-    expect(summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
-        greaterThan(0));
-    expect(stopwatch.elapsedMilliseconds, lessThan(10000));
-  });
+      final summary = result.getOrElse((f) => throw StateError(f.message));
+      expect(
+        summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
+        greaterThan(0),
+      );
+      expect(stopwatch.elapsedMilliseconds, lessThan(10000));
+    },
+  );
 
   test(
     'getCategoryBreakdown over $entryCount entries stays well inside budget',
@@ -104,27 +109,30 @@ void main() {
     expect(
       page,
       hasLength(50),
-      reason: 'a page, not all $entryCount rows — this is what keeps the '
+      reason:
+          'a page, not all $entryCount rows — this is what keeps the '
           'list scrolling smoothly',
     );
     expect(stopwatch.elapsedMilliseconds, lessThan(10000));
   });
 
-  test('totals are exact integer minor units — no rounding drift (SC-003)',
-      () async {
-    final result = await repository.getSummary(wholeYear);
-    final summary = result.getOrElse((f) => throw StateError(f.message));
+  test(
+    'totals are exact integer minor units — no rounding drift (SC-003)',
+    () async {
+      final result = await repository.getSummary(wholeYear);
+      final summary = result.getOrElse((f) => throw StateError(f.message));
 
-    // The expected total is computed independently, in pure integer
-    // arithmetic, from the same formula the seeding used.
-    var expectedTotal = 0;
-    for (var i = 0; i < entryCount; i++) {
-      expectedTotal += 1000 + i;
-    }
+      // The expected total is computed independently, in pure integer
+      // arithmetic, from the same formula the seeding used.
+      var expectedTotal = 0;
+      for (var i = 0; i < entryCount; i++) {
+        expectedTotal += 1000 + i;
+      }
 
-    expect(
-      summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
-      expectedTotal,
-    );
-  });
+      expect(
+        summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
+        expectedTotal,
+      );
+    },
+  );
 }

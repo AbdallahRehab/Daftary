@@ -41,6 +41,14 @@ import '../../features/finance/domain/usecases/restore_finance_entry.dart'
     as _i1008;
 import '../../features/finance/domain/usecases/seed_default_categories.dart'
     as _i717;
+import '../../features/finance/presentation/cubit/category_form_cubit.dart'
+    as _i1030;
+import '../../features/finance/presentation/cubit/category_management_cubit.dart'
+    as _i109;
+import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
+    as _i505;
+import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
+    as _i987;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -273,6 +281,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1008.RestoreFinanceEntry>(
       () => _i1008.RestoreFinanceEntry(gh<_i137.FinanceRepository>()),
     );
+    gh.factory<_i987.FinanceHistoryCubit>(
+      () => _i987.FinanceHistoryCubit(
+        gh<_i844.GetFinanceSummary>(),
+        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i27.GetFinanceHistory>(),
+        gh<_i1.GetCategories>(),
+        gh<_i1065.DeleteFinanceEntry>(),
+        gh<_i1008.RestoreFinanceEntry>(),
+        gh<_i137.FinanceRepository>(),
+      ),
+    );
     gh.lazySingleton<_i807.OnboardingCubit>(
       () => _i807.OnboardingCubit(
         gh<_i791.ResolveOnboardingStatus>(),
@@ -286,6 +305,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
         gh<_i333.GetThemeModePreference>(),
         gh<_i46.ChangeThemeMode>(),
+      ),
+    );
+    gh.factory<_i505.FinanceEntryFormCubit>(
+      () => _i505.FinanceEntryFormCubit(
+        gh<_i159.AddFinanceEntry>(),
+        gh<_i416.EditFinanceEntry>(),
+        gh<_i1.GetCategories>(),
+        gh<_i999.EgpFormatter>(),
       ),
     );
     gh.factory<_i668.PersonFormCubit>(
@@ -322,6 +349,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i305.OverviewCubit>(
       () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
+    );
+    gh.factory<_i1030.CategoryFormCubit>(
+      () => _i1030.CategoryFormCubit(
+        gh<_i24.CreateCategory>(),
+        gh<_i611.EditCategory>(),
+      ),
+    );
+    gh.factory<_i109.CategoryManagementCubit>(
+      () => _i109.CategoryManagementCubit(
+        gh<_i1.GetCategories>(),
+        gh<_i490.RemoveCategory>(),
+      ),
     );
     return this;
   }

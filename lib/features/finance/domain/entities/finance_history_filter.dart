@@ -37,9 +37,15 @@ class DateRange extends Equatable {
 
   /// The `end` day's last millisecond, so a `BETWEEN` bound includes every
   /// entry on the closing date rather than only ones stamped at midnight.
-  int get endMillis =>
-      DateTime(end.year, end.month, end.day, 23, 59, 59, 999)
-          .millisecondsSinceEpoch;
+  int get endMillis => DateTime(
+    end.year,
+    end.month,
+    end.day,
+    23,
+    59,
+    59,
+    999,
+  ).millisecondsSinceEpoch;
 
   bool contains(DateTime date) {
     final dayMillis = DateTime(

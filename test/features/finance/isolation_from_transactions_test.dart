@@ -87,79 +87,71 @@ void main() {
     };
   }
 
-  test(
-    'adding, editing, and deleting finance entries never moves a person '
-    'balance or an overview total (FR-023)',
-    () async {
-      final balancesBefore = await readBalances();
-      final overviewBefore = await readOverview();
+  test('adding, editing, and deleting finance entries never moves a person '
+      'balance or an overview total (FR-023)', () async {
+    final balancesBefore = await readBalances();
+    final overviewBefore = await readOverview();
 
-      final added = await finance.addEntry(
-        idempotencyKey: 'fin-1',
-        categoryId: 'seed_groceries',
-        type: FinanceEntryType.expense,
-        amountMinorUnits: 75000,
-        date: DateTime(2026, 9, 3),
-      );
-      final entry = added.getOrElse((f) => throw StateError(f.message));
+    final added = await finance.addEntry(
+      idempotencyKey: 'fin-1',
+      categoryId: 'seed_groceries',
+      type: FinanceEntryType.expense,
+      amountMinorUnits: 75000,
+      date: DateTime(2026, 9, 3),
+    );
+    final entry = added.getOrElse((f) => throw StateError(f.message));
 
-      await finance.addEntry(
-        idempotencyKey: 'fin-2',
-        categoryId: 'seed_salary',
-        type: FinanceEntryType.income,
-        amountMinorUnits: 900000,
-        date: DateTime(2026, 9, 4),
-      );
+    await finance.addEntry(
+      idempotencyKey: 'fin-2',
+      categoryId: 'seed_salary',
+      type: FinanceEntryType.income,
+      amountMinorUnits: 900000,
+      date: DateTime(2026, 9, 4),
+    );
 
-      expect(await readBalances(), balancesBefore);
-      expect(await readOverview(), overviewBefore);
+    expect(await readBalances(), balancesBefore);
+    expect(await readOverview(), overviewBefore);
 
-      await finance.editEntry(
-        entryId: entry.id,
-        categoryId: 'seed_rent',
-        amountMinorUnits: 120000,
-        date: DateTime(2026, 9, 5),
-      );
-      expect(await readBalances(), balancesBefore);
-      expect(await readOverview(), overviewBefore);
+    await finance.editEntry(
+      entryId: entry.id,
+      categoryId: 'seed_rent',
+      amountMinorUnits: 120000,
+      date: DateTime(2026, 9, 5),
+    );
+    expect(await readBalances(), balancesBefore);
+    expect(await readOverview(), overviewBefore);
 
-      await finance.deleteEntry(entry.id);
-      expect(await readBalances(), balancesBefore);
-      expect(await readOverview(), overviewBefore);
+    await finance.deleteEntry(entry.id);
+    expect(await readBalances(), balancesBefore);
+    expect(await readOverview(), overviewBefore);
 
-      await finance.restoreEntry(entry.id);
-      expect(await readBalances(), balancesBefore);
-      expect(await readOverview(), overviewBefore);
-    },
-  );
+    await finance.restoreEntry(entry.id);
+    expect(await readBalances(), balancesBefore);
+    expect(await readOverview(), overviewBefore);
+  });
 
-  test(
-    'transaction activity never leaks into a finance summary or breakdown '
-    '(FR-023, the same boundary from the other side)',
-    () async {
-      final period = DateRange(
-        start: DateTime(2026, 9, 1),
-        end: DateTime(2026, 9, 30),
-      );
+  test('transaction activity never leaks into a finance summary or breakdown '
+      '(FR-023, the same boundary from the other side)', () async {
+    final period = DateRange(
+      start: DateTime(2026, 9, 1),
+      end: DateTime(2026, 9, 30),
+    );
 
-      final emptySummary = await finance.getSummary(period);
-      final summary = emptySummary.getOrElse(
-        (f) => throw StateError(f.message),
-      );
-      expect(
-        summary.totalExpense.minorUnits,
-        0,
-        reason: 'two MoneyTransactions exist, but no FinanceEntries do',
-      );
-      expect(summary.totalIncome.minorUnits, 0);
+    final emptySummary = await finance.getSummary(period);
+    final summary = emptySummary.getOrElse((f) => throw StateError(f.message));
+    expect(
+      summary.totalExpense.minorUnits,
+      0,
+      reason: 'two MoneyTransactions exist, but no FinanceEntries do',
+    );
+    expect(summary.totalIncome.minorUnits, 0);
 
-      final breakdown = await finance.getCategoryBreakdown(period);
-      expect(breakdown.getOrElse((f) => throw StateError(f.message)), isEmpty);
+    final breakdown = await finance.getCategoryBreakdown(period);
+    expect(breakdown.getOrElse((f) => throw StateError(f.message)), isEmpty);
 
-      final history = await finance.getHistory();
-      expect(history.getOrElse((f) => throw StateError(f.message)), isEmpty);
-    },
-  );
+    final history = await finance.getHistory();
+    expect(history.getOrElse((f) => throw StateError(f.message)), isEmpty);
+  });
 
   test('no finance query names the people or money_transactions tables', () {
     // The behavioral assertions above prove the totals stay separate; this
@@ -176,8 +168,12 @@ void main() {
 
     final sources = [
       code('lib/features/finance/data/datasources/finance_dao.dart'),
-      code('lib/features/finance/data/repositories/finance_repository_impl.dart'),
-      code('lib/features/finance/data/repositories/category_repository_impl.dart'),
+      code(
+        'lib/features/finance/data/repositories/finance_repository_impl.dart',
+      ),
+      code(
+        'lib/features/finance/data/repositories/category_repository_impl.dart',
+      ),
     ];
 
     for (final source in sources) {

@@ -136,6 +136,19 @@ class FinanceRepositoryImpl implements FinanceRepository {
   }
 
   @override
+  Future<Either<Failure, FinanceEntry>> getEntryById(String entryId) async {
+    try {
+      final row = await _dao.getEntryById(entryId);
+      if (row == null) {
+        return const Left(NotFoundFailure('Entry not found'));
+      }
+      return Right(row.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to load entry: $e'));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<FinanceEntry>>> getHistory({
     FinanceHistoryFilter? filter,
     int limit = 50,

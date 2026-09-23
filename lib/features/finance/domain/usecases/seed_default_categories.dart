@@ -30,10 +30,7 @@ class SeedDefaultCategories {
     }
     final incomes = await _repository.getCategories(type: CategoryType.income);
     return incomes.map(
-      (incomeList) => [
-        ...expenses.getOrElse((_) => const []),
-        ...incomeList,
-      ],
+      (incomeList) => [...expenses.getOrElse((_) => const []), ...incomeList],
     );
   }
 }

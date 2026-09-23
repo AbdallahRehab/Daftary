@@ -77,12 +77,13 @@ class FinanceDao {
   }
 
   Future<void> softDeleteEntry(String id, DateTime deletedAt) {
-    return (_db.update(_db.financeEntries)..where((t) => t.id.equals(id)))
-        .write(
-          db.FinanceEntriesCompanion(
-            deletedAt: db.Value(deletedAt.millisecondsSinceEpoch),
-          ),
-        );
+    return (_db.update(
+      _db.financeEntries,
+    )..where((t) => t.id.equals(id))).write(
+      db.FinanceEntriesCompanion(
+        deletedAt: db.Value(deletedAt.millisecondsSinceEpoch),
+      ),
+    );
   }
 
   /// Un-sets the soft-delete tombstone (research.md Decision 8's undo).
@@ -123,8 +124,10 @@ class FinanceDao {
     query
       ..orderBy([
         (t) => db.OrderingTerm(expression: t.date, mode: db.OrderingMode.desc),
-        (t) =>
-            db.OrderingTerm(expression: t.createdAt, mode: db.OrderingMode.desc),
+        (t) => db.OrderingTerm(
+          expression: t.createdAt,
+          mode: db.OrderingMode.desc,
+        ),
       ])
       ..limit(limit, offset: offset);
 
@@ -185,7 +188,9 @@ class FinanceDao {
     query
       ..where(predicate)
       ..groupBy([_db.financeEntries.categoryId])
-      ..orderBy([db.OrderingTerm(expression: total, mode: db.OrderingMode.desc)]);
+      ..orderBy([
+        db.OrderingTerm(expression: total, mode: db.OrderingMode.desc),
+      ]);
 
     final rows = await query.get();
     return [
@@ -275,13 +280,14 @@ class FinanceDao {
   }
 
   Future<void> archiveCategory(String id, DateTime updatedAt) {
-    return (_db.update(_db.financeCategories)..where((t) => t.id.equals(id)))
-        .write(
-          db.FinanceCategoriesCompanion(
-            isArchived: const db.Value(true),
-            updatedAt: db.Value(updatedAt.millisecondsSinceEpoch),
-          ),
-        );
+    return (_db.update(
+      _db.financeCategories,
+    )..where((t) => t.id.equals(id))).write(
+      db.FinanceCategoriesCompanion(
+        isArchived: const db.Value(true),
+        updatedAt: db.Value(updatedAt.millisecondsSinceEpoch),
+      ),
+    );
   }
 
   Future<void> deleteCategory(String id) {

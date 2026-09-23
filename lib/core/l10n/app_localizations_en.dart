@@ -350,4 +350,242 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingSkipAction => 'Skip';
+
+  @override
+  String get financeTitle => 'Income & expenses';
+
+  @override
+  String get financeOverviewCardTitle => 'This month';
+
+  @override
+  String get financeAddExpenseAction => 'Add expense';
+
+  @override
+  String get financeAddIncomeAction => 'Add income';
+
+  @override
+  String get financeAddFirstEntryAction => 'Add your first entry';
+
+  @override
+  String get financeViewAllAction => 'View all';
+
+  @override
+  String get financeEntryFormExpenseTitle => 'Add expense';
+
+  @override
+  String get financeEntryFormIncomeTitle => 'Add income';
+
+  @override
+  String get financeEntryFormEditTitle => 'Edit entry';
+
+  @override
+  String get financeTypeExpense => 'Expense';
+
+  @override
+  String get financeTypeIncome => 'Income';
+
+  @override
+  String get financeCategoryLabel => 'Category';
+
+  @override
+  String get financeCategoryRequiredError => 'Choose a category';
+
+  @override
+  String get financeManageCategoriesAction => 'Manage categories';
+
+  @override
+  String get financeNoCategoriesTitle => 'No categories yet';
+
+  @override
+  String get financeNoCategoriesMessage =>
+      'Create a category to start recording entries.';
+
+  @override
+  String get financeCategoryManagementTitle => 'Categories';
+
+  @override
+  String get financeCategoryFormCreateTitle => 'New category';
+
+  @override
+  String get financeCategoryFormEditTitle => 'Edit category';
+
+  @override
+  String get financeCategoryNameLabel => 'Category name';
+
+  @override
+  String get financeCategoryNameRequiredError => 'Category name is required';
+
+  @override
+  String get financeCategoryIconLabel => 'Icon';
+
+  @override
+  String get financeCategoryIconRequiredError => 'Choose an icon';
+
+  @override
+  String get financeCategoryTypeLabel => 'Type';
+
+  @override
+  String financeCategoryDuplicateError(String name) {
+    return 'You already have a category named \"$name\".';
+  }
+
+  @override
+  String get financeCategorySectionActive => 'Active';
+
+  @override
+  String get financeCategorySectionArchived => 'Archived';
+
+  @override
+  String get financeAddCategoryAction => 'Add category';
+
+  @override
+  String get financeRemoveCategoryAction => 'Remove category';
+
+  @override
+  String get financeRemoveCategoryConfirmTitle => 'Remove this category?';
+
+  @override
+  String get financeRemoveCategoryConfirmMessage =>
+      'If any entries use this category, it will be archived so their history stays intact. Otherwise it will be deleted.';
+
+  @override
+  String get financeCategoryArchivedNotice =>
+      'Archived — hidden from new entries, kept for existing ones.';
+
+  @override
+  String get financePeriodThisMonth => 'This month';
+
+  @override
+  String get financePeriodLastMonth => 'Last month';
+
+  @override
+  String get financePeriodCustom => 'Custom range';
+
+  @override
+  String get financePeriodStartLabel => 'From';
+
+  @override
+  String get financePeriodEndLabel => 'To';
+
+  @override
+  String get financeSummaryTotalIncome => 'Total income';
+
+  @override
+  String get financeSummaryTotalExpense => 'Total expenses';
+
+  @override
+  String get financeSummaryNet => 'Net';
+
+  @override
+  String get financeBreakdownTitle => 'By category';
+
+  @override
+  String financeBreakdownShare(String percent) {
+    return '$percent% of total';
+  }
+
+  @override
+  String get financeHistoryTitle => 'History';
+
+  @override
+  String get financeFilterTypeLabel => 'Type';
+
+  @override
+  String get financeFilterCategoryLabel => 'Category';
+
+  @override
+  String get financeClearFiltersAction => 'Clear filters';
+
+  @override
+  String get financeEmptyTitle => 'No entries yet';
+
+  @override
+  String get financeEmptyMessage =>
+      'Record your income and spending to see where your money goes.';
+
+  @override
+  String get financeNoMatchTitle => 'No matching entries';
+
+  @override
+  String get financeNoMatchMessage =>
+      'No entries match the filters you picked. Try a different period or category.';
+
+  @override
+  String get financeDeleteEntryConfirmTitle => 'Delete this entry?';
+
+  @override
+  String get financeDeleteEntryConfirmMessage =>
+      'Your totals will update right away. You can undo this for a few seconds.';
+
+  @override
+  String get financeEntryDeletedMessage => 'Entry deleted';
+
+  @override
+  String get financeUndoAction => 'Undo';
+
+  @override
+  String get financeCategoryRent => 'Rent';
+
+  @override
+  String get financeCategoryElectricity => 'Electricity';
+
+  @override
+  String get financeCategoryWater => 'Water';
+
+  @override
+  String get financeCategoryInternet => 'Internet';
+
+  @override
+  String get financeCategoryPhone => 'Phone';
+
+  @override
+  String get financeCategoryGroceries => 'Groceries';
+
+  @override
+  String get financeCategoryTransportation => 'Transportation';
+
+  @override
+  String get financeCategoryFuel => 'Fuel';
+
+  @override
+  String get financeCategoryMedical => 'Medical';
+
+  @override
+  String get financeCategoryEducation => 'Education';
+
+  @override
+  String get financeCategoryEntertainment => 'Entertainment';
+
+  @override
+  String get financeCategoryShopping => 'Shopping';
+
+  @override
+  String get financeCategoryRestaurants => 'Restaurants';
+
+  @override
+  String get financeCategorySubscriptions => 'Subscriptions';
+
+  @override
+  String get financeCategoryFamily => 'Family';
+
+  @override
+  String get financeCategoryOther => 'Other';
+
+  @override
+  String get financeCategorySalary => 'Salary';
+
+  @override
+  String get financeCategoryFreelance => 'Freelance';
+
+  @override
+  String get financeCategoryBusiness => 'Business';
+
+  @override
+  String get financeCategoryBonus => 'Bonus';
+
+  @override
+  String get financeCategoryGift => 'Gift';
+
+  @override
+  String get financeCategoryOtherIncome => 'Other income';
 }

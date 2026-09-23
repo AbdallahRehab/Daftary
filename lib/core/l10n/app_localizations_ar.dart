@@ -351,4 +351,240 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingSkipAction => 'تخطي';
+
+  @override
+  String get financeTitle => 'الدخل والمصروفات';
+
+  @override
+  String get financeOverviewCardTitle => 'هذا الشهر';
+
+  @override
+  String get financeAddExpenseAction => 'إضافة مصروف';
+
+  @override
+  String get financeAddIncomeAction => 'إضافة دخل';
+
+  @override
+  String get financeAddFirstEntryAction => 'أضف أول سجل';
+
+  @override
+  String get financeViewAllAction => 'عرض الكل';
+
+  @override
+  String get financeEntryFormExpenseTitle => 'إضافة مصروف';
+
+  @override
+  String get financeEntryFormIncomeTitle => 'إضافة دخل';
+
+  @override
+  String get financeEntryFormEditTitle => 'تعديل السجل';
+
+  @override
+  String get financeTypeExpense => 'مصروف';
+
+  @override
+  String get financeTypeIncome => 'دخل';
+
+  @override
+  String get financeCategoryLabel => 'الفئة';
+
+  @override
+  String get financeCategoryRequiredError => 'اختر فئة';
+
+  @override
+  String get financeManageCategoriesAction => 'إدارة الفئات';
+
+  @override
+  String get financeNoCategoriesTitle => 'لا توجد فئات بعد';
+
+  @override
+  String get financeNoCategoriesMessage => 'أنشئ فئة لتبدأ تسجيل مدخلاتك.';
+
+  @override
+  String get financeCategoryManagementTitle => 'الفئات';
+
+  @override
+  String get financeCategoryFormCreateTitle => 'فئة جديدة';
+
+  @override
+  String get financeCategoryFormEditTitle => 'تعديل الفئة';
+
+  @override
+  String get financeCategoryNameLabel => 'اسم الفئة';
+
+  @override
+  String get financeCategoryNameRequiredError => 'اسم الفئة مطلوب';
+
+  @override
+  String get financeCategoryIconLabel => 'الأيقونة';
+
+  @override
+  String get financeCategoryIconRequiredError => 'اختر أيقونة';
+
+  @override
+  String get financeCategoryTypeLabel => 'النوع';
+
+  @override
+  String financeCategoryDuplicateError(String name) {
+    return 'لديك بالفعل فئة باسم \"$name\".';
+  }
+
+  @override
+  String get financeCategorySectionActive => 'نشطة';
+
+  @override
+  String get financeCategorySectionArchived => 'مؤرشفة';
+
+  @override
+  String get financeAddCategoryAction => 'إضافة فئة';
+
+  @override
+  String get financeRemoveCategoryAction => 'إزالة الفئة';
+
+  @override
+  String get financeRemoveCategoryConfirmTitle => 'إزالة هذه الفئة؟';
+
+  @override
+  String get financeRemoveCategoryConfirmMessage =>
+      'إذا كانت هناك أي مدخلات تستخدم هذه الفئة، فسيتم أرشفتها للحفاظ على سجلّها. وإلا فسيتم حذفها.';
+
+  @override
+  String get financeCategoryArchivedNotice =>
+      'مؤرشفة — مخفية عن المدخلات الجديدة، ومحفوظة للمدخلات الحالية.';
+
+  @override
+  String get financePeriodThisMonth => 'هذا الشهر';
+
+  @override
+  String get financePeriodLastMonth => 'الشهر الماضي';
+
+  @override
+  String get financePeriodCustom => 'نطاق مخصص';
+
+  @override
+  String get financePeriodStartLabel => 'من';
+
+  @override
+  String get financePeriodEndLabel => 'إلى';
+
+  @override
+  String get financeSummaryTotalIncome => 'إجمالي الدخل';
+
+  @override
+  String get financeSummaryTotalExpense => 'إجمالي المصروفات';
+
+  @override
+  String get financeSummaryNet => 'الصافي';
+
+  @override
+  String get financeBreakdownTitle => 'حسب الفئة';
+
+  @override
+  String financeBreakdownShare(String percent) {
+    return '$percent٪ من الإجمالي';
+  }
+
+  @override
+  String get financeHistoryTitle => 'السجل';
+
+  @override
+  String get financeFilterTypeLabel => 'النوع';
+
+  @override
+  String get financeFilterCategoryLabel => 'الفئة';
+
+  @override
+  String get financeClearFiltersAction => 'مسح عوامل التصفية';
+
+  @override
+  String get financeEmptyTitle => 'لا توجد مدخلات بعد';
+
+  @override
+  String get financeEmptyMessage => 'سجّل دخلك ومصروفاتك لترى أين تذهب أموالك.';
+
+  @override
+  String get financeNoMatchTitle => 'لا توجد مدخلات مطابقة';
+
+  @override
+  String get financeNoMatchMessage =>
+      'لا توجد مدخلات تطابق عوامل التصفية التي اخترتها. جرّب فترة أو فئة مختلفة.';
+
+  @override
+  String get financeDeleteEntryConfirmTitle => 'حذف هذا السجل؟';
+
+  @override
+  String get financeDeleteEntryConfirmMessage =>
+      'سيتم تحديث إجمالياتك فورًا. يمكنك التراجع خلال ثوانٍ قليلة.';
+
+  @override
+  String get financeEntryDeletedMessage => 'تم حذف السجل';
+
+  @override
+  String get financeUndoAction => 'تراجع';
+
+  @override
+  String get financeCategoryRent => 'الإيجار';
+
+  @override
+  String get financeCategoryElectricity => 'الكهرباء';
+
+  @override
+  String get financeCategoryWater => 'المياه';
+
+  @override
+  String get financeCategoryInternet => 'الإنترنت';
+
+  @override
+  String get financeCategoryPhone => 'الهاتف';
+
+  @override
+  String get financeCategoryGroceries => 'البقالة';
+
+  @override
+  String get financeCategoryTransportation => 'المواصلات';
+
+  @override
+  String get financeCategoryFuel => 'الوقود';
+
+  @override
+  String get financeCategoryMedical => 'الرعاية الصحية';
+
+  @override
+  String get financeCategoryEducation => 'التعليم';
+
+  @override
+  String get financeCategoryEntertainment => 'الترفيه';
+
+  @override
+  String get financeCategoryShopping => 'التسوق';
+
+  @override
+  String get financeCategoryRestaurants => 'المطاعم';
+
+  @override
+  String get financeCategorySubscriptions => 'الاشتراكات';
+
+  @override
+  String get financeCategoryFamily => 'الأسرة';
+
+  @override
+  String get financeCategoryOther => 'أخرى';
+
+  @override
+  String get financeCategorySalary => 'الراتب';
+
+  @override
+  String get financeCategoryFreelance => 'العمل الحر';
+
+  @override
+  String get financeCategoryBusiness => 'الأعمال';
+
+  @override
+  String get financeCategoryBonus => 'المكافأة';
+
+  @override
+  String get financeCategoryGift => 'هدية';
+
+  @override
+  String get financeCategoryOtherIncome => 'دخل آخر';
 }

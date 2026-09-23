@@ -739,6 +739,462 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip'**
   String get onboardingSkipAction;
+
+  /// No description provided for @financeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income & expenses'**
+  String get financeTitle;
+
+  /// No description provided for @financeOverviewCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get financeOverviewCardTitle;
+
+  /// No description provided for @financeAddExpenseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get financeAddExpenseAction;
+
+  /// No description provided for @financeAddIncomeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income'**
+  String get financeAddIncomeAction;
+
+  /// No description provided for @financeAddFirstEntryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first entry'**
+  String get financeAddFirstEntryAction;
+
+  /// No description provided for @financeViewAllAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View all'**
+  String get financeViewAllAction;
+
+  /// No description provided for @financeEntryFormExpenseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get financeEntryFormExpenseTitle;
+
+  /// No description provided for @financeEntryFormIncomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income'**
+  String get financeEntryFormIncomeTitle;
+
+  /// No description provided for @financeEntryFormEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit entry'**
+  String get financeEntryFormEditTitle;
+
+  /// No description provided for @financeTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get financeTypeExpense;
+
+  /// No description provided for @financeTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get financeTypeIncome;
+
+  /// No description provided for @financeCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get financeCategoryLabel;
+
+  /// No description provided for @financeCategoryRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get financeCategoryRequiredError;
+
+  /// No description provided for @financeManageCategoriesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage categories'**
+  String get financeManageCategoriesAction;
+
+  /// No description provided for @financeNoCategoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet'**
+  String get financeNoCategoriesTitle;
+
+  /// No description provided for @financeNoCategoriesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a category to start recording entries.'**
+  String get financeNoCategoriesMessage;
+
+  /// No description provided for @financeCategoryManagementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get financeCategoryManagementTitle;
+
+  /// No description provided for @financeCategoryFormCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get financeCategoryFormCreateTitle;
+
+  /// No description provided for @financeCategoryFormEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit category'**
+  String get financeCategoryFormEditTitle;
+
+  /// No description provided for @financeCategoryNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name'**
+  String get financeCategoryNameLabel;
+
+  /// No description provided for @financeCategoryNameRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Category name is required'**
+  String get financeCategoryNameRequiredError;
+
+  /// No description provided for @financeCategoryIconLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon'**
+  String get financeCategoryIconLabel;
+
+  /// No description provided for @financeCategoryIconRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an icon'**
+  String get financeCategoryIconRequiredError;
+
+  /// No description provided for @financeCategoryTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get financeCategoryTypeLabel;
+
+  /// No description provided for @financeCategoryDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a category named \"{name}\".'**
+  String financeCategoryDuplicateError(String name);
+
+  /// No description provided for @financeCategorySectionActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get financeCategorySectionActive;
+
+  /// No description provided for @financeCategorySectionArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get financeCategorySectionArchived;
+
+  /// No description provided for @financeAddCategoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get financeAddCategoryAction;
+
+  /// No description provided for @financeRemoveCategoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove category'**
+  String get financeRemoveCategoryAction;
+
+  /// No description provided for @financeRemoveCategoryConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this category?'**
+  String get financeRemoveCategoryConfirmTitle;
+
+  /// No description provided for @financeRemoveCategoryConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'If any entries use this category, it will be archived so their history stays intact. Otherwise it will be deleted.'**
+  String get financeRemoveCategoryConfirmMessage;
+
+  /// No description provided for @financeCategoryArchivedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived — hidden from new entries, kept for existing ones.'**
+  String get financeCategoryArchivedNotice;
+
+  /// No description provided for @financePeriodThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get financePeriodThisMonth;
+
+  /// No description provided for @financePeriodLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get financePeriodLastMonth;
+
+  /// No description provided for @financePeriodCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom range'**
+  String get financePeriodCustom;
+
+  /// No description provided for @financePeriodStartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get financePeriodStartLabel;
+
+  /// No description provided for @financePeriodEndLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get financePeriodEndLabel;
+
+  /// No description provided for @financeSummaryTotalIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Total income'**
+  String get financeSummaryTotalIncome;
+
+  /// No description provided for @financeSummaryTotalExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Total expenses'**
+  String get financeSummaryTotalExpense;
+
+  /// No description provided for @financeSummaryNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get financeSummaryNet;
+
+  /// No description provided for @financeBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'By category'**
+  String get financeBreakdownTitle;
+
+  /// No description provided for @financeBreakdownShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of total'**
+  String financeBreakdownShare(String percent);
+
+  /// No description provided for @financeHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get financeHistoryTitle;
+
+  /// No description provided for @financeFilterTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get financeFilterTypeLabel;
+
+  /// No description provided for @financeFilterCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get financeFilterCategoryLabel;
+
+  /// No description provided for @financeClearFiltersAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get financeClearFiltersAction;
+
+  /// No description provided for @financeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries yet'**
+  String get financeEmptyTitle;
+
+  /// No description provided for @financeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your income and spending to see where your money goes.'**
+  String get financeEmptyMessage;
+
+  /// No description provided for @financeNoMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching entries'**
+  String get financeNoMatchTitle;
+
+  /// No description provided for @financeNoMatchMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries match the filters you picked. Try a different period or category.'**
+  String get financeNoMatchMessage;
+
+  /// No description provided for @financeDeleteEntryConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry?'**
+  String get financeDeleteEntryConfirmTitle;
+
+  /// No description provided for @financeDeleteEntryConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your totals will update right away. You can undo this for a few seconds.'**
+  String get financeDeleteEntryConfirmMessage;
+
+  /// No description provided for @financeEntryDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry deleted'**
+  String get financeEntryDeletedMessage;
+
+  /// No description provided for @financeUndoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get financeUndoAction;
+
+  /// No description provided for @financeCategoryRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get financeCategoryRent;
+
+  /// No description provided for @financeCategoryElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity'**
+  String get financeCategoryElectricity;
+
+  /// No description provided for @financeCategoryWater.
+  ///
+  /// In en, this message translates to:
+  /// **'Water'**
+  String get financeCategoryWater;
+
+  /// No description provided for @financeCategoryInternet.
+  ///
+  /// In en, this message translates to:
+  /// **'Internet'**
+  String get financeCategoryInternet;
+
+  /// No description provided for @financeCategoryPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get financeCategoryPhone;
+
+  /// No description provided for @financeCategoryGroceries.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get financeCategoryGroceries;
+
+  /// No description provided for @financeCategoryTransportation.
+  ///
+  /// In en, this message translates to:
+  /// **'Transportation'**
+  String get financeCategoryTransportation;
+
+  /// No description provided for @financeCategoryFuel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel'**
+  String get financeCategoryFuel;
+
+  /// No description provided for @financeCategoryMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical'**
+  String get financeCategoryMedical;
+
+  /// No description provided for @financeCategoryEducation.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get financeCategoryEducation;
+
+  /// No description provided for @financeCategoryEntertainment.
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get financeCategoryEntertainment;
+
+  /// No description provided for @financeCategoryShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get financeCategoryShopping;
+
+  /// No description provided for @financeCategoryRestaurants.
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get financeCategoryRestaurants;
+
+  /// No description provided for @financeCategorySubscriptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get financeCategorySubscriptions;
+
+  /// No description provided for @financeCategoryFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get financeCategoryFamily;
+
+  /// No description provided for @financeCategoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get financeCategoryOther;
+
+  /// No description provided for @financeCategorySalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get financeCategorySalary;
+
+  /// No description provided for @financeCategoryFreelance.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelance'**
+  String get financeCategoryFreelance;
+
+  /// No description provided for @financeCategoryBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get financeCategoryBusiness;
+
+  /// No description provided for @financeCategoryBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get financeCategoryBonus;
+
+  /// No description provided for @financeCategoryGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get financeCategoryGift;
+
+  /// No description provided for @financeCategoryOtherIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Other income'**
+  String get financeCategoryOtherIncome;
 }
 
 class _AppLocalizationsDelegate

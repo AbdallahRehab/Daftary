@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/finance/data/datasources/finance_dao.dart' as _i443;
@@ -51,6 +52,43 @@ import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
     as _i987;
 import '../../features/finance/presentation/cubit/finance_month_summary_cubit.dart'
     as _i231;
+import '../../features/occasions/data/datasources/occasions_dao.dart' as _i791;
+import '../../features/occasions/data/repositories/occasions_repository_impl.dart'
+    as _i454;
+import '../../features/occasions/domain/repositories/occasions_repository.dart'
+    as _i72;
+import '../../features/occasions/domain/usecases/add_occasion_attachment.dart'
+    as _i247;
+import '../../features/occasions/domain/usecases/add_participant_contribution.dart'
+    as _i415;
+import '../../features/occasions/domain/usecases/archive_occasion.dart'
+    as _i847;
+import '../../features/occasions/domain/usecases/create_occasion.dart' as _i905;
+import '../../features/occasions/domain/usecases/delete_occasion.dart'
+    as _i1046;
+import '../../features/occasions/domain/usecases/edit_occasion.dart' as _i712;
+import '../../features/occasions/domain/usecases/edit_participant_contribution.dart'
+    as _i152;
+import '../../features/occasions/domain/usecases/get_occasion_detail.dart'
+    as _i431;
+import '../../features/occasions/domain/usecases/get_occasions_list.dart'
+    as _i957;
+import '../../features/occasions/domain/usecases/remove_occasion_attachment.dart'
+    as _i191;
+import '../../features/occasions/domain/usecases/remove_participant_contribution.dart'
+    as _i192;
+import '../../features/occasions/domain/usecases/restore_occasion.dart'
+    as _i154;
+import '../../features/occasions/presentation/cubit/archived_occasions_cubit.dart'
+    as _i185;
+import '../../features/occasions/presentation/cubit/occasion_detail_cubit.dart'
+    as _i52;
+import '../../features/occasions/presentation/cubit/occasion_form_cubit.dart'
+    as _i13;
+import '../../features/occasions/presentation/cubit/occasions_list_cubit.dart'
+    as _i193;
+import '../../features/occasions/presentation/cubit/participant_form_cubit.dart'
+    as _i218;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -58,7 +96,7 @@ import '../../features/onboarding/data/repositories/onboarding_repository_impl.d
 import '../../features/onboarding/domain/repositories/onboarding_repository.dart'
     as _i430;
 import '../../features/onboarding/domain/usecases/resolve_onboarding_status.dart'
-    as _i791;
+    as _i792;
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart'
     as _i807;
 import '../../features/people/data/datasources/people_dao.dart' as _i735;
@@ -91,7 +129,7 @@ import '../../features/settings/domain/usecases/get_language_preference.dart'
 import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
     as _i333;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
-    as _i792;
+    as _i793;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
@@ -121,6 +159,8 @@ import '../../features/transactions/presentation/cubit/transaction_form_cubit.da
     as _i593;
 import '../database/app_database.dart' as _i982;
 import '../device/device_locale_provider.dart' as _i933;
+import '../media/attachment_picker_service.dart' as _i780;
+import '../media/attachment_picker_service_impl.dart' as _i157;
 import '../money/egp_formatter.dart' as _i999;
 import 'register_module.dart' as _i291;
 
@@ -137,11 +177,24 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
+    gh.lazySingleton<_i183.ImagePicker>(() => registerModule.imagePicker);
+    gh.lazySingleton<_i780.DocumentsDirectory>(
+      () => const _i780.DocumentsDirectory(),
+    );
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
     );
+    gh.lazySingleton<_i780.AttachmentPickerService>(
+      () => _i157.AttachmentPickerServiceImpl(
+        gh<_i183.ImagePicker>(),
+        gh<_i780.DocumentsDirectory>(),
+      ),
+    );
     gh.factory<_i443.FinanceDao>(
       () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i791.OccasionsDao>(
+      () => _i791.OccasionsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
@@ -178,8 +231,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
     );
-    gh.factory<_i791.ResolveOnboardingStatus>(
-      () => _i791.ResolveOnboardingStatus(
+    gh.factory<_i792.ResolveOnboardingStatus>(
+      () => _i792.ResolveOnboardingStatus(
         gh<_i430.OnboardingRepository>(),
         gh<_i646.PeopleRepository>(),
         gh<_i956.TransactionsRepository>(),
@@ -240,11 +293,28 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
+    gh.lazySingleton<_i72.OccasionsRepository>(
+      () => _i454.OccasionsRepositoryImpl(
+        gh<_i791.OccasionsDao>(),
+        gh<_i956.TransactionsRepository>(),
+        gh<_i646.PeopleRepository>(),
+        gh<_i982.AppDatabase>(),
+      ),
+    );
     gh.factory<_i1018.PersonListCubit>(
       () => _i1018.PersonListCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i750.GetPersonBalance>(),
         gh<_i221.ArchivePerson>(),
+      ),
+    );
+    gh.factory<_i992.PersonDetailCubit>(
+      () => _i992.PersonDetailCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i750.GetPersonBalance>(),
+        gh<_i610.GetPersonHistory>(),
+        gh<_i645.DeleteTransaction>(),
+        gh<_i956.TransactionsRepository>(),
       ),
     );
     gh.factory<_i24.CreateCategory>(
@@ -296,15 +366,51 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i807.OnboardingCubit>(
       () => _i807.OnboardingCubit(
-        gh<_i791.ResolveOnboardingStatus>(),
+        gh<_i792.ResolveOnboardingStatus>(),
         gh<_i430.OnboardingRepository>(),
       ),
+    );
+    gh.factory<_i247.AddOccasionAttachment>(
+      () => _i247.AddOccasionAttachment(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i415.AddParticipantContribution>(
+      () => _i415.AddParticipantContribution(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i847.ArchiveOccasion>(
+      () => _i847.ArchiveOccasion(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i905.CreateOccasion>(
+      () => _i905.CreateOccasion(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i1046.DeleteOccasion>(
+      () => _i1046.DeleteOccasion(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i712.EditOccasion>(
+      () => _i712.EditOccasion(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i152.EditParticipantContribution>(
+      () => _i152.EditParticipantContribution(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i431.GetOccasionDetail>(
+      () => _i431.GetOccasionDetail(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i957.GetOccasionsList>(
+      () => _i957.GetOccasionsList(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i191.RemoveOccasionAttachment>(
+      () => _i191.RemoveOccasionAttachment(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i192.RemoveParticipantContribution>(
+      () => _i192.RemoveParticipantContribution(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i154.RestoreOccasion>(
+      () => _i154.RestoreOccasion(gh<_i72.OccasionsRepository>()),
     );
     gh.factory<_i231.FinanceMonthSummaryCubit>(
       () => _i231.FinanceMonthSummaryCubit(gh<_i844.GetFinanceSummary>()),
     );
-    gh.lazySingleton<_i792.SettingsCubit>(
-      () => _i792.SettingsCubit(
+    gh.lazySingleton<_i793.SettingsCubit>(
+      () => _i793.SettingsCubit(
         gh<_i1032.GetLanguagePreference>(),
         gh<_i90.ChangeLanguage>(),
         gh<_i933.DeviceLocaleProvider>(),
@@ -329,6 +435,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i907.DeletePerson>(),
       ),
     );
+    gh.factory<_i218.ParticipantFormCubit>(
+      () => _i218.ParticipantFormCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i789.CreatePerson>(),
+        gh<_i415.AddParticipantContribution>(),
+        gh<_i152.EditParticipantContribution>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
     gh.factory<_i593.TransactionFormCubit>(
       () => _i593.TransactionFormCubit(
         gh<_i646.PeopleRepository>(),
@@ -338,22 +453,32 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.factory<_i52.OccasionDetailCubit>(
+      () => _i52.OccasionDetailCubit(
+        gh<_i431.GetOccasionDetail>(),
+        gh<_i192.RemoveParticipantContribution>(),
+        gh<_i247.AddOccasionAttachment>(),
+        gh<_i191.RemoveOccasionAttachment>(),
+        gh<_i847.ArchiveOccasion>(),
+        gh<_i154.RestoreOccasion>(),
+        gh<_i1046.DeleteOccasion>(),
+        gh<_i780.AttachmentPickerService>(),
+      ),
+    );
     gh.factory<_i62.ArchivedPeopleCubit>(
       () => _i62.ArchivedPeopleCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i49.RestorePerson>(),
       ),
     );
-    gh.factory<_i992.PersonDetailCubit>(
-      () => _i992.PersonDetailCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i750.GetPersonBalance>(),
-        gh<_i610.GetPersonHistory>(),
-        gh<_i645.DeleteTransaction>(),
-      ),
-    );
     gh.factory<_i305.OverviewCubit>(
       () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
+    );
+    gh.factory<_i185.ArchivedOccasionsCubit>(
+      () => _i185.ArchivedOccasionsCubit(
+        gh<_i957.GetOccasionsList>(),
+        gh<_i154.RestoreOccasion>(),
+      ),
     );
     gh.factory<_i1030.CategoryFormCubit>(
       () => _i1030.CategoryFormCubit(
@@ -361,11 +486,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i611.EditCategory>(),
       ),
     );
+    gh.factory<_i13.OccasionFormCubit>(
+      () => _i13.OccasionFormCubit(
+        gh<_i905.CreateOccasion>(),
+        gh<_i712.EditOccasion>(),
+      ),
+    );
     gh.factory<_i109.CategoryManagementCubit>(
       () => _i109.CategoryManagementCubit(
         gh<_i1.GetCategories>(),
         gh<_i490.RemoveCategory>(),
       ),
+    );
+    gh.factory<_i193.OccasionsListCubit>(
+      () => _i193.OccasionsListCubit(gh<_i957.GetOccasionsList>()),
     );
     return this;
   }

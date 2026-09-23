@@ -632,6 +632,621 @@ class PeopleCompanion extends UpdateCompanion<PeopleData> {
   }
 }
 
+class $OccasionsTable extends Occasions
+    with TableInfo<$OccasionsTable, Occasion> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OccasionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    name,
+    date,
+    type,
+    notes,
+    isArchived,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'occasions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Occasion> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Occasion map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Occasion(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OccasionsTable createAlias(String alias) {
+    return $OccasionsTable(attachedDatabase, alias);
+  }
+}
+
+class Occasion extends DataClass implements Insertable<Occasion> {
+  final String id;
+  final String idempotencyKey;
+  final String name;
+
+  /// Epoch millis, date-only. May be in the future (pre-planned occasions).
+  final int date;
+
+  /// A standard `OccasionType` value or free text, same open-set pattern as
+  /// [People.relationshipTag] (008 research.md Decision 6).
+  final String type;
+  final String? notes;
+  final bool isArchived;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const Occasion({
+    required this.id,
+    required this.idempotencyKey,
+    required this.name,
+    required this.date,
+    required this.type,
+    this.notes,
+    required this.isArchived,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['name'] = Variable<String>(name);
+    map['date'] = Variable<int>(date);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['is_archived'] = Variable<bool>(isArchived);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OccasionsCompanion toCompanion(bool nullToAbsent) {
+    return OccasionsCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      name: Value(name),
+      date: Value(date),
+      type: Value(type),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      isArchived: Value(isArchived),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory Occasion.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Occasion(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      name: serializer.fromJson<String>(json['name']),
+      date: serializer.fromJson<int>(json['date']),
+      type: serializer.fromJson<String>(json['type']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'name': serializer.toJson<String>(name),
+      'date': serializer.toJson<int>(date),
+      'type': serializer.toJson<String>(type),
+      'notes': serializer.toJson<String?>(notes),
+      'isArchived': serializer.toJson<bool>(isArchived),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  Occasion copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? name,
+    int? date,
+    String? type,
+    Value<String?> notes = const Value.absent(),
+    bool? isArchived,
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => Occasion(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    name: name ?? this.name,
+    date: date ?? this.date,
+    type: type ?? this.type,
+    notes: notes.present ? notes.value : this.notes,
+    isArchived: isArchived ?? this.isArchived,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  Occasion copyWithCompanion(OccasionsCompanion data) {
+    return Occasion(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      name: data.name.present ? data.name.value : this.name,
+      date: data.date.present ? data.date.value : this.date,
+      type: data.type.present ? data.type.value : this.type,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Occasion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('name: $name, ')
+          ..write('date: $date, ')
+          ..write('type: $type, ')
+          ..write('notes: $notes, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    name,
+    date,
+    type,
+    notes,
+    isArchived,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Occasion &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.name == this.name &&
+          other.date == this.date &&
+          other.type == this.type &&
+          other.notes == this.notes &&
+          other.isArchived == this.isArchived &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OccasionsCompanion extends UpdateCompanion<Occasion> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> name;
+  final Value<int> date;
+  final Value<String> type;
+  final Value<String?> notes;
+  final Value<bool> isArchived;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OccasionsCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.name = const Value.absent(),
+    this.date = const Value.absent(),
+    this.type = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OccasionsCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String name,
+    required int date,
+    required String type,
+    this.notes = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       name = Value(name),
+       date = Value(date),
+       type = Value(type),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<Occasion> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? name,
+    Expression<int>? date,
+    Expression<String>? type,
+    Expression<String>? notes,
+    Expression<bool>? isArchived,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (name != null) 'name': name,
+      if (date != null) 'date': date,
+      if (type != null) 'type': type,
+      if (notes != null) 'notes': notes,
+      if (isArchived != null) 'is_archived': isArchived,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OccasionsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? name,
+    Value<int>? date,
+    Value<String>? type,
+    Value<String?>? notes,
+    Value<bool>? isArchived,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OccasionsCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      name: name ?? this.name,
+      date: date ?? this.date,
+      type: type ?? this.type,
+      notes: notes ?? this.notes,
+      isArchived: isArchived ?? this.isArchived,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionsCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('name: $name, ')
+          ..write('date: $date, ')
+          ..write('type: $type, ')
+          ..write('notes: $notes, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MoneyTransactionsTable extends MoneyTransactions
     with TableInfo<$MoneyTransactionsTable, MoneyTransaction> {
   @override
@@ -722,6 +1337,34 @@ class $MoneyTransactionsTable extends MoneyTransactions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _countsTowardBalanceMeta =
+      const VerificationMeta('countsTowardBalance');
+  @override
+  late final GeneratedColumn<bool> countsTowardBalance = GeneratedColumn<bool>(
+    'counts_toward_balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("counts_toward_balance" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -765,6 +1408,8 @@ class $MoneyTransactionsTable extends MoneyTransactions
     kind,
     date,
     note,
+    occasionId,
+    countsTowardBalance,
     createdAt,
     editedAt,
     deletedAt,
@@ -846,6 +1491,21 @@ class $MoneyTransactionsTable extends MoneyTransactions
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    }
+    if (data.containsKey('counts_toward_balance')) {
+      context.handle(
+        _countsTowardBalanceMeta,
+        countsTowardBalance.isAcceptableOrUnknown(
+          data['counts_toward_balance']!,
+          _countsTowardBalanceMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -907,6 +1567,14 @@ class $MoneyTransactionsTable extends MoneyTransactions
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      ),
+      countsTowardBalance: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}counts_toward_balance'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -938,6 +1606,16 @@ class MoneyTransaction extends DataClass
   final String kind;
   final int date;
   final String? note;
+
+  /// The [Occasions] row this contribution was recorded under (008).
+  /// `NULL` for every ordinary transaction — which is every row that
+  /// existed before this feature, so the migration needs no backfill.
+  final String? occasionId;
+
+  /// Whether this row counts toward the person's net balance (008 FR-018).
+  /// `TRUE` for every kind but an occasion contribution recorded as
+  /// non-counting, so the default keeps all pre-existing rows correct.
+  final bool countsTowardBalance;
   final int createdAt;
   final int? editedAt;
   final int? deletedAt;
@@ -950,6 +1628,8 @@ class MoneyTransaction extends DataClass
     required this.kind,
     required this.date,
     this.note,
+    this.occasionId,
+    required this.countsTowardBalance,
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
@@ -967,6 +1647,10 @@ class MoneyTransaction extends DataClass
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
     }
+    if (!nullToAbsent || occasionId != null) {
+      map['occasion_id'] = Variable<String>(occasionId);
+    }
+    map['counts_toward_balance'] = Variable<bool>(countsTowardBalance);
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || editedAt != null) {
       map['edited_at'] = Variable<int>(editedAt);
@@ -987,6 +1671,10 @@ class MoneyTransaction extends DataClass
       kind: Value(kind),
       date: Value(date),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      occasionId: occasionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occasionId),
+      countsTowardBalance: Value(countsTowardBalance),
       createdAt: Value(createdAt),
       editedAt: editedAt == null && nullToAbsent
           ? const Value.absent()
@@ -1011,6 +1699,10 @@ class MoneyTransaction extends DataClass
       kind: serializer.fromJson<String>(json['kind']),
       date: serializer.fromJson<int>(json['date']),
       note: serializer.fromJson<String?>(json['note']),
+      occasionId: serializer.fromJson<String?>(json['occasionId']),
+      countsTowardBalance: serializer.fromJson<bool>(
+        json['countsTowardBalance'],
+      ),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       editedAt: serializer.fromJson<int?>(json['editedAt']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
@@ -1028,6 +1720,8 @@ class MoneyTransaction extends DataClass
       'kind': serializer.toJson<String>(kind),
       'date': serializer.toJson<int>(date),
       'note': serializer.toJson<String?>(note),
+      'occasionId': serializer.toJson<String?>(occasionId),
+      'countsTowardBalance': serializer.toJson<bool>(countsTowardBalance),
       'createdAt': serializer.toJson<int>(createdAt),
       'editedAt': serializer.toJson<int?>(editedAt),
       'deletedAt': serializer.toJson<int?>(deletedAt),
@@ -1043,6 +1737,8 @@ class MoneyTransaction extends DataClass
     String? kind,
     int? date,
     Value<String?> note = const Value.absent(),
+    Value<String?> occasionId = const Value.absent(),
+    bool? countsTowardBalance,
     int? createdAt,
     Value<int?> editedAt = const Value.absent(),
     Value<int?> deletedAt = const Value.absent(),
@@ -1055,6 +1751,8 @@ class MoneyTransaction extends DataClass
     kind: kind ?? this.kind,
     date: date ?? this.date,
     note: note.present ? note.value : this.note,
+    occasionId: occasionId.present ? occasionId.value : this.occasionId,
+    countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
     createdAt: createdAt ?? this.createdAt,
     editedAt: editedAt.present ? editedAt.value : this.editedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
@@ -1073,6 +1771,12 @@ class MoneyTransaction extends DataClass
       kind: data.kind.present ? data.kind.value : this.kind,
       date: data.date.present ? data.date.value : this.date,
       note: data.note.present ? data.note.value : this.note,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      countsTowardBalance: data.countsTowardBalance.present
+          ? data.countsTowardBalance.value
+          : this.countsTowardBalance,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
@@ -1090,6 +1794,8 @@ class MoneyTransaction extends DataClass
           ..write('kind: $kind, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('countsTowardBalance: $countsTowardBalance, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt')
@@ -1107,6 +1813,8 @@ class MoneyTransaction extends DataClass
     kind,
     date,
     note,
+    occasionId,
+    countsTowardBalance,
     createdAt,
     editedAt,
     deletedAt,
@@ -1123,6 +1831,8 @@ class MoneyTransaction extends DataClass
           other.kind == this.kind &&
           other.date == this.date &&
           other.note == this.note &&
+          other.occasionId == this.occasionId &&
+          other.countsTowardBalance == this.countsTowardBalance &&
           other.createdAt == this.createdAt &&
           other.editedAt == this.editedAt &&
           other.deletedAt == this.deletedAt);
@@ -1137,6 +1847,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
   final Value<String> kind;
   final Value<int> date;
   final Value<String?> note;
+  final Value<String?> occasionId;
+  final Value<bool> countsTowardBalance;
   final Value<int> createdAt;
   final Value<int?> editedAt;
   final Value<int?> deletedAt;
@@ -1150,6 +1862,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     this.kind = const Value.absent(),
     this.date = const Value.absent(),
     this.note = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.countsTowardBalance = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1164,6 +1878,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     required String kind,
     required int date,
     this.note = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.countsTowardBalance = const Value.absent(),
     required int createdAt,
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1185,6 +1901,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Expression<String>? kind,
     Expression<int>? date,
     Expression<String>? note,
+    Expression<String>? occasionId,
+    Expression<bool>? countsTowardBalance,
     Expression<int>? createdAt,
     Expression<int>? editedAt,
     Expression<int>? deletedAt,
@@ -1199,6 +1917,9 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       if (kind != null) 'kind': kind,
       if (date != null) 'date': date,
       if (note != null) 'note': note,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (countsTowardBalance != null)
+        'counts_toward_balance': countsTowardBalance,
       if (createdAt != null) 'created_at': createdAt,
       if (editedAt != null) 'edited_at': editedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
@@ -1215,6 +1936,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Value<String>? kind,
     Value<int>? date,
     Value<String?>? note,
+    Value<String?>? occasionId,
+    Value<bool>? countsTowardBalance,
     Value<int>? createdAt,
     Value<int?>? editedAt,
     Value<int?>? deletedAt,
@@ -1229,6 +1952,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       kind: kind ?? this.kind,
       date: date ?? this.date,
       note: note ?? this.note,
+      occasionId: occasionId ?? this.occasionId,
+      countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -1263,6 +1988,12 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (countsTowardBalance.present) {
+      map['counts_toward_balance'] = Variable<bool>(countsTowardBalance.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -1289,6 +2020,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
           ..write('kind: $kind, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('countsTowardBalance: $countsTowardBalance, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt, ')
@@ -3475,10 +4208,381 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
   }
 }
 
+class $OccasionAttachmentsTable extends OccasionAttachments
+    with TableInfo<$OccasionAttachmentsTable, OccasionAttachment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OccasionAttachmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _filePathMeta = const VerificationMeta(
+    'filePath',
+  );
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+    'file_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    occasionId,
+    filePath,
+    createdAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'occasion_attachments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OccasionAttachment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_occasionIdMeta);
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(
+        _filePathMeta,
+        filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filePathMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OccasionAttachment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OccasionAttachment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      )!,
+      filePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_path'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OccasionAttachmentsTable createAlias(String alias) {
+    return $OccasionAttachmentsTable(attachedDatabase, alias);
+  }
+}
+
+class OccasionAttachment extends DataClass
+    implements Insertable<OccasionAttachment> {
+  final String id;
+  final String occasionId;
+  final String filePath;
+  final int createdAt;
+  final int? deletedAt;
+  const OccasionAttachment({
+    required this.id,
+    required this.occasionId,
+    required this.filePath,
+    required this.createdAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['occasion_id'] = Variable<String>(occasionId);
+    map['file_path'] = Variable<String>(filePath);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OccasionAttachmentsCompanion toCompanion(bool nullToAbsent) {
+    return OccasionAttachmentsCompanion(
+      id: Value(id),
+      occasionId: Value(occasionId),
+      filePath: Value(filePath),
+      createdAt: Value(createdAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory OccasionAttachment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OccasionAttachment(
+      id: serializer.fromJson<String>(json['id']),
+      occasionId: serializer.fromJson<String>(json['occasionId']),
+      filePath: serializer.fromJson<String>(json['filePath']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'occasionId': serializer.toJson<String>(occasionId),
+      'filePath': serializer.toJson<String>(filePath),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  OccasionAttachment copyWith({
+    String? id,
+    String? occasionId,
+    String? filePath,
+    int? createdAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => OccasionAttachment(
+    id: id ?? this.id,
+    occasionId: occasionId ?? this.occasionId,
+    filePath: filePath ?? this.filePath,
+    createdAt: createdAt ?? this.createdAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  OccasionAttachment copyWithCompanion(OccasionAttachmentsCompanion data) {
+    return OccasionAttachment(
+      id: data.id.present ? data.id.value : this.id,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionAttachment(')
+          ..write('id: $id, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, occasionId, filePath, createdAt, deletedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OccasionAttachment &&
+          other.id == this.id &&
+          other.occasionId == this.occasionId &&
+          other.filePath == this.filePath &&
+          other.createdAt == this.createdAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OccasionAttachmentsCompanion extends UpdateCompanion<OccasionAttachment> {
+  final Value<String> id;
+  final Value<String> occasionId;
+  final Value<String> filePath;
+  final Value<int> createdAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OccasionAttachmentsCompanion({
+    this.id = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OccasionAttachmentsCompanion.insert({
+    required String id,
+    required String occasionId,
+    required String filePath,
+    required int createdAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       occasionId = Value(occasionId),
+       filePath = Value(filePath),
+       createdAt = Value(createdAt);
+  static Insertable<OccasionAttachment> custom({
+    Expression<String>? id,
+    Expression<String>? occasionId,
+    Expression<String>? filePath,
+    Expression<int>? createdAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (filePath != null) 'file_path': filePath,
+      if (createdAt != null) 'created_at': createdAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OccasionAttachmentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? occasionId,
+    Value<String>? filePath,
+    Value<int>? createdAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OccasionAttachmentsCompanion(
+      id: id ?? this.id,
+      occasionId: occasionId ?? this.occasionId,
+      filePath: filePath ?? this.filePath,
+      createdAt: createdAt ?? this.createdAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionAttachmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $PeopleTable people = $PeopleTable(this);
+  late final $OccasionsTable occasions = $OccasionsTable(this);
   late final $MoneyTransactionsTable moneyTransactions =
       $MoneyTransactionsTable(this);
   late final $TransactionAuditEntriesTable transactionAuditEntries =
@@ -3490,6 +4594,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FinanceCategoriesTable financeCategories =
       $FinanceCategoriesTable(this);
   late final $FinanceEntriesTable financeEntries = $FinanceEntriesTable(this);
+  late final $OccasionAttachmentsTable occasionAttachments =
+      $OccasionAttachmentsTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -3497,6 +4603,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index idxTransactionsPersonId = Index(
     'idx_transactions_person_id',
     'CREATE INDEX idx_transactions_person_id ON money_transactions (person_id, deleted_at)',
+  );
+  late final Index idxTransactionsOccasionId = Index(
+    'idx_transactions_occasion_id',
+    'CREATE INDEX idx_transactions_occasion_id ON money_transactions (occasion_id, deleted_at)',
   );
   late final Index idxAuditTransactionId = Index(
     'idx_audit_transaction_id',
@@ -3514,24 +4624,47 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_finance_entries_date',
     'CREATE INDEX idx_finance_entries_date ON finance_entries (date, deleted_at)',
   );
+  late final Index idxOccasionsIdempotencyKey = Index(
+    'idx_occasions_idempotency_key',
+    'CREATE UNIQUE INDEX idx_occasions_idempotency_key ON occasions (idempotency_key)',
+  );
+  late final Index idxOccasionsDate = Index(
+    'idx_occasions_date',
+    'CREATE INDEX idx_occasions_date ON occasions (date, deleted_at)',
+  );
+  late final Index idxOccasionsType = Index(
+    'idx_occasions_type',
+    'CREATE INDEX idx_occasions_type ON occasions (type)',
+  );
+  late final Index idxOccasionAttachmentsOccasionId = Index(
+    'idx_occasion_attachments_occasion_id',
+    'CREATE INDEX idx_occasion_attachments_occasion_id ON occasion_attachments (occasion_id, deleted_at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     people,
+    occasions,
     moneyTransactions,
     transactionAuditEntries,
     appSettings,
     onboardingStatus,
     financeCategories,
     financeEntries,
+    occasionAttachments,
     idxPeopleNormalizedName,
     idxTransactionsPersonId,
+    idxTransactionsOccasionId,
     idxAuditTransactionId,
     idxFinanceCategoriesNormalizedName,
     idxFinanceEntriesCategoryId,
     idxFinanceEntriesDate,
+    idxOccasionsIdempotencyKey,
+    idxOccasionsDate,
+    idxOccasionsType,
+    idxOccasionAttachmentsOccasionId,
   ];
 }
 
@@ -3946,6 +5079,521 @@ typedef $$PeopleTableProcessedTableManager =
       PeopleData,
       PrefetchHooks Function({bool moneyTransactionsRefs})
     >;
+typedef $$OccasionsTableCreateCompanionBuilder =
+    OccasionsCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String name,
+      required int date,
+      required String type,
+      Value<String?> notes,
+      Value<bool> isArchived,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OccasionsTableUpdateCompanionBuilder =
+    OccasionsCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> name,
+      Value<int> date,
+      Value<String> type,
+      Value<String?> notes,
+      Value<bool> isArchived,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OccasionsTableReferences
+    extends BaseReferences<_$AppDatabase, $OccasionsTable, Occasion> {
+  $$OccasionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$MoneyTransactionsTable, List<MoneyTransaction>>
+  _moneyTransactionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.moneyTransactions,
+        aliasName: 'occasions__id__money_transactions__occasion_id',
+      );
+
+  $$MoneyTransactionsTableProcessedTableManager get moneyTransactionsRefs {
+    final manager = $$MoneyTransactionsTableTableManager(
+      $_db,
+      $_db.moneyTransactions,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _moneyTransactionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $OccasionAttachmentsTable,
+    List<OccasionAttachment>
+  >
+  _occasionAttachmentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.occasionAttachments,
+        aliasName: 'occasions__id__occasion_attachments__occasion_id',
+      );
+
+  $$OccasionAttachmentsTableProcessedTableManager get occasionAttachmentsRefs {
+    final manager = $$OccasionAttachmentsTableTableManager(
+      $_db,
+      $_db.occasionAttachments,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _occasionAttachmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$OccasionsTableFilterComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> moneyTransactionsRefs(
+    Expression<bool> Function($$MoneyTransactionsTableFilterComposer f) f,
+  ) {
+    final $$MoneyTransactionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.moneyTransactions,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyTransactionsTableFilterComposer(
+            $db: $db,
+            $table: $db.moneyTransactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> occasionAttachmentsRefs(
+    Expression<bool> Function($$OccasionAttachmentsTableFilterComposer f) f,
+  ) {
+    final $$OccasionAttachmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.occasionAttachments,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionAttachmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasionAttachments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OccasionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OccasionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> moneyTransactionsRefs<T extends Object>(
+    Expression<T> Function($$MoneyTransactionsTableAnnotationComposer a) f,
+  ) {
+    final $$MoneyTransactionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.moneyTransactions,
+          getReferencedColumn: (t) => t.occasionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MoneyTransactionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.moneyTransactions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> occasionAttachmentsRefs<T extends Object>(
+    Expression<T> Function($$OccasionAttachmentsTableAnnotationComposer a) f,
+  ) {
+    final $$OccasionAttachmentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.occasionAttachments,
+          getReferencedColumn: (t) => t.occasionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OccasionAttachmentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.occasionAttachments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$OccasionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OccasionsTable,
+          Occasion,
+          $$OccasionsTableFilterComposer,
+          $$OccasionsTableOrderingComposer,
+          $$OccasionsTableAnnotationComposer,
+          $$OccasionsTableCreateCompanionBuilder,
+          $$OccasionsTableUpdateCompanionBuilder,
+          (Occasion, $$OccasionsTableReferences),
+          Occasion,
+          PrefetchHooks Function({
+            bool moneyTransactionsRefs,
+            bool occasionAttachmentsRefs,
+          })
+        > {
+  $$OccasionsTableTableManager(_$AppDatabase db, $OccasionsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OccasionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OccasionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OccasionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> date = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionsCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                name: name,
+                date: date,
+                type: type,
+                notes: notes,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String name,
+                required int date,
+                required String type,
+                Value<String?> notes = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionsCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                name: name,
+                date: date,
+                type: type,
+                notes: notes,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OccasionsTable, Occasion>(table),
+                  $$OccasionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                moneyTransactionsRefs = false,
+                occasionAttachmentsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (moneyTransactionsRefs) db.moneyTransactions,
+                    if (occasionAttachmentsRefs) db.occasionAttachments,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (moneyTransactionsRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          MoneyTransaction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._moneyTransactionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).moneyTransactionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (occasionAttachmentsRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          OccasionAttachment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._occasionAttachmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).occasionAttachmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$OccasionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OccasionsTable,
+      Occasion,
+      $$OccasionsTableFilterComposer,
+      $$OccasionsTableOrderingComposer,
+      $$OccasionsTableAnnotationComposer,
+      $$OccasionsTableCreateCompanionBuilder,
+      $$OccasionsTableUpdateCompanionBuilder,
+      (Occasion, $$OccasionsTableReferences),
+      Occasion,
+      PrefetchHooks Function({
+        bool moneyTransactionsRefs,
+        bool occasionAttachmentsRefs,
+      })
+    >;
 typedef $$MoneyTransactionsTableCreateCompanionBuilder =
     MoneyTransactionsCompanion Function({
       required String id,
@@ -3956,6 +5604,8 @@ typedef $$MoneyTransactionsTableCreateCompanionBuilder =
       required String kind,
       required int date,
       Value<String?> note,
+      Value<String?> occasionId,
+      Value<bool> countsTowardBalance,
       required int createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -3971,6 +5621,8 @@ typedef $$MoneyTransactionsTableUpdateCompanionBuilder =
       Value<String> kind,
       Value<int> date,
       Value<String?> note,
+      Value<String?> occasionId,
+      Value<bool> countsTowardBalance,
       Value<int> createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -4001,6 +5653,23 @@ final class $$MoneyTransactionsTableReferences
       $_db.people,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_personIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) => db.occasions
+      .createAlias('money_transactions__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager? get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id');
+    if ($_column == null) return null;
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -4078,6 +5747,11 @@ class $$MoneyTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -4107,6 +5781,29 @@ class $$MoneyTransactionsTableFilterComposer
           }) => $$PeopleTableFilterComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4187,6 +5884,11 @@ class $$MoneyTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -4216,6 +5918,29 @@ class $$MoneyTransactionsTableOrderingComposer
           }) => $$PeopleTableOrderingComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4260,6 +5985,11 @@ class $$MoneyTransactionsTableAnnotationComposer
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
 
+  GeneratedColumn<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -4283,6 +6013,29 @@ class $$MoneyTransactionsTableAnnotationComposer
           }) => $$PeopleTableAnnotationComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4335,6 +6088,7 @@ class $$MoneyTransactionsTableTableManager
           MoneyTransaction,
           PrefetchHooks Function({
             bool personId,
+            bool occasionId,
             bool transactionAuditEntriesRefs,
           })
         > {
@@ -4364,6 +6118,8 @@ class $$MoneyTransactionsTableTableManager
                 Value<String> kind = const Value.absent(),
                 Value<int> date = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<bool> countsTowardBalance = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -4377,6 +6133,8 @@ class $$MoneyTransactionsTableTableManager
                 kind: kind,
                 date: date,
                 note: note,
+                occasionId: occasionId,
+                countsTowardBalance: countsTowardBalance,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -4392,6 +6150,8 @@ class $$MoneyTransactionsTableTableManager
                 required String kind,
                 required int date,
                 Value<String?> note = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<bool> countsTowardBalance = const Value.absent(),
                 required int createdAt,
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -4405,6 +6165,8 @@ class $$MoneyTransactionsTableTableManager
                 kind: kind,
                 date: date,
                 note: note,
+                occasionId: occasionId,
+                countsTowardBalance: countsTowardBalance,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -4419,7 +6181,11 @@ class $$MoneyTransactionsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({personId = false, transactionAuditEntriesRefs = false}) {
+              ({
+                personId = false,
+                occasionId = false,
+                transactionAuditEntriesRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -4452,6 +6218,21 @@ class $$MoneyTransactionsTableTableManager
                                     referencedColumn:
                                         $$MoneyTransactionsTableReferences
                                             ._personIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (occasionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.occasionId,
+                                    referencedTable:
+                                        $$MoneyTransactionsTableReferences
+                                            ._occasionIdTable(db),
+                                    referencedColumn:
+                                        $$MoneyTransactionsTableReferences
+                                            ._occasionIdTable(db)
                                             .id,
                                   )
                                   as T;
@@ -4502,7 +6283,11 @@ typedef $$MoneyTransactionsTableProcessedTableManager =
       $$MoneyTransactionsTableUpdateCompanionBuilder,
       (MoneyTransaction, $$MoneyTransactionsTableReferences),
       MoneyTransaction,
-      PrefetchHooks Function({bool personId, bool transactionAuditEntriesRefs})
+      PrefetchHooks Function({
+        bool personId,
+        bool occasionId,
+        bool transactionAuditEntriesRefs,
+      })
     >;
 typedef $$TransactionAuditEntriesTableCreateCompanionBuilder =
     TransactionAuditEntriesCompanion Function({
@@ -6054,12 +7839,352 @@ typedef $$FinanceEntriesTableProcessedTableManager =
       FinanceEntry,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $$OccasionAttachmentsTableCreateCompanionBuilder =
+    OccasionAttachmentsCompanion Function({
+      required String id,
+      required String occasionId,
+      required String filePath,
+      required int createdAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OccasionAttachmentsTableUpdateCompanionBuilder =
+    OccasionAttachmentsCompanion Function({
+      Value<String> id,
+      Value<String> occasionId,
+      Value<String> filePath,
+      Value<int> createdAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OccasionAttachmentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $OccasionAttachmentsTable,
+          OccasionAttachment
+        > {
+  $$OccasionAttachmentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) => db.occasions
+      .createAlias('occasion_attachments__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id')!;
+
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$OccasionAttachmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get filePath =>
+      $composableBuilder(column: $table.filePath, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OccasionAttachmentsTable,
+          OccasionAttachment,
+          $$OccasionAttachmentsTableFilterComposer,
+          $$OccasionAttachmentsTableOrderingComposer,
+          $$OccasionAttachmentsTableAnnotationComposer,
+          $$OccasionAttachmentsTableCreateCompanionBuilder,
+          $$OccasionAttachmentsTableUpdateCompanionBuilder,
+          (OccasionAttachment, $$OccasionAttachmentsTableReferences),
+          OccasionAttachment,
+          PrefetchHooks Function({bool occasionId})
+        > {
+  $$OccasionAttachmentsTableTableManager(
+    _$AppDatabase db,
+    $OccasionAttachmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OccasionAttachmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OccasionAttachmentsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$OccasionAttachmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> occasionId = const Value.absent(),
+                Value<String> filePath = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionAttachmentsCompanion(
+                id: id,
+                occasionId: occasionId,
+                filePath: filePath,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String occasionId,
+                required String filePath,
+                required int createdAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionAttachmentsCompanion.insert(
+                id: id,
+                occasionId: occasionId,
+                filePath: filePath,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OccasionAttachmentsTable, OccasionAttachment>(
+                    table,
+                  ),
+                  $$OccasionAttachmentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({occasionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (occasionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.occasionId,
+                                referencedTable:
+                                    $$OccasionAttachmentsTableReferences
+                                        ._occasionIdTable(db),
+                                referencedColumn:
+                                    $$OccasionAttachmentsTableReferences
+                                        ._occasionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$OccasionAttachmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OccasionAttachmentsTable,
+      OccasionAttachment,
+      $$OccasionAttachmentsTableFilterComposer,
+      $$OccasionAttachmentsTableOrderingComposer,
+      $$OccasionAttachmentsTableAnnotationComposer,
+      $$OccasionAttachmentsTableCreateCompanionBuilder,
+      $$OccasionAttachmentsTableUpdateCompanionBuilder,
+      (OccasionAttachment, $$OccasionAttachmentsTableReferences),
+      OccasionAttachment,
+      PrefetchHooks Function({bool occasionId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$PeopleTableTableManager get people =>
       $$PeopleTableTableManager(_db, _db.people);
+  $$OccasionsTableTableManager get occasions =>
+      $$OccasionsTableTableManager(_db, _db.occasions);
   $$MoneyTransactionsTableTableManager get moneyTransactions =>
       $$MoneyTransactionsTableTableManager(_db, _db.moneyTransactions);
   $$TransactionAuditEntriesTableTableManager get transactionAuditEntries =>
@@ -6075,4 +8200,6 @@ class $AppDatabaseManager {
       $$FinanceCategoriesTableTableManager(_db, _db.financeCategories);
   $$FinanceEntriesTableTableManager get financeEntries =>
       $$FinanceEntriesTableTableManager(_db, _db.financeEntries);
+  $$OccasionAttachmentsTableTableManager get occasionAttachments =>
+      $$OccasionAttachmentsTableTableManager(_db, _db.occasionAttachments);
 }

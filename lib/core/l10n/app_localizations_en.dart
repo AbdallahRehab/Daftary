@@ -588,4 +588,316 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get financeCategoryOtherIncome => 'Other income';
+
+  @override
+  String get occasionsTitle => 'Occasions';
+
+  @override
+  String get occasionsEmptyTitle => 'No occasions yet';
+
+  @override
+  String get occasionsEmptyMessage =>
+      'Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.';
+
+  @override
+  String get occasionAddAction => 'New occasion';
+
+  @override
+  String get occasionAddFirstAction => 'Create your first occasion';
+
+  @override
+  String get occasionSearchHint => 'Search occasions';
+
+  @override
+  String get occasionFilterTypeLabel => 'Type';
+
+  @override
+  String get occasionFilterAllTypes => 'All types';
+
+  @override
+  String get occasionFilterDateRangeLabel => 'Date range';
+
+  @override
+  String get occasionFilterDateFromLabel => 'From';
+
+  @override
+  String get occasionFilterDateToLabel => 'To';
+
+  @override
+  String get occasionFilterAllDates => 'Any date';
+
+  @override
+  String get occasionClearFiltersAction => 'Clear filters';
+
+  @override
+  String get occasionNoMatchTitle => 'No matching occasions';
+
+  @override
+  String get occasionNoMatchMessage =>
+      'No occasions match your search or filters. Try a different name, type, or date range.';
+
+  @override
+  String get occasionArchivedAction => 'Archived occasions';
+
+  @override
+  String get occasionArchivedTitle => 'Archived occasions';
+
+  @override
+  String get occasionArchivedEmptyTitle => 'No archived occasions';
+
+  @override
+  String get occasionArchivedEmptyMessage =>
+      'Occasions you archive will appear here, with their contributions and balances intact.';
+
+  @override
+  String get occasionArchivedLabel => 'Archived';
+
+  @override
+  String get occasionUpcomingLabel => 'Upcoming';
+
+  @override
+  String get occasionTypeWedding => 'Wedding';
+
+  @override
+  String get occasionTypeEngagement => 'Engagement';
+
+  @override
+  String get occasionTypeBirthday => 'Birthday';
+
+  @override
+  String get occasionTypeNewbornSebou => 'Newborn (Sebou)';
+
+  @override
+  String get occasionTypeCondolence => 'Condolence';
+
+  @override
+  String get occasionTypeCelebration => 'Celebration';
+
+  @override
+  String get occasionTypeOther => 'Other';
+
+  @override
+  String get occasionTypeCustomLabel => 'Custom type';
+
+  @override
+  String get occasionTypeCustomHint => 'Write your own type, e.g. graduation';
+
+  @override
+  String get occasionFormCreateTitle => 'New occasion';
+
+  @override
+  String get occasionFormEditTitle => 'Edit occasion';
+
+  @override
+  String get occasionNameLabel => 'Occasion name';
+
+  @override
+  String get occasionNameHint => 'e.g. Ahmed\'s wedding';
+
+  @override
+  String get occasionNameRequiredError => 'Occasion name is required';
+
+  @override
+  String get occasionDateLabel => 'Date';
+
+  @override
+  String get occasionTypeLabel => 'Type';
+
+  @override
+  String get occasionTypeRequiredError => 'Choose an occasion type';
+
+  @override
+  String get occasionNotesLabel => 'Notes (optional)';
+
+  @override
+  String get occasionCreateAction => 'Create occasion';
+
+  @override
+  String get occasionUpdateAction => 'Save changes';
+
+  @override
+  String get occasionEditAction => 'Edit occasion';
+
+  @override
+  String get occasionDeleteAction => 'Delete occasion';
+
+  @override
+  String get occasionArchiveAction => 'Archive occasion';
+
+  @override
+  String get occasionRestoreAction => 'Restore occasion';
+
+  @override
+  String get occasionParticipantFormAddTitle => 'Add participant';
+
+  @override
+  String get occasionParticipantFormEditTitle => 'Edit contribution';
+
+  @override
+  String get occasionParticipantPersonLabel => 'Person';
+
+  @override
+  String get occasionParticipantAmountLabel => 'Amount (EGP)';
+
+  @override
+  String get occasionParticipantAmountInvalidError =>
+      'Enter a valid amount greater than zero';
+
+  @override
+  String get occasionParticipantDirectionLabel => 'Direction';
+
+  @override
+  String get occasionParticipantDirectionReceived => 'I received from them';
+
+  @override
+  String get occasionParticipantDirectionGiven => 'I gave them';
+
+  @override
+  String get occasionParticipantNoteLabel => 'Note (optional)';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceLabel =>
+      'Counts toward their balance';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceHint =>
+      'Condolence money isn\'t expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.';
+
+  @override
+  String get occasionParticipantSaveAction => 'Save participant';
+
+  @override
+  String get occasionParticipantUpdateAction => 'Save changes';
+
+  @override
+  String get occasionDetailTotalReceived => 'Total received';
+
+  @override
+  String get occasionDetailTotalGiven => 'Total given';
+
+  @override
+  String get occasionDetailNet => 'Net';
+
+  @override
+  String get occasionSettlementSettled => 'Settled';
+
+  @override
+  String occasionSettlementMoreReceived(String amount) {
+    return '$amount more received than given';
+  }
+
+  @override
+  String occasionSettlementMoreGiven(String amount) {
+    return '$amount more given than received';
+  }
+
+  @override
+  String get occasionParticipantsHeader => 'Participants';
+
+  @override
+  String get occasionParticipantsEmptyTitle => 'No participants yet';
+
+  @override
+  String get occasionParticipantsEmptyMessage =>
+      'Add the first person who gave or received money at this occasion.';
+
+  @override
+  String get occasionAddParticipantAction => 'Add participant';
+
+  @override
+  String get occasionEditParticipantAction => 'Edit contribution';
+
+  @override
+  String get occasionRemoveParticipantAction => 'Remove contribution';
+
+  @override
+  String get occasionContributionBadge => 'Occasion';
+
+  @override
+  String get occasionRemoveParticipantConfirmTitle =>
+      'Remove this contribution?';
+
+  @override
+  String get occasionRemoveParticipantConfirmMessage =>
+      'It will also disappear from this person\'s history and balance. This can\'t be undone.';
+
+  @override
+  String get occasionDeleteConfirmTitle => 'Delete this occasion?';
+
+  @override
+  String occasionDeleteConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'This also removes $count contributions and updates the balance of everyone who took part. This can\'t be undone.',
+      one:
+          'This also removes 1 contribution and updates that person\'s balance. This can\'t be undone.',
+      zero:
+          'This occasion has no contributions recorded yet. This can\'t be undone.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get occasionArchiveConfirmTitle => 'Archive this occasion?';
+
+  @override
+  String get occasionArchiveConfirmMessage =>
+      'It moves to archived occasions. Its contributions stay in everyone\'s history and balances, and you can restore it any time.';
+
+  @override
+  String get occasionRestoreConfirmTitle => 'Restore this occasion?';
+
+  @override
+  String get occasionRestoreConfirmMessage =>
+      'It will appear in your occasions list again.';
+
+  @override
+  String get occasionAttachmentsHeader => 'Photos';
+
+  @override
+  String get occasionAttachPhotoAction => 'Attach photo';
+
+  @override
+  String get occasionAttachFromCameraAction => 'Take a photo';
+
+  @override
+  String get occasionAttachFromGalleryAction => 'Choose from gallery';
+
+  @override
+  String get occasionAttachmentsEmptyTitle => 'No photos yet';
+
+  @override
+  String get occasionAttachmentsEmptyMessage =>
+      'Attach a photo of the envelope list, the invitation, or the occasion itself to keep it with this record.';
+
+  @override
+  String get occasionRemoveAttachmentAction => 'Remove photo';
+
+  @override
+  String get occasionRemoveAttachmentConfirmTitle => 'Remove this photo?';
+
+  @override
+  String get occasionRemoveAttachmentConfirmMessage =>
+      'The photo will be deleted from this occasion. This can\'t be undone.';
+
+  @override
+  String get occasionCameraPermissionDeniedTitle =>
+      'Camera access is turned off';
+
+  @override
+  String get occasionCameraPermissionDeniedMessage =>
+      'Daftary needs your camera to take a photo for this occasion. Open your device settings and allow camera access for Daftary, or choose a photo from your gallery instead.';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedTitle =>
+      'Photo access is turned off';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedMessage =>
+      'Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.';
+
+  @override
+  String get occasionOpenSettingsAction => 'Open settings';
 }

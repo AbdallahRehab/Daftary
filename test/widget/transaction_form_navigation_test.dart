@@ -107,12 +107,18 @@ void main() {
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
 
+    // 008: every load also resolves the occasion names for the history's
+    // contribution rows; these flows have none.
+    when(
+      () => transactionsRepository.getOccasionNamesForPerson(any()),
+    ).thenAnswer((_) async => const Right({}));
     getIt.registerFactory<PersonDetailCubit>(
       () => PersonDetailCubit(
         peopleRepository,
         GetPersonBalance(transactionsRepository),
         GetPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
+        transactionsRepository,
       ),
     );
     getIt.registerFactory<TransactionFormCubit>(

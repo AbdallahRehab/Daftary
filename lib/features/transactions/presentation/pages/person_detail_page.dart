@@ -174,6 +174,8 @@ class _PersonDetailView extends StatelessWidget {
                           final transaction = state.history[index];
                           return TransactionListTile(
                             transaction: transaction,
+                            occasionName:
+                                state.occasionNames[transaction.occasionId],
                             onTap: () =>
                                 _editTransaction(context, transaction, person),
                             onDelete: () =>

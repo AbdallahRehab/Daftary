@@ -251,6 +251,67 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   }
 
   @override
+  Future<Either<Failure, MoneyTransaction>> addOccasionContribution({
+    required String idempotencyKey,
+    required String personId,
+    required String occasionId,
+    required Money amount,
+    required TransactionDirection direction,
+    required bool countsTowardBalance,
+    required DateTime date,
+    String? note,
+  }) async {
+    final validation = _validateAmountAndPerson(amount, personId);
+    if (validation != null) return Left(validation);
+    try {
+      final companion = db.MoneyTransactionsCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        direction: direction.dbValue,
+        kind: TransactionKind.occasionContribution.dbValue,
+        date: _dateOnlyMillis(date),
+        note: db.Value(note),
+        occasionId: db.Value(occasionId),
+        // Persisted per row rather than derived from the occasion's current
+        // type, so later re-typing an occasion never silently moves a
+        // balance (008 research.md Decision 3).
+        countsTowardBalance: db.Value(countsTowardBalance),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _dao.insertTransactionIdempotent(companion);
+      await _writeCreatedAuditEntry(row.id);
+      return Right(row.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to record contribution: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MoneyTransaction>>> getContributionsForOccasion(
+    String occasionId,
+  ) async {
+    try {
+      final rows = await _dao.getContributionsForOccasion(occasionId);
+      return Right(rows.map((row) => row.toDomain()).toList());
+    } catch (e) {
+      return Left(CacheFailure('Failed to load contributions: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, String>>> getOccasionNamesForPerson(
+    String personId,
+  ) async {
+    try {
+      return Right(await _dao.occasionNamesForPerson(personId));
+    } catch (e) {
+      return Left(CacheFailure('Failed to load occasion names: $e'));
+    }
+  }
+
+  @override
   Future<Either<Failure, bool>> hasAnyTransaction() async {
     try {
       return Right(await _dao.hasAnyTransaction());

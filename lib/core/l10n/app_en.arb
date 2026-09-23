@@ -225,6 +225,107 @@
   "financeCategoryBonus": "Bonus",
   "financeCategoryGift": "Gift",
   "financeCategoryOtherIncome": "Other income",
+
+  "occasionsTitle": "Occasions",
+  "occasionsEmptyTitle": "No occasions yet",
+  "occasionsEmptyMessage": "Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.",
+  "occasionAddAction": "New occasion",
+  "occasionAddFirstAction": "Create your first occasion",
+  "occasionSearchHint": "Search occasions",
+  "occasionFilterTypeLabel": "Type",
+  "occasionFilterAllTypes": "All types",
+  "occasionFilterDateRangeLabel": "Date range",
+  "occasionFilterDateFromLabel": "From",
+  "occasionFilterDateToLabel": "To",
+  "occasionFilterAllDates": "Any date",
+  "occasionClearFiltersAction": "Clear filters",
+  "occasionNoMatchTitle": "No matching occasions",
+  "occasionNoMatchMessage": "No occasions match your search or filters. Try a different name, type, or date range.",
+  "occasionArchivedAction": "Archived occasions",
+  "occasionArchivedTitle": "Archived occasions",
+  "occasionArchivedEmptyTitle": "No archived occasions",
+  "occasionArchivedEmptyMessage": "Occasions you archive will appear here, with their contributions and balances intact.",
+  "occasionArchivedLabel": "Archived",
+  "occasionUpcomingLabel": "Upcoming",
+
+  "occasionTypeWedding": "Wedding",
+  "occasionTypeEngagement": "Engagement",
+  "occasionTypeBirthday": "Birthday",
+  "occasionTypeNewbornSebou": "Newborn (Sebou)",
+  "occasionTypeCondolence": "Condolence",
+  "occasionTypeCelebration": "Celebration",
+  "occasionTypeOther": "Other",
+  "occasionTypeCustomLabel": "Custom type",
+  "occasionTypeCustomHint": "Write your own type, e.g. graduation",
+
+  "occasionFormCreateTitle": "New occasion",
+  "occasionFormEditTitle": "Edit occasion",
+  "occasionNameLabel": "Occasion name",
+  "occasionNameHint": "e.g. Ahmed's wedding",
+  "occasionNameRequiredError": "Occasion name is required",
+  "occasionDateLabel": "Date",
+  "occasionTypeLabel": "Type",
+  "occasionTypeRequiredError": "Choose an occasion type",
+  "occasionNotesLabel": "Notes (optional)",
+  "occasionCreateAction": "Create occasion",
+  "occasionUpdateAction": "Save changes",
+  "occasionEditAction": "Edit occasion",
+  "occasionDeleteAction": "Delete occasion",
+  "occasionArchiveAction": "Archive occasion",
+  "occasionRestoreAction": "Restore occasion",
+
+  "occasionParticipantFormAddTitle": "Add participant",
+  "occasionParticipantFormEditTitle": "Edit contribution",
+  "occasionParticipantPersonLabel": "Person",
+  "occasionParticipantAmountLabel": "Amount (EGP)",
+  "occasionParticipantAmountInvalidError": "Enter a valid amount greater than zero",
+  "occasionParticipantDirectionLabel": "Direction",
+  "occasionParticipantDirectionReceived": "I received from them",
+  "occasionParticipantDirectionGiven": "I gave them",
+  "occasionParticipantNoteLabel": "Note (optional)",
+  "occasionParticipantCountsTowardBalanceLabel": "Counts toward their balance",
+  "occasionParticipantCountsTowardBalanceHint": "Condolence money isn't expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.",
+  "occasionParticipantSaveAction": "Save participant",
+  "occasionParticipantUpdateAction": "Save changes",
+
+  "occasionDetailTotalReceived": "Total received",
+  "occasionDetailTotalGiven": "Total given",
+  "occasionDetailNet": "Net",
+  "occasionSettlementSettled": "Settled",
+  "occasionSettlementMoreReceived": "{amount} more received than given",
+  "occasionSettlementMoreGiven": "{amount} more given than received",
+  "occasionParticipantsHeader": "Participants",
+  "occasionParticipantsEmptyTitle": "No participants yet",
+  "occasionParticipantsEmptyMessage": "Add the first person who gave or received money at this occasion.",
+  "occasionAddParticipantAction": "Add participant",
+  "occasionEditParticipantAction": "Edit contribution",
+  "occasionRemoveParticipantAction": "Remove contribution",
+  "occasionContributionBadge": "Occasion",
+
+  "occasionRemoveParticipantConfirmTitle": "Remove this contribution?",
+  "occasionRemoveParticipantConfirmMessage": "It will also disappear from this person's history and balance. This can't be undone.",
+  "occasionDeleteConfirmTitle": "Delete this occasion?",
+  "occasionDeleteConfirmMessage": "{count, plural, =0{This occasion has no contributions recorded yet. This can't be undone.} =1{This also removes 1 contribution and updates that person's balance. This can't be undone.} other{This also removes {count} contributions and updates the balance of everyone who took part. This can't be undone.}}",
+  "occasionArchiveConfirmTitle": "Archive this occasion?",
+  "occasionArchiveConfirmMessage": "It moves to archived occasions. Its contributions stay in everyone's history and balances, and you can restore it any time.",
+  "occasionRestoreConfirmTitle": "Restore this occasion?",
+  "occasionRestoreConfirmMessage": "It will appear in your occasions list again.",
+
+  "occasionAttachmentsHeader": "Photos",
+  "occasionAttachPhotoAction": "Attach photo",
+  "occasionAttachFromCameraAction": "Take a photo",
+  "occasionAttachFromGalleryAction": "Choose from gallery",
+  "occasionAttachmentsEmptyTitle": "No photos yet",
+  "occasionAttachmentsEmptyMessage": "Attach a photo of the envelope list, the invitation, or the occasion itself to keep it with this record.",
+  "occasionRemoveAttachmentAction": "Remove photo",
+  "occasionRemoveAttachmentConfirmTitle": "Remove this photo?",
+  "occasionRemoveAttachmentConfirmMessage": "The photo will be deleted from this occasion. This can't be undone.",
+  "occasionCameraPermissionDeniedTitle": "Camera access is turned off",
+  "occasionCameraPermissionDeniedMessage": "Daftary needs your camera to take a photo for this occasion. Open your device settings and allow camera access for Daftary, or choose a photo from your gallery instead.",
+  "occasionPhotoLibraryPermissionDeniedTitle": "Photo access is turned off",
+  "occasionPhotoLibraryPermissionDeniedMessage": "Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.",
+  "occasionOpenSettingsAction": "Open settings",
+
   "@financeCategoryDuplicateError": {
     "placeholders": {
       "name": {"type": "String"}
@@ -233,6 +334,21 @@
   "@financeBreakdownShare": {
     "placeholders": {
       "percent": {"type": "String"}
+    }
+  },
+  "@occasionSettlementMoreReceived": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "@occasionSettlementMoreGiven": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "@occasionDeleteConfirmMessage": {
+    "placeholders": {
+      "count": {"type": "int"}
     }
   }
 }

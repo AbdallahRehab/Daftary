@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 
 import '../database/app_database.dart';
@@ -14,4 +15,7 @@ abstract class RegisterModule {
 
   @lazySingleton
   EgpFormatter get egpFormatter => EgpFormatter();
+
+  @lazySingleton
+  ImagePicker get imagePicker => ImagePicker();
 }

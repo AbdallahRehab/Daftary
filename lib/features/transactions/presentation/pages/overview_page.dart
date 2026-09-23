@@ -61,6 +61,19 @@ class _OverviewView extends StatelessWidget {
                   // Settled balances do not mean nothing happened this
                   // month, so the finance link stays visible here.
                   const FinanceMonthSummaryCard(),
+                  const SizedBox(height: AppSpacing.md),
+                  // The occasions section's entry point, alongside finance's
+                  // and for the same reason (008 research.md Decision 9): the
+                  // section is reached from here rather than from a fourth
+                  // bottom-nav tab.
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.celebration_outlined),
+                      title: Text(l10n.occasionsTitle),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => context.push('/occasions'),
+                    ),
+                  ),
                   SizedBox(
                     height: 420,
                     child: AppEmptyView(
@@ -88,6 +101,19 @@ class _OverviewView extends StatelessWidget {
                 // Decision 9). It brings its own Cubit, so nothing about
                 // OverviewCubit's existing behavior changes.
                 const FinanceMonthSummaryCard(),
+                const SizedBox(height: AppSpacing.md),
+                // The occasions section's entry point, alongside finance's
+                // and for the same reason (008 research.md Decision 9): the
+                // section is reached from here rather than from a fourth
+                // bottom-nav tab.
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.celebration_outlined),
+                    title: Text(l10n.occasionsTitle),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push('/occasions'),
+                  ),
+                ),
                 if (summary.peopleTheyOweYou.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
                   _SectionHeader(title: l10n.overviewSectionTheyOweYou),

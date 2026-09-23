@@ -5,6 +5,13 @@ import 'app_database.dart';
 /// features — a genuine cross-feature concern per constitution Principle II.
 /// Formula: `SUM(given) - SUM(received)` over non-deleted rows (FR-008).
 /// Positive ⇒ they owe you, negative ⇒ you owe them, zero ⇒ settled.
+///
+/// The aggregates additionally skip occasion contributions flagged as
+/// non-counting (008 FR-018): condolence money is a social gesture, not a
+/// reciprocal debt, so recording it must never make someone look like they
+/// owe you. The flag is stored per row, so the predicate is a pure filter —
+/// every other row is summed by the identical 001 formula, which is the
+/// 008 FR-023 no-regression guarantee.
 extension BalanceQueries on AppDatabase {
   Future<int> netBalanceMinorUnitsForPerson(String personId) async {
     final result = await customSelect(
@@ -15,6 +22,7 @@ extension BalanceQueries on AppDatabase {
         AS net
       FROM money_transactions
       WHERE person_id = ? AND deleted_at IS NULL
+        AND (kind != 'occasionContribution' OR counts_toward_balance = 1)
       ''',
       variables: [Variable<String>(personId)],
       readsFrom: {moneyTransactions},
@@ -35,6 +43,7 @@ extension BalanceQueries on AppDatabase {
         AS net
       FROM money_transactions
       WHERE deleted_at IS NULL
+        AND (kind != 'occasionContribution' OR counts_toward_balance = 1)
       GROUP BY person_id
       ''',
       readsFrom: {moneyTransactions},

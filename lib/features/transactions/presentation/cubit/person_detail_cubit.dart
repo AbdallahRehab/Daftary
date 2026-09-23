@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../people/domain/repositories/people_repository.dart';
+import '../../domain/repositories/transactions_repository.dart';
 import '../../domain/usecases/delete_transaction.dart';
 import '../../domain/usecases/get_person_balance.dart';
 import '../../domain/usecases/get_person_history.dart';
@@ -17,12 +18,18 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     this._getPersonBalance,
     this._getPersonHistory,
     this._deleteTransaction,
+    this._transactionsRepository,
   ) : super(const PersonDetailState());
 
   final PeopleRepository _peopleRepository;
   final GetPersonBalance _getPersonBalance;
   final GetPersonHistory _getPersonHistory;
   final DeleteTransaction _deleteTransaction;
+
+  /// Read directly rather than through a use case: occasion names are a
+  /// pure labelling detail of the history already fetched, carrying no
+  /// business rule of their own.
+  final TransactionsRepository _transactionsRepository;
 
   String? _personId;
 
@@ -33,6 +40,8 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     final personResult = await _peopleRepository.getPersonById(personId);
     final balanceResult = await _getPersonBalance(personId);
     final historyResult = await _getPersonHistory(personId);
+    final occasionNamesResult = await _transactionsRepository
+        .getOccasionNamesForPerson(personId);
 
     final failure = personResult.isLeft()
         ? personResult
@@ -62,6 +71,10 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
         history: historyResult.getOrElse(
           (_) => throw StateError('unreachable'),
         ),
+        // A missing name is a label, not a balance: the history stays
+        // readable without it, so a failure here degrades to no badge
+        // rather than failing the whole screen.
+        occasionNames: occasionNamesResult.getOrElse((_) => const {}),
       ),
     );
   }

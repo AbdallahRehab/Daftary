@@ -9,6 +9,11 @@ import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
 import '../../features/finance/presentation/pages/finance_entry_form_page.dart';
 import '../../features/finance/presentation/pages/finance_history_page.dart';
+import '../../features/occasions/presentation/pages/archived_occasions_page.dart';
+import '../../features/occasions/presentation/pages/occasion_detail_page.dart';
+import '../../features/occasions/presentation/pages/occasion_form_page.dart';
+import '../../features/occasions/presentation/pages/occasions_list_page.dart';
+import '../../features/occasions/presentation/pages/participant_form_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
@@ -155,6 +160,47 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) => CategoryFormPage(
                 editingCategoryId: state.pathParameters['id']!,
               ),
+            ),
+            // Occasions share the People branch for the same reason
+            // finance does (research.md Decision 9): the section is reached
+            // from People and the Overview rather than from a fourth
+            // bottom-nav tab. The static `/occasions/...` paths are
+            // declared before `/occasions/:id` so `new` and `archived` are
+            // never captured as an occasion id.
+            GoRoute(
+              path: '/occasions',
+              builder: (context, state) => const OccasionsListPage(),
+            ),
+            GoRoute(
+              path: '/occasions/new',
+              builder: (context, state) => const OccasionFormPage(),
+            ),
+            GoRoute(
+              path: '/occasions/archived',
+              builder: (context, state) => const ArchivedOccasionsPage(),
+            ),
+            GoRoute(
+              path: '/occasions/:id/edit',
+              builder: (context, state) => OccasionFormPage(
+                editingOccasionId: state.pathParameters['id']!,
+              ),
+            ),
+            GoRoute(
+              path: '/occasions/:id/participants/new',
+              builder: (context, state) =>
+                  ParticipantFormPage(occasionId: state.pathParameters['id']!),
+            ),
+            GoRoute(
+              path: '/occasions/:id/participants/:transactionId/edit',
+              builder: (context, state) => ParticipantFormPage(
+                occasionId: state.pathParameters['id']!,
+                editingTransactionId: state.pathParameters['transactionId']!,
+              ),
+            ),
+            GoRoute(
+              path: '/occasions/:id',
+              builder: (context, state) =>
+                  OccasionDetailPage(occasionId: state.pathParameters['id']!),
             ),
           ],
         ),

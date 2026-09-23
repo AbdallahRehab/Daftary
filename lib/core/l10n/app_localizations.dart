@@ -1195,6 +1195,564 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other income'**
   String get financeCategoryOtherIncome;
+
+  /// No description provided for @occasionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasions'**
+  String get occasionsTitle;
+
+  /// No description provided for @occasionsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No occasions yet'**
+  String get occasionsEmptyTitle;
+
+  /// No description provided for @occasionsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.'**
+  String get occasionsEmptyMessage;
+
+  /// No description provided for @occasionAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New occasion'**
+  String get occasionAddAction;
+
+  /// No description provided for @occasionAddFirstAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first occasion'**
+  String get occasionAddFirstAction;
+
+  /// No description provided for @occasionSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search occasions'**
+  String get occasionSearchHint;
+
+  /// No description provided for @occasionFilterTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get occasionFilterTypeLabel;
+
+  /// No description provided for @occasionFilterAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All types'**
+  String get occasionFilterAllTypes;
+
+  /// No description provided for @occasionFilterDateRangeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date range'**
+  String get occasionFilterDateRangeLabel;
+
+  /// No description provided for @occasionFilterDateFromLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get occasionFilterDateFromLabel;
+
+  /// No description provided for @occasionFilterDateToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get occasionFilterDateToLabel;
+
+  /// No description provided for @occasionFilterAllDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Any date'**
+  String get occasionFilterAllDates;
+
+  /// No description provided for @occasionClearFiltersAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get occasionClearFiltersAction;
+
+  /// No description provided for @occasionNoMatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching occasions'**
+  String get occasionNoMatchTitle;
+
+  /// No description provided for @occasionNoMatchMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No occasions match your search or filters. Try a different name, type, or date range.'**
+  String get occasionNoMatchMessage;
+
+  /// No description provided for @occasionArchivedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived occasions'**
+  String get occasionArchivedAction;
+
+  /// No description provided for @occasionArchivedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived occasions'**
+  String get occasionArchivedTitle;
+
+  /// No description provided for @occasionArchivedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived occasions'**
+  String get occasionArchivedEmptyTitle;
+
+  /// No description provided for @occasionArchivedEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasions you archive will appear here, with their contributions and balances intact.'**
+  String get occasionArchivedEmptyMessage;
+
+  /// No description provided for @occasionArchivedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get occasionArchivedLabel;
+
+  /// No description provided for @occasionUpcomingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get occasionUpcomingLabel;
+
+  /// No description provided for @occasionTypeWedding.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get occasionTypeWedding;
+
+  /// No description provided for @occasionTypeEngagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement'**
+  String get occasionTypeEngagement;
+
+  /// No description provided for @occasionTypeBirthday.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday'**
+  String get occasionTypeBirthday;
+
+  /// No description provided for @occasionTypeNewbornSebou.
+  ///
+  /// In en, this message translates to:
+  /// **'Newborn (Sebou)'**
+  String get occasionTypeNewbornSebou;
+
+  /// No description provided for @occasionTypeCondolence.
+  ///
+  /// In en, this message translates to:
+  /// **'Condolence'**
+  String get occasionTypeCondolence;
+
+  /// No description provided for @occasionTypeCelebration.
+  ///
+  /// In en, this message translates to:
+  /// **'Celebration'**
+  String get occasionTypeCelebration;
+
+  /// No description provided for @occasionTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get occasionTypeOther;
+
+  /// No description provided for @occasionTypeCustomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom type'**
+  String get occasionTypeCustomLabel;
+
+  /// No description provided for @occasionTypeCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your own type, e.g. graduation'**
+  String get occasionTypeCustomHint;
+
+  /// No description provided for @occasionFormCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New occasion'**
+  String get occasionFormCreateTitle;
+
+  /// No description provided for @occasionFormEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit occasion'**
+  String get occasionFormEditTitle;
+
+  /// No description provided for @occasionNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasion name'**
+  String get occasionNameLabel;
+
+  /// No description provided for @occasionNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Ahmed\'s wedding'**
+  String get occasionNameHint;
+
+  /// No description provided for @occasionNameRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasion name is required'**
+  String get occasionNameRequiredError;
+
+  /// No description provided for @occasionDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get occasionDateLabel;
+
+  /// No description provided for @occasionTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get occasionTypeLabel;
+
+  /// No description provided for @occasionTypeRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an occasion type'**
+  String get occasionTypeRequiredError;
+
+  /// No description provided for @occasionNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get occasionNotesLabel;
+
+  /// No description provided for @occasionCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create occasion'**
+  String get occasionCreateAction;
+
+  /// No description provided for @occasionUpdateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get occasionUpdateAction;
+
+  /// No description provided for @occasionEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit occasion'**
+  String get occasionEditAction;
+
+  /// No description provided for @occasionDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete occasion'**
+  String get occasionDeleteAction;
+
+  /// No description provided for @occasionArchiveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive occasion'**
+  String get occasionArchiveAction;
+
+  /// No description provided for @occasionRestoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore occasion'**
+  String get occasionRestoreAction;
+
+  /// No description provided for @occasionParticipantFormAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get occasionParticipantFormAddTitle;
+
+  /// No description provided for @occasionParticipantFormEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit contribution'**
+  String get occasionParticipantFormEditTitle;
+
+  /// No description provided for @occasionParticipantPersonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get occasionParticipantPersonLabel;
+
+  /// No description provided for @occasionParticipantAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (EGP)'**
+  String get occasionParticipantAmountLabel;
+
+  /// No description provided for @occasionParticipantAmountInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount greater than zero'**
+  String get occasionParticipantAmountInvalidError;
+
+  /// No description provided for @occasionParticipantDirectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get occasionParticipantDirectionLabel;
+
+  /// No description provided for @occasionParticipantDirectionReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'I received from them'**
+  String get occasionParticipantDirectionReceived;
+
+  /// No description provided for @occasionParticipantDirectionGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'I gave them'**
+  String get occasionParticipantDirectionGiven;
+
+  /// No description provided for @occasionParticipantNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get occasionParticipantNoteLabel;
+
+  /// No description provided for @occasionParticipantCountsTowardBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts toward their balance'**
+  String get occasionParticipantCountsTowardBalanceLabel;
+
+  /// No description provided for @occasionParticipantCountsTowardBalanceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Condolence money isn\'t expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.'**
+  String get occasionParticipantCountsTowardBalanceHint;
+
+  /// No description provided for @occasionParticipantSaveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save participant'**
+  String get occasionParticipantSaveAction;
+
+  /// No description provided for @occasionParticipantUpdateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get occasionParticipantUpdateAction;
+
+  /// No description provided for @occasionDetailTotalReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Total received'**
+  String get occasionDetailTotalReceived;
+
+  /// No description provided for @occasionDetailTotalGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Total given'**
+  String get occasionDetailTotalGiven;
+
+  /// No description provided for @occasionDetailNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get occasionDetailNet;
+
+  /// No description provided for @occasionSettlementSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'Settled'**
+  String get occasionSettlementSettled;
+
+  /// No description provided for @occasionSettlementMoreReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} more received than given'**
+  String occasionSettlementMoreReceived(String amount);
+
+  /// No description provided for @occasionSettlementMoreGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} more given than received'**
+  String occasionSettlementMoreGiven(String amount);
+
+  /// No description provided for @occasionParticipantsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get occasionParticipantsHeader;
+
+  /// No description provided for @occasionParticipantsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No participants yet'**
+  String get occasionParticipantsEmptyTitle;
+
+  /// No description provided for @occasionParticipantsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the first person who gave or received money at this occasion.'**
+  String get occasionParticipantsEmptyMessage;
+
+  /// No description provided for @occasionAddParticipantAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get occasionAddParticipantAction;
+
+  /// No description provided for @occasionEditParticipantAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit contribution'**
+  String get occasionEditParticipantAction;
+
+  /// No description provided for @occasionRemoveParticipantAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove contribution'**
+  String get occasionRemoveParticipantAction;
+
+  /// No description provided for @occasionContributionBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasion'**
+  String get occasionContributionBadge;
+
+  /// No description provided for @occasionRemoveParticipantConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this contribution?'**
+  String get occasionRemoveParticipantConfirmTitle;
+
+  /// No description provided for @occasionRemoveParticipantConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It will also disappear from this person\'s history and balance. This can\'t be undone.'**
+  String get occasionRemoveParticipantConfirmMessage;
+
+  /// No description provided for @occasionDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this occasion?'**
+  String get occasionDeleteConfirmTitle;
+
+  /// No description provided for @occasionDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{This occasion has no contributions recorded yet. This can\'t be undone.} =1{This also removes 1 contribution and updates that person\'s balance. This can\'t be undone.} other{This also removes {count} contributions and updates the balance of everyone who took part. This can\'t be undone.}}'**
+  String occasionDeleteConfirmMessage(int count);
+
+  /// No description provided for @occasionArchiveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive this occasion?'**
+  String get occasionArchiveConfirmTitle;
+
+  /// No description provided for @occasionArchiveConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It moves to archived occasions. Its contributions stay in everyone\'s history and balances, and you can restore it any time.'**
+  String get occasionArchiveConfirmMessage;
+
+  /// No description provided for @occasionRestoreConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore this occasion?'**
+  String get occasionRestoreConfirmTitle;
+
+  /// No description provided for @occasionRestoreConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It will appear in your occasions list again.'**
+  String get occasionRestoreConfirmMessage;
+
+  /// No description provided for @occasionAttachmentsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get occasionAttachmentsHeader;
+
+  /// No description provided for @occasionAttachPhotoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach photo'**
+  String get occasionAttachPhotoAction;
+
+  /// No description provided for @occasionAttachFromCameraAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get occasionAttachFromCameraAction;
+
+  /// No description provided for @occasionAttachFromGalleryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get occasionAttachFromGalleryAction;
+
+  /// No description provided for @occasionAttachmentsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos yet'**
+  String get occasionAttachmentsEmptyTitle;
+
+  /// No description provided for @occasionAttachmentsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach a photo of the envelope list, the invitation, or the occasion itself to keep it with this record.'**
+  String get occasionAttachmentsEmptyMessage;
+
+  /// No description provided for @occasionRemoveAttachmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get occasionRemoveAttachmentAction;
+
+  /// No description provided for @occasionRemoveAttachmentConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this photo?'**
+  String get occasionRemoveAttachmentConfirmTitle;
+
+  /// No description provided for @occasionRemoveAttachmentConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo will be deleted from this occasion. This can\'t be undone.'**
+  String get occasionRemoveAttachmentConfirmMessage;
+
+  /// No description provided for @occasionCameraPermissionDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is turned off'**
+  String get occasionCameraPermissionDeniedTitle;
+
+  /// No description provided for @occasionCameraPermissionDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary needs your camera to take a photo for this occasion. Open your device settings and allow camera access for Daftary, or choose a photo from your gallery instead.'**
+  String get occasionCameraPermissionDeniedMessage;
+
+  /// No description provided for @occasionPhotoLibraryPermissionDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo access is turned off'**
+  String get occasionPhotoLibraryPermissionDeniedTitle;
+
+  /// No description provided for @occasionPhotoLibraryPermissionDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.'**
+  String get occasionPhotoLibraryPermissionDeniedMessage;
+
+  /// No description provided for @occasionOpenSettingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get occasionOpenSettingsAction;
 }
 
 class _AppLocalizationsDelegate

@@ -36,6 +36,11 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    // Occasion names are a labelling detail fetched on every load; only the
+    // 008 tests below care what comes back, so the default is "none".
+    when(
+      () => transactionsRepository.getOccasionNamesForPerson(any()),
+    ).thenAnswer((_) async => const Right({}));
   });
 
   PersonDetailCubit buildCubit() => PersonDetailCubit(
@@ -43,6 +48,7 @@ void main() {
     GetPersonBalance(transactionsRepository),
     GetPersonHistory(transactionsRepository),
     DeleteTransaction(transactionsRepository),
+    transactionsRepository,
   );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
@@ -257,6 +263,105 @@ void main() {
     },
     verify: (cubit) {
       expect(cubit.state.balance?.net, const Money.fromMinorUnits(300000));
+    },
+  );
+
+  blocTest<PersonDetailCubit, PersonDetailState>(
+    'loads occasion-linked contributions with their occasion names '
+    'populated (008 US2)',
+    build: buildCubit,
+    setUp: () {
+      final ordinary = MoneyTransaction(
+        id: 't1',
+        idempotencyKey: 'k1',
+        personId: 'p1',
+        amount: const Money.fromMinorUnits(200000),
+        direction: TransactionDirection.given,
+        kind: TransactionKind.initialExchange,
+        date: now,
+        createdAt: now,
+      );
+      final contribution = MoneyTransaction(
+        id: 't2',
+        idempotencyKey: 'k2',
+        personId: 'p1',
+        amount: const Money.fromMinorUnits(50000),
+        direction: TransactionDirection.received,
+        kind: TransactionKind.occasionContribution,
+        date: now,
+        createdAt: now,
+        occasionId: 'o1',
+        countsTowardBalance: false,
+      );
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(200000)),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => Right([ordinary, contribution]));
+      when(
+        () => transactionsRepository.getOccasionNamesForPerson('p1'),
+      ).thenAnswer((_) async => const Right({'o1': "Ahmed's wedding"}));
+    },
+    act: (cubit) => cubit.load('p1'),
+    verify: (cubit) {
+      expect(cubit.state.history, hasLength(2));
+      expect(cubit.state.occasionNames, {'o1': "Ahmed's wedding"});
+    },
+  );
+
+  blocTest<PersonDetailCubit, PersonDetailState>(
+    'removing the last contribution for an occasion drops its name on the '
+    'refresh, exactly as an ordinary row disappears (008 US2)',
+    build: buildCubit,
+    setUp: () {
+      final contribution = MoneyTransaction(
+        id: 't1',
+        idempotencyKey: 'k1',
+        personId: 'p1',
+        amount: const Money.fromMinorUnits(50000),
+        direction: TransactionDirection.received,
+        kind: TransactionKind.occasionContribution,
+        date: now,
+        createdAt: now,
+        occasionId: 'o1',
+      );
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(50000)),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => Right([contribution]));
+      when(
+        () => transactionsRepository.getOccasionNamesForPerson('p1'),
+      ).thenAnswer((_) async => const Right({'o1': "Ahmed's wedding"}));
+      when(
+        () => transactionsRepository.deleteTransaction('t1'),
+      ).thenAnswer((_) async => const Right(unit));
+    },
+    act: (cubit) async {
+      await cubit.load('p1');
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => const Right([]));
+      when(
+        () => transactionsRepository.getOccasionNamesForPerson('p1'),
+      ).thenAnswer((_) async => const Right({}));
+      await cubit.deleteTransaction('t1');
+    },
+    verify: (cubit) {
+      expect(cubit.state.history, isEmpty);
+      expect(cubit.state.occasionNames, isEmpty);
     },
   );
 }

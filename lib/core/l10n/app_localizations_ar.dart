@@ -587,4 +587,319 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get financeCategoryOtherIncome => 'دخل آخر';
+
+  @override
+  String get occasionsTitle => 'المناسبات';
+
+  @override
+  String get occasionsEmptyTitle => 'لا توجد مناسبات بعد';
+
+  @override
+  String get occasionsEmptyMessage =>
+      'أفراح وخطوبة وأعياد ميلاد وسبوع وعزاء — أنشئ مناسبة لتسجّل النقوط اللي أخدتها أو دفعتها فيها.';
+
+  @override
+  String get occasionAddAction => 'مناسبة جديدة';
+
+  @override
+  String get occasionAddFirstAction => 'أنشئ أول مناسبة';
+
+  @override
+  String get occasionSearchHint => 'ابحث عن مناسبة';
+
+  @override
+  String get occasionFilterTypeLabel => 'النوع';
+
+  @override
+  String get occasionFilterAllTypes => 'كل الأنواع';
+
+  @override
+  String get occasionFilterDateRangeLabel => 'نطاق التاريخ';
+
+  @override
+  String get occasionFilterDateFromLabel => 'من';
+
+  @override
+  String get occasionFilterDateToLabel => 'إلى';
+
+  @override
+  String get occasionFilterAllDates => 'أي تاريخ';
+
+  @override
+  String get occasionClearFiltersAction => 'مسح عوامل التصفية';
+
+  @override
+  String get occasionNoMatchTitle => 'لا توجد مناسبات مطابقة';
+
+  @override
+  String get occasionNoMatchMessage =>
+      'لا توجد مناسبات تطابق بحثك أو عوامل التصفية. جرّب اسمًا أو نوعًا أو نطاق تاريخ مختلفًا.';
+
+  @override
+  String get occasionArchivedAction => 'المناسبات المؤرشفة';
+
+  @override
+  String get occasionArchivedTitle => 'المناسبات المؤرشفة';
+
+  @override
+  String get occasionArchivedEmptyTitle => 'لا توجد مناسبات مؤرشفة';
+
+  @override
+  String get occasionArchivedEmptyMessage =>
+      'المناسبات التي تقوم بأرشفتها ستظهر هنا، مع الاحتفاظ بمساهماتها وأرصدتها كاملة.';
+
+  @override
+  String get occasionArchivedLabel => 'مؤرشفة';
+
+  @override
+  String get occasionUpcomingLabel => 'قادمة';
+
+  @override
+  String get occasionTypeWedding => 'فرح';
+
+  @override
+  String get occasionTypeEngagement => 'خطوبة';
+
+  @override
+  String get occasionTypeBirthday => 'عيد ميلاد';
+
+  @override
+  String get occasionTypeNewbornSebou => 'سبوع';
+
+  @override
+  String get occasionTypeCondolence => 'عزاء';
+
+  @override
+  String get occasionTypeCelebration => 'احتفال';
+
+  @override
+  String get occasionTypeOther => 'أخرى';
+
+  @override
+  String get occasionTypeCustomLabel => 'نوع مخصص';
+
+  @override
+  String get occasionTypeCustomHint => 'اكتب نوعًا من عندك، مثل حفل تخرج';
+
+  @override
+  String get occasionFormCreateTitle => 'مناسبة جديدة';
+
+  @override
+  String get occasionFormEditTitle => 'تعديل المناسبة';
+
+  @override
+  String get occasionNameLabel => 'اسم المناسبة';
+
+  @override
+  String get occasionNameHint => 'مثال: فرح أحمد';
+
+  @override
+  String get occasionNameRequiredError => 'اسم المناسبة مطلوب';
+
+  @override
+  String get occasionDateLabel => 'التاريخ';
+
+  @override
+  String get occasionTypeLabel => 'النوع';
+
+  @override
+  String get occasionTypeRequiredError => 'اختر نوع المناسبة';
+
+  @override
+  String get occasionNotesLabel => 'ملاحظات (اختياري)';
+
+  @override
+  String get occasionCreateAction => 'إنشاء المناسبة';
+
+  @override
+  String get occasionUpdateAction => 'حفظ التعديلات';
+
+  @override
+  String get occasionEditAction => 'تعديل المناسبة';
+
+  @override
+  String get occasionDeleteAction => 'حذف المناسبة';
+
+  @override
+  String get occasionArchiveAction => 'أرشفة المناسبة';
+
+  @override
+  String get occasionRestoreAction => 'استعادة المناسبة';
+
+  @override
+  String get occasionParticipantFormAddTitle => 'إضافة مشارك';
+
+  @override
+  String get occasionParticipantFormEditTitle => 'تعديل المساهمة';
+
+  @override
+  String get occasionParticipantPersonLabel => 'الشخص';
+
+  @override
+  String get occasionParticipantAmountLabel => 'المبلغ (جنيه مصري)';
+
+  @override
+  String get occasionParticipantAmountInvalidError =>
+      'أدخل مبلغًا صحيحًا أكبر من صفر';
+
+  @override
+  String get occasionParticipantDirectionLabel => 'الاتجاه';
+
+  @override
+  String get occasionParticipantDirectionReceived => 'استلمت منه';
+
+  @override
+  String get occasionParticipantDirectionGiven => 'أعطيته';
+
+  @override
+  String get occasionParticipantNoteLabel => 'ملاحظة (اختياري)';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceLabel => 'تُحتسب ضمن رصيده';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceHint =>
+      'نقوط العزاء لا تُرد عادةً، لذا لا تُحتسب ضمن الرصيد افتراضيًا. فعّل هذا الخيار لاحتسابها مثل أي تبادل آخر.';
+
+  @override
+  String get occasionParticipantSaveAction => 'حفظ المشارك';
+
+  @override
+  String get occasionParticipantUpdateAction => 'حفظ التعديلات';
+
+  @override
+  String get occasionDetailTotalReceived => 'إجمالي المستلم';
+
+  @override
+  String get occasionDetailTotalGiven => 'إجمالي المدفوع';
+
+  @override
+  String get occasionDetailNet => 'الصافي';
+
+  @override
+  String get occasionSettlementSettled => 'تمت التسوية';
+
+  @override
+  String occasionSettlementMoreReceived(String amount) {
+    return 'استلمت $amount أكثر مما دفعت';
+  }
+
+  @override
+  String occasionSettlementMoreGiven(String amount) {
+    return 'دفعت $amount أكثر مما استلمت';
+  }
+
+  @override
+  String get occasionParticipantsHeader => 'المشاركون';
+
+  @override
+  String get occasionParticipantsEmptyTitle => 'لا يوجد مشاركون بعد';
+
+  @override
+  String get occasionParticipantsEmptyMessage =>
+      'أضف أول شخص أعطى أو استلم نقوطًا في هذه المناسبة.';
+
+  @override
+  String get occasionAddParticipantAction => 'إضافة مشارك';
+
+  @override
+  String get occasionEditParticipantAction => 'تعديل المساهمة';
+
+  @override
+  String get occasionRemoveParticipantAction => 'إزالة المساهمة';
+
+  @override
+  String get occasionContributionBadge => 'مناسبة';
+
+  @override
+  String get occasionRemoveParticipantConfirmTitle => 'إزالة هذه المساهمة؟';
+
+  @override
+  String get occasionRemoveParticipantConfirmMessage =>
+      'ستختفي أيضًا من سجل هذا الشخص ومن رصيده. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get occasionDeleteConfirmTitle => 'حذف هذه المناسبة؟';
+
+  @override
+  String occasionDeleteConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'سيتم أيضًا حذف $count مساهمة وتحديث أرصدة أصحابها. لا يمكن التراجع عن هذا الإجراء.',
+      many:
+          'سيتم أيضًا حذف $count مساهمة وتحديث أرصدة أصحابها. لا يمكن التراجع عن هذا الإجراء.',
+      few:
+          'سيتم أيضًا حذف $count مساهمات وتحديث أرصدة أصحابها. لا يمكن التراجع عن هذا الإجراء.',
+      two:
+          'سيتم أيضًا حذف مساهمتين وتحديث رصيد صاحبيهما. لا يمكن التراجع عن هذا الإجراء.',
+      one:
+          'سيتم أيضًا حذف مساهمة واحدة وتحديث رصيد صاحبها. لا يمكن التراجع عن هذا الإجراء.',
+      zero:
+          'لا توجد مساهمات مسجلة في هذه المناسبة. لا يمكن التراجع عن هذا الإجراء.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get occasionArchiveConfirmTitle => 'أرشفة هذه المناسبة؟';
+
+  @override
+  String get occasionArchiveConfirmMessage =>
+      'ستنتقل إلى المناسبات المؤرشفة. تبقى مساهماتها في سجل كل شخص وفي رصيده، ويمكنك استعادتها في أي وقت.';
+
+  @override
+  String get occasionRestoreConfirmTitle => 'استعادة هذه المناسبة؟';
+
+  @override
+  String get occasionRestoreConfirmMessage =>
+      'ستظهر مرة أخرى في قائمة المناسبات.';
+
+  @override
+  String get occasionAttachmentsHeader => 'الصور';
+
+  @override
+  String get occasionAttachPhotoAction => 'إرفاق صورة';
+
+  @override
+  String get occasionAttachFromCameraAction => 'التقاط صورة';
+
+  @override
+  String get occasionAttachFromGalleryAction => 'الاختيار من المعرض';
+
+  @override
+  String get occasionAttachmentsEmptyTitle => 'لا توجد صور بعد';
+
+  @override
+  String get occasionAttachmentsEmptyMessage =>
+      'أرفق صورة لكشف النقوط أو الدعوة أو المناسبة نفسها لتبقى محفوظة مع هذا السجل.';
+
+  @override
+  String get occasionRemoveAttachmentAction => 'إزالة الصورة';
+
+  @override
+  String get occasionRemoveAttachmentConfirmTitle => 'إزالة هذه الصورة؟';
+
+  @override
+  String get occasionRemoveAttachmentConfirmMessage =>
+      'سيتم حذف الصورة من هذه المناسبة. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get occasionCameraPermissionDeniedTitle => 'الوصول إلى الكاميرا مغلق';
+
+  @override
+  String get occasionCameraPermissionDeniedMessage =>
+      'يحتاج دفتري إلى الكاميرا لالتقاط صورة لهذه المناسبة. افتح إعدادات جهازك واسمح لدفتري باستخدام الكاميرا، أو اختر صورة من المعرض بدلًا من ذلك.';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedTitle =>
+      'الوصول إلى الصور مغلق';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedMessage =>
+      'يحتاج دفتري إلى الوصول لصورك ليتمكن من إرفاق صورة بهذه المناسبة. افتح إعدادات جهازك واسمح لدفتري بالوصول إلى الصور، أو التقط صورة جديدة بالكاميرا بدلًا من ذلك.';
+
+  @override
+  String get occasionOpenSettingsAction => 'فتح الإعدادات';
 }

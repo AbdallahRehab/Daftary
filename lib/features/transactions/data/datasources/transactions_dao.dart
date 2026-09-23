@@ -48,6 +48,43 @@ class TransactionsDao {
         .get();
   }
 
+  /// Every non-deleted contribution row for [occasionId], oldest first
+  /// (008 FR-007). Filtering on `occasion_id` lets SQLite use
+  /// `idx_transactions_occasion_id` instead of scanning the whole table,
+  /// which matters because this runs on every occasion-detail open.
+  Future<List<db.MoneyTransaction>> getContributionsForOccasion(
+    String occasionId,
+  ) {
+    return (_db.select(_db.moneyTransactions)
+          ..where((t) => t.occasionId.equals(occasionId) & t.deletedAt.isNull())
+          ..orderBy([(t) => db.OrderingTerm(expression: t.date)]))
+        .get();
+  }
+
+  /// Occasion id → occasion name for every occasion-linked, non-deleted row
+  /// belonging to [personId] (008). One join rather than a name lookup per
+  /// history row, so rendering the person's history stays a single read.
+  Future<Map<String, String>> occasionNamesForPerson(String personId) async {
+    final rows = await _db
+        .customSelect(
+          '''
+          SELECT DISTINCT o.id AS occasion_id, o.name AS name
+          FROM money_transactions t
+          INNER JOIN occasions o ON o.id = t.occasion_id
+          WHERE t.person_id = ?
+            AND t.deleted_at IS NULL
+            AND t.occasion_id IS NOT NULL
+          ''',
+          variables: [db.Variable<String>(personId)],
+          readsFrom: {_db.moneyTransactions, _db.occasions},
+        )
+        .get();
+    return {
+      for (final row in rows)
+        row.read<String>('occasion_id'): row.read<String>('name'),
+    };
+  }
+
   Future<db.MoneyTransaction> updateTransaction(
     String id,
     db.MoneyTransactionsCompanion companion,

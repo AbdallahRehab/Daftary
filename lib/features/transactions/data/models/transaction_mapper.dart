@@ -15,11 +15,16 @@ extension MoneyTransactionMapper on db.MoneyTransaction {
     direction: direction == 'given'
         ? domain.TransactionDirection.given
         : domain.TransactionDirection.received,
-    kind: kind == 'repayment'
-        ? domain.TransactionKind.repayment
-        : domain.TransactionKind.initialExchange,
+    kind: switch (kind) {
+      'initialExchange' => domain.TransactionKind.initialExchange,
+      'repayment' => domain.TransactionKind.repayment,
+      'occasionContribution' => domain.TransactionKind.occasionContribution,
+      _ => throw StateError('Unknown transaction kind: $kind'),
+    },
     date: DateTime.fromMillisecondsSinceEpoch(date),
     note: note,
+    occasionId: occasionId,
+    countsTowardBalance: countsTowardBalance,
     createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),
     editedAt: editedAt == null
         ? null
@@ -36,9 +41,14 @@ extension TransactionDirectionDb on domain.TransactionDirection {
 }
 
 extension TransactionKindDb on domain.TransactionKind {
-  String get dbValue => this == domain.TransactionKind.repayment
-      ? 'repayment'
-      : 'initialExchange';
+  /// Exhaustive by design: a ternary fallback would silently persist any
+  /// future kind as `initialExchange`, quietly corrupting balances. A
+  /// `switch` over the enum makes adding a kind a compile error instead.
+  String get dbValue => switch (this) {
+    domain.TransactionKind.initialExchange => 'initialExchange',
+    domain.TransactionKind.repayment => 'repayment',
+    domain.TransactionKind.occasionContribution => 'occasionContribution',
+  };
 }
 
 extension TransactionAuditEntryMapper on db.TransactionAuditEntry {

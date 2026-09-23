@@ -5,7 +5,6 @@ import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_failures.dart';
 import 'package:daftary/features/finance/domain/usecases/edit_category.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 

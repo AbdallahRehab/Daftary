@@ -4,7 +4,6 @@ import 'package:daftary/features/finance/data/repositories/category_repository_i
 import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/usecases/remove_category.dart';
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 

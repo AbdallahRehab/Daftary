@@ -4,6 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../features/finance/domain/entities/finance_entry_type.dart';
+import '../../features/finance/presentation/pages/category_form_page.dart';
+import '../../features/finance/presentation/pages/category_management_page.dart';
+import '../../features/finance/presentation/pages/finance_entry_form_page.dart';
+import '../../features/finance/presentation/pages/finance_history_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
@@ -109,6 +114,50 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) =>
                   RepaymentFormPage(personId: state.pathParameters['id']!),
             ),
+            // The finance section lives in the People branch rather than a
+            // fourth bottom-nav tab (research.md Decision 9); it is reached
+            // from the Overview summary card and from the quick actions.
+            GoRoute(
+              path: '/finance',
+              builder: (context, state) => const FinanceHistoryPage(),
+            ),
+            GoRoute(
+              path: '/finance/entries/new',
+              builder: (context, state) => FinanceEntryFormPage(
+                initialType: _financeEntryTypeFrom(
+                  state.uri.queryParameters['type'],
+                ),
+              ),
+            ),
+            GoRoute(
+              path: '/finance/entries/:id/edit',
+              builder: (context, state) => FinanceEntryFormPage(
+                editingEntryId: state.pathParameters['id']!,
+              ),
+            ),
+            GoRoute(
+              path: '/finance/categories',
+              builder: (context, state) => const CategoryManagementPage(),
+            ),
+            GoRoute(
+              path: '/finance/categories/new',
+              builder: (context, state) => CategoryFormPage(
+                // The management screen passes the type it is currently
+                // showing, so "add category" from the income tab opens an
+                // income category rather than silently defaulting away.
+                initialType: state.extra is CategoryType
+                    ? state.extra! as CategoryType
+                    : _financeEntryTypeFrom(
+                        state.uri.queryParameters['type'],
+                      ),
+              ),
+            ),
+            GoRoute(
+              path: '/finance/categories/:id/edit',
+              builder: (context, state) => CategoryFormPage(
+                editingCategoryId: state.pathParameters['id']!,
+              ),
+            ),
           ],
         ),
         StatefulShellBranch(
@@ -133,3 +182,10 @@ final GoRouter appRouter = GoRouter(
     ),
   ],
 );
+
+/// Resolves the `?type=` query parameter used by the Add Expense and Add
+/// Income entry points. Anything unrecognized (or absent) falls back to
+/// expense, the far more frequent entry — a bad URL should open a usable
+/// form, not fail.
+FinanceEntryType _financeEntryTypeFrom(String? value) =>
+    value == 'income' ? FinanceEntryType.income : FinanceEntryType.expense;

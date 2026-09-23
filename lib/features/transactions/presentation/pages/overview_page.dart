@@ -8,6 +8,7 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../finance/presentation/widgets/finance_month_summary_card.dart';
 import '../../domain/entities/overview_summary.dart';
 import '../cubit/overview_cubit.dart';
 import '../cubit/overview_state.dart';
@@ -55,9 +56,13 @@ class _OverviewView extends StatelessWidget {
             return RefreshIndicator(
               onRefresh: () => context.read<OverviewCubit>().load(),
               child: ListView(
+                padding: const EdgeInsets.all(AppSpacing.md),
                 children: [
+                  // Settled balances do not mean nothing happened this
+                  // month, so the finance link stays visible here.
+                  const FinanceMonthSummaryCard(),
                   SizedBox(
-                    height: 480,
+                    height: 420,
                     child: AppEmptyView(
                       icon: Icons.check_circle_outline,
                       title: l10n.overviewAllSettledTitle,
@@ -78,6 +83,11 @@ class _OverviewView extends StatelessWidget {
                   totalOwedToUser: summary.totalOwedToUser,
                   totalUserOwes: summary.totalUserOwes,
                 ),
+                const SizedBox(height: AppSpacing.md),
+                // The finance section's entry point (research.md
+                // Decision 9). It brings its own Cubit, so nothing about
+                // OverviewCubit's existing behavior changes.
+                const FinanceMonthSummaryCard(),
                 if (summary.peopleTheyOweYou.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
                   _SectionHeader(title: l10n.overviewSectionTheyOweYou),

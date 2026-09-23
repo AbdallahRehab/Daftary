@@ -49,6 +49,8 @@ import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
     as _i505;
 import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
     as _i987;
+import '../../features/finance/presentation/cubit/finance_month_summary_cubit.dart'
+    as _i231;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -297,6 +299,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i791.ResolveOnboardingStatus>(),
         gh<_i430.OnboardingRepository>(),
       ),
+    );
+    gh.factory<_i231.FinanceMonthSummaryCubit>(
+      () => _i231.FinanceMonthSummaryCubit(gh<_i844.GetFinanceSummary>()),
     );
     gh.lazySingleton<_i792.SettingsCubit>(
       () => _i792.SettingsCubit(

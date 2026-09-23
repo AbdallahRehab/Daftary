@@ -74,6 +74,10 @@ dependencies:
   # view (FR-014, research.md Decision 4).
   fl_chart: ^1.2.0
 
+  # 013 Data export: hands the generated CSV to the OS share sheet (FR-010).
+  # Wrapped behind `data_privacy/ShareService`; only SharePlusService imports it.
+  share_plus: ^12.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

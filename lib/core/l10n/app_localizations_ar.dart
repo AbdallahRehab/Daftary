@@ -1616,4 +1616,158 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeEmptyAction => 'أضف أول شخص';
+
+  @override
+  String get reportsTitle => 'التقارير';
+
+  @override
+  String get reportsOpenAction => 'التقارير';
+
+  @override
+  String get reportsTrendTitle => 'الاتجاه الشهري';
+
+  @override
+  String reportsTrendSubtitle(int months) {
+    return 'الدخل والمصروفات خلال آخر $months أشهر';
+  }
+
+  @override
+  String get reportsBreakdownTitle => 'الإنفاق حسب الفئة';
+
+  @override
+  String get reportsIncome => 'الدخل';
+
+  @override
+  String get reportsExpenses => 'المصروفات';
+
+  @override
+  String get reportsNet => 'الصافي';
+
+  @override
+  String get reportsPeriodThisMonth => 'هذا الشهر';
+
+  @override
+  String get reportsPeriodLastMonth => 'الشهر الماضي';
+
+  @override
+  String get reportsPeriodLast3Months => 'آخر 3 أشهر';
+
+  @override
+  String get reportsPeriodLast6Months => 'آخر 6 أشهر';
+
+  @override
+  String get reportsBreakdownEmpty => 'لا توجد مصروفات مسجلة في هذه الفترة.';
+
+  @override
+  String get reportsEmptyTitle => 'لا توجد تقارير بعد';
+
+  @override
+  String get reportsEmptyMessage =>
+      'سجّل أول دخل أو مصروف لتبدأ في رؤية الاتجاهات وتوزيع الفئات.';
+
+  @override
+  String get reportsEmptyAction => 'أضف قيدًا';
+
+  @override
+  String get reportsLoadError => 'تعذر تحميل تقاريرك. حاول مرة أخرى.';
+
+  @override
+  String get reportsExportAction => 'تصدير بياناتي';
+
+  @override
+  String reportsCategoryShare(String percent) {
+    return '$percent٪';
+  }
+
+  @override
+  String get exportTitle => 'تصدير بياناتي';
+
+  @override
+  String get exportDescription =>
+      'أنشئ ملف CSV واحدًا يحتوي على نسخة كاملة من بياناتك: الأشخاص والمعاملات وقيود الدخل والمصروفات والفئات والإعدادات. يُنشأ الملف على جهازك وأنت من يختار أين يرسله.';
+
+  @override
+  String get exportGenerateAction => 'إنشاء ملف التصدير';
+
+  @override
+  String get exportGenerating => 'جارٍ تجهيز ملف التصدير…';
+
+  @override
+  String get exportReadyTitle => 'ملف التصدير جاهز';
+
+  @override
+  String exportReadyMessage(int count) {
+    return 'تم تضمين $count سجلًا.';
+  }
+
+  @override
+  String get exportShareAction => 'مشاركة الملف';
+
+  @override
+  String get exportRegenerateAction => 'إنشاء ملف تصدير جديد';
+
+  @override
+  String get exportError =>
+      'تعذر إنشاء ملف التصدير. لم يُحفظ أي ملف ناقص. حاول مرة أخرى.';
+
+  @override
+  String get exportShareError => 'تعذر فتح قائمة المشاركة. حاول مرة أخرى.';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get settingsDataSectionTitle => 'بياناتك';
+
+  @override
+  String get settingsExportTile => 'تصدير بياناتي';
+
+  @override
+  String get settingsDangerZoneTitle => 'منطقة الخطر';
+
+  @override
+  String get settingsDeleteDataTile => 'حذف بياناتي';
+
+  @override
+  String get settingsDeleteDataSubtitle =>
+      'امسح كل ما هو محفوظ في دفتري نهائيًا';
+
+  @override
+  String get deleteDataTitle => 'حذف بياناتي';
+
+  @override
+  String get deleteDataWarningTitle => 'هذا الإجراء نهائي';
+
+  @override
+  String get deleteDataWarningMessage =>
+      'سيؤدي هذا إلى حذف جميع الأشخاص والمعاملات والمناسبات والمسوحات وقيود الدخل والمصروفات والفئات والميزانيات والإعدادات من هذا الجهاز نهائيًا. لا يمكن التراجع عن ذلك. يُنصح بتصدير بياناتك أولًا.';
+
+  @override
+  String get deleteDataExportFirstAction => 'صدّر بياناتي أولًا';
+
+  @override
+  String get deleteDataConfirmPhrase => 'حذف';
+
+  @override
+  String deleteDataConfirmLabel(String phrase) {
+    return 'اكتب $phrase للتأكيد';
+  }
+
+  @override
+  String deleteDataConfirmHint(String phrase) {
+    return '$phrase';
+  }
+
+  @override
+  String get deleteDataConfirmAction => 'احذف كل شيء';
+
+  @override
+  String get deleteDataCancelAction => 'إلغاء';
+
+  @override
+  String get deleteDataInProgress => 'جارٍ حذف بياناتك…';
+
+  @override
+  String get deleteDataError =>
+      'تعذر حذف بياناتك. لم يُحذف أي شيء — جميع بياناتك ما زالت سليمة. حاول مرة أخرى.';
 }

@@ -8,6 +8,7 @@ import 'package:daftary/features/settings/presentation/pages/settings_page.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockSettingsCubit extends MockCubit<SettingsState>
@@ -114,5 +115,84 @@ void main() {
     await tester.pumpAndSettle();
 
     verify(() => cubit.changeThemeMode(AppThemeMode.system)).called(1);
+  });
+
+  group('Your data / Danger zone (013)', () {
+    /// `/settings` with placeholder `export` / `delete-data` children, the
+    /// same shape as the real Settings branch.
+    Widget wrapWithRouter() {
+      final router = GoRouter(
+        initialLocation: '/settings',
+        routes: [
+          GoRoute(
+            path: '/settings',
+            builder: (_, _) => BlocProvider<SettingsCubit>.value(
+              value: cubit,
+              child: const SettingsPage(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'export',
+                builder: (_, _) =>
+                    const Scaffold(body: Text('EXPORT_PLACEHOLDER')),
+              ),
+              GoRoute(
+                path: 'delete-data',
+                builder: (_, _) =>
+                    const Scaffold(body: Text('DELETE_PLACEHOLDER')),
+              ),
+            ],
+          ),
+        ],
+      );
+      return MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      );
+    }
+
+    setUp(() => when(() => cubit.state).thenReturn(const SettingsState()));
+
+    testWidgets('shows both sections below the existing ones', (tester) async {
+      await tester.pumpWidget(wrapWithRouter());
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(find.text('Delete my data'), 100);
+      expect(find.text('Your data'), findsOneWidget);
+      expect(find.text('Export my data'), findsOneWidget);
+      expect(find.text('Danger zone'), findsOneWidget);
+      expect(
+        find.text('Permanently erase everything stored in Daftary'),
+        findsOneWidget,
+      );
+      // Additive: the existing sections are still there, above.
+      expect(
+        tester.getTopLeft(find.text('Dark')).dy,
+        lessThan(tester.getTopLeft(find.text('Your data')).dy),
+      );
+    });
+
+    testWidgets('"Export my data" opens /settings/export', (tester) async {
+      await tester.pumpWidget(wrapWithRouter());
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(find.text('Export my data'), 100);
+      await tester.tap(find.text('Export my data'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('EXPORT_PLACEHOLDER'), findsOneWidget);
+    });
+
+    testWidgets('"Delete my data" opens /settings/delete-data', (tester) async {
+      await tester.pumpWidget(wrapWithRouter());
+      await tester.pumpAndSettle();
+
+      await tester.scrollUntilVisible(find.text('Delete my data'), 100);
+      await tester.tap(find.text('Delete my data'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('DELETE_PLACEHOLDER'), findsOneWidget);
+    });
   });
 }

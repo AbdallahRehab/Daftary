@@ -9,11 +9,14 @@ import '../../features/budgets/presentation/pages/budget_form_page.dart';
 import '../../features/budgets/presentation/pages/budget_month_page.dart';
 import '../../features/budgets/presentation/pages/budget_trend_page.dart';
 import '../../features/dashboard/presentation/pages/home_page.dart';
+import '../../features/data_privacy/presentation/pages/data_export_page.dart';
+import '../../features/data_privacy/presentation/pages/delete_data_confirmation_page.dart';
 import '../../features/finance/domain/entities/finance_entry_type.dart';
 import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
 import '../../features/finance/presentation/pages/finance_entry_form_page.dart';
 import '../../features/finance/presentation/pages/finance_history_page.dart';
+import '../../features/finance/presentation/pages/reports_page.dart';
 import '../../features/occasions/presentation/pages/archived_occasions_page.dart';
 import '../../features/occasions/presentation/pages/occasion_detail_page.dart';
 import '../../features/occasions/presentation/pages/occasion_form_page.dart';
@@ -138,6 +141,10 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/finance',
               builder: (context, state) => const FinanceHistoryPage(),
+            ),
+            GoRoute(
+              path: '/finance/reports',
+              builder: (context, state) => const ReportsPage(),
             ),
             GoRoute(
               path: '/finance/entries/new',
@@ -308,6 +315,14 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/settings',
               builder: (context, state) => const SettingsPage(),
+            ),
+            GoRoute(
+              path: '/settings/export',
+              builder: (context, state) => const DataExportPage(),
+            ),
+            GoRoute(
+              path: '/settings/delete-data',
+              builder: (context, state) => const DeleteDataConfirmationPage(),
             ),
           ],
         ),

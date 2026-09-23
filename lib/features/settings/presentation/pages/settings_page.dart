@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
@@ -89,6 +90,34 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _SettingsSection(
+                icon: Icons.folder_outlined,
+                title: l10n.settingsDataSectionTitle,
+                child: ListTile(
+                  leading: const Icon(Icons.ios_share_outlined),
+                  title: Text(l10n.settingsExportTile),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/export'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Last on the page, and in the theme's error color, so the
+              // one irreversible action is never mistaken for a preference
+              // (013 FR-013).
+              _SettingsSection(
+                icon: Icons.warning_amber_outlined,
+                title: l10n.settingsDangerZoneTitle,
+                child: ListTile(
+                  iconColor: Theme.of(context).colorScheme.error,
+                  textColor: Theme.of(context).colorScheme.error,
+                  leading: const Icon(Icons.delete_forever_outlined),
+                  title: Text(l10n.settingsDeleteDataTile),
+                  subtitle: Text(l10n.settingsDeleteDataSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/delete-data'),
                 ),
               ),
             ],

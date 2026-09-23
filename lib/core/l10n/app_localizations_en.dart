@@ -1618,4 +1618,160 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeEmptyAction => 'Add your first person';
+
+  @override
+  String get reportsTitle => 'Reports';
+
+  @override
+  String get reportsOpenAction => 'Reports';
+
+  @override
+  String get reportsTrendTitle => 'Monthly trend';
+
+  @override
+  String reportsTrendSubtitle(int months) {
+    return 'Income and expenses over the last $months months';
+  }
+
+  @override
+  String get reportsBreakdownTitle => 'Spending by category';
+
+  @override
+  String get reportsIncome => 'Income';
+
+  @override
+  String get reportsExpenses => 'Expenses';
+
+  @override
+  String get reportsNet => 'Net';
+
+  @override
+  String get reportsPeriodThisMonth => 'This month';
+
+  @override
+  String get reportsPeriodLastMonth => 'Last month';
+
+  @override
+  String get reportsPeriodLast3Months => 'Last 3 months';
+
+  @override
+  String get reportsPeriodLast6Months => 'Last 6 months';
+
+  @override
+  String get reportsBreakdownEmpty => 'No expenses recorded for this period.';
+
+  @override
+  String get reportsEmptyTitle => 'No reports yet';
+
+  @override
+  String get reportsEmptyMessage =>
+      'Record your first income or expense to start seeing trends and category breakdowns.';
+
+  @override
+  String get reportsEmptyAction => 'Add an entry';
+
+  @override
+  String get reportsLoadError =>
+      'Your reports couldn\'t be loaded. Please try again.';
+
+  @override
+  String get reportsExportAction => 'Export my data';
+
+  @override
+  String reportsCategoryShare(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get exportTitle => 'Export my data';
+
+  @override
+  String get exportDescription =>
+      'Create one CSV file containing a complete copy of your data: people, transactions, income and expense entries, categories, and settings. The file is created on your device and you choose where to send it.';
+
+  @override
+  String get exportGenerateAction => 'Create export file';
+
+  @override
+  String get exportGenerating => 'Preparing your export…';
+
+  @override
+  String get exportReadyTitle => 'Your export is ready';
+
+  @override
+  String exportReadyMessage(int count) {
+    return '$count records were included.';
+  }
+
+  @override
+  String get exportShareAction => 'Share file';
+
+  @override
+  String get exportRegenerateAction => 'Create a new export';
+
+  @override
+  String get exportError =>
+      'Your export couldn\'t be created. No partial file was saved. Please try again.';
+
+  @override
+  String get exportShareError =>
+      'The share sheet couldn\'t be opened. Please try again.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get settingsDataSectionTitle => 'Your data';
+
+  @override
+  String get settingsExportTile => 'Export my data';
+
+  @override
+  String get settingsDangerZoneTitle => 'Danger zone';
+
+  @override
+  String get settingsDeleteDataTile => 'Delete my data';
+
+  @override
+  String get settingsDeleteDataSubtitle =>
+      'Permanently erase everything stored in Daftary';
+
+  @override
+  String get deleteDataTitle => 'Delete my data';
+
+  @override
+  String get deleteDataWarningTitle => 'This is permanent';
+
+  @override
+  String get deleteDataWarningMessage =>
+      'This will permanently delete all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, and settings from this device. This cannot be undone. Consider exporting your data first.';
+
+  @override
+  String get deleteDataExportFirstAction => 'Export my data first';
+
+  @override
+  String get deleteDataConfirmPhrase => 'DELETE';
+
+  @override
+  String deleteDataConfirmLabel(String phrase) {
+    return 'Type $phrase to confirm';
+  }
+
+  @override
+  String deleteDataConfirmHint(String phrase) {
+    return '$phrase';
+  }
+
+  @override
+  String get deleteDataConfirmAction => 'Delete everything';
+
+  @override
+  String get deleteDataCancelAction => 'Cancel';
+
+  @override
+  String get deleteDataInProgress => 'Deleting your data…';
+
+  @override
+  String get deleteDataError =>
+      'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.';
 }

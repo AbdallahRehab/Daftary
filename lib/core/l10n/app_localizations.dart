@@ -3037,6 +3037,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add your first person'**
   String get homeEmptyAction;
+
+  /// No description provided for @reportsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportsTitle;
+
+  /// No description provided for @reportsOpenAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reportsOpenAction;
+
+  /// No description provided for @reportsTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly trend'**
+  String get reportsTrendTitle;
+
+  /// No description provided for @reportsTrendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and expenses over the last {months} months'**
+  String reportsTrendSubtitle(int months);
+
+  /// No description provided for @reportsBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category'**
+  String get reportsBreakdownTitle;
+
+  /// No description provided for @reportsIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get reportsIncome;
+
+  /// No description provided for @reportsExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get reportsExpenses;
+
+  /// No description provided for @reportsNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get reportsNet;
+
+  /// No description provided for @reportsPeriodThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get reportsPeriodThisMonth;
+
+  /// No description provided for @reportsPeriodLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last month'**
+  String get reportsPeriodLastMonth;
+
+  /// No description provided for @reportsPeriodLast3Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 months'**
+  String get reportsPeriodLast3Months;
+
+  /// No description provided for @reportsPeriodLast6Months.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 6 months'**
+  String get reportsPeriodLast6Months;
+
+  /// No description provided for @reportsBreakdownEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No expenses recorded for this period.'**
+  String get reportsBreakdownEmpty;
+
+  /// No description provided for @reportsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No reports yet'**
+  String get reportsEmptyTitle;
+
+  /// No description provided for @reportsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first income or expense to start seeing trends and category breakdowns.'**
+  String get reportsEmptyMessage;
+
+  /// No description provided for @reportsEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an entry'**
+  String get reportsEmptyAction;
+
+  /// No description provided for @reportsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reports couldn\'t be loaded. Please try again.'**
+  String get reportsLoadError;
+
+  /// No description provided for @reportsExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data'**
+  String get reportsExportAction;
+
+  /// No description provided for @reportsCategoryShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String reportsCategoryShare(String percent);
+
+  /// No description provided for @exportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data'**
+  String get exportTitle;
+
+  /// No description provided for @exportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one CSV file containing a complete copy of your data: people, transactions, income and expense entries, categories, and settings. The file is created on your device and you choose where to send it.'**
+  String get exportDescription;
+
+  /// No description provided for @exportGenerateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create export file'**
+  String get exportGenerateAction;
+
+  /// No description provided for @exportGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your export…'**
+  String get exportGenerating;
+
+  /// No description provided for @exportReadyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your export is ready'**
+  String get exportReadyTitle;
+
+  /// No description provided for @exportReadyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} records were included.'**
+  String exportReadyMessage(int count);
+
+  /// No description provided for @exportShareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share file'**
+  String get exportShareAction;
+
+  /// No description provided for @exportRegenerateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new export'**
+  String get exportRegenerateAction;
+
+  /// No description provided for @exportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your export couldn\'t be created. No partial file was saved. Please try again.'**
+  String get exportError;
+
+  /// No description provided for @exportShareError.
+  ///
+  /// In en, this message translates to:
+  /// **'The share sheet couldn\'t be opened. Please try again.'**
+  String get exportShareError;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @settingsDataSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data'**
+  String get settingsDataSectionTitle;
+
+  /// No description provided for @settingsExportTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data'**
+  String get settingsExportTile;
+
+  /// No description provided for @settingsDangerZoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger zone'**
+  String get settingsDangerZoneTitle;
+
+  /// No description provided for @settingsDeleteDataTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my data'**
+  String get settingsDeleteDataTile;
+
+  /// No description provided for @settingsDeleteDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently erase everything stored in Daftary'**
+  String get settingsDeleteDataSubtitle;
+
+  /// No description provided for @deleteDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete my data'**
+  String get deleteDataTitle;
+
+  /// No description provided for @deleteDataWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is permanent'**
+  String get deleteDataWarningTitle;
+
+  /// No description provided for @deleteDataWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, and settings from this device. This cannot be undone. Consider exporting your data first.'**
+  String get deleteDataWarningMessage;
+
+  /// No description provided for @deleteDataExportFirstAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export my data first'**
+  String get deleteDataExportFirstAction;
+
+  /// No description provided for @deleteDataConfirmPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get deleteDataConfirmPhrase;
+
+  /// No description provided for @deleteDataConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {phrase} to confirm'**
+  String deleteDataConfirmLabel(String phrase);
+
+  /// No description provided for @deleteDataConfirmHint.
+  ///
+  /// In en, this message translates to:
+  /// **'{phrase}'**
+  String deleteDataConfirmHint(String phrase);
+
+  /// No description provided for @deleteDataConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete everything'**
+  String get deleteDataConfirmAction;
+
+  /// No description provided for @deleteDataCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get deleteDataCancelAction;
+
+  /// No description provided for @deleteDataInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your data…'**
+  String get deleteDataInProgress;
+
+  /// No description provided for @deleteDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.'**
+  String get deleteDataError;
 }
 
 class _AppLocalizationsDelegate

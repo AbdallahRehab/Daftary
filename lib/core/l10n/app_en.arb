@@ -785,5 +785,86 @@
   "homeFullErrorMessage": "Your dashboard couldn't be loaded. Please try again.",
   "homeEmptyTitle": "Welcome to Daftary",
   "homeEmptyMessage": "Keep track of who owes you, what you owe, and where your money goes each month — all on your device.",
-  "homeEmptyAction": "Add your first person"
+  "homeEmptyAction": "Add your first person",
+  "reportsTitle": "Reports",
+  "reportsOpenAction": "Reports",
+  "reportsTrendTitle": "Monthly trend",
+  "reportsTrendSubtitle": "Income and expenses over the last {months} months",
+  "@reportsTrendSubtitle": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "reportsBreakdownTitle": "Spending by category",
+  "reportsIncome": "Income",
+  "reportsExpenses": "Expenses",
+  "reportsNet": "Net",
+  "reportsPeriodThisMonth": "This month",
+  "reportsPeriodLastMonth": "Last month",
+  "reportsPeriodLast3Months": "Last 3 months",
+  "reportsPeriodLast6Months": "Last 6 months",
+  "reportsBreakdownEmpty": "No expenses recorded for this period.",
+  "reportsEmptyTitle": "No reports yet",
+  "reportsEmptyMessage": "Record your first income or expense to start seeing trends and category breakdowns.",
+  "reportsEmptyAction": "Add an entry",
+  "reportsLoadError": "Your reports couldn't be loaded. Please try again.",
+  "reportsExportAction": "Export my data",
+  "reportsCategoryShare": "{percent}%",
+  "@reportsCategoryShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "exportTitle": "Export my data",
+  "exportDescription": "Create one CSV file containing a complete copy of your data: people, transactions, income and expense entries, categories, and settings. The file is created on your device and you choose where to send it.",
+  "exportGenerateAction": "Create export file",
+  "exportGenerating": "Preparing your export…",
+  "exportReadyTitle": "Your export is ready",
+  "exportReadyMessage": "{count} records were included.",
+  "@exportReadyMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportShareAction": "Share file",
+  "exportRegenerateAction": "Create a new export",
+  "exportError": "Your export couldn't be created. No partial file was saved. Please try again.",
+  "exportShareError": "The share sheet couldn't be opened. Please try again.",
+  "retry": "Retry",
+  "settingsDataSectionTitle": "Your data",
+  "settingsExportTile": "Export my data",
+  "settingsDangerZoneTitle": "Danger zone",
+  "settingsDeleteDataTile": "Delete my data",
+  "settingsDeleteDataSubtitle": "Permanently erase everything stored in Daftary",
+  "deleteDataTitle": "Delete my data",
+  "deleteDataWarningTitle": "This is permanent",
+  "deleteDataWarningMessage": "This will permanently delete all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, and settings from this device. This cannot be undone. Consider exporting your data first.",
+  "deleteDataExportFirstAction": "Export my data first",
+  "deleteDataConfirmPhrase": "DELETE",
+  "deleteDataConfirmLabel": "Type {phrase} to confirm",
+  "@deleteDataConfirmLabel": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteDataConfirmHint": "{phrase}",
+  "@deleteDataConfirmHint": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteDataConfirmAction": "Delete everything",
+  "deleteDataCancelAction": "Cancel",
+  "deleteDataInProgress": "Deleting your data…",
+  "deleteDataError": "Your data couldn't be deleted. Nothing was removed — all your data is still intact. Please try again."
 }

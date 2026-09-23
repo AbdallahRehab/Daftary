@@ -56,6 +56,14 @@ class _FinanceHistoryView extends StatelessWidget {
       appBar: AppBar(
         title: Text(l10n.financeHistoryTitle),
         actions: [
+          // 013 T017: Reports is reached from here, so it is discoverable
+          // without knowing its route. Reloads on return because Reports'
+          // empty state can record a first entry.
+          IconButton(
+            icon: const Icon(Icons.insights_outlined),
+            tooltip: l10n.reportsOpenAction,
+            onPressed: () => _pushAndReload(context, '/finance/reports'),
+          ),
           IconButton(
             icon: const Icon(Icons.category_outlined),
             tooltip: l10n.financeManageCategoriesAction,

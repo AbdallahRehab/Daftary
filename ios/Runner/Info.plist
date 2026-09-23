@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Daftary uses the camera so you can photograph an occasion — an invitation, a receipt, or the event itself — and keep it with that occasion’s record. Photos stay on this device and are never uploaded.</string>
+	<string>Daftary uses the camera so you can photograph an occasion — an invitation, a receipt, or the event itself — or a paper list of names and amounts to turn into entries. Photos stay on this device and are never uploaded.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Daftary needs access to your photo library so you can attach an existing photo to an occasion. Photos stay on this device and are never uploaded.</string>
+	<string>Daftary needs access to your photo library so you can attach an existing photo to an occasion, or pick a photo of a paper list to turn into entries. Photos stay on this device and are never uploaded.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

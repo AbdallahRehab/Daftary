@@ -1,7 +1,6 @@
 {
   "@@locale": "ar",
   "appTitle": "دفتري",
-
   "commonSave": "حفظ",
   "commonCancel": "إلغاء",
   "commonDelete": "حذف",
@@ -17,7 +16,6 @@
   "errorNotFound": "تعذر العثور على هذا العنصر.",
   "errorValidation": "من فضلك راجع البيانات المدخلة وحاول مرة أخرى.",
   "errorUnknown": "حدث خطأ غير متوقع. من فضلك حاول مرة أخرى.",
-
   "peopleListTitle": "الأشخاص",
   "searchPeopleHint": "ابحث عن شخص",
   "filterAll": "الكل",
@@ -28,7 +26,6 @@
   "emptyPeopleMessage": "أضف شخصًا لتبدأ في تتبع الأموال التي تعطيها أو تستلمها معه.",
   "archivedPeopleAction": "الأشخاص المؤرشفون",
   "addPersonAction": "إضافة شخص",
-
   "personFormCreateTitle": "شخص جديد",
   "personFormEditTitle": "تعديل الشخص",
   "nameLabel": "الاسم",
@@ -40,19 +37,16 @@
   "deleteBlockedTitle": "لا يمكن حذف هذا الشخص",
   "deleteBlockedMessage": "لهذا الشخص معاملات مسجلة. قم بأرشفته بدلًا من ذلك للحفاظ على سجله.",
   "archiveInsteadAction": "أرشفة بدلًا من الحذف",
-
   "relationshipFamily": "عائلة",
   "relationshipFriend": "صديق",
   "relationshipColleague": "زميل",
   "relationshipCustomer": "عميل",
   "relationshipSupplier": "مورّد",
   "relationshipOther": "أخرى",
-
   "duplicateWarningTitle": "تكرار محتمل",
   "duplicateWarningMessage": "هذا الاسم يشبه شخصًا تعرفه بالفعل.",
   "duplicateUseExisting": "استخدام الشخص الموجود",
   "duplicateCreateNew": "إنشاء شخص جديد على أي حال",
-
   "transactionFormCreateTitle": "تسجيل معاملة",
   "transactionFormEditTitle": "تعديل المعاملة",
   "amountLabel": "المبلغ (جنيه مصري)",
@@ -66,10 +60,8 @@
   "savedConfirmation": "تم الحفظ",
   "editedLabel": "معدَّل",
   "repaymentLabel": "سداد",
-
   "repaymentFormTitle": "تسجيل سداد",
   "recordRepaymentAction": "تسجيل سداد",
-
   "personDetailTheyOweYou": "{name} مديون لك بمبلغ {amount}",
   "personDetailYouOweThem": "أنت مدين لـ {name} بمبلغ {amount}",
   "personDetailSettled": "تمت التسوية",
@@ -78,7 +70,6 @@
   "recordTransactionAction": "تسجيل معاملة",
   "deleteTransactionConfirmTitle": "هل تريد حذف هذه المعاملة؟",
   "deleteTransactionConfirmMessage": "لا يمكن التراجع عن هذا الإجراء.",
-
   "overviewTitle": "نظرة عامة",
   "overviewTotalOwedToYou": "إجمالي المستحق لك",
   "overviewTotalYouOwe": "إجمالي المستحق عليك",
@@ -86,13 +77,11 @@
   "overviewSectionYouOweThem": "عليك لهم",
   "overviewAllSettledTitle": "كل شيء تمت تسويته",
   "overviewAllSettledMessage": "ليس لديك أي أرصدة مستحقة مع أي شخص الآن.",
-
   "archivedLabel": "مؤرشف",
   "archivedPeopleTitle": "الأشخاص المؤرشفون",
   "archivedEmptyTitle": "لا يوجد أشخاص مؤرشفون",
   "archivedEmptyMessage": "الأشخاص الذين تقوم بأرشفتهم سيظهرون هنا، مع الاحتفاظ الكامل بسجلهم.",
   "restoreAction": "استعادة",
-
   "settingsTitle": "الإعدادات",
   "languageSectionTitle": "اللغة",
   "languageEnglish": "الإنجليزية",
@@ -103,7 +92,6 @@
   "themeDark": "داكن",
   "themeSystemDefault": "افتراضي النظام",
   "themeSaveFailed": "تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.",
-
   "onboardingStepProgress": "الخطوة {current} من {total}",
   "onboardingUnderstandingMoneyTitle": "افهم وضعك المالي بنظرة واحدة",
   "onboardingUnderstandingMoneyDescription": "شاهد من يدين لك، ومن تدين له، والوضع العام كله في مكان واحد.",
@@ -125,7 +113,6 @@
   "financeAddIncomeAction": "إضافة دخل",
   "financeAddFirstEntryAction": "أضف أول سجل",
   "financeViewAllAction": "عرض الكل",
-
   "financeEntryFormExpenseTitle": "إضافة مصروف",
   "financeEntryFormIncomeTitle": "إضافة دخل",
   "financeEntryFormEditTitle": "تعديل السجل",
@@ -136,7 +123,6 @@
   "financeManageCategoriesAction": "إدارة الفئات",
   "financeNoCategoriesTitle": "لا توجد فئات بعد",
   "financeNoCategoriesMessage": "أنشئ فئة لتبدأ تسجيل مدخلاتك.",
-
   "financeCategoryManagementTitle": "الفئات",
   "financeCategoryFormCreateTitle": "فئة جديدة",
   "financeCategoryFormEditTitle": "تعديل الفئة",
@@ -153,7 +139,6 @@
   "financeRemoveCategoryConfirmTitle": "إزالة هذه الفئة؟",
   "financeRemoveCategoryConfirmMessage": "إذا كانت هناك أي مدخلات تستخدم هذه الفئة، فسيتم أرشفتها للحفاظ على سجلّها. وإلا فسيتم حذفها.",
   "financeCategoryArchivedNotice": "مؤرشفة — مخفية عن المدخلات الجديدة، ومحفوظة للمدخلات الحالية.",
-
   "financePeriodThisMonth": "هذا الشهر",
   "financePeriodLastMonth": "الشهر الماضي",
   "financePeriodCustom": "نطاق مخصص",
@@ -168,17 +153,14 @@
   "financeFilterTypeLabel": "النوع",
   "financeFilterCategoryLabel": "الفئة",
   "financeClearFiltersAction": "مسح عوامل التصفية",
-
   "financeEmptyTitle": "لا توجد مدخلات بعد",
   "financeEmptyMessage": "سجّل دخلك ومصروفاتك لترى أين تذهب أموالك.",
   "financeNoMatchTitle": "لا توجد مدخلات مطابقة",
   "financeNoMatchMessage": "لا توجد مدخلات تطابق عوامل التصفية التي اخترتها. جرّب فترة أو فئة مختلفة.",
-
   "financeDeleteEntryConfirmTitle": "حذف هذا السجل؟",
   "financeDeleteEntryConfirmMessage": "سيتم تحديث إجمالياتك فورًا. يمكنك التراجع خلال ثوانٍ قليلة.",
   "financeEntryDeletedMessage": "تم حذف السجل",
   "financeUndoAction": "تراجع",
-
   "financeCategoryRent": "الإيجار",
   "financeCategoryElectricity": "الكهرباء",
   "financeCategoryWater": "المياه",
@@ -201,7 +183,6 @@
   "financeCategoryBonus": "المكافأة",
   "financeCategoryGift": "هدية",
   "financeCategoryOtherIncome": "دخل آخر",
-
   "occasionsTitle": "المناسبات",
   "occasionsEmptyTitle": "لا توجد مناسبات بعد",
   "occasionsEmptyMessage": "أفراح وخطوبة وأعياد ميلاد وسبوع وعزاء — أنشئ مناسبة لتسجّل النقوط اللي أخدتها أو دفعتها فيها.",
@@ -223,7 +204,6 @@
   "occasionArchivedEmptyMessage": "المناسبات التي تقوم بأرشفتها ستظهر هنا، مع الاحتفاظ بمساهماتها وأرصدتها كاملة.",
   "occasionArchivedLabel": "مؤرشفة",
   "occasionUpcomingLabel": "قادمة",
-
   "occasionTypeWedding": "فرح",
   "occasionTypeEngagement": "خطوبة",
   "occasionTypeBirthday": "عيد ميلاد",
@@ -233,7 +213,6 @@
   "occasionTypeOther": "أخرى",
   "occasionTypeCustomLabel": "نوع مخصص",
   "occasionTypeCustomHint": "اكتب نوعًا من عندك، مثل حفل تخرج",
-
   "occasionFormCreateTitle": "مناسبة جديدة",
   "occasionFormEditTitle": "تعديل المناسبة",
   "occasionNameLabel": "اسم المناسبة",
@@ -249,7 +228,6 @@
   "occasionDeleteAction": "حذف المناسبة",
   "occasionArchiveAction": "أرشفة المناسبة",
   "occasionRestoreAction": "استعادة المناسبة",
-
   "occasionParticipantFormAddTitle": "إضافة مشارك",
   "occasionParticipantFormEditTitle": "تعديل المساهمة",
   "occasionParticipantPersonLabel": "الشخص",
@@ -263,7 +241,6 @@
   "occasionParticipantCountsTowardBalanceHint": "نقوط العزاء لا تُرد عادةً، لذا لا تُحتسب ضمن الرصيد افتراضيًا. فعّل هذا الخيار لاحتسابها مثل أي تبادل آخر.",
   "occasionParticipantSaveAction": "حفظ المشارك",
   "occasionParticipantUpdateAction": "حفظ التعديلات",
-
   "occasionDetailTotalReceived": "إجمالي المستلم",
   "occasionDetailTotalGiven": "إجمالي المدفوع",
   "occasionDetailNet": "الصافي",
@@ -277,7 +254,6 @@
   "occasionEditParticipantAction": "تعديل المساهمة",
   "occasionRemoveParticipantAction": "إزالة المساهمة",
   "occasionContributionBadge": "مناسبة",
-
   "occasionRemoveParticipantConfirmTitle": "إزالة هذه المساهمة؟",
   "occasionRemoveParticipantConfirmMessage": "ستختفي أيضًا من سجل هذا الشخص ومن رصيده. لا يمكن التراجع عن هذا الإجراء.",
   "occasionDeleteConfirmTitle": "حذف هذه المناسبة؟",
@@ -286,7 +262,6 @@
   "occasionArchiveConfirmMessage": "ستنتقل إلى المناسبات المؤرشفة. تبقى مساهماتها في سجل كل شخص وفي رصيده، ويمكنك استعادتها في أي وقت.",
   "occasionRestoreConfirmTitle": "استعادة هذه المناسبة؟",
   "occasionRestoreConfirmMessage": "ستظهر مرة أخرى في قائمة المناسبات.",
-
   "occasionAttachmentsHeader": "الصور",
   "occasionAttachPhotoAction": "إرفاق صورة",
   "occasionAttachFromCameraAction": "التقاط صورة",
@@ -300,5 +275,325 @@
   "occasionCameraPermissionDeniedMessage": "يحتاج دفتري إلى الكاميرا لالتقاط صورة لهذه المناسبة. افتح إعدادات جهازك واسمح لدفتري باستخدام الكاميرا، أو اختر صورة من المعرض بدلًا من ذلك.",
   "occasionPhotoLibraryPermissionDeniedTitle": "الوصول إلى الصور مغلق",
   "occasionPhotoLibraryPermissionDeniedMessage": "يحتاج دفتري إلى الوصول لصورك ليتمكن من إرفاق صورة بهذه المناسبة. افتح إعدادات جهازك واسمح لدفتري بالوصول إلى الصور، أو التقط صورة جديدة بالكاميرا بدلًا من ذلك.",
-  "occasionOpenSettingsAction": "فتح الإعدادات"
+  "occasionOpenSettingsAction": "فتح الإعدادات",
+  "ocrCaptureTitle": "مسح ورقة",
+  "@ocrCaptureTitle": {},
+  "ocrCaptureHeadline": "حوّل قائمة ورقية إلى معاملات",
+  "@ocrCaptureHeadline": {},
+  "ocrCaptureMessage": "صوّر قائمة بالأسماء والمبالغ. تتم القراءة بالكامل على هذا الجهاز، ولا يُحفظ أي شيء قبل مراجعتك له.",
+  "@ocrCaptureMessage": {},
+  "ocrCaptureTakePhoto": "التقاط صورة",
+  "@ocrCaptureTakePhoto": {},
+  "ocrCaptureChooseFromGallery": "اختيار من المعرض",
+  "@ocrCaptureChooseFromGallery": {},
+  "ocrCaptureUnsupportedTitle": "المسح غير متاح على هذا الجهاز",
+  "@ocrCaptureUnsupportedTitle": {},
+  "ocrCaptureUnsupportedMessage": "لا يستطيع هذا الجهاز تشغيل التعرّف على النصوص محليًا، لذا لن يعمل مسح الورق هنا. ما زال بإمكانك إضافة المعاملات يدويًا.",
+  "@ocrCaptureUnsupportedMessage": {},
+  "ocrCaptureEnterManually": "إدخال يدوي",
+  "@ocrCaptureEnterManually": {},
+  "ocrPrepTitle": "تجهيز الصورة",
+  "@ocrPrepTitle": {},
+  "ocrPrepHint": "اقتصّ الصورة على قائمة الأسماء والمبالغ فقط، ثم حسّن الإضاءة للحصول على أفضل قراءة.",
+  "@ocrPrepHint": {},
+  "ocrPrepCropRotate": "اقتصاص وتدوير",
+  "@ocrPrepCropRotate": {},
+  "ocrPrepRecrop": "إعادة الاقتصاص",
+  "@ocrPrepRecrop": {},
+  "ocrPrepEnhance": "تحسين الصورة",
+  "@ocrPrepEnhance": {},
+  "ocrPrepEnhanceAgain": "تحسين مرة أخرى",
+  "@ocrPrepEnhanceAgain": {},
+  "ocrPrepProcess": "اقرأ الورقة",
+  "@ocrPrepProcess": {},
+  "ocrPrepProcessingTitle": "جارٍ قراءة الورقة",
+  "@ocrPrepProcessingTitle": {},
+  "ocrPrepProcessingMessage": "يعمل التعرّف على النصوص على هذا الجهاز. لا يتم رفع أي شيء إلى أي مكان.",
+  "@ocrPrepProcessingMessage": {},
+  "ocrPrepCancel": "إلغاء",
+  "@ocrPrepCancel": {},
+  "ocrPrepInterruptedTitle": "لم تكتمل العملية",
+  "@ocrPrepInterruptedTitle": {},
+  "ocrPrepInterruptedMessage": "توقفت القراءة قبل أن تنتهي، على الأرجح بسبب مقاطعة التطبيق. لم يُحفظ أي شيء، ويمكنك المحاولة من جديد.",
+  "@ocrPrepInterruptedMessage": {},
+  "ocrPrepRetry": "إعادة المحاولة",
+  "@ocrPrepRetry": {},
+  "ocrPrepDefaultDirectionLabel": "الاتجاه الافتراضي لهذه القائمة",
+  "@ocrPrepDefaultDirectionLabel": {},
+  "ocrPrepDefaultDirectionHint": "يُطبَّق على كل معاملة لا يمكن معرفة اتجاهها من الورقة. يمكنك تعديل أي معاملة أثناء المراجعة.",
+  "@ocrPrepDefaultDirectionHint": {},
+  "ocrPrepDirectionReceived": "مبلغ مستلم",
+  "@ocrPrepDirectionReceived": {},
+  "ocrPrepDirectionGiven": "مبلغ مدفوع",
+  "@ocrPrepDirectionGiven": {},
+  "ocrFailureNoTextTitle": "لم يُعثر على نص",
+  "@ocrFailureNoTextTitle": {},
+  "ocrFailureNoTextMessage": "لم يُعثر على نص مقروء في هذه الصورة. عادةً ما تحل المشكلة صورة أوضح وبإضاءة أفضل ومن زاوية مستقيمة.",
+  "@ocrFailureNoTextMessage": {},
+  "ocrFailureNoCandidatesTitle": "تعذّر استخراج أي معاملات",
+  "@ocrFailureNoCandidatesTitle": {},
+  "ocrFailureNoCandidatesMessage": "تم العثور على نص، لكن لم يبدُ أي سطر كاسم ومبلغ. جرّب الاقتصاص على القائمة وحدها، أو أدخل المعاملات يدويًا.",
+  "@ocrFailureNoCandidatesMessage": {},
+  "ocrFailurePermissionTitle": "مطلوب إذن",
+  "@ocrFailurePermissionTitle": {},
+  "ocrFailurePermissionMessage": "يحتاج المسح إلى إذن الوصول إلى الكاميرا أو الصور لقراءة الورقة. امنح الإذن من إعدادات التطبيق ثم أعد المحاولة.",
+  "@ocrFailurePermissionMessage": {},
+  "ocrFailureUnsupportedTitle": "المسح غير متاح على هذا الجهاز",
+  "@ocrFailureUnsupportedTitle": {},
+  "ocrFailureUnsupportedMessage": "لا يستطيع هذا الجهاز تشغيل التعرّف على النصوص محليًا. الإدخال اليدوي يعمل بالطريقة نفسها تمامًا.",
+  "@ocrFailureUnsupportedMessage": {},
+  "ocrFailureGenericTitle": "لم تنجح عملية المسح",
+  "@ocrFailureGenericTitle": {},
+  "ocrFailureGenericMessage": "حدث خطأ أثناء قراءة الورقة. لم يُحفظ أي شيء، ويمكنك إعادة المحاولة أو إدخال المعاملات يدويًا.",
+  "@ocrFailureGenericMessage": {},
+  "ocrFailureRetakePhoto": "التقاط صورة جديدة",
+  "@ocrFailureRetakePhoto": {},
+  "ocrFailureRecrop": "تعديل الاقتصاص وإعادة المحاولة",
+  "@ocrFailureRecrop": {},
+  "ocrFailureManualEntry": "إدخال يدوي",
+  "@ocrFailureManualEntry": {},
+  "ocrFailureOpenSettings": "فتح الإعدادات",
+  "@ocrFailureOpenSettings": {},
+  "ocrConfidenceLow": "ثقة منخفضة",
+  "@ocrConfidenceLow": {},
+  "ocrConfidenceMedium": "ثقة متوسطة",
+  "@ocrConfidenceMedium": {},
+  "ocrConfidenceHigh": "ثقة عالية",
+  "@ocrConfidenceHigh": {},
+  "ocrConfidenceInferred": "مُستنتَج وليس مقروءًا",
+  "@ocrConfidenceInferred": {},
+  "ocrReviewTitle": "مراجعة القيود",
+  "@ocrReviewTitle": {},
+  "ocrReviewBatchSectionTitle": "تنطبق على الدفعة كلها",
+  "@ocrReviewBatchSectionTitle": {},
+  "ocrReviewBatchSectionMessage": "تنطبق هذه الاختيارات على كل قيد ليس له اختيار خاص به. لا يُحفَظ أي شيء قبل التأكيد.",
+  "@ocrReviewBatchSectionMessage": {},
+  "ocrReviewBatchDirectionLabel": "الاتجاه الافتراضي",
+  "@ocrReviewBatchDirectionLabel": {},
+  "ocrReviewDirectionLabel": "الاتجاه",
+  "@ocrReviewDirectionLabel": {},
+  "ocrReviewDirectionReceived": "مستلَم",
+  "@ocrReviewDirectionReceived": {},
+  "ocrReviewDirectionGiven": "مدفوع",
+  "@ocrReviewDirectionGiven": {},
+  "ocrReviewDirectionRequired": "اختر اتجاهًا لهذا القيد، أو عيّن اتجاهًا افتراضيًا للدفعة.",
+  "@ocrReviewDirectionRequired": {},
+  "ocrReviewPersonLabel": "الشخص",
+  "@ocrReviewPersonLabel": {},
+  "ocrReviewPersonRequired": "أدخل اسم الشخص.",
+  "@ocrReviewPersonRequired": {},
+  "ocrReviewDuplicateWarningAction": "أسماء مشابهة محفوظة بالفعل",
+  "@ocrReviewDuplicateWarningAction": {},
+  "ocrReviewAmountLabel": "المبلغ",
+  "@ocrReviewAmountLabel": {},
+  "ocrReviewAmountRequired": "أدخل مبلغًا أكبر من صفر.",
+  "@ocrReviewAmountRequired": {},
+  "ocrReviewAmountInvalid": "أدخل مبلغًا صحيحًا، مثل 150.50",
+  "@ocrReviewAmountInvalid": {},
+  "ocrReviewDateLabel": "التاريخ",
+  "@ocrReviewDateLabel": {},
+  "ocrReviewNotesLabel": "ملاحظات",
+  "@ocrReviewNotesLabel": {},
+  "ocrReviewRawTextAction": "النص الأصلي",
+  "@ocrReviewRawTextAction": {},
+  "ocrReviewRawTextLabel": "المقروء من الورقة",
+  "@ocrReviewRawTextLabel": {},
+  "ocrReviewEditedBadge": "مُعدَّل",
+  "@ocrReviewEditedBadge": {},
+  "ocrReviewDiscardAction": "استبعاد هذا القيد",
+  "@ocrReviewDiscardAction": {},
+  "ocrReviewIncompleteTitle": "غير جاهز للحفظ",
+  "@ocrReviewIncompleteTitle": {},
+  "ocrReviewIncompleteBatchMessage": "ما زالت بعض القيود تنقصها بيانات مطلوبة. لم يُحفَظ أي شيء.",
+  "@ocrReviewIncompleteBatchMessage": {},
+  "ocrReviewConfirmAction": "تأكيد وحفظ",
+  "@ocrReviewConfirmAction": {},
+  "ocrReviewConfirmBlockedHint": "أكمل القيود المميّزة أو استبعدها قبل الحفظ.",
+  "@ocrReviewConfirmBlockedHint": {},
+  "ocrReviewNothingToConfirm": "لم يعد هناك ما يُحفَظ في هذا المسح.",
+  "@ocrReviewNothingToConfirm": {},
+  "ocrReviewCancelAction": "إلغاء المسح",
+  "@ocrReviewCancelAction": {},
+  "ocrReviewCancelPromptTitle": "هل تريد التخلي عن تصحيحاتك؟",
+  "@ocrReviewCancelPromptTitle": {},
+  "ocrReviewCancelPromptMessage": "لقد صحّحت بعض القيود. إلغاء هذا المسح يتخلى عن هذا العمل ولا يحفظ شيئًا.",
+  "@ocrReviewCancelPromptMessage": {},
+  "ocrReviewCancelPromptConfirm": "تخلَّ وألغِ",
+  "@ocrReviewCancelPromptConfirm": {},
+  "ocrReviewCancelPromptKeep": "متابعة المراجعة",
+  "@ocrReviewCancelPromptKeep": {},
+  "ocrReviewEmptyTitle": "لم تتبقَّ أي قيود",
+  "@ocrReviewEmptyTitle": {},
+  "ocrReviewEmptyMessage": "لقد استبعدت كل قيود هذا المسح. ألغِ المسح، أو ارجع والتقط صورة الورقة من جديد.",
+  "@ocrReviewEmptyMessage": {},
+  "ocrReviewLoadErrorTitle": "تعذّر فتح هذا المسح",
+  "@ocrReviewLoadErrorTitle": {},
+  "ocrReviewLoadErrorMessage": "تعذّر تحميل المسح وقيوده. لم يُحفَظ أي شيء.",
+  "@ocrReviewLoadErrorMessage": {},
+  "ocrReviewRetryAction": "أعد المحاولة",
+  "@ocrReviewRetryAction": {},
+  "ocrReviewSaveErrorMessage": "تعذّر حفظ القيود. لم يُسجَّل أي شيء، لذا يمكنك إعادة المحاولة بأمان.",
+  "@ocrReviewSaveErrorMessage": {},
+  "ocrReviewOccasionLabel": "المناسبة",
+  "@ocrReviewOccasionLabel": {},
+  "ocrReviewOccasionNone": "بدون مناسبة",
+  "@ocrReviewOccasionNone": {},
+  "ocrReviewOccasionClear": "إزالة ربط المناسبة",
+  "@ocrReviewOccasionClear": {},
+  "ocrReviewOccasionPickerTitle": "اربط هذه الدفعة بمناسبة",
+  "@ocrReviewOccasionPickerTitle": {},
+  "ocrReviewOccasionEmpty": "ليس لديك مناسبات بعد. أنشئ مناسبة من شاشة المناسبات أولًا.",
+  "@ocrReviewOccasionEmpty": {},
+  "ocrHistoryTitle": "سجل عمليات المسح",
+  "@ocrHistoryTitle": {},
+  "ocrHistoryEmptyTitle": "لا توجد عمليات مسح بعد",
+  "@ocrHistoryEmptyTitle": {},
+  "ocrHistoryEmptyMessage": "بعد أن تمسح ورقة بها قائمة، ستظهر هنا كل عملية مسح تحتفظ بها مع صورتها ونتيجتها.",
+  "@ocrHistoryEmptyMessage": {},
+  "ocrHistoryErrorTitle": "تعذّر تحميل عمليات المسح",
+  "@ocrHistoryErrorTitle": {},
+  "ocrHistoryErrorMessage": "حدث خطأ أثناء قراءة سجل عمليات المسح. حاول مرة أخرى.",
+  "@ocrHistoryErrorMessage": {},
+  "ocrHistoryStatusProcessing": "قيد المعالجة",
+  "@ocrHistoryStatusProcessing": {},
+  "ocrHistoryStatusNeedsReview": "في انتظار المراجعة",
+  "@ocrHistoryStatusNeedsReview": {},
+  "ocrHistoryStatusConfirmed": "مؤكَّدة",
+  "@ocrHistoryStatusConfirmed": {},
+  "ocrHistoryStatusDiscarded": "لم تنتج شيئًا",
+  "@ocrHistoryStatusDiscarded": {},
+  "ocrHistoryStatusFailed": "تعذّرت قراءة أي نص",
+  "@ocrHistoryStatusFailed": {},
+  "ocrHistoryConfirmedEntries": "تم تأكيد {count} من الإدخالات",
+  "@ocrHistoryConfirmedEntries": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrHistoryDeleteAction": "حذف عملية المسح",
+  "@ocrHistoryDeleteAction": {},
+  "ocrHistoryDeleteTitle": "حذف عملية المسح هذه؟",
+  "@ocrHistoryDeleteTitle": {},
+  "ocrHistoryDeleteMessage": "سيؤدي هذا إلى حذف عملية المسح وصورتها من جهازك. أما المعاملات التي أنشأتها فلن تُحذف وستبقى في سجلاتك.",
+  "@ocrHistoryDeleteMessage": {},
+  "ocrHistoryDeleteConfirm": "حذف عملية المسح",
+  "@ocrHistoryDeleteConfirm": {},
+  "ocrScanDetailTitle": "تفاصيل عملية المسح",
+  "@ocrScanDetailTitle": {},
+  "ocrScanDetailImageMissing": "لم تعد صورة عملية المسح هذه موجودة على جهازك.",
+  "@ocrScanDetailImageMissing": {},
+  "ocrScanDetailEntriesTitle": "الإدخالات المقروءة من الورقة",
+  "@ocrScanDetailEntriesTitle": {},
+  "ocrScanDetailNoEntries": "لم تُقرأ أي إدخالات من عملية المسح هذه.",
+  "@ocrScanDetailNoEntries": {},
+  "ocrScanDetailUnknownPerson": "لم يُقرأ أي اسم",
+  "@ocrScanDetailUnknownPerson": {},
+  "ocrScanDetailNoAmount": "لم يُقرأ أي مبلغ",
+  "@ocrScanDetailNoAmount": {},
+  "ocrScanDetailEntryStatusPending": "لم تُراجع",
+  "@ocrScanDetailEntryStatusPending": {},
+  "ocrScanDetailEntryStatusConfirmed": "مؤكَّد",
+  "@ocrScanDetailEntryStatusConfirmed": {},
+  "ocrScanDetailEntryStatusDiscarded": "مستبعَد",
+  "@ocrScanDetailEntryStatusDiscarded": {},
+  "ocrScanDetailTransactionsTitle": "المعاملات التي أُنشئت",
+  "@ocrScanDetailTransactionsTitle": {},
+  "ocrScanDetailNoTransactionsMessage": "لم تُنشئ عملية المسح هذه أي معاملات.",
+  "@ocrScanDetailNoTransactionsMessage": {},
+  "ocrScanDetailTransactionsKeptNote": "هذه معاملات فعلية في سجلاتك. حذف عملية المسح هذه لا يحذفها.",
+  "@ocrScanDetailTransactionsKeptNote": {},
+  "ocrScanDetailDeleteAction": "حذف عملية المسح",
+  "@ocrScanDetailDeleteAction": {},
+  "ocrScanDetailDeleteTitle": "حذف عملية المسح هذه؟",
+  "@ocrScanDetailDeleteTitle": {},
+  "ocrScanDetailDeleteMessage": "سيؤدي هذا إلى حذف عملية المسح وصورتها من جهازك. أما المعاملات التي أنشأتها وعددها {count} فلن تُحذف وستبقى في سجلاتك، وكل ما تفقده هو الرابط إلى الصورة الأصلية.",
+  "@ocrScanDetailDeleteMessage": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrScanDetailDeleteConfirm": "حذف عملية المسح",
+  "@ocrScanDetailDeleteConfirm": {},
+  "ocrScanDetailDeletedMessage": "تم حذف عملية المسح مع الإبقاء على معاملاتها.",
+  "@ocrScanDetailDeletedMessage": {},
+  "ocrScanDetailErrorTitle": "تعذّر تحميل عملية المسح",
+  "@ocrScanDetailErrorTitle": {},
+  "ocrScanDetailErrorMessage": "حدث خطأ أثناء قراءة عملية المسح هذه.",
+  "@ocrScanDetailErrorMessage": {},
+  "@personDetailTheyOweYou": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@personDetailYouOweThem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@historyEmptyMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@onboardingStepProgress": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@financeCategoryDuplicateError": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@financeBreakdownShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "@occasionSettlementMoreReceived": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@occasionSettlementMoreGiven": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@occasionDeleteConfirmMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

@@ -902,4 +902,391 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get occasionOpenSettingsAction => 'فتح الإعدادات';
+
+  @override
+  String get ocrCaptureTitle => 'مسح ورقة';
+
+  @override
+  String get ocrCaptureHeadline => 'حوّل قائمة ورقية إلى معاملات';
+
+  @override
+  String get ocrCaptureMessage =>
+      'صوّر قائمة بالأسماء والمبالغ. تتم القراءة بالكامل على هذا الجهاز، ولا يُحفظ أي شيء قبل مراجعتك له.';
+
+  @override
+  String get ocrCaptureTakePhoto => 'التقاط صورة';
+
+  @override
+  String get ocrCaptureChooseFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get ocrCaptureUnsupportedTitle => 'المسح غير متاح على هذا الجهاز';
+
+  @override
+  String get ocrCaptureUnsupportedMessage =>
+      'لا يستطيع هذا الجهاز تشغيل التعرّف على النصوص محليًا، لذا لن يعمل مسح الورق هنا. ما زال بإمكانك إضافة المعاملات يدويًا.';
+
+  @override
+  String get ocrCaptureEnterManually => 'إدخال يدوي';
+
+  @override
+  String get ocrPrepTitle => 'تجهيز الصورة';
+
+  @override
+  String get ocrPrepHint =>
+      'اقتصّ الصورة على قائمة الأسماء والمبالغ فقط، ثم حسّن الإضاءة للحصول على أفضل قراءة.';
+
+  @override
+  String get ocrPrepCropRotate => 'اقتصاص وتدوير';
+
+  @override
+  String get ocrPrepRecrop => 'إعادة الاقتصاص';
+
+  @override
+  String get ocrPrepEnhance => 'تحسين الصورة';
+
+  @override
+  String get ocrPrepEnhanceAgain => 'تحسين مرة أخرى';
+
+  @override
+  String get ocrPrepProcess => 'اقرأ الورقة';
+
+  @override
+  String get ocrPrepProcessingTitle => 'جارٍ قراءة الورقة';
+
+  @override
+  String get ocrPrepProcessingMessage =>
+      'يعمل التعرّف على النصوص على هذا الجهاز. لا يتم رفع أي شيء إلى أي مكان.';
+
+  @override
+  String get ocrPrepCancel => 'إلغاء';
+
+  @override
+  String get ocrPrepInterruptedTitle => 'لم تكتمل العملية';
+
+  @override
+  String get ocrPrepInterruptedMessage =>
+      'توقفت القراءة قبل أن تنتهي، على الأرجح بسبب مقاطعة التطبيق. لم يُحفظ أي شيء، ويمكنك المحاولة من جديد.';
+
+  @override
+  String get ocrPrepRetry => 'إعادة المحاولة';
+
+  @override
+  String get ocrPrepDefaultDirectionLabel => 'الاتجاه الافتراضي لهذه القائمة';
+
+  @override
+  String get ocrPrepDefaultDirectionHint =>
+      'يُطبَّق على كل معاملة لا يمكن معرفة اتجاهها من الورقة. يمكنك تعديل أي معاملة أثناء المراجعة.';
+
+  @override
+  String get ocrPrepDirectionReceived => 'مبلغ مستلم';
+
+  @override
+  String get ocrPrepDirectionGiven => 'مبلغ مدفوع';
+
+  @override
+  String get ocrFailureNoTextTitle => 'لم يُعثر على نص';
+
+  @override
+  String get ocrFailureNoTextMessage =>
+      'لم يُعثر على نص مقروء في هذه الصورة. عادةً ما تحل المشكلة صورة أوضح وبإضاءة أفضل ومن زاوية مستقيمة.';
+
+  @override
+  String get ocrFailureNoCandidatesTitle => 'تعذّر استخراج أي معاملات';
+
+  @override
+  String get ocrFailureNoCandidatesMessage =>
+      'تم العثور على نص، لكن لم يبدُ أي سطر كاسم ومبلغ. جرّب الاقتصاص على القائمة وحدها، أو أدخل المعاملات يدويًا.';
+
+  @override
+  String get ocrFailurePermissionTitle => 'مطلوب إذن';
+
+  @override
+  String get ocrFailurePermissionMessage =>
+      'يحتاج المسح إلى إذن الوصول إلى الكاميرا أو الصور لقراءة الورقة. امنح الإذن من إعدادات التطبيق ثم أعد المحاولة.';
+
+  @override
+  String get ocrFailureUnsupportedTitle => 'المسح غير متاح على هذا الجهاز';
+
+  @override
+  String get ocrFailureUnsupportedMessage =>
+      'لا يستطيع هذا الجهاز تشغيل التعرّف على النصوص محليًا. الإدخال اليدوي يعمل بالطريقة نفسها تمامًا.';
+
+  @override
+  String get ocrFailureGenericTitle => 'لم تنجح عملية المسح';
+
+  @override
+  String get ocrFailureGenericMessage =>
+      'حدث خطأ أثناء قراءة الورقة. لم يُحفظ أي شيء، ويمكنك إعادة المحاولة أو إدخال المعاملات يدويًا.';
+
+  @override
+  String get ocrFailureRetakePhoto => 'التقاط صورة جديدة';
+
+  @override
+  String get ocrFailureRecrop => 'تعديل الاقتصاص وإعادة المحاولة';
+
+  @override
+  String get ocrFailureManualEntry => 'إدخال يدوي';
+
+  @override
+  String get ocrFailureOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get ocrConfidenceLow => 'ثقة منخفضة';
+
+  @override
+  String get ocrConfidenceMedium => 'ثقة متوسطة';
+
+  @override
+  String get ocrConfidenceHigh => 'ثقة عالية';
+
+  @override
+  String get ocrConfidenceInferred => 'مُستنتَج وليس مقروءًا';
+
+  @override
+  String get ocrReviewTitle => 'مراجعة القيود';
+
+  @override
+  String get ocrReviewBatchSectionTitle => 'تنطبق على الدفعة كلها';
+
+  @override
+  String get ocrReviewBatchSectionMessage =>
+      'تنطبق هذه الاختيارات على كل قيد ليس له اختيار خاص به. لا يُحفَظ أي شيء قبل التأكيد.';
+
+  @override
+  String get ocrReviewBatchDirectionLabel => 'الاتجاه الافتراضي';
+
+  @override
+  String get ocrReviewDirectionLabel => 'الاتجاه';
+
+  @override
+  String get ocrReviewDirectionReceived => 'مستلَم';
+
+  @override
+  String get ocrReviewDirectionGiven => 'مدفوع';
+
+  @override
+  String get ocrReviewDirectionRequired =>
+      'اختر اتجاهًا لهذا القيد، أو عيّن اتجاهًا افتراضيًا للدفعة.';
+
+  @override
+  String get ocrReviewPersonLabel => 'الشخص';
+
+  @override
+  String get ocrReviewPersonRequired => 'أدخل اسم الشخص.';
+
+  @override
+  String get ocrReviewDuplicateWarningAction => 'أسماء مشابهة محفوظة بالفعل';
+
+  @override
+  String get ocrReviewAmountLabel => 'المبلغ';
+
+  @override
+  String get ocrReviewAmountRequired => 'أدخل مبلغًا أكبر من صفر.';
+
+  @override
+  String get ocrReviewAmountInvalid => 'أدخل مبلغًا صحيحًا، مثل 150.50';
+
+  @override
+  String get ocrReviewDateLabel => 'التاريخ';
+
+  @override
+  String get ocrReviewNotesLabel => 'ملاحظات';
+
+  @override
+  String get ocrReviewRawTextAction => 'النص الأصلي';
+
+  @override
+  String get ocrReviewRawTextLabel => 'المقروء من الورقة';
+
+  @override
+  String get ocrReviewEditedBadge => 'مُعدَّل';
+
+  @override
+  String get ocrReviewDiscardAction => 'استبعاد هذا القيد';
+
+  @override
+  String get ocrReviewIncompleteTitle => 'غير جاهز للحفظ';
+
+  @override
+  String get ocrReviewIncompleteBatchMessage =>
+      'ما زالت بعض القيود تنقصها بيانات مطلوبة. لم يُحفَظ أي شيء.';
+
+  @override
+  String get ocrReviewConfirmAction => 'تأكيد وحفظ';
+
+  @override
+  String get ocrReviewConfirmBlockedHint =>
+      'أكمل القيود المميّزة أو استبعدها قبل الحفظ.';
+
+  @override
+  String get ocrReviewNothingToConfirm => 'لم يعد هناك ما يُحفَظ في هذا المسح.';
+
+  @override
+  String get ocrReviewCancelAction => 'إلغاء المسح';
+
+  @override
+  String get ocrReviewCancelPromptTitle => 'هل تريد التخلي عن تصحيحاتك؟';
+
+  @override
+  String get ocrReviewCancelPromptMessage =>
+      'لقد صحّحت بعض القيود. إلغاء هذا المسح يتخلى عن هذا العمل ولا يحفظ شيئًا.';
+
+  @override
+  String get ocrReviewCancelPromptConfirm => 'تخلَّ وألغِ';
+
+  @override
+  String get ocrReviewCancelPromptKeep => 'متابعة المراجعة';
+
+  @override
+  String get ocrReviewEmptyTitle => 'لم تتبقَّ أي قيود';
+
+  @override
+  String get ocrReviewEmptyMessage =>
+      'لقد استبعدت كل قيود هذا المسح. ألغِ المسح، أو ارجع والتقط صورة الورقة من جديد.';
+
+  @override
+  String get ocrReviewLoadErrorTitle => 'تعذّر فتح هذا المسح';
+
+  @override
+  String get ocrReviewLoadErrorMessage =>
+      'تعذّر تحميل المسح وقيوده. لم يُحفَظ أي شيء.';
+
+  @override
+  String get ocrReviewRetryAction => 'أعد المحاولة';
+
+  @override
+  String get ocrReviewSaveErrorMessage =>
+      'تعذّر حفظ القيود. لم يُسجَّل أي شيء، لذا يمكنك إعادة المحاولة بأمان.';
+
+  @override
+  String get ocrReviewOccasionLabel => 'المناسبة';
+
+  @override
+  String get ocrReviewOccasionNone => 'بدون مناسبة';
+
+  @override
+  String get ocrReviewOccasionClear => 'إزالة ربط المناسبة';
+
+  @override
+  String get ocrReviewOccasionPickerTitle => 'اربط هذه الدفعة بمناسبة';
+
+  @override
+  String get ocrReviewOccasionEmpty =>
+      'ليس لديك مناسبات بعد. أنشئ مناسبة من شاشة المناسبات أولًا.';
+
+  @override
+  String get ocrHistoryTitle => 'سجل عمليات المسح';
+
+  @override
+  String get ocrHistoryEmptyTitle => 'لا توجد عمليات مسح بعد';
+
+  @override
+  String get ocrHistoryEmptyMessage =>
+      'بعد أن تمسح ورقة بها قائمة، ستظهر هنا كل عملية مسح تحتفظ بها مع صورتها ونتيجتها.';
+
+  @override
+  String get ocrHistoryErrorTitle => 'تعذّر تحميل عمليات المسح';
+
+  @override
+  String get ocrHistoryErrorMessage =>
+      'حدث خطأ أثناء قراءة سجل عمليات المسح. حاول مرة أخرى.';
+
+  @override
+  String get ocrHistoryStatusProcessing => 'قيد المعالجة';
+
+  @override
+  String get ocrHistoryStatusNeedsReview => 'في انتظار المراجعة';
+
+  @override
+  String get ocrHistoryStatusConfirmed => 'مؤكَّدة';
+
+  @override
+  String get ocrHistoryStatusDiscarded => 'لم تنتج شيئًا';
+
+  @override
+  String get ocrHistoryStatusFailed => 'تعذّرت قراءة أي نص';
+
+  @override
+  String ocrHistoryConfirmedEntries(Object count) {
+    return 'تم تأكيد $count من الإدخالات';
+  }
+
+  @override
+  String get ocrHistoryDeleteAction => 'حذف عملية المسح';
+
+  @override
+  String get ocrHistoryDeleteTitle => 'حذف عملية المسح هذه؟';
+
+  @override
+  String get ocrHistoryDeleteMessage =>
+      'سيؤدي هذا إلى حذف عملية المسح وصورتها من جهازك. أما المعاملات التي أنشأتها فلن تُحذف وستبقى في سجلاتك.';
+
+  @override
+  String get ocrHistoryDeleteConfirm => 'حذف عملية المسح';
+
+  @override
+  String get ocrScanDetailTitle => 'تفاصيل عملية المسح';
+
+  @override
+  String get ocrScanDetailImageMissing =>
+      'لم تعد صورة عملية المسح هذه موجودة على جهازك.';
+
+  @override
+  String get ocrScanDetailEntriesTitle => 'الإدخالات المقروءة من الورقة';
+
+  @override
+  String get ocrScanDetailNoEntries =>
+      'لم تُقرأ أي إدخالات من عملية المسح هذه.';
+
+  @override
+  String get ocrScanDetailUnknownPerson => 'لم يُقرأ أي اسم';
+
+  @override
+  String get ocrScanDetailNoAmount => 'لم يُقرأ أي مبلغ';
+
+  @override
+  String get ocrScanDetailEntryStatusPending => 'لم تُراجع';
+
+  @override
+  String get ocrScanDetailEntryStatusConfirmed => 'مؤكَّد';
+
+  @override
+  String get ocrScanDetailEntryStatusDiscarded => 'مستبعَد';
+
+  @override
+  String get ocrScanDetailTransactionsTitle => 'المعاملات التي أُنشئت';
+
+  @override
+  String get ocrScanDetailNoTransactionsMessage =>
+      'لم تُنشئ عملية المسح هذه أي معاملات.';
+
+  @override
+  String get ocrScanDetailTransactionsKeptNote =>
+      'هذه معاملات فعلية في سجلاتك. حذف عملية المسح هذه لا يحذفها.';
+
+  @override
+  String get ocrScanDetailDeleteAction => 'حذف عملية المسح';
+
+  @override
+  String get ocrScanDetailDeleteTitle => 'حذف عملية المسح هذه؟';
+
+  @override
+  String ocrScanDetailDeleteMessage(Object count) {
+    return 'سيؤدي هذا إلى حذف عملية المسح وصورتها من جهازك. أما المعاملات التي أنشأتها وعددها $count فلن تُحذف وستبقى في سجلاتك، وكل ما تفقده هو الرابط إلى الصورة الأصلية.';
+  }
+
+  @override
+  String get ocrScanDetailDeleteConfirm => 'حذف عملية المسح';
+
+  @override
+  String get ocrScanDetailDeletedMessage =>
+      'تم حذف عملية المسح مع الإبقاء على معاملاتها.';
+
+  @override
+  String get ocrScanDetailErrorTitle => 'تعذّر تحميل عملية المسح';
+
+  @override
+  String get ocrScanDetailErrorMessage =>
+      'حدث خطأ أثناء قراءة عملية المسح هذه.';
 }

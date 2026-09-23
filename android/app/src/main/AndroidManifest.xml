@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- FR-017: attaching a photo to an occasion. Both are requested
+    <!-- 008 FR-017 (attaching a photo to an occasion) and 009 FR-016
+         (photographing a paper list to scan). Both are requested
          contextually the first time the user taps "attach photo", never at
          app startup (constitution Engineering Standards). `android:maxSdkVersion`
          is not set on CAMERA because capture is offered on every supported
@@ -37,6 +38,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- 009 FR-002: `image_cropper`'s crop/rotate screen. The plugin
+             launches this activity itself, so it must be declared here or
+             the crop step crashes at runtime on Android. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

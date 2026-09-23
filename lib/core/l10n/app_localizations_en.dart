@@ -900,4 +900,394 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get occasionOpenSettingsAction => 'Open settings';
+
+  @override
+  String get ocrCaptureTitle => 'Scan paper';
+
+  @override
+  String get ocrCaptureHeadline => 'Turn a paper list into entries';
+
+  @override
+  String get ocrCaptureMessage =>
+      'Photograph a list of names and amounts. Everything is read on this device, and nothing is saved until you review it.';
+
+  @override
+  String get ocrCaptureTakePhoto => 'Take a photo';
+
+  @override
+  String get ocrCaptureChooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get ocrCaptureUnsupportedTitle =>
+      'Scanning isn\'t available on this device';
+
+  @override
+  String get ocrCaptureUnsupportedMessage =>
+      'This device can\'t run on-device text recognition, so scanning a paper won\'t work here. You can still add transactions manually.';
+
+  @override
+  String get ocrCaptureEnterManually => 'Enter manually';
+
+  @override
+  String get ocrPrepTitle => 'Prepare the image';
+
+  @override
+  String get ocrPrepHint =>
+      'Crop to just the list of names and amounts, then even out the lighting for the best reading.';
+
+  @override
+  String get ocrPrepCropRotate => 'Crop and rotate';
+
+  @override
+  String get ocrPrepRecrop => 'Redo the crop';
+
+  @override
+  String get ocrPrepEnhance => 'Enhance';
+
+  @override
+  String get ocrPrepEnhanceAgain => 'Enhance again';
+
+  @override
+  String get ocrPrepProcess => 'Read the paper';
+
+  @override
+  String get ocrPrepProcessingTitle => 'Reading your paper';
+
+  @override
+  String get ocrPrepProcessingMessage =>
+      'Text recognition is running on this device. Nothing is uploaded anywhere.';
+
+  @override
+  String get ocrPrepCancel => 'Cancel';
+
+  @override
+  String get ocrPrepInterruptedTitle => 'That didn\'t finish';
+
+  @override
+  String get ocrPrepInterruptedMessage =>
+      'Reading stopped before it finished, probably because the app was interrupted. Nothing was saved, so you can try again.';
+
+  @override
+  String get ocrPrepRetry => 'Try again';
+
+  @override
+  String get ocrPrepDefaultDirectionLabel => 'Default direction for this list';
+
+  @override
+  String get ocrPrepDefaultDirectionHint =>
+      'Applied to every entry whose direction can\'t be read from the paper. You can change any entry while reviewing.';
+
+  @override
+  String get ocrPrepDirectionReceived => 'Money received';
+
+  @override
+  String get ocrPrepDirectionGiven => 'Money given';
+
+  @override
+  String get ocrFailureNoTextTitle => 'No text found';
+
+  @override
+  String get ocrFailureNoTextMessage =>
+      'No readable text was found in this photo. A sharper, better lit, straight-on shot usually fixes it.';
+
+  @override
+  String get ocrFailureNoCandidatesTitle => 'No entries could be made';
+
+  @override
+  String get ocrFailureNoCandidatesMessage =>
+      'Text was found, but no line looked like a name and an amount. Try cropping to just the list, or enter the entries manually.';
+
+  @override
+  String get ocrFailurePermissionTitle => 'Permission needed';
+
+  @override
+  String get ocrFailurePermissionMessage =>
+      'Scanning needs access to your camera or photos to read the paper. Grant access from the app\'s settings, then try again.';
+
+  @override
+  String get ocrFailureUnsupportedTitle =>
+      'Scanning isn\'t available on this device';
+
+  @override
+  String get ocrFailureUnsupportedMessage =>
+      'This device can\'t run on-device text recognition. Manual entry works exactly the same way.';
+
+  @override
+  String get ocrFailureGenericTitle => 'The scan didn\'t work';
+
+  @override
+  String get ocrFailureGenericMessage =>
+      'Something went wrong while reading the paper. Nothing was saved, so you can try again or enter the entries manually.';
+
+  @override
+  String get ocrFailureRetakePhoto => 'Retake the photo';
+
+  @override
+  String get ocrFailureRecrop => 'Adjust the crop and retry';
+
+  @override
+  String get ocrFailureManualEntry => 'Enter manually';
+
+  @override
+  String get ocrFailureOpenSettings => 'Open settings';
+
+  @override
+  String get ocrConfidenceLow => 'Low confidence';
+
+  @override
+  String get ocrConfidenceMedium => 'Medium confidence';
+
+  @override
+  String get ocrConfidenceHigh => 'High confidence';
+
+  @override
+  String get ocrConfidenceInferred => 'Inferred, not read';
+
+  @override
+  String get ocrReviewTitle => 'Review entries';
+
+  @override
+  String get ocrReviewBatchSectionTitle => 'Applies to the whole batch';
+
+  @override
+  String get ocrReviewBatchSectionMessage =>
+      'These choices apply to every entry that does not have its own. Nothing is saved until you confirm.';
+
+  @override
+  String get ocrReviewBatchDirectionLabel => 'Default direction';
+
+  @override
+  String get ocrReviewDirectionLabel => 'Direction';
+
+  @override
+  String get ocrReviewDirectionReceived => 'Received';
+
+  @override
+  String get ocrReviewDirectionGiven => 'Given';
+
+  @override
+  String get ocrReviewDirectionRequired =>
+      'Choose a direction for this entry, or set a default for the batch.';
+
+  @override
+  String get ocrReviewPersonLabel => 'Person';
+
+  @override
+  String get ocrReviewPersonRequired => 'Enter the person\'s name.';
+
+  @override
+  String get ocrReviewDuplicateWarningAction => 'Similar names already saved';
+
+  @override
+  String get ocrReviewAmountLabel => 'Amount';
+
+  @override
+  String get ocrReviewAmountRequired => 'Enter an amount greater than zero.';
+
+  @override
+  String get ocrReviewAmountInvalid =>
+      'Enter a valid amount, for example 150.50';
+
+  @override
+  String get ocrReviewDateLabel => 'Date';
+
+  @override
+  String get ocrReviewNotesLabel => 'Notes';
+
+  @override
+  String get ocrReviewRawTextAction => 'Original text';
+
+  @override
+  String get ocrReviewRawTextLabel => 'Read from the page';
+
+  @override
+  String get ocrReviewEditedBadge => 'Edited';
+
+  @override
+  String get ocrReviewDiscardAction => 'Discard this entry';
+
+  @override
+  String get ocrReviewIncompleteTitle => 'Not ready to save';
+
+  @override
+  String get ocrReviewIncompleteBatchMessage =>
+      'Some entries are still missing required details. Nothing was saved.';
+
+  @override
+  String get ocrReviewConfirmAction => 'Confirm and save';
+
+  @override
+  String get ocrReviewConfirmBlockedHint =>
+      'Complete or discard the highlighted entries before saving.';
+
+  @override
+  String get ocrReviewNothingToConfirm =>
+      'There is nothing left to save in this scan.';
+
+  @override
+  String get ocrReviewCancelAction => 'Cancel scan';
+
+  @override
+  String get ocrReviewCancelPromptTitle => 'Discard your corrections?';
+
+  @override
+  String get ocrReviewCancelPromptMessage =>
+      'You have corrected some entries. Cancelling this scan discards that work and saves nothing.';
+
+  @override
+  String get ocrReviewCancelPromptConfirm => 'Discard and cancel';
+
+  @override
+  String get ocrReviewCancelPromptKeep => 'Keep reviewing';
+
+  @override
+  String get ocrReviewEmptyTitle => 'No entries left';
+
+  @override
+  String get ocrReviewEmptyMessage =>
+      'You discarded every entry from this scan. Cancel the scan, or go back and photograph the page again.';
+
+  @override
+  String get ocrReviewLoadErrorTitle => 'Could not open this scan';
+
+  @override
+  String get ocrReviewLoadErrorMessage =>
+      'The scan and its entries could not be loaded. Nothing was saved.';
+
+  @override
+  String get ocrReviewRetryAction => 'Try again';
+
+  @override
+  String get ocrReviewSaveErrorMessage =>
+      'The entries could not be saved. Nothing was recorded, so you can try again safely.';
+
+  @override
+  String get ocrReviewOccasionLabel => 'Occasion';
+
+  @override
+  String get ocrReviewOccasionNone => 'No occasion';
+
+  @override
+  String get ocrReviewOccasionClear => 'Remove the occasion tag';
+
+  @override
+  String get ocrReviewOccasionPickerTitle => 'Tag this batch to an occasion';
+
+  @override
+  String get ocrReviewOccasionEmpty =>
+      'You have no occasions yet. Create one from the Occasions screen first.';
+
+  @override
+  String get ocrHistoryTitle => 'Scan history';
+
+  @override
+  String get ocrHistoryEmptyTitle => 'No scans yet';
+
+  @override
+  String get ocrHistoryEmptyMessage =>
+      'Once you scan a paper list, every scan you keep shows up here with its photo and what came of it.';
+
+  @override
+  String get ocrHistoryErrorTitle => 'Couldn\'t load your scans';
+
+  @override
+  String get ocrHistoryErrorMessage =>
+      'Something went wrong while reading your scan history. Try again.';
+
+  @override
+  String get ocrHistoryStatusProcessing => 'Processing';
+
+  @override
+  String get ocrHistoryStatusNeedsReview => 'Waiting for review';
+
+  @override
+  String get ocrHistoryStatusConfirmed => 'Confirmed';
+
+  @override
+  String get ocrHistoryStatusDiscarded => 'Produced nothing';
+
+  @override
+  String get ocrHistoryStatusFailed => 'Nothing could be read';
+
+  @override
+  String ocrHistoryConfirmedEntries(Object count) {
+    return '$count entries confirmed';
+  }
+
+  @override
+  String get ocrHistoryDeleteAction => 'Delete scan';
+
+  @override
+  String get ocrHistoryDeleteTitle => 'Delete this scan?';
+
+  @override
+  String get ocrHistoryDeleteMessage =>
+      'This deletes the scan and its photo from your device. The transactions it created are not deleted and stay in your records.';
+
+  @override
+  String get ocrHistoryDeleteConfirm => 'Delete scan';
+
+  @override
+  String get ocrScanDetailTitle => 'Scan details';
+
+  @override
+  String get ocrScanDetailImageMissing =>
+      'The photo for this scan is no longer on your device.';
+
+  @override
+  String get ocrScanDetailEntriesTitle => 'Entries read from the paper';
+
+  @override
+  String get ocrScanDetailNoEntries => 'No entries were read from this scan.';
+
+  @override
+  String get ocrScanDetailUnknownPerson => 'No name read';
+
+  @override
+  String get ocrScanDetailNoAmount => 'No amount read';
+
+  @override
+  String get ocrScanDetailEntryStatusPending => 'Not reviewed';
+
+  @override
+  String get ocrScanDetailEntryStatusConfirmed => 'Confirmed';
+
+  @override
+  String get ocrScanDetailEntryStatusDiscarded => 'Discarded';
+
+  @override
+  String get ocrScanDetailTransactionsTitle => 'Transactions created';
+
+  @override
+  String get ocrScanDetailNoTransactionsMessage =>
+      'This scan created no transactions.';
+
+  @override
+  String get ocrScanDetailTransactionsKeptNote =>
+      'These are real transactions in your records. Deleting this scan does not delete them.';
+
+  @override
+  String get ocrScanDetailDeleteAction => 'Delete scan';
+
+  @override
+  String get ocrScanDetailDeleteTitle => 'Delete this scan?';
+
+  @override
+  String ocrScanDetailDeleteMessage(Object count) {
+    return 'This deletes the scan and its photo from your device. The $count transactions it created are not deleted and stay in your records — you just lose the link back to the original photo.';
+  }
+
+  @override
+  String get ocrScanDetailDeleteConfirm => 'Delete scan';
+
+  @override
+  String get ocrScanDetailDeletedMessage =>
+      'Scan deleted. Its transactions were kept.';
+
+  @override
+  String get ocrScanDetailErrorTitle => 'Couldn\'t load this scan';
+
+  @override
+  String get ocrScanDetailErrorMessage =>
+      'Something went wrong while reading this scan.';
 }

@@ -9,6 +9,8 @@ void main() {
     required String kind,
     String? occasionId,
     bool countsTowardBalance = true,
+    String source = 'manual',
+    String? ocrScanId,
   }) {
     return db.MoneyTransaction(
       id: 't1',
@@ -20,6 +22,8 @@ void main() {
       date: DateTime(2026, 1, 1).millisecondsSinceEpoch,
       occasionId: occasionId,
       countsTowardBalance: countsTowardBalance,
+      source: source,
+      ocrScanId: ocrScanId,
       createdAt: DateTime(2026, 1, 1).millisecondsSinceEpoch,
     );
   }

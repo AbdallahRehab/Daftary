@@ -163,6 +163,7 @@ class OccasionsRepositoryImpl implements OccasionsRepository {
     required DateTime date,
     bool? countsTowardBalance,
     String? note,
+    String? ocrScanId,
   }) async {
     if (!amount.isPositive) {
       return const Left(ValidationFailure('Amount must be greater than zero'));
@@ -193,6 +194,7 @@ class OccasionsRepositoryImpl implements OccasionsRepository {
       countsTowardBalance: counts,
       date: date,
       note: note,
+      ocrScanId: ocrScanId,
     );
   }
 

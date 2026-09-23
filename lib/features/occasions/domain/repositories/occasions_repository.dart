@@ -68,6 +68,11 @@ abstract class OccasionsRepository {
   /// occasion's type is `condolence` and the caller passes `null`
   /// (FR-018); every other type defaults to `true`. Rejects a non-positive
   /// [amount], an unknown/deleted occasion, and a blank [personId].
+  /// [ocrScanId] (009, optional) marks the created row as OCR-sourced and
+  /// links it back to the scan it was confirmed from. `null` for manual
+  /// entry, which is unchanged 008 behaviour. The occasion link (008) and
+  /// the scan link (009) are independent columns that compose on the same
+  /// row without conflict.
   Future<Either<Failure, MoneyTransaction>> addParticipantContribution({
     required String idempotencyKey,
     required String occasionId,
@@ -77,6 +82,7 @@ abstract class OccasionsRepository {
     required DateTime date,
     bool? countsTowardBalance,
     String? note,
+    String? ocrScanId,
   });
 
   /// Edits a contribution's amount/direction/date/note (FR-010). Identical

@@ -1753,6 +1753,714 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open settings'**
   String get occasionOpenSettingsAction;
+
+  /// No description provided for @ocrCaptureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan paper'**
+  String get ocrCaptureTitle;
+
+  /// No description provided for @ocrCaptureHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn a paper list into entries'**
+  String get ocrCaptureHeadline;
+
+  /// No description provided for @ocrCaptureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Photograph a list of names and amounts. Everything is read on this device, and nothing is saved until you review it.'**
+  String get ocrCaptureMessage;
+
+  /// No description provided for @ocrCaptureTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get ocrCaptureTakePhoto;
+
+  /// No description provided for @ocrCaptureChooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from gallery'**
+  String get ocrCaptureChooseFromGallery;
+
+  /// No description provided for @ocrCaptureUnsupportedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning isn\'t available on this device'**
+  String get ocrCaptureUnsupportedTitle;
+
+  /// No description provided for @ocrCaptureUnsupportedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This device can\'t run on-device text recognition, so scanning a paper won\'t work here. You can still add transactions manually.'**
+  String get ocrCaptureUnsupportedMessage;
+
+  /// No description provided for @ocrCaptureEnterManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manually'**
+  String get ocrCaptureEnterManually;
+
+  /// No description provided for @ocrPrepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare the image'**
+  String get ocrPrepTitle;
+
+  /// No description provided for @ocrPrepHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop to just the list of names and amounts, then even out the lighting for the best reading.'**
+  String get ocrPrepHint;
+
+  /// No description provided for @ocrPrepCropRotate.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop and rotate'**
+  String get ocrPrepCropRotate;
+
+  /// No description provided for @ocrPrepRecrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Redo the crop'**
+  String get ocrPrepRecrop;
+
+  /// No description provided for @ocrPrepEnhance.
+  ///
+  /// In en, this message translates to:
+  /// **'Enhance'**
+  String get ocrPrepEnhance;
+
+  /// No description provided for @ocrPrepEnhanceAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Enhance again'**
+  String get ocrPrepEnhanceAgain;
+
+  /// No description provided for @ocrPrepProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the paper'**
+  String get ocrPrepProcess;
+
+  /// No description provided for @ocrPrepProcessingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading your paper'**
+  String get ocrPrepProcessingTitle;
+
+  /// No description provided for @ocrPrepProcessingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Text recognition is running on this device. Nothing is uploaded anywhere.'**
+  String get ocrPrepProcessingMessage;
+
+  /// No description provided for @ocrPrepCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get ocrPrepCancel;
+
+  /// No description provided for @ocrPrepInterruptedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t finish'**
+  String get ocrPrepInterruptedTitle;
+
+  /// No description provided for @ocrPrepInterruptedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading stopped before it finished, probably because the app was interrupted. Nothing was saved, so you can try again.'**
+  String get ocrPrepInterruptedMessage;
+
+  /// No description provided for @ocrPrepRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get ocrPrepRetry;
+
+  /// No description provided for @ocrPrepDefaultDirectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default direction for this list'**
+  String get ocrPrepDefaultDirectionLabel;
+
+  /// No description provided for @ocrPrepDefaultDirectionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied to every entry whose direction can\'t be read from the paper. You can change any entry while reviewing.'**
+  String get ocrPrepDefaultDirectionHint;
+
+  /// No description provided for @ocrPrepDirectionReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Money received'**
+  String get ocrPrepDirectionReceived;
+
+  /// No description provided for @ocrPrepDirectionGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Money given'**
+  String get ocrPrepDirectionGiven;
+
+  /// No description provided for @ocrFailureNoTextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No text found'**
+  String get ocrFailureNoTextTitle;
+
+  /// No description provided for @ocrFailureNoTextMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No readable text was found in this photo. A sharper, better lit, straight-on shot usually fixes it.'**
+  String get ocrFailureNoTextMessage;
+
+  /// No description provided for @ocrFailureNoCandidatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries could be made'**
+  String get ocrFailureNoCandidatesTitle;
+
+  /// No description provided for @ocrFailureNoCandidatesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Text was found, but no line looked like a name and an amount. Try cropping to just the list, or enter the entries manually.'**
+  String get ocrFailureNoCandidatesMessage;
+
+  /// No description provided for @ocrFailurePermissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission needed'**
+  String get ocrFailurePermissionTitle;
+
+  /// No description provided for @ocrFailurePermissionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning needs access to your camera or photos to read the paper. Grant access from the app\'s settings, then try again.'**
+  String get ocrFailurePermissionMessage;
+
+  /// No description provided for @ocrFailureUnsupportedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning isn\'t available on this device'**
+  String get ocrFailureUnsupportedTitle;
+
+  /// No description provided for @ocrFailureUnsupportedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This device can\'t run on-device text recognition. Manual entry works exactly the same way.'**
+  String get ocrFailureUnsupportedMessage;
+
+  /// No description provided for @ocrFailureGenericTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan didn\'t work'**
+  String get ocrFailureGenericTitle;
+
+  /// No description provided for @ocrFailureGenericMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while reading the paper. Nothing was saved, so you can try again or enter the entries manually.'**
+  String get ocrFailureGenericMessage;
+
+  /// No description provided for @ocrFailureRetakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake the photo'**
+  String get ocrFailureRetakePhoto;
+
+  /// No description provided for @ocrFailureRecrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust the crop and retry'**
+  String get ocrFailureRecrop;
+
+  /// No description provided for @ocrFailureManualEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manually'**
+  String get ocrFailureManualEntry;
+
+  /// No description provided for @ocrFailureOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get ocrFailureOpenSettings;
+
+  /// No description provided for @ocrConfidenceLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low confidence'**
+  String get ocrConfidenceLow;
+
+  /// No description provided for @ocrConfidenceMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium confidence'**
+  String get ocrConfidenceMedium;
+
+  /// No description provided for @ocrConfidenceHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High confidence'**
+  String get ocrConfidenceHigh;
+
+  /// No description provided for @ocrConfidenceInferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Inferred, not read'**
+  String get ocrConfidenceInferred;
+
+  /// No description provided for @ocrReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review entries'**
+  String get ocrReviewTitle;
+
+  /// No description provided for @ocrReviewBatchSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to the whole batch'**
+  String get ocrReviewBatchSectionTitle;
+
+  /// No description provided for @ocrReviewBatchSectionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'These choices apply to every entry that does not have its own. Nothing is saved until you confirm.'**
+  String get ocrReviewBatchSectionMessage;
+
+  /// No description provided for @ocrReviewBatchDirectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default direction'**
+  String get ocrReviewBatchDirectionLabel;
+
+  /// No description provided for @ocrReviewDirectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get ocrReviewDirectionLabel;
+
+  /// No description provided for @ocrReviewDirectionReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get ocrReviewDirectionReceived;
+
+  /// No description provided for @ocrReviewDirectionGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Given'**
+  String get ocrReviewDirectionGiven;
+
+  /// No description provided for @ocrReviewDirectionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a direction for this entry, or set a default for the batch.'**
+  String get ocrReviewDirectionRequired;
+
+  /// No description provided for @ocrReviewPersonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get ocrReviewPersonLabel;
+
+  /// No description provided for @ocrReviewPersonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the person\'s name.'**
+  String get ocrReviewPersonRequired;
+
+  /// No description provided for @ocrReviewDuplicateWarningAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Similar names already saved'**
+  String get ocrReviewDuplicateWarningAction;
+
+  /// No description provided for @ocrReviewAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get ocrReviewAmountLabel;
+
+  /// No description provided for @ocrReviewAmountRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount greater than zero.'**
+  String get ocrReviewAmountRequired;
+
+  /// No description provided for @ocrReviewAmountInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount, for example 150.50'**
+  String get ocrReviewAmountInvalid;
+
+  /// No description provided for @ocrReviewDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get ocrReviewDateLabel;
+
+  /// No description provided for @ocrReviewNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get ocrReviewNotesLabel;
+
+  /// No description provided for @ocrReviewRawTextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Original text'**
+  String get ocrReviewRawTextAction;
+
+  /// No description provided for @ocrReviewRawTextLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Read from the page'**
+  String get ocrReviewRawTextLabel;
+
+  /// No description provided for @ocrReviewEditedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get ocrReviewEditedBadge;
+
+  /// No description provided for @ocrReviewDiscardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this entry'**
+  String get ocrReviewDiscardAction;
+
+  /// No description provided for @ocrReviewIncompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ready to save'**
+  String get ocrReviewIncompleteTitle;
+
+  /// No description provided for @ocrReviewIncompleteBatchMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Some entries are still missing required details. Nothing was saved.'**
+  String get ocrReviewIncompleteBatchMessage;
+
+  /// No description provided for @ocrReviewConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm and save'**
+  String get ocrReviewConfirmAction;
+
+  /// No description provided for @ocrReviewConfirmBlockedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete or discard the highlighted entries before saving.'**
+  String get ocrReviewConfirmBlockedHint;
+
+  /// No description provided for @ocrReviewNothingToConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'There is nothing left to save in this scan.'**
+  String get ocrReviewNothingToConfirm;
+
+  /// No description provided for @ocrReviewCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel scan'**
+  String get ocrReviewCancelAction;
+
+  /// No description provided for @ocrReviewCancelPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard your corrections?'**
+  String get ocrReviewCancelPromptTitle;
+
+  /// No description provided for @ocrReviewCancelPromptMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have corrected some entries. Cancelling this scan discards that work and saves nothing.'**
+  String get ocrReviewCancelPromptMessage;
+
+  /// No description provided for @ocrReviewCancelPromptConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard and cancel'**
+  String get ocrReviewCancelPromptConfirm;
+
+  /// No description provided for @ocrReviewCancelPromptKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reviewing'**
+  String get ocrReviewCancelPromptKeep;
+
+  /// No description provided for @ocrReviewEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries left'**
+  String get ocrReviewEmptyTitle;
+
+  /// No description provided for @ocrReviewEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You discarded every entry from this scan. Cancel the scan, or go back and photograph the page again.'**
+  String get ocrReviewEmptyMessage;
+
+  /// No description provided for @ocrReviewLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this scan'**
+  String get ocrReviewLoadErrorTitle;
+
+  /// No description provided for @ocrReviewLoadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan and its entries could not be loaded. Nothing was saved.'**
+  String get ocrReviewLoadErrorMessage;
+
+  /// No description provided for @ocrReviewRetryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get ocrReviewRetryAction;
+
+  /// No description provided for @ocrReviewSaveErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The entries could not be saved. Nothing was recorded, so you can try again safely.'**
+  String get ocrReviewSaveErrorMessage;
+
+  /// No description provided for @ocrReviewOccasionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasion'**
+  String get ocrReviewOccasionLabel;
+
+  /// No description provided for @ocrReviewOccasionNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No occasion'**
+  String get ocrReviewOccasionNone;
+
+  /// No description provided for @ocrReviewOccasionClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the occasion tag'**
+  String get ocrReviewOccasionClear;
+
+  /// No description provided for @ocrReviewOccasionPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag this batch to an occasion'**
+  String get ocrReviewOccasionPickerTitle;
+
+  /// No description provided for @ocrReviewOccasionEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no occasions yet. Create one from the Occasions screen first.'**
+  String get ocrReviewOccasionEmpty;
+
+  /// No description provided for @ocrHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan history'**
+  String get ocrHistoryTitle;
+
+  /// No description provided for @ocrHistoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No scans yet'**
+  String get ocrHistoryEmptyTitle;
+
+  /// No description provided for @ocrHistoryEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Once you scan a paper list, every scan you keep shows up here with its photo and what came of it.'**
+  String get ocrHistoryEmptyMessage;
+
+  /// No description provided for @ocrHistoryErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your scans'**
+  String get ocrHistoryErrorTitle;
+
+  /// No description provided for @ocrHistoryErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while reading your scan history. Try again.'**
+  String get ocrHistoryErrorMessage;
+
+  /// No description provided for @ocrHistoryStatusProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get ocrHistoryStatusProcessing;
+
+  /// No description provided for @ocrHistoryStatusNeedsReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for review'**
+  String get ocrHistoryStatusNeedsReview;
+
+  /// No description provided for @ocrHistoryStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get ocrHistoryStatusConfirmed;
+
+  /// No description provided for @ocrHistoryStatusDiscarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Produced nothing'**
+  String get ocrHistoryStatusDiscarded;
+
+  /// No description provided for @ocrHistoryStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing could be read'**
+  String get ocrHistoryStatusFailed;
+
+  /// No description provided for @ocrHistoryConfirmedEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} entries confirmed'**
+  String ocrHistoryConfirmedEntries(Object count);
+
+  /// No description provided for @ocrHistoryDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete scan'**
+  String get ocrHistoryDeleteAction;
+
+  /// No description provided for @ocrHistoryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this scan?'**
+  String get ocrHistoryDeleteTitle;
+
+  /// No description provided for @ocrHistoryDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes the scan and its photo from your device. The transactions it created are not deleted and stay in your records.'**
+  String get ocrHistoryDeleteMessage;
+
+  /// No description provided for @ocrHistoryDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete scan'**
+  String get ocrHistoryDeleteConfirm;
+
+  /// No description provided for @ocrScanDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan details'**
+  String get ocrScanDetailTitle;
+
+  /// No description provided for @ocrScanDetailImageMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'The photo for this scan is no longer on your device.'**
+  String get ocrScanDetailImageMissing;
+
+  /// No description provided for @ocrScanDetailEntriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries read from the paper'**
+  String get ocrScanDetailEntriesTitle;
+
+  /// No description provided for @ocrScanDetailNoEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries were read from this scan.'**
+  String get ocrScanDetailNoEntries;
+
+  /// No description provided for @ocrScanDetailUnknownPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'No name read'**
+  String get ocrScanDetailUnknownPerson;
+
+  /// No description provided for @ocrScanDetailNoAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'No amount read'**
+  String get ocrScanDetailNoAmount;
+
+  /// No description provided for @ocrScanDetailEntryStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Not reviewed'**
+  String get ocrScanDetailEntryStatusPending;
+
+  /// No description provided for @ocrScanDetailEntryStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get ocrScanDetailEntryStatusConfirmed;
+
+  /// No description provided for @ocrScanDetailEntryStatusDiscarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Discarded'**
+  String get ocrScanDetailEntryStatusDiscarded;
+
+  /// No description provided for @ocrScanDetailTransactionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions created'**
+  String get ocrScanDetailTransactionsTitle;
+
+  /// No description provided for @ocrScanDetailNoTransactionsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This scan created no transactions.'**
+  String get ocrScanDetailNoTransactionsMessage;
+
+  /// No description provided for @ocrScanDetailTransactionsKeptNote.
+  ///
+  /// In en, this message translates to:
+  /// **'These are real transactions in your records. Deleting this scan does not delete them.'**
+  String get ocrScanDetailTransactionsKeptNote;
+
+  /// No description provided for @ocrScanDetailDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete scan'**
+  String get ocrScanDetailDeleteAction;
+
+  /// No description provided for @ocrScanDetailDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this scan?'**
+  String get ocrScanDetailDeleteTitle;
+
+  /// No description provided for @ocrScanDetailDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes the scan and its photo from your device. The {count} transactions it created are not deleted and stay in your records — you just lose the link back to the original photo.'**
+  String ocrScanDetailDeleteMessage(Object count);
+
+  /// No description provided for @ocrScanDetailDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete scan'**
+  String get ocrScanDetailDeleteConfirm;
+
+  /// No description provided for @ocrScanDetailDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan deleted. Its transactions were kept.'**
+  String get ocrScanDetailDeletedMessage;
+
+  /// No description provided for @ocrScanDetailErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this scan'**
+  String get ocrScanDetailErrorTitle;
+
+  /// No description provided for @ocrScanDetailErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while reading this scan.'**
+  String get ocrScanDetailErrorMessage;
 }
 
 class _AppLocalizationsDelegate

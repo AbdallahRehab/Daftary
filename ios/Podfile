@@ -1,5 +1,7 @@
-# Uncomment this line to define a global platform for your project
-# platform :ios, '15.0'
+# 009 (OCR): `google_mlkit_commons` requires iOS 15.5, so the platform is
+# declared explicitly rather than left to CocoaPods' 15.0 default — without
+# this line `pod install` fails outright.
+platform :ios, '15.5'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'

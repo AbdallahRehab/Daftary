@@ -14,6 +14,11 @@ import '../../features/occasions/presentation/pages/occasion_detail_page.dart';
 import '../../features/occasions/presentation/pages/occasion_form_page.dart';
 import '../../features/occasions/presentation/pages/occasions_list_page.dart';
 import '../../features/occasions/presentation/pages/participant_form_page.dart';
+import '../../features/ocr/presentation/pages/image_prep_page.dart';
+import '../../features/ocr/presentation/pages/scan_capture_page.dart';
+import '../../features/ocr/presentation/pages/scan_detail_page.dart';
+import '../../features/ocr/presentation/pages/scan_history_page.dart';
+import '../../features/ocr/presentation/pages/scan_review_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
@@ -201,6 +206,38 @@ final GoRouter appRouter = GoRouter(
               path: '/occasions/:id',
               builder: (context, state) =>
                   OccasionDetailPage(occasionId: state.pathParameters['id']!),
+            ),
+            // The scan flow lives in the People branch for the same reason
+            // finance and occasions do (research.md Decision 9): it is
+            // reached from the quick actions and from People, not from a
+            // bottom-nav tab of its own. As with occasions, the static
+            // `/ocr/...` paths are declared before `/ocr/history/:scanId`
+            // so no literal segment is ever captured as a scan id.
+            GoRoute(
+              path: '/ocr/scan',
+              builder: (context, state) => const ScanCapturePage(),
+            ),
+            GoRoute(
+              path: '/ocr/scan/prepare',
+              // The capture step hands the picked image's path along as
+              // `extra` rather than in the URL: it is a private sandbox
+              // path, which has no business being in a shareable location.
+              builder: (context, state) =>
+                  ImagePrepPage(imagePath: state.extra! as String),
+            ),
+            GoRoute(
+              path: '/ocr/scan/review',
+              builder: (context, state) =>
+                  ScanReviewPage(scanId: state.uri.queryParameters['scanId']!),
+            ),
+            GoRoute(
+              path: '/ocr/history',
+              builder: (context, state) => const ScanHistoryPage(),
+            ),
+            GoRoute(
+              path: '/ocr/history/:scanId',
+              builder: (context, state) =>
+                  ScanDetailPage(scanId: state.pathParameters['scanId']!),
             ),
           ],
         ),

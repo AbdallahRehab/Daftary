@@ -61,6 +61,16 @@ class TransactionsDao {
         .get();
   }
 
+  /// Every non-deleted row this scan produced, oldest first (009 FR-018).
+  /// Filtered on `ocr_scan_id` so SQLite uses `idx_transactions_ocr_scan_id`
+  /// rather than scanning the whole table.
+  Future<List<db.MoneyTransaction>> getTransactionsForScan(String ocrScanId) {
+    return (_db.select(_db.moneyTransactions)
+          ..where((t) => t.ocrScanId.equals(ocrScanId) & t.deletedAt.isNull())
+          ..orderBy([(t) => db.OrderingTerm(expression: t.date)]))
+        .get();
+  }
+
   /// Occasion id → occasion name for every occasion-linked, non-deleted row
   /// belonging to [personId] (008). One join rather than a name lookup per
   /// history row, so rendering the person's history stays a single read.

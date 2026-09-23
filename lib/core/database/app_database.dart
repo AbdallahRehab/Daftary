@@ -36,6 +36,10 @@ class People extends Table {
   name: 'idx_transactions_occasion_id',
   columns: {#occasionId, #deletedAt},
 )
+@TableIndex(
+  name: 'idx_transactions_ocr_scan_id',
+  columns: {#ocrScanId, #deletedAt},
+)
 class MoneyTransactions extends Table {
   TextColumn get id => text()();
   TextColumn get idempotencyKey => text().unique()();
@@ -56,6 +60,19 @@ class MoneyTransactions extends Table {
   /// non-counting, so the default keeps all pre-existing rows correct.
   BoolColumn get countsTowardBalance =>
       boolean().withDefault(const Constant(true))();
+
+  /// How this row was created: `'manual'` or `'ocr'` (009 FR-012). The
+  /// default keeps every pre-009 row correct with no backfill — they were
+  /// all typed in by hand.
+  TextColumn get source => text().withDefault(const Constant('manual'))();
+
+  /// The [OcrScans] row this transaction was confirmed from (009).
+  /// `NULL` for every manually entered row. Intentionally *not* declared
+  /// as a `references()` FK: 009 FR-023 lets the user delete a past scan
+  /// while the transactions it produced stay — a real FK would either
+  /// block that delete or cascade it, and both are wrong here
+  /// (data-model.md Relationships).
+  TextColumn get ocrScanId => text().nullable()();
   IntColumn get createdAt => integer()();
   IntColumn get editedAt => integer().nullable()();
   IntColumn get deletedAt => integer().nullable()();
@@ -109,6 +126,95 @@ class OccasionAttachments extends Table {
   TextColumn get filePath => text()();
   IntColumn get createdAt => integer()();
   IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One user-initiated paper-scanning session (009). Holds the prepared
+/// image and the batch-level choices that apply to everything parsed out of
+/// it, but never any money: the money only exists once the user confirms
+/// the review, as ordinary [MoneyTransactions] rows (009 research.md
+/// Decision 5).
+@TableIndex(
+  name: 'idx_ocr_scans_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(name: 'idx_ocr_scans_status', columns: {#status, #deletedAt})
+class OcrScans extends Table {
+  TextColumn get id => text()();
+
+  /// Regenerated per confirm attempt; the UNIQUE index above is what makes
+  /// a double-tapped confirm a no-op rather than a second batch of
+  /// transactions (009 FR-021).
+  TextColumn get idempotencyKey => text()();
+
+  /// Path into the app's own sandboxed storage. Never a remote URL — the
+  /// bytes are never uploaded (009 FR-019/FR-023).
+  TextColumn get sourceImagePath => text()();
+  TextColumn get cropBounds => text().nullable()();
+  IntColumn get rotationDegrees => integer().withDefault(const Constant(0))();
+
+  /// `'processing'|'needsReview'|'confirmed'|'discarded'|'failed'`.
+  TextColumn get status => text()();
+
+  /// Set when the user tags the whole batch to an occasion at review time
+  /// (009 FR-014), so every entry confirmed afterwards is recorded as that
+  /// occasion's contribution (008).
+  TextColumn get occasionId => text().nullable().references(Occasions, #id)();
+
+  /// `'given'|'received'`, or `NULL` while the user has not chosen a batch
+  /// default yet (009 FR-005).
+  TextColumn get defaultDirection => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get completedAt => integer().nullable()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One proposed transaction parsed out of an [OcrScans] row, before the
+/// user has agreed to it (009).
+///
+/// Persisted rather than held in memory so a half-reviewed scan survives
+/// the app being backgrounded mid-review — but persisted *as a suggestion*:
+/// nothing here counts toward any balance, and the only way a row in this
+/// table becomes money is `confirmScanBatch` (constitution Principle X).
+@TableIndex(name: 'idx_candidate_entries_scan_id', columns: {#scanId})
+class CandidateEntries extends Table {
+  TextColumn get id => text()();
+  TextColumn get scanId => text().references(OcrScans, #id)();
+
+  /// `'pendingReview'|'confirmed'|'discarded'`.
+  TextColumn get status =>
+      text().withDefault(const Constant('pendingReview'))();
+  TextColumn get personName => text()();
+
+  /// Per-field provenance, stored as a `kind`/`level` pair per field
+  /// (009 data-model.md's `FieldConfidence`): `'read'|'inferred'` and
+  /// `'low'|'medium'|'high'|'none'`. Kept as two columns rather than one
+  /// encoded string so a future query can filter on either half.
+  TextColumn get personNameConfidenceKind => text()();
+  TextColumn get personNameConfidenceLevel => text()();
+  TextColumn get matchedPersonId => text().nullable().references(People, #id)();
+  IntColumn get amountMinorUnits => integer().nullable()();
+  TextColumn get amountConfidenceKind => text()();
+  TextColumn get amountConfidenceLevel => text()();
+  TextColumn get direction => text().nullable()();
+  TextColumn get directionConfidenceKind => text()();
+  TextColumn get directionConfidenceLevel => text()();
+  IntColumn get date => integer().nullable()();
+  TextColumn get dateConfidenceKind => text()();
+  TextColumn get dateConfidenceLevel => text()();
+  TextColumn get notes => text().nullable()();
+
+  /// The unedited recognized line this entry was parsed from, so review can
+  /// compare against the page and a past scan stays explainable.
+  TextColumn get rawOcrText => text()();
+  IntColumn get createdAt => integer()();
+  IntColumn get editedAt => integer().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -226,6 +332,8 @@ class OnboardingStatus extends Table {
     FinanceEntries,
     Occasions,
     OccasionAttachments,
+    OcrScans,
+    CandidateEntries,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -234,7 +342,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -275,6 +383,23 @@ class AppDatabase extends _$AppDatabase {
           moneyTransactions.countsTowardBalance,
         );
         await m.createIndex(idxTransactionsOccasionId);
+      }
+      if (from < 7) {
+        await m.createTable(ocrScans);
+        await m.createTable(candidateEntries);
+        // Same reason as the 008 block above: `createTable` does not carry
+        // a table's `@TableIndex` declarations across, and here the UNIQUE
+        // index is the entire mechanism behind 009 FR-021's idempotent
+        // batch confirm — without it a double-tap saves the batch twice.
+        await m.createIndex(idxOcrScansIdempotencyKey);
+        await m.createIndex(idxOcrScansStatus);
+        await m.createIndex(idxCandidateEntriesScanId);
+        // Additive only: `source` is defaulted and `ocr_scan_id` nullable,
+        // so every pre-009 row stays valid untouched — it simply reports
+        // itself as manually entered, which it was.
+        await m.addColumn(moneyTransactions, moneyTransactions.source);
+        await m.addColumn(moneyTransactions, moneyTransactions.ocrScanId);
+        await m.createIndex(idxTransactionsOcrScanId);
       }
     },
     beforeOpen: (details) async {

@@ -74,6 +74,30 @@ class _OverviewView extends StatelessWidget {
                       onTap: () => context.push('/occasions'),
                     ),
                   ),
+                  // Scanning a paper list is an entry point, so it sits with
+                  // the other section links rather than behind People
+                  // (009 FR-001, docs/project.txt §12 Quick Actions).
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.document_scanner_outlined),
+                      title: Text(l10n.ocrCaptureTitle),
+                      subtitle: Text(l10n.ocrCaptureHeadline),
+                      // Past scans get their own button rather than a long-press:
+                      // an affordance nobody can see is not an affordance.
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.history),
+                            tooltip: l10n.ocrHistoryTitle,
+                            onPressed: () => context.push('/ocr/history'),
+                          ),
+                          const Icon(Icons.chevron_right),
+                        ],
+                      ),
+                      onTap: () => context.push('/ocr/scan'),
+                    ),
+                  ),
                   SizedBox(
                     height: 420,
                     child: AppEmptyView(
@@ -112,6 +136,30 @@ class _OverviewView extends StatelessWidget {
                     title: Text(l10n.occasionsTitle),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => context.push('/occasions'),
+                  ),
+                ),
+                // See the settled-state branch above: same entry point, so
+                // "scan a paper" is reachable whether or not anything is
+                // currently outstanding.
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.document_scanner_outlined),
+                    title: Text(l10n.ocrCaptureTitle),
+                    subtitle: Text(l10n.ocrCaptureHeadline),
+                    // Past scans get their own button rather than a long-press:
+                    // an affordance nobody can see is not an affordance.
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.history),
+                          tooltip: l10n.ocrHistoryTitle,
+                          onPressed: () => context.push('/ocr/history'),
+                        ),
+                        const Icon(Icons.chevron_right),
+                      ],
+                    ),
+                    onTap: () => context.push('/ocr/scan'),
                   ),
                 ),
                 if (summary.peopleTheyOweYou.isNotEmpty) ...[

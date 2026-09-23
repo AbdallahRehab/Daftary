@@ -25,6 +25,12 @@ extension MoneyTransactionMapper on db.MoneyTransaction {
     note: note,
     occasionId: occasionId,
     countsTowardBalance: countsTowardBalance,
+    source: switch (source) {
+      'manual' => domain.TransactionSource.manual,
+      'ocr' => domain.TransactionSource.ocr,
+      _ => throw StateError('Unknown transaction source: $source'),
+    },
+    ocrScanId: ocrScanId,
     createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),
     editedAt: editedAt == null
         ? null
@@ -48,6 +54,16 @@ extension TransactionKindDb on domain.TransactionKind {
     domain.TransactionKind.initialExchange => 'initialExchange',
     domain.TransactionKind.repayment => 'repayment',
     domain.TransactionKind.occasionContribution => 'occasionContribution',
+  };
+}
+
+/// Exhaustive for the same reason [TransactionKindDb] is: a row whose
+/// origin silently defaulted to `manual` would be a transaction quietly
+/// lying about where it came from (009 FR-012).
+extension TransactionSourceDb on domain.TransactionSource {
+  String get dbValue => switch (this) {
+    domain.TransactionSource.manual => 'manual',
+    domain.TransactionSource.ocr => 'ocr',
   };
 }
 

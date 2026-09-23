@@ -260,6 +260,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
     required bool countsTowardBalance,
     required DateTime date,
     String? note,
+    String? ocrScanId,
   }) async {
     final validation = _validateAmountAndPerson(amount, personId);
     if (validation != null) return Left(validation);
@@ -278,6 +279,15 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         // type, so later re-typing an occasion never silently moves a
         // balance (008 research.md Decision 3).
         countsTowardBalance: db.Value(countsTowardBalance),
+        // 008's occasion link and 009's scan link are independent columns
+        // on the same row: an OCR-confirmed, occasion-tagged entry carries
+        // both, and a manually entered one carries only the first.
+        source: db.Value(
+          ocrScanId == null
+              ? TransactionSource.manual.dbValue
+              : TransactionSource.ocr.dbValue,
+        ),
+        ocrScanId: db.Value(ocrScanId),
         createdAt: DateTime.now().millisecondsSinceEpoch,
       );
       final row = await _dao.insertTransactionIdempotent(companion);
@@ -285,6 +295,57 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       return Right(row.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to record contribution: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MoneyTransaction>> addOcrSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required String ocrScanId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  }) async {
+    final validation = _validateAmountAndPerson(amount, personId);
+    if (validation != null) return Left(validation);
+    try {
+      final companion = db.MoneyTransactionsCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        direction: direction.dbValue,
+        kind: TransactionKind.initialExchange.dbValue,
+        date: _dateOnlyMillis(date),
+        note: db.Value(note),
+        // The two columns that make this row honest about where it came
+        // from, and traceable back to the page it was read off (009
+        // FR-012). Everything else about the row is an ordinary
+        // transaction, deliberately: there is one ledger, not an
+        // "OCR ledger" alongside it (009 research.md Decision 5).
+        source: db.Value(TransactionSource.ocr.dbValue),
+        ocrScanId: db.Value(ocrScanId),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _dao.insertTransactionIdempotent(companion);
+      await _writeCreatedAuditEntry(row.id);
+      return Right(row.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to record scanned transaction: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MoneyTransaction>>> getTransactionsForScan(
+    String ocrScanId,
+  ) async {
+    try {
+      final rows = await _dao.getTransactionsForScan(ocrScanId);
+      return Right(rows.map((row) => row.toDomain()).toList());
+    } catch (e) {
+      return Left(CacheFailure('Failed to load transactions for scan: $e'));
     }
   }
 

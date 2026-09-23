@@ -1365,6 +1365,27 @@ class $MoneyTransactionsTable extends MoneyTransactions
     ),
     defaultValue: const Constant(true),
   );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('manual'),
+  );
+  static const VerificationMeta _ocrScanIdMeta = const VerificationMeta(
+    'ocrScanId',
+  );
+  @override
+  late final GeneratedColumn<String> ocrScanId = GeneratedColumn<String>(
+    'ocr_scan_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -1410,6 +1431,8 @@ class $MoneyTransactionsTable extends MoneyTransactions
     note,
     occasionId,
     countsTowardBalance,
+    source,
+    ocrScanId,
     createdAt,
     editedAt,
     deletedAt,
@@ -1506,6 +1529,18 @@ class $MoneyTransactionsTable extends MoneyTransactions
         ),
       );
     }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
+    if (data.containsKey('ocr_scan_id')) {
+      context.handle(
+        _ocrScanIdMeta,
+        ocrScanId.isAcceptableOrUnknown(data['ocr_scan_id']!, _ocrScanIdMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -1575,6 +1610,14 @@ class $MoneyTransactionsTable extends MoneyTransactions
         DriftSqlType.bool,
         data['${effectivePrefix}counts_toward_balance'],
       )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      ocrScanId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ocr_scan_id'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -1616,6 +1659,19 @@ class MoneyTransaction extends DataClass
   /// `TRUE` for every kind but an occasion contribution recorded as
   /// non-counting, so the default keeps all pre-existing rows correct.
   final bool countsTowardBalance;
+
+  /// How this row was created: `'manual'` or `'ocr'` (009 FR-012). The
+  /// default keeps every pre-009 row correct with no backfill — they were
+  /// all typed in by hand.
+  final String source;
+
+  /// The [OcrScans] row this transaction was confirmed from (009).
+  /// `NULL` for every manually entered row. Intentionally *not* declared
+  /// as a `references()` FK: 009 FR-023 lets the user delete a past scan
+  /// while the transactions it produced stay — a real FK would either
+  /// block that delete or cascade it, and both are wrong here
+  /// (data-model.md Relationships).
+  final String? ocrScanId;
   final int createdAt;
   final int? editedAt;
   final int? deletedAt;
@@ -1630,6 +1686,8 @@ class MoneyTransaction extends DataClass
     this.note,
     this.occasionId,
     required this.countsTowardBalance,
+    required this.source,
+    this.ocrScanId,
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
@@ -1651,6 +1709,10 @@ class MoneyTransaction extends DataClass
       map['occasion_id'] = Variable<String>(occasionId);
     }
     map['counts_toward_balance'] = Variable<bool>(countsTowardBalance);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || ocrScanId != null) {
+      map['ocr_scan_id'] = Variable<String>(ocrScanId);
+    }
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || editedAt != null) {
       map['edited_at'] = Variable<int>(editedAt);
@@ -1675,6 +1737,10 @@ class MoneyTransaction extends DataClass
           ? const Value.absent()
           : Value(occasionId),
       countsTowardBalance: Value(countsTowardBalance),
+      source: Value(source),
+      ocrScanId: ocrScanId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ocrScanId),
       createdAt: Value(createdAt),
       editedAt: editedAt == null && nullToAbsent
           ? const Value.absent()
@@ -1703,6 +1769,8 @@ class MoneyTransaction extends DataClass
       countsTowardBalance: serializer.fromJson<bool>(
         json['countsTowardBalance'],
       ),
+      source: serializer.fromJson<String>(json['source']),
+      ocrScanId: serializer.fromJson<String?>(json['ocrScanId']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       editedAt: serializer.fromJson<int?>(json['editedAt']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
@@ -1722,6 +1790,8 @@ class MoneyTransaction extends DataClass
       'note': serializer.toJson<String?>(note),
       'occasionId': serializer.toJson<String?>(occasionId),
       'countsTowardBalance': serializer.toJson<bool>(countsTowardBalance),
+      'source': serializer.toJson<String>(source),
+      'ocrScanId': serializer.toJson<String?>(ocrScanId),
       'createdAt': serializer.toJson<int>(createdAt),
       'editedAt': serializer.toJson<int?>(editedAt),
       'deletedAt': serializer.toJson<int?>(deletedAt),
@@ -1739,6 +1809,8 @@ class MoneyTransaction extends DataClass
     Value<String?> note = const Value.absent(),
     Value<String?> occasionId = const Value.absent(),
     bool? countsTowardBalance,
+    String? source,
+    Value<String?> ocrScanId = const Value.absent(),
     int? createdAt,
     Value<int?> editedAt = const Value.absent(),
     Value<int?> deletedAt = const Value.absent(),
@@ -1753,6 +1825,8 @@ class MoneyTransaction extends DataClass
     note: note.present ? note.value : this.note,
     occasionId: occasionId.present ? occasionId.value : this.occasionId,
     countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
+    source: source ?? this.source,
+    ocrScanId: ocrScanId.present ? ocrScanId.value : this.ocrScanId,
     createdAt: createdAt ?? this.createdAt,
     editedAt: editedAt.present ? editedAt.value : this.editedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
@@ -1777,6 +1851,8 @@ class MoneyTransaction extends DataClass
       countsTowardBalance: data.countsTowardBalance.present
           ? data.countsTowardBalance.value
           : this.countsTowardBalance,
+      source: data.source.present ? data.source.value : this.source,
+      ocrScanId: data.ocrScanId.present ? data.ocrScanId.value : this.ocrScanId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
@@ -1796,6 +1872,8 @@ class MoneyTransaction extends DataClass
           ..write('note: $note, ')
           ..write('occasionId: $occasionId, ')
           ..write('countsTowardBalance: $countsTowardBalance, ')
+          ..write('source: $source, ')
+          ..write('ocrScanId: $ocrScanId, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt')
@@ -1815,6 +1893,8 @@ class MoneyTransaction extends DataClass
     note,
     occasionId,
     countsTowardBalance,
+    source,
+    ocrScanId,
     createdAt,
     editedAt,
     deletedAt,
@@ -1833,6 +1913,8 @@ class MoneyTransaction extends DataClass
           other.note == this.note &&
           other.occasionId == this.occasionId &&
           other.countsTowardBalance == this.countsTowardBalance &&
+          other.source == this.source &&
+          other.ocrScanId == this.ocrScanId &&
           other.createdAt == this.createdAt &&
           other.editedAt == this.editedAt &&
           other.deletedAt == this.deletedAt);
@@ -1849,6 +1931,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
   final Value<String?> note;
   final Value<String?> occasionId;
   final Value<bool> countsTowardBalance;
+  final Value<String> source;
+  final Value<String?> ocrScanId;
   final Value<int> createdAt;
   final Value<int?> editedAt;
   final Value<int?> deletedAt;
@@ -1864,6 +1948,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     this.note = const Value.absent(),
     this.occasionId = const Value.absent(),
     this.countsTowardBalance = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrScanId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1880,6 +1966,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     this.note = const Value.absent(),
     this.occasionId = const Value.absent(),
     this.countsTowardBalance = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrScanId = const Value.absent(),
     required int createdAt,
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1903,6 +1991,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Expression<String>? note,
     Expression<String>? occasionId,
     Expression<bool>? countsTowardBalance,
+    Expression<String>? source,
+    Expression<String>? ocrScanId,
     Expression<int>? createdAt,
     Expression<int>? editedAt,
     Expression<int>? deletedAt,
@@ -1920,6 +2010,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       if (occasionId != null) 'occasion_id': occasionId,
       if (countsTowardBalance != null)
         'counts_toward_balance': countsTowardBalance,
+      if (source != null) 'source': source,
+      if (ocrScanId != null) 'ocr_scan_id': ocrScanId,
       if (createdAt != null) 'created_at': createdAt,
       if (editedAt != null) 'edited_at': editedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
@@ -1938,6 +2030,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Value<String?>? note,
     Value<String?>? occasionId,
     Value<bool>? countsTowardBalance,
+    Value<String>? source,
+    Value<String?>? ocrScanId,
     Value<int>? createdAt,
     Value<int?>? editedAt,
     Value<int?>? deletedAt,
@@ -1954,6 +2048,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       note: note ?? this.note,
       occasionId: occasionId ?? this.occasionId,
       countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
+      source: source ?? this.source,
+      ocrScanId: ocrScanId ?? this.ocrScanId,
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -1994,6 +2090,12 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     if (countsTowardBalance.present) {
       map['counts_toward_balance'] = Variable<bool>(countsTowardBalance.value);
     }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (ocrScanId.present) {
+      map['ocr_scan_id'] = Variable<String>(ocrScanId.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -2022,6 +2124,8 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
           ..write('note: $note, ')
           ..write('occasionId: $occasionId, ')
           ..write('countsTowardBalance: $countsTowardBalance, ')
+          ..write('source: $source, ')
+          ..write('ocrScanId: $ocrScanId, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt, ')
@@ -4578,6 +4682,1934 @@ class OccasionAttachmentsCompanion extends UpdateCompanion<OccasionAttachment> {
   }
 }
 
+class $OcrScansTable extends OcrScans with TableInfo<$OcrScansTable, OcrScan> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OcrScansTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceImagePathMeta = const VerificationMeta(
+    'sourceImagePath',
+  );
+  @override
+  late final GeneratedColumn<String> sourceImagePath = GeneratedColumn<String>(
+    'source_image_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cropBoundsMeta = const VerificationMeta(
+    'cropBounds',
+  );
+  @override
+  late final GeneratedColumn<String> cropBounds = GeneratedColumn<String>(
+    'crop_bounds',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rotationDegreesMeta = const VerificationMeta(
+    'rotationDegrees',
+  );
+  @override
+  late final GeneratedColumn<int> rotationDegrees = GeneratedColumn<int>(
+    'rotation_degrees',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _defaultDirectionMeta = const VerificationMeta(
+    'defaultDirection',
+  );
+  @override
+  late final GeneratedColumn<String> defaultDirection = GeneratedColumn<String>(
+    'default_direction',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<int> completedAt = GeneratedColumn<int>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    sourceImagePath,
+    cropBounds,
+    rotationDegrees,
+    status,
+    occasionId,
+    defaultDirection,
+    createdAt,
+    completedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ocr_scans';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OcrScan> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('source_image_path')) {
+      context.handle(
+        _sourceImagePathMeta,
+        sourceImagePath.isAcceptableOrUnknown(
+          data['source_image_path']!,
+          _sourceImagePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceImagePathMeta);
+    }
+    if (data.containsKey('crop_bounds')) {
+      context.handle(
+        _cropBoundsMeta,
+        cropBounds.isAcceptableOrUnknown(data['crop_bounds']!, _cropBoundsMeta),
+      );
+    }
+    if (data.containsKey('rotation_degrees')) {
+      context.handle(
+        _rotationDegreesMeta,
+        rotationDegrees.isAcceptableOrUnknown(
+          data['rotation_degrees']!,
+          _rotationDegreesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    }
+    if (data.containsKey('default_direction')) {
+      context.handle(
+        _defaultDirectionMeta,
+        defaultDirection.isAcceptableOrUnknown(
+          data['default_direction']!,
+          _defaultDirectionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OcrScan map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OcrScan(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      sourceImagePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_image_path'],
+      )!,
+      cropBounds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_bounds'],
+      ),
+      rotationDegrees: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rotation_degrees'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      ),
+      defaultDirection: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_direction'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_at'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OcrScansTable createAlias(String alias) {
+    return $OcrScansTable(attachedDatabase, alias);
+  }
+}
+
+class OcrScan extends DataClass implements Insertable<OcrScan> {
+  final String id;
+
+  /// Regenerated per confirm attempt; the UNIQUE index above is what makes
+  /// a double-tapped confirm a no-op rather than a second batch of
+  /// transactions (009 FR-021).
+  final String idempotencyKey;
+
+  /// Path into the app's own sandboxed storage. Never a remote URL — the
+  /// bytes are never uploaded (009 FR-019/FR-023).
+  final String sourceImagePath;
+  final String? cropBounds;
+  final int rotationDegrees;
+
+  /// `'processing'|'needsReview'|'confirmed'|'discarded'|'failed'`.
+  final String status;
+
+  /// Set when the user tags the whole batch to an occasion at review time
+  /// (009 FR-014), so every entry confirmed afterwards is recorded as that
+  /// occasion's contribution (008).
+  final String? occasionId;
+
+  /// `'given'|'received'`, or `NULL` while the user has not chosen a batch
+  /// default yet (009 FR-005).
+  final String? defaultDirection;
+  final int createdAt;
+  final int? completedAt;
+  final int? deletedAt;
+  const OcrScan({
+    required this.id,
+    required this.idempotencyKey,
+    required this.sourceImagePath,
+    this.cropBounds,
+    required this.rotationDegrees,
+    required this.status,
+    this.occasionId,
+    this.defaultDirection,
+    required this.createdAt,
+    this.completedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['source_image_path'] = Variable<String>(sourceImagePath);
+    if (!nullToAbsent || cropBounds != null) {
+      map['crop_bounds'] = Variable<String>(cropBounds);
+    }
+    map['rotation_degrees'] = Variable<int>(rotationDegrees);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || occasionId != null) {
+      map['occasion_id'] = Variable<String>(occasionId);
+    }
+    if (!nullToAbsent || defaultDirection != null) {
+      map['default_direction'] = Variable<String>(defaultDirection);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<int>(completedAt);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OcrScansCompanion toCompanion(bool nullToAbsent) {
+    return OcrScansCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      sourceImagePath: Value(sourceImagePath),
+      cropBounds: cropBounds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropBounds),
+      rotationDegrees: Value(rotationDegrees),
+      status: Value(status),
+      occasionId: occasionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occasionId),
+      defaultDirection: defaultDirection == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultDirection),
+      createdAt: Value(createdAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory OcrScan.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OcrScan(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      sourceImagePath: serializer.fromJson<String>(json['sourceImagePath']),
+      cropBounds: serializer.fromJson<String?>(json['cropBounds']),
+      rotationDegrees: serializer.fromJson<int>(json['rotationDegrees']),
+      status: serializer.fromJson<String>(json['status']),
+      occasionId: serializer.fromJson<String?>(json['occasionId']),
+      defaultDirection: serializer.fromJson<String?>(json['defaultDirection']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      completedAt: serializer.fromJson<int?>(json['completedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'sourceImagePath': serializer.toJson<String>(sourceImagePath),
+      'cropBounds': serializer.toJson<String?>(cropBounds),
+      'rotationDegrees': serializer.toJson<int>(rotationDegrees),
+      'status': serializer.toJson<String>(status),
+      'occasionId': serializer.toJson<String?>(occasionId),
+      'defaultDirection': serializer.toJson<String?>(defaultDirection),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'completedAt': serializer.toJson<int?>(completedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  OcrScan copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? sourceImagePath,
+    Value<String?> cropBounds = const Value.absent(),
+    int? rotationDegrees,
+    String? status,
+    Value<String?> occasionId = const Value.absent(),
+    Value<String?> defaultDirection = const Value.absent(),
+    int? createdAt,
+    Value<int?> completedAt = const Value.absent(),
+    Value<int?> deletedAt = const Value.absent(),
+  }) => OcrScan(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    sourceImagePath: sourceImagePath ?? this.sourceImagePath,
+    cropBounds: cropBounds.present ? cropBounds.value : this.cropBounds,
+    rotationDegrees: rotationDegrees ?? this.rotationDegrees,
+    status: status ?? this.status,
+    occasionId: occasionId.present ? occasionId.value : this.occasionId,
+    defaultDirection: defaultDirection.present
+        ? defaultDirection.value
+        : this.defaultDirection,
+    createdAt: createdAt ?? this.createdAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  OcrScan copyWithCompanion(OcrScansCompanion data) {
+    return OcrScan(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      sourceImagePath: data.sourceImagePath.present
+          ? data.sourceImagePath.value
+          : this.sourceImagePath,
+      cropBounds: data.cropBounds.present
+          ? data.cropBounds.value
+          : this.cropBounds,
+      rotationDegrees: data.rotationDegrees.present
+          ? data.rotationDegrees.value
+          : this.rotationDegrees,
+      status: data.status.present ? data.status.value : this.status,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      defaultDirection: data.defaultDirection.present
+          ? data.defaultDirection.value
+          : this.defaultDirection,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrScan(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('sourceImagePath: $sourceImagePath, ')
+          ..write('cropBounds: $cropBounds, ')
+          ..write('rotationDegrees: $rotationDegrees, ')
+          ..write('status: $status, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('defaultDirection: $defaultDirection, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    sourceImagePath,
+    cropBounds,
+    rotationDegrees,
+    status,
+    occasionId,
+    defaultDirection,
+    createdAt,
+    completedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OcrScan &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.sourceImagePath == this.sourceImagePath &&
+          other.cropBounds == this.cropBounds &&
+          other.rotationDegrees == this.rotationDegrees &&
+          other.status == this.status &&
+          other.occasionId == this.occasionId &&
+          other.defaultDirection == this.defaultDirection &&
+          other.createdAt == this.createdAt &&
+          other.completedAt == this.completedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OcrScansCompanion extends UpdateCompanion<OcrScan> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> sourceImagePath;
+  final Value<String?> cropBounds;
+  final Value<int> rotationDegrees;
+  final Value<String> status;
+  final Value<String?> occasionId;
+  final Value<String?> defaultDirection;
+  final Value<int> createdAt;
+  final Value<int?> completedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OcrScansCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.sourceImagePath = const Value.absent(),
+    this.cropBounds = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
+    this.status = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.defaultDirection = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OcrScansCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String sourceImagePath,
+    this.cropBounds = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
+    required String status,
+    this.occasionId = const Value.absent(),
+    this.defaultDirection = const Value.absent(),
+    required int createdAt,
+    this.completedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       sourceImagePath = Value(sourceImagePath),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<OcrScan> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? sourceImagePath,
+    Expression<String>? cropBounds,
+    Expression<int>? rotationDegrees,
+    Expression<String>? status,
+    Expression<String>? occasionId,
+    Expression<String>? defaultDirection,
+    Expression<int>? createdAt,
+    Expression<int>? completedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (sourceImagePath != null) 'source_image_path': sourceImagePath,
+      if (cropBounds != null) 'crop_bounds': cropBounds,
+      if (rotationDegrees != null) 'rotation_degrees': rotationDegrees,
+      if (status != null) 'status': status,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (defaultDirection != null) 'default_direction': defaultDirection,
+      if (createdAt != null) 'created_at': createdAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OcrScansCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? sourceImagePath,
+    Value<String?>? cropBounds,
+    Value<int>? rotationDegrees,
+    Value<String>? status,
+    Value<String?>? occasionId,
+    Value<String?>? defaultDirection,
+    Value<int>? createdAt,
+    Value<int?>? completedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OcrScansCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      sourceImagePath: sourceImagePath ?? this.sourceImagePath,
+      cropBounds: cropBounds ?? this.cropBounds,
+      rotationDegrees: rotationDegrees ?? this.rotationDegrees,
+      status: status ?? this.status,
+      occasionId: occasionId ?? this.occasionId,
+      defaultDirection: defaultDirection ?? this.defaultDirection,
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt ?? this.completedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (sourceImagePath.present) {
+      map['source_image_path'] = Variable<String>(sourceImagePath.value);
+    }
+    if (cropBounds.present) {
+      map['crop_bounds'] = Variable<String>(cropBounds.value);
+    }
+    if (rotationDegrees.present) {
+      map['rotation_degrees'] = Variable<int>(rotationDegrees.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (defaultDirection.present) {
+      map['default_direction'] = Variable<String>(defaultDirection.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<int>(completedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrScansCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('sourceImagePath: $sourceImagePath, ')
+          ..write('cropBounds: $cropBounds, ')
+          ..write('rotationDegrees: $rotationDegrees, ')
+          ..write('status: $status, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('defaultDirection: $defaultDirection, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CandidateEntriesTable extends CandidateEntries
+    with TableInfo<$CandidateEntriesTable, CandidateEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CandidateEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scanIdMeta = const VerificationMeta('scanId');
+  @override
+  late final GeneratedColumn<String> scanId = GeneratedColumn<String>(
+    'scan_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ocr_scans (id)',
+    ),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pendingReview'),
+  );
+  static const VerificationMeta _personNameMeta = const VerificationMeta(
+    'personName',
+  );
+  @override
+  late final GeneratedColumn<String> personName = GeneratedColumn<String>(
+    'person_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _personNameConfidenceKindMeta =
+      const VerificationMeta('personNameConfidenceKind');
+  @override
+  late final GeneratedColumn<String> personNameConfidenceKind =
+      GeneratedColumn<String>(
+        'person_name_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _personNameConfidenceLevelMeta =
+      const VerificationMeta('personNameConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> personNameConfidenceLevel =
+      GeneratedColumn<String>(
+        'person_name_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _matchedPersonIdMeta = const VerificationMeta(
+    'matchedPersonId',
+  );
+  @override
+  late final GeneratedColumn<String> matchedPersonId = GeneratedColumn<String>(
+    'matched_person_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES people (id)',
+    ),
+  );
+  static const VerificationMeta _amountMinorUnitsMeta = const VerificationMeta(
+    'amountMinorUnits',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinorUnits = GeneratedColumn<int>(
+    'amount_minor_units',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountConfidenceKindMeta =
+      const VerificationMeta('amountConfidenceKind');
+  @override
+  late final GeneratedColumn<String> amountConfidenceKind =
+      GeneratedColumn<String>(
+        'amount_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _amountConfidenceLevelMeta =
+      const VerificationMeta('amountConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> amountConfidenceLevel =
+      GeneratedColumn<String>(
+        'amount_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _directionConfidenceKindMeta =
+      const VerificationMeta('directionConfidenceKind');
+  @override
+  late final GeneratedColumn<String> directionConfidenceKind =
+      GeneratedColumn<String>(
+        'direction_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _directionConfidenceLevelMeta =
+      const VerificationMeta('directionConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> directionConfidenceLevel =
+      GeneratedColumn<String>(
+        'direction_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+    'date',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _dateConfidenceKindMeta =
+      const VerificationMeta('dateConfidenceKind');
+  @override
+  late final GeneratedColumn<String> dateConfidenceKind =
+      GeneratedColumn<String>(
+        'date_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _dateConfidenceLevelMeta =
+      const VerificationMeta('dateConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> dateConfidenceLevel =
+      GeneratedColumn<String>(
+        'date_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawOcrTextMeta = const VerificationMeta(
+    'rawOcrText',
+  );
+  @override
+  late final GeneratedColumn<String> rawOcrText = GeneratedColumn<String>(
+    'raw_ocr_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<int> editedAt = GeneratedColumn<int>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    scanId,
+    status,
+    personName,
+    personNameConfidenceKind,
+    personNameConfidenceLevel,
+    matchedPersonId,
+    amountMinorUnits,
+    amountConfidenceKind,
+    amountConfidenceLevel,
+    direction,
+    directionConfidenceKind,
+    directionConfidenceLevel,
+    date,
+    dateConfidenceKind,
+    dateConfidenceLevel,
+    notes,
+    rawOcrText,
+    createdAt,
+    editedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'candidate_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CandidateEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('scan_id')) {
+      context.handle(
+        _scanIdMeta,
+        scanId.isAcceptableOrUnknown(data['scan_id']!, _scanIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scanIdMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('person_name')) {
+      context.handle(
+        _personNameMeta,
+        personName.isAcceptableOrUnknown(data['person_name']!, _personNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameMeta);
+    }
+    if (data.containsKey('person_name_confidence_kind')) {
+      context.handle(
+        _personNameConfidenceKindMeta,
+        personNameConfidenceKind.isAcceptableOrUnknown(
+          data['person_name_confidence_kind']!,
+          _personNameConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameConfidenceKindMeta);
+    }
+    if (data.containsKey('person_name_confidence_level')) {
+      context.handle(
+        _personNameConfidenceLevelMeta,
+        personNameConfidenceLevel.isAcceptableOrUnknown(
+          data['person_name_confidence_level']!,
+          _personNameConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameConfidenceLevelMeta);
+    }
+    if (data.containsKey('matched_person_id')) {
+      context.handle(
+        _matchedPersonIdMeta,
+        matchedPersonId.isAcceptableOrUnknown(
+          data['matched_person_id']!,
+          _matchedPersonIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_minor_units')) {
+      context.handle(
+        _amountMinorUnitsMeta,
+        amountMinorUnits.isAcceptableOrUnknown(
+          data['amount_minor_units']!,
+          _amountMinorUnitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_confidence_kind')) {
+      context.handle(
+        _amountConfidenceKindMeta,
+        amountConfidenceKind.isAcceptableOrUnknown(
+          data['amount_confidence_kind']!,
+          _amountConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountConfidenceKindMeta);
+    }
+    if (data.containsKey('amount_confidence_level')) {
+      context.handle(
+        _amountConfidenceLevelMeta,
+        amountConfidenceLevel.isAcceptableOrUnknown(
+          data['amount_confidence_level']!,
+          _amountConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountConfidenceLevelMeta);
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    }
+    if (data.containsKey('direction_confidence_kind')) {
+      context.handle(
+        _directionConfidenceKindMeta,
+        directionConfidenceKind.isAcceptableOrUnknown(
+          data['direction_confidence_kind']!,
+          _directionConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_directionConfidenceKindMeta);
+    }
+    if (data.containsKey('direction_confidence_level')) {
+      context.handle(
+        _directionConfidenceLevelMeta,
+        directionConfidenceLevel.isAcceptableOrUnknown(
+          data['direction_confidence_level']!,
+          _directionConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_directionConfidenceLevelMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    }
+    if (data.containsKey('date_confidence_kind')) {
+      context.handle(
+        _dateConfidenceKindMeta,
+        dateConfidenceKind.isAcceptableOrUnknown(
+          data['date_confidence_kind']!,
+          _dateConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_dateConfidenceKindMeta);
+    }
+    if (data.containsKey('date_confidence_level')) {
+      context.handle(
+        _dateConfidenceLevelMeta,
+        dateConfidenceLevel.isAcceptableOrUnknown(
+          data['date_confidence_level']!,
+          _dateConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_dateConfidenceLevelMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('raw_ocr_text')) {
+      context.handle(
+        _rawOcrTextMeta,
+        rawOcrText.isAcceptableOrUnknown(
+          data['raw_ocr_text']!,
+          _rawOcrTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rawOcrTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CandidateEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CandidateEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      scanId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scan_id'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      personName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name'],
+      )!,
+      personNameConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name_confidence_kind'],
+      )!,
+      personNameConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name_confidence_level'],
+      )!,
+      matchedPersonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}matched_person_id'],
+      ),
+      amountMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor_units'],
+      ),
+      amountConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}amount_confidence_kind'],
+      )!,
+      amountConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}amount_confidence_level'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      ),
+      directionConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction_confidence_kind'],
+      )!,
+      directionConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction_confidence_level'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      ),
+      dateConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_confidence_kind'],
+      )!,
+      dateConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_confidence_level'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      rawOcrText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_ocr_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}edited_at'],
+      ),
+    );
+  }
+
+  @override
+  $CandidateEntriesTable createAlias(String alias) {
+    return $CandidateEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CandidateEntry extends DataClass implements Insertable<CandidateEntry> {
+  final String id;
+  final String scanId;
+
+  /// `'pendingReview'|'confirmed'|'discarded'`.
+  final String status;
+  final String personName;
+
+  /// Per-field provenance, stored as a `kind`/`level` pair per field
+  /// (009 data-model.md's `FieldConfidence`): `'read'|'inferred'` and
+  /// `'low'|'medium'|'high'|'none'`. Kept as two columns rather than one
+  /// encoded string so a future query can filter on either half.
+  final String personNameConfidenceKind;
+  final String personNameConfidenceLevel;
+  final String? matchedPersonId;
+  final int? amountMinorUnits;
+  final String amountConfidenceKind;
+  final String amountConfidenceLevel;
+  final String? direction;
+  final String directionConfidenceKind;
+  final String directionConfidenceLevel;
+  final int? date;
+  final String dateConfidenceKind;
+  final String dateConfidenceLevel;
+  final String? notes;
+
+  /// The unedited recognized line this entry was parsed from, so review can
+  /// compare against the page and a past scan stays explainable.
+  final String rawOcrText;
+  final int createdAt;
+  final int? editedAt;
+  const CandidateEntry({
+    required this.id,
+    required this.scanId,
+    required this.status,
+    required this.personName,
+    required this.personNameConfidenceKind,
+    required this.personNameConfidenceLevel,
+    this.matchedPersonId,
+    this.amountMinorUnits,
+    required this.amountConfidenceKind,
+    required this.amountConfidenceLevel,
+    this.direction,
+    required this.directionConfidenceKind,
+    required this.directionConfidenceLevel,
+    this.date,
+    required this.dateConfidenceKind,
+    required this.dateConfidenceLevel,
+    this.notes,
+    required this.rawOcrText,
+    required this.createdAt,
+    this.editedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['scan_id'] = Variable<String>(scanId);
+    map['status'] = Variable<String>(status);
+    map['person_name'] = Variable<String>(personName);
+    map['person_name_confidence_kind'] = Variable<String>(
+      personNameConfidenceKind,
+    );
+    map['person_name_confidence_level'] = Variable<String>(
+      personNameConfidenceLevel,
+    );
+    if (!nullToAbsent || matchedPersonId != null) {
+      map['matched_person_id'] = Variable<String>(matchedPersonId);
+    }
+    if (!nullToAbsent || amountMinorUnits != null) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits);
+    }
+    map['amount_confidence_kind'] = Variable<String>(amountConfidenceKind);
+    map['amount_confidence_level'] = Variable<String>(amountConfidenceLevel);
+    if (!nullToAbsent || direction != null) {
+      map['direction'] = Variable<String>(direction);
+    }
+    map['direction_confidence_kind'] = Variable<String>(
+      directionConfidenceKind,
+    );
+    map['direction_confidence_level'] = Variable<String>(
+      directionConfidenceLevel,
+    );
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<int>(date);
+    }
+    map['date_confidence_kind'] = Variable<String>(dateConfidenceKind);
+    map['date_confidence_level'] = Variable<String>(dateConfidenceLevel);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['raw_ocr_text'] = Variable<String>(rawOcrText);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<int>(editedAt);
+    }
+    return map;
+  }
+
+  CandidateEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CandidateEntriesCompanion(
+      id: Value(id),
+      scanId: Value(scanId),
+      status: Value(status),
+      personName: Value(personName),
+      personNameConfidenceKind: Value(personNameConfidenceKind),
+      personNameConfidenceLevel: Value(personNameConfidenceLevel),
+      matchedPersonId: matchedPersonId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(matchedPersonId),
+      amountMinorUnits: amountMinorUnits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMinorUnits),
+      amountConfidenceKind: Value(amountConfidenceKind),
+      amountConfidenceLevel: Value(amountConfidenceLevel),
+      direction: direction == null && nullToAbsent
+          ? const Value.absent()
+          : Value(direction),
+      directionConfidenceKind: Value(directionConfidenceKind),
+      directionConfidenceLevel: Value(directionConfidenceLevel),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+      dateConfidenceKind: Value(dateConfidenceKind),
+      dateConfidenceLevel: Value(dateConfidenceLevel),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      rawOcrText: Value(rawOcrText),
+      createdAt: Value(createdAt),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+    );
+  }
+
+  factory CandidateEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CandidateEntry(
+      id: serializer.fromJson<String>(json['id']),
+      scanId: serializer.fromJson<String>(json['scanId']),
+      status: serializer.fromJson<String>(json['status']),
+      personName: serializer.fromJson<String>(json['personName']),
+      personNameConfidenceKind: serializer.fromJson<String>(
+        json['personNameConfidenceKind'],
+      ),
+      personNameConfidenceLevel: serializer.fromJson<String>(
+        json['personNameConfidenceLevel'],
+      ),
+      matchedPersonId: serializer.fromJson<String?>(json['matchedPersonId']),
+      amountMinorUnits: serializer.fromJson<int?>(json['amountMinorUnits']),
+      amountConfidenceKind: serializer.fromJson<String>(
+        json['amountConfidenceKind'],
+      ),
+      amountConfidenceLevel: serializer.fromJson<String>(
+        json['amountConfidenceLevel'],
+      ),
+      direction: serializer.fromJson<String?>(json['direction']),
+      directionConfidenceKind: serializer.fromJson<String>(
+        json['directionConfidenceKind'],
+      ),
+      directionConfidenceLevel: serializer.fromJson<String>(
+        json['directionConfidenceLevel'],
+      ),
+      date: serializer.fromJson<int?>(json['date']),
+      dateConfidenceKind: serializer.fromJson<String>(
+        json['dateConfidenceKind'],
+      ),
+      dateConfidenceLevel: serializer.fromJson<String>(
+        json['dateConfidenceLevel'],
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      rawOcrText: serializer.fromJson<String>(json['rawOcrText']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      editedAt: serializer.fromJson<int?>(json['editedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'scanId': serializer.toJson<String>(scanId),
+      'status': serializer.toJson<String>(status),
+      'personName': serializer.toJson<String>(personName),
+      'personNameConfidenceKind': serializer.toJson<String>(
+        personNameConfidenceKind,
+      ),
+      'personNameConfidenceLevel': serializer.toJson<String>(
+        personNameConfidenceLevel,
+      ),
+      'matchedPersonId': serializer.toJson<String?>(matchedPersonId),
+      'amountMinorUnits': serializer.toJson<int?>(amountMinorUnits),
+      'amountConfidenceKind': serializer.toJson<String>(amountConfidenceKind),
+      'amountConfidenceLevel': serializer.toJson<String>(amountConfidenceLevel),
+      'direction': serializer.toJson<String?>(direction),
+      'directionConfidenceKind': serializer.toJson<String>(
+        directionConfidenceKind,
+      ),
+      'directionConfidenceLevel': serializer.toJson<String>(
+        directionConfidenceLevel,
+      ),
+      'date': serializer.toJson<int?>(date),
+      'dateConfidenceKind': serializer.toJson<String>(dateConfidenceKind),
+      'dateConfidenceLevel': serializer.toJson<String>(dateConfidenceLevel),
+      'notes': serializer.toJson<String?>(notes),
+      'rawOcrText': serializer.toJson<String>(rawOcrText),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'editedAt': serializer.toJson<int?>(editedAt),
+    };
+  }
+
+  CandidateEntry copyWith({
+    String? id,
+    String? scanId,
+    String? status,
+    String? personName,
+    String? personNameConfidenceKind,
+    String? personNameConfidenceLevel,
+    Value<String?> matchedPersonId = const Value.absent(),
+    Value<int?> amountMinorUnits = const Value.absent(),
+    String? amountConfidenceKind,
+    String? amountConfidenceLevel,
+    Value<String?> direction = const Value.absent(),
+    String? directionConfidenceKind,
+    String? directionConfidenceLevel,
+    Value<int?> date = const Value.absent(),
+    String? dateConfidenceKind,
+    String? dateConfidenceLevel,
+    Value<String?> notes = const Value.absent(),
+    String? rawOcrText,
+    int? createdAt,
+    Value<int?> editedAt = const Value.absent(),
+  }) => CandidateEntry(
+    id: id ?? this.id,
+    scanId: scanId ?? this.scanId,
+    status: status ?? this.status,
+    personName: personName ?? this.personName,
+    personNameConfidenceKind:
+        personNameConfidenceKind ?? this.personNameConfidenceKind,
+    personNameConfidenceLevel:
+        personNameConfidenceLevel ?? this.personNameConfidenceLevel,
+    matchedPersonId: matchedPersonId.present
+        ? matchedPersonId.value
+        : this.matchedPersonId,
+    amountMinorUnits: amountMinorUnits.present
+        ? amountMinorUnits.value
+        : this.amountMinorUnits,
+    amountConfidenceKind: amountConfidenceKind ?? this.amountConfidenceKind,
+    amountConfidenceLevel: amountConfidenceLevel ?? this.amountConfidenceLevel,
+    direction: direction.present ? direction.value : this.direction,
+    directionConfidenceKind:
+        directionConfidenceKind ?? this.directionConfidenceKind,
+    directionConfidenceLevel:
+        directionConfidenceLevel ?? this.directionConfidenceLevel,
+    date: date.present ? date.value : this.date,
+    dateConfidenceKind: dateConfidenceKind ?? this.dateConfidenceKind,
+    dateConfidenceLevel: dateConfidenceLevel ?? this.dateConfidenceLevel,
+    notes: notes.present ? notes.value : this.notes,
+    rawOcrText: rawOcrText ?? this.rawOcrText,
+    createdAt: createdAt ?? this.createdAt,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+  );
+  CandidateEntry copyWithCompanion(CandidateEntriesCompanion data) {
+    return CandidateEntry(
+      id: data.id.present ? data.id.value : this.id,
+      scanId: data.scanId.present ? data.scanId.value : this.scanId,
+      status: data.status.present ? data.status.value : this.status,
+      personName: data.personName.present
+          ? data.personName.value
+          : this.personName,
+      personNameConfidenceKind: data.personNameConfidenceKind.present
+          ? data.personNameConfidenceKind.value
+          : this.personNameConfidenceKind,
+      personNameConfidenceLevel: data.personNameConfidenceLevel.present
+          ? data.personNameConfidenceLevel.value
+          : this.personNameConfidenceLevel,
+      matchedPersonId: data.matchedPersonId.present
+          ? data.matchedPersonId.value
+          : this.matchedPersonId,
+      amountMinorUnits: data.amountMinorUnits.present
+          ? data.amountMinorUnits.value
+          : this.amountMinorUnits,
+      amountConfidenceKind: data.amountConfidenceKind.present
+          ? data.amountConfidenceKind.value
+          : this.amountConfidenceKind,
+      amountConfidenceLevel: data.amountConfidenceLevel.present
+          ? data.amountConfidenceLevel.value
+          : this.amountConfidenceLevel,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      directionConfidenceKind: data.directionConfidenceKind.present
+          ? data.directionConfidenceKind.value
+          : this.directionConfidenceKind,
+      directionConfidenceLevel: data.directionConfidenceLevel.present
+          ? data.directionConfidenceLevel.value
+          : this.directionConfidenceLevel,
+      date: data.date.present ? data.date.value : this.date,
+      dateConfidenceKind: data.dateConfidenceKind.present
+          ? data.dateConfidenceKind.value
+          : this.dateConfidenceKind,
+      dateConfidenceLevel: data.dateConfidenceLevel.present
+          ? data.dateConfidenceLevel.value
+          : this.dateConfidenceLevel,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      rawOcrText: data.rawOcrText.present
+          ? data.rawOcrText.value
+          : this.rawOcrText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CandidateEntry(')
+          ..write('id: $id, ')
+          ..write('scanId: $scanId, ')
+          ..write('status: $status, ')
+          ..write('personName: $personName, ')
+          ..write('personNameConfidenceKind: $personNameConfidenceKind, ')
+          ..write('personNameConfidenceLevel: $personNameConfidenceLevel, ')
+          ..write('matchedPersonId: $matchedPersonId, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('amountConfidenceKind: $amountConfidenceKind, ')
+          ..write('amountConfidenceLevel: $amountConfidenceLevel, ')
+          ..write('direction: $direction, ')
+          ..write('directionConfidenceKind: $directionConfidenceKind, ')
+          ..write('directionConfidenceLevel: $directionConfidenceLevel, ')
+          ..write('date: $date, ')
+          ..write('dateConfidenceKind: $dateConfidenceKind, ')
+          ..write('dateConfidenceLevel: $dateConfidenceLevel, ')
+          ..write('notes: $notes, ')
+          ..write('rawOcrText: $rawOcrText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    scanId,
+    status,
+    personName,
+    personNameConfidenceKind,
+    personNameConfidenceLevel,
+    matchedPersonId,
+    amountMinorUnits,
+    amountConfidenceKind,
+    amountConfidenceLevel,
+    direction,
+    directionConfidenceKind,
+    directionConfidenceLevel,
+    date,
+    dateConfidenceKind,
+    dateConfidenceLevel,
+    notes,
+    rawOcrText,
+    createdAt,
+    editedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CandidateEntry &&
+          other.id == this.id &&
+          other.scanId == this.scanId &&
+          other.status == this.status &&
+          other.personName == this.personName &&
+          other.personNameConfidenceKind == this.personNameConfidenceKind &&
+          other.personNameConfidenceLevel == this.personNameConfidenceLevel &&
+          other.matchedPersonId == this.matchedPersonId &&
+          other.amountMinorUnits == this.amountMinorUnits &&
+          other.amountConfidenceKind == this.amountConfidenceKind &&
+          other.amountConfidenceLevel == this.amountConfidenceLevel &&
+          other.direction == this.direction &&
+          other.directionConfidenceKind == this.directionConfidenceKind &&
+          other.directionConfidenceLevel == this.directionConfidenceLevel &&
+          other.date == this.date &&
+          other.dateConfidenceKind == this.dateConfidenceKind &&
+          other.dateConfidenceLevel == this.dateConfidenceLevel &&
+          other.notes == this.notes &&
+          other.rawOcrText == this.rawOcrText &&
+          other.createdAt == this.createdAt &&
+          other.editedAt == this.editedAt);
+}
+
+class CandidateEntriesCompanion extends UpdateCompanion<CandidateEntry> {
+  final Value<String> id;
+  final Value<String> scanId;
+  final Value<String> status;
+  final Value<String> personName;
+  final Value<String> personNameConfidenceKind;
+  final Value<String> personNameConfidenceLevel;
+  final Value<String?> matchedPersonId;
+  final Value<int?> amountMinorUnits;
+  final Value<String> amountConfidenceKind;
+  final Value<String> amountConfidenceLevel;
+  final Value<String?> direction;
+  final Value<String> directionConfidenceKind;
+  final Value<String> directionConfidenceLevel;
+  final Value<int?> date;
+  final Value<String> dateConfidenceKind;
+  final Value<String> dateConfidenceLevel;
+  final Value<String?> notes;
+  final Value<String> rawOcrText;
+  final Value<int> createdAt;
+  final Value<int?> editedAt;
+  final Value<int> rowid;
+  const CandidateEntriesCompanion({
+    this.id = const Value.absent(),
+    this.scanId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.personName = const Value.absent(),
+    this.personNameConfidenceKind = const Value.absent(),
+    this.personNameConfidenceLevel = const Value.absent(),
+    this.matchedPersonId = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    this.amountConfidenceKind = const Value.absent(),
+    this.amountConfidenceLevel = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.directionConfidenceKind = const Value.absent(),
+    this.directionConfidenceLevel = const Value.absent(),
+    this.date = const Value.absent(),
+    this.dateConfidenceKind = const Value.absent(),
+    this.dateConfidenceLevel = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rawOcrText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CandidateEntriesCompanion.insert({
+    required String id,
+    required String scanId,
+    this.status = const Value.absent(),
+    required String personName,
+    required String personNameConfidenceKind,
+    required String personNameConfidenceLevel,
+    this.matchedPersonId = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    required String amountConfidenceKind,
+    required String amountConfidenceLevel,
+    this.direction = const Value.absent(),
+    required String directionConfidenceKind,
+    required String directionConfidenceLevel,
+    this.date = const Value.absent(),
+    required String dateConfidenceKind,
+    required String dateConfidenceLevel,
+    this.notes = const Value.absent(),
+    required String rawOcrText,
+    required int createdAt,
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       scanId = Value(scanId),
+       personName = Value(personName),
+       personNameConfidenceKind = Value(personNameConfidenceKind),
+       personNameConfidenceLevel = Value(personNameConfidenceLevel),
+       amountConfidenceKind = Value(amountConfidenceKind),
+       amountConfidenceLevel = Value(amountConfidenceLevel),
+       directionConfidenceKind = Value(directionConfidenceKind),
+       directionConfidenceLevel = Value(directionConfidenceLevel),
+       dateConfidenceKind = Value(dateConfidenceKind),
+       dateConfidenceLevel = Value(dateConfidenceLevel),
+       rawOcrText = Value(rawOcrText),
+       createdAt = Value(createdAt);
+  static Insertable<CandidateEntry> custom({
+    Expression<String>? id,
+    Expression<String>? scanId,
+    Expression<String>? status,
+    Expression<String>? personName,
+    Expression<String>? personNameConfidenceKind,
+    Expression<String>? personNameConfidenceLevel,
+    Expression<String>? matchedPersonId,
+    Expression<int>? amountMinorUnits,
+    Expression<String>? amountConfidenceKind,
+    Expression<String>? amountConfidenceLevel,
+    Expression<String>? direction,
+    Expression<String>? directionConfidenceKind,
+    Expression<String>? directionConfidenceLevel,
+    Expression<int>? date,
+    Expression<String>? dateConfidenceKind,
+    Expression<String>? dateConfidenceLevel,
+    Expression<String>? notes,
+    Expression<String>? rawOcrText,
+    Expression<int>? createdAt,
+    Expression<int>? editedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (scanId != null) 'scan_id': scanId,
+      if (status != null) 'status': status,
+      if (personName != null) 'person_name': personName,
+      if (personNameConfidenceKind != null)
+        'person_name_confidence_kind': personNameConfidenceKind,
+      if (personNameConfidenceLevel != null)
+        'person_name_confidence_level': personNameConfidenceLevel,
+      if (matchedPersonId != null) 'matched_person_id': matchedPersonId,
+      if (amountMinorUnits != null) 'amount_minor_units': amountMinorUnits,
+      if (amountConfidenceKind != null)
+        'amount_confidence_kind': amountConfidenceKind,
+      if (amountConfidenceLevel != null)
+        'amount_confidence_level': amountConfidenceLevel,
+      if (direction != null) 'direction': direction,
+      if (directionConfidenceKind != null)
+        'direction_confidence_kind': directionConfidenceKind,
+      if (directionConfidenceLevel != null)
+        'direction_confidence_level': directionConfidenceLevel,
+      if (date != null) 'date': date,
+      if (dateConfidenceKind != null)
+        'date_confidence_kind': dateConfidenceKind,
+      if (dateConfidenceLevel != null)
+        'date_confidence_level': dateConfidenceLevel,
+      if (notes != null) 'notes': notes,
+      if (rawOcrText != null) 'raw_ocr_text': rawOcrText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CandidateEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? scanId,
+    Value<String>? status,
+    Value<String>? personName,
+    Value<String>? personNameConfidenceKind,
+    Value<String>? personNameConfidenceLevel,
+    Value<String?>? matchedPersonId,
+    Value<int?>? amountMinorUnits,
+    Value<String>? amountConfidenceKind,
+    Value<String>? amountConfidenceLevel,
+    Value<String?>? direction,
+    Value<String>? directionConfidenceKind,
+    Value<String>? directionConfidenceLevel,
+    Value<int?>? date,
+    Value<String>? dateConfidenceKind,
+    Value<String>? dateConfidenceLevel,
+    Value<String?>? notes,
+    Value<String>? rawOcrText,
+    Value<int>? createdAt,
+    Value<int?>? editedAt,
+    Value<int>? rowid,
+  }) {
+    return CandidateEntriesCompanion(
+      id: id ?? this.id,
+      scanId: scanId ?? this.scanId,
+      status: status ?? this.status,
+      personName: personName ?? this.personName,
+      personNameConfidenceKind:
+          personNameConfidenceKind ?? this.personNameConfidenceKind,
+      personNameConfidenceLevel:
+          personNameConfidenceLevel ?? this.personNameConfidenceLevel,
+      matchedPersonId: matchedPersonId ?? this.matchedPersonId,
+      amountMinorUnits: amountMinorUnits ?? this.amountMinorUnits,
+      amountConfidenceKind: amountConfidenceKind ?? this.amountConfidenceKind,
+      amountConfidenceLevel:
+          amountConfidenceLevel ?? this.amountConfidenceLevel,
+      direction: direction ?? this.direction,
+      directionConfidenceKind:
+          directionConfidenceKind ?? this.directionConfidenceKind,
+      directionConfidenceLevel:
+          directionConfidenceLevel ?? this.directionConfidenceLevel,
+      date: date ?? this.date,
+      dateConfidenceKind: dateConfidenceKind ?? this.dateConfidenceKind,
+      dateConfidenceLevel: dateConfidenceLevel ?? this.dateConfidenceLevel,
+      notes: notes ?? this.notes,
+      rawOcrText: rawOcrText ?? this.rawOcrText,
+      createdAt: createdAt ?? this.createdAt,
+      editedAt: editedAt ?? this.editedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (scanId.present) {
+      map['scan_id'] = Variable<String>(scanId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (personName.present) {
+      map['person_name'] = Variable<String>(personName.value);
+    }
+    if (personNameConfidenceKind.present) {
+      map['person_name_confidence_kind'] = Variable<String>(
+        personNameConfidenceKind.value,
+      );
+    }
+    if (personNameConfidenceLevel.present) {
+      map['person_name_confidence_level'] = Variable<String>(
+        personNameConfidenceLevel.value,
+      );
+    }
+    if (matchedPersonId.present) {
+      map['matched_person_id'] = Variable<String>(matchedPersonId.value);
+    }
+    if (amountMinorUnits.present) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits.value);
+    }
+    if (amountConfidenceKind.present) {
+      map['amount_confidence_kind'] = Variable<String>(
+        amountConfidenceKind.value,
+      );
+    }
+    if (amountConfidenceLevel.present) {
+      map['amount_confidence_level'] = Variable<String>(
+        amountConfidenceLevel.value,
+      );
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (directionConfidenceKind.present) {
+      map['direction_confidence_kind'] = Variable<String>(
+        directionConfidenceKind.value,
+      );
+    }
+    if (directionConfidenceLevel.present) {
+      map['direction_confidence_level'] = Variable<String>(
+        directionConfidenceLevel.value,
+      );
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (dateConfidenceKind.present) {
+      map['date_confidence_kind'] = Variable<String>(dateConfidenceKind.value);
+    }
+    if (dateConfidenceLevel.present) {
+      map['date_confidence_level'] = Variable<String>(
+        dateConfidenceLevel.value,
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rawOcrText.present) {
+      map['raw_ocr_text'] = Variable<String>(rawOcrText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<int>(editedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CandidateEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('scanId: $scanId, ')
+          ..write('status: $status, ')
+          ..write('personName: $personName, ')
+          ..write('personNameConfidenceKind: $personNameConfidenceKind, ')
+          ..write('personNameConfidenceLevel: $personNameConfidenceLevel, ')
+          ..write('matchedPersonId: $matchedPersonId, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('amountConfidenceKind: $amountConfidenceKind, ')
+          ..write('amountConfidenceLevel: $amountConfidenceLevel, ')
+          ..write('direction: $direction, ')
+          ..write('directionConfidenceKind: $directionConfidenceKind, ')
+          ..write('directionConfidenceLevel: $directionConfidenceLevel, ')
+          ..write('date: $date, ')
+          ..write('dateConfidenceKind: $dateConfidenceKind, ')
+          ..write('dateConfidenceLevel: $dateConfidenceLevel, ')
+          ..write('notes: $notes, ')
+          ..write('rawOcrText: $rawOcrText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4596,6 +6628,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FinanceEntriesTable financeEntries = $FinanceEntriesTable(this);
   late final $OccasionAttachmentsTable occasionAttachments =
       $OccasionAttachmentsTable(this);
+  late final $OcrScansTable ocrScans = $OcrScansTable(this);
+  late final $CandidateEntriesTable candidateEntries = $CandidateEntriesTable(
+    this,
+  );
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -4607,6 +6643,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index idxTransactionsOccasionId = Index(
     'idx_transactions_occasion_id',
     'CREATE INDEX idx_transactions_occasion_id ON money_transactions (occasion_id, deleted_at)',
+  );
+  late final Index idxTransactionsOcrScanId = Index(
+    'idx_transactions_ocr_scan_id',
+    'CREATE INDEX idx_transactions_ocr_scan_id ON money_transactions (ocr_scan_id, deleted_at)',
   );
   late final Index idxAuditTransactionId = Index(
     'idx_audit_transaction_id',
@@ -4640,6 +6680,18 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_occasion_attachments_occasion_id',
     'CREATE INDEX idx_occasion_attachments_occasion_id ON occasion_attachments (occasion_id, deleted_at)',
   );
+  late final Index idxOcrScansIdempotencyKey = Index(
+    'idx_ocr_scans_idempotency_key',
+    'CREATE UNIQUE INDEX idx_ocr_scans_idempotency_key ON ocr_scans (idempotency_key)',
+  );
+  late final Index idxOcrScansStatus = Index(
+    'idx_ocr_scans_status',
+    'CREATE INDEX idx_ocr_scans_status ON ocr_scans (status, deleted_at)',
+  );
+  late final Index idxCandidateEntriesScanId = Index(
+    'idx_candidate_entries_scan_id',
+    'CREATE INDEX idx_candidate_entries_scan_id ON candidate_entries (scan_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4654,9 +6706,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     financeCategories,
     financeEntries,
     occasionAttachments,
+    ocrScans,
+    candidateEntries,
     idxPeopleNormalizedName,
     idxTransactionsPersonId,
     idxTransactionsOccasionId,
+    idxTransactionsOcrScanId,
     idxAuditTransactionId,
     idxFinanceCategoriesNormalizedName,
     idxFinanceEntriesCategoryId,
@@ -4665,6 +6720,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     idxOccasionsDate,
     idxOccasionsType,
     idxOccasionAttachmentsOccasionId,
+    idxOcrScansIdempotencyKey,
+    idxOcrScansStatus,
+    idxCandidateEntriesScanId,
   ];
 }
 
@@ -4716,6 +6774,26 @@ final class $$PeopleTableReferences
 
     final cache = $_typedResult.readTableOrNull(
       _moneyTransactionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CandidateEntriesTable, List<CandidateEntry>>
+  _candidateEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.candidateEntries,
+    aliasName: 'people__id__candidate_entries__matched_person_id',
+  );
+
+  $$CandidateEntriesTableProcessedTableManager get candidateEntriesRefs {
+    final manager =
+        $$CandidateEntriesTableTableManager($_db, $_db.candidateEntries).filter(
+          (f) => f.matchedPersonId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _candidateEntriesRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -4798,6 +6876,31 @@ class $$PeopleTableFilterComposer
           }) => $$MoneyTransactionsTableFilterComposer(
             $db: $db,
             $table: $db.moneyTransactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> candidateEntriesRefs(
+    Expression<bool> Function($$CandidateEntriesTableFilterComposer f) f,
+  ) {
+    final $$CandidateEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.matchedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4942,6 +7045,31 @@ class $$PeopleTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> candidateEntriesRefs<T extends Object>(
+    Expression<T> Function($$CandidateEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$CandidateEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.matchedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PeopleTableTableManager
@@ -4957,7 +7085,10 @@ class $$PeopleTableTableManager
           $$PeopleTableUpdateCompanionBuilder,
           (PeopleData, $$PeopleTableReferences),
           PeopleData,
-          PrefetchHooks Function({bool moneyTransactionsRefs})
+          PrefetchHooks Function({
+            bool moneyTransactionsRefs,
+            bool candidateEntriesRefs,
+          })
         > {
   $$PeopleTableTableManager(_$AppDatabase db, $PeopleTable table)
     : super(
@@ -5030,37 +7161,63 @@ class $$PeopleTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({moneyTransactionsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (moneyTransactionsRefs) db.moneyTransactions,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (moneyTransactionsRefs)
-                    await $_getPrefetchedData<
-                      PeopleData,
-                      $PeopleTable,
-                      MoneyTransaction
-                    >(
-                      currentTable: table,
-                      referencedTable: $$PeopleTableReferences
-                          ._moneyTransactionsRefsTable(db),
-                      managerFromTypedResult: (p0) => $$PeopleTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).moneyTransactionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.personId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({moneyTransactionsRefs = false, candidateEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (moneyTransactionsRefs) db.moneyTransactions,
+                    if (candidateEntriesRefs) db.candidateEntries,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (moneyTransactionsRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          MoneyTransaction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._moneyTransactionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).moneyTransactionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.personId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (candidateEntriesRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          CandidateEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._candidateEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).candidateEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.matchedPersonId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -5077,7 +7234,10 @@ typedef $$PeopleTableProcessedTableManager =
       $$PeopleTableUpdateCompanionBuilder,
       (PeopleData, $$PeopleTableReferences),
       PeopleData,
-      PrefetchHooks Function({bool moneyTransactionsRefs})
+      PrefetchHooks Function({
+        bool moneyTransactionsRefs,
+        bool candidateEntriesRefs,
+      })
     >;
 typedef $$OccasionsTableCreateCompanionBuilder =
     OccasionsCompanion Function({
@@ -5152,6 +7312,25 @@ final class $$OccasionsTableReferences
     final cache = $_typedResult.readTableOrNull(
       _occasionAttachmentsRefsTable($_db),
     );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$OcrScansTable, List<OcrScan>> _ocrScansRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.ocrScans,
+    aliasName: 'occasions__id__ocr_scans__occasion_id',
+  );
+
+  $$OcrScansTableProcessedTableManager get ocrScansRefs {
+    final manager = $$OcrScansTableTableManager(
+      $_db,
+      $_db.ocrScans,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_ocrScansRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -5258,6 +7437,31 @@ class $$OccasionsTableFilterComposer
           }) => $$OccasionAttachmentsTableFilterComposer(
             $db: $db,
             $table: $db.occasionAttachments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> ocrScansRefs(
+    Expression<bool> Function($$OcrScansTableFilterComposer f) f,
+  ) {
+    final $$OcrScansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableFilterComposer(
+            $db: $db,
+            $table: $db.ocrScans,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -5422,6 +7626,31 @@ class $$OccasionsTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> ocrScansRefs<T extends Object>(
+    Expression<T> Function($$OcrScansTableAnnotationComposer a) f,
+  ) {
+    final $$OcrScansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$OccasionsTableTableManager
@@ -5440,6 +7669,7 @@ class $$OccasionsTableTableManager
           PrefetchHooks Function({
             bool moneyTransactionsRefs,
             bool occasionAttachmentsRefs,
+            bool ocrScansRefs,
           })
         > {
   $$OccasionsTableTableManager(_$AppDatabase db, $OccasionsTable table)
@@ -5517,12 +7747,14 @@ class $$OccasionsTableTableManager
               ({
                 moneyTransactionsRefs = false,
                 occasionAttachmentsRefs = false,
+                ocrScansRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (moneyTransactionsRefs) db.moneyTransactions,
                     if (occasionAttachmentsRefs) db.occasionAttachments,
+                    if (ocrScansRefs) db.ocrScans,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -5569,6 +7801,27 @@ class $$OccasionsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (ocrScansRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          OcrScan
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._ocrScansRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ocrScansRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -5592,6 +7845,7 @@ typedef $$OccasionsTableProcessedTableManager =
       PrefetchHooks Function({
         bool moneyTransactionsRefs,
         bool occasionAttachmentsRefs,
+        bool ocrScansRefs,
       })
     >;
 typedef $$MoneyTransactionsTableCreateCompanionBuilder =
@@ -5606,6 +7860,8 @@ typedef $$MoneyTransactionsTableCreateCompanionBuilder =
       Value<String?> note,
       Value<String?> occasionId,
       Value<bool> countsTowardBalance,
+      Value<String> source,
+      Value<String?> ocrScanId,
       required int createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -5623,6 +7879,8 @@ typedef $$MoneyTransactionsTableUpdateCompanionBuilder =
       Value<String?> note,
       Value<String?> occasionId,
       Value<bool> countsTowardBalance,
+      Value<String> source,
+      Value<String?> ocrScanId,
       Value<int> createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -5749,6 +8007,16 @@ class $$MoneyTransactionsTableFilterComposer
 
   ColumnFilters<bool> get countsTowardBalance => $composableBuilder(
     column: $table.countsTowardBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ocrScanId => $composableBuilder(
+    column: $table.ocrScanId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5889,6 +8157,16 @@ class $$MoneyTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ocrScanId => $composableBuilder(
+    column: $table.ocrScanId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -5989,6 +8267,12 @@ class $$MoneyTransactionsTableAnnotationComposer
     column: $table.countsTowardBalance,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get ocrScanId =>
+      $composableBuilder(column: $table.ocrScanId, builder: (column) => column);
 
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -6120,6 +8404,8 @@ class $$MoneyTransactionsTableTableManager
                 Value<String?> note = const Value.absent(),
                 Value<String?> occasionId = const Value.absent(),
                 Value<bool> countsTowardBalance = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> ocrScanId = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -6135,6 +8421,8 @@ class $$MoneyTransactionsTableTableManager
                 note: note,
                 occasionId: occasionId,
                 countsTowardBalance: countsTowardBalance,
+                source: source,
+                ocrScanId: ocrScanId,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -6152,6 +8440,8 @@ class $$MoneyTransactionsTableTableManager
                 Value<String?> note = const Value.absent(),
                 Value<String?> occasionId = const Value.absent(),
                 Value<bool> countsTowardBalance = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> ocrScanId = const Value.absent(),
                 required int createdAt,
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -6167,6 +8457,8 @@ class $$MoneyTransactionsTableTableManager
                 note: note,
                 occasionId: occasionId,
                 countsTowardBalance: countsTowardBalance,
+                source: source,
+                ocrScanId: ocrScanId,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -8177,6 +10469,1265 @@ typedef $$OccasionAttachmentsTableProcessedTableManager =
       OccasionAttachment,
       PrefetchHooks Function({bool occasionId})
     >;
+typedef $$OcrScansTableCreateCompanionBuilder =
+    OcrScansCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String sourceImagePath,
+      Value<String?> cropBounds,
+      Value<int> rotationDegrees,
+      required String status,
+      Value<String?> occasionId,
+      Value<String?> defaultDirection,
+      required int createdAt,
+      Value<int?> completedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OcrScansTableUpdateCompanionBuilder =
+    OcrScansCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> sourceImagePath,
+      Value<String?> cropBounds,
+      Value<int> rotationDegrees,
+      Value<String> status,
+      Value<String?> occasionId,
+      Value<String?> defaultDirection,
+      Value<int> createdAt,
+      Value<int?> completedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OcrScansTableReferences
+    extends BaseReferences<_$AppDatabase, $OcrScansTable, OcrScan> {
+  $$OcrScansTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) =>
+      db.occasions.createAlias('ocr_scans__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager? get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id');
+    if ($_column == null) return null;
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$CandidateEntriesTable, List<CandidateEntry>>
+  _candidateEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.candidateEntries,
+    aliasName: 'ocr_scans__id__candidate_entries__scan_id',
+  );
+
+  $$CandidateEntriesTableProcessedTableManager get candidateEntriesRefs {
+    final manager = $$CandidateEntriesTableTableManager(
+      $_db,
+      $_db.candidateEntries,
+    ).filter((f) => f.scanId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _candidateEntriesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$OcrScansTableFilterComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> candidateEntriesRefs(
+    Expression<bool> Function($$CandidateEntriesTableFilterComposer f) f,
+  ) {
+    final $$CandidateEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.scanId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OcrScansTableOrderingComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OcrScansTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> candidateEntriesRefs<T extends Object>(
+    Expression<T> Function($$CandidateEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$CandidateEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.scanId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OcrScansTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OcrScansTable,
+          OcrScan,
+          $$OcrScansTableFilterComposer,
+          $$OcrScansTableOrderingComposer,
+          $$OcrScansTableAnnotationComposer,
+          $$OcrScansTableCreateCompanionBuilder,
+          $$OcrScansTableUpdateCompanionBuilder,
+          (OcrScan, $$OcrScansTableReferences),
+          OcrScan,
+          PrefetchHooks Function({bool occasionId, bool candidateEntriesRefs})
+        > {
+  $$OcrScansTableTableManager(_$AppDatabase db, $OcrScansTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OcrScansTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OcrScansTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OcrScansTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> sourceImagePath = const Value.absent(),
+                Value<String?> cropBounds = const Value.absent(),
+                Value<int> rotationDegrees = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<String?> defaultDirection = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> completedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OcrScansCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                sourceImagePath: sourceImagePath,
+                cropBounds: cropBounds,
+                rotationDegrees: rotationDegrees,
+                status: status,
+                occasionId: occasionId,
+                defaultDirection: defaultDirection,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String sourceImagePath,
+                Value<String?> cropBounds = const Value.absent(),
+                Value<int> rotationDegrees = const Value.absent(),
+                required String status,
+                Value<String?> occasionId = const Value.absent(),
+                Value<String?> defaultDirection = const Value.absent(),
+                required int createdAt,
+                Value<int?> completedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OcrScansCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                sourceImagePath: sourceImagePath,
+                cropBounds: cropBounds,
+                rotationDegrees: rotationDegrees,
+                status: status,
+                occasionId: occasionId,
+                defaultDirection: defaultDirection,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OcrScansTable, OcrScan>(table),
+                  $$OcrScansTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({occasionId = false, candidateEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (candidateEntriesRefs) db.candidateEntries,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (occasionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.occasionId,
+                                    referencedTable: $$OcrScansTableReferences
+                                        ._occasionIdTable(db),
+                                    referencedColumn: $$OcrScansTableReferences
+                                        ._occasionIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (candidateEntriesRefs)
+                        await $_getPrefetchedData<
+                          OcrScan,
+                          $OcrScansTable,
+                          CandidateEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OcrScansTableReferences
+                              ._candidateEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OcrScansTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).candidateEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.scanId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$OcrScansTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OcrScansTable,
+      OcrScan,
+      $$OcrScansTableFilterComposer,
+      $$OcrScansTableOrderingComposer,
+      $$OcrScansTableAnnotationComposer,
+      $$OcrScansTableCreateCompanionBuilder,
+      $$OcrScansTableUpdateCompanionBuilder,
+      (OcrScan, $$OcrScansTableReferences),
+      OcrScan,
+      PrefetchHooks Function({bool occasionId, bool candidateEntriesRefs})
+    >;
+typedef $$CandidateEntriesTableCreateCompanionBuilder =
+    CandidateEntriesCompanion Function({
+      required String id,
+      required String scanId,
+      Value<String> status,
+      required String personName,
+      required String personNameConfidenceKind,
+      required String personNameConfidenceLevel,
+      Value<String?> matchedPersonId,
+      Value<int?> amountMinorUnits,
+      required String amountConfidenceKind,
+      required String amountConfidenceLevel,
+      Value<String?> direction,
+      required String directionConfidenceKind,
+      required String directionConfidenceLevel,
+      Value<int?> date,
+      required String dateConfidenceKind,
+      required String dateConfidenceLevel,
+      Value<String?> notes,
+      required String rawOcrText,
+      required int createdAt,
+      Value<int?> editedAt,
+      Value<int> rowid,
+    });
+typedef $$CandidateEntriesTableUpdateCompanionBuilder =
+    CandidateEntriesCompanion Function({
+      Value<String> id,
+      Value<String> scanId,
+      Value<String> status,
+      Value<String> personName,
+      Value<String> personNameConfidenceKind,
+      Value<String> personNameConfidenceLevel,
+      Value<String?> matchedPersonId,
+      Value<int?> amountMinorUnits,
+      Value<String> amountConfidenceKind,
+      Value<String> amountConfidenceLevel,
+      Value<String?> direction,
+      Value<String> directionConfidenceKind,
+      Value<String> directionConfidenceLevel,
+      Value<int?> date,
+      Value<String> dateConfidenceKind,
+      Value<String> dateConfidenceLevel,
+      Value<String?> notes,
+      Value<String> rawOcrText,
+      Value<int> createdAt,
+      Value<int?> editedAt,
+      Value<int> rowid,
+    });
+
+final class $$CandidateEntriesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $CandidateEntriesTable, CandidateEntry> {
+  $$CandidateEntriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $OcrScansTable _scanIdTable(_$AppDatabase db) =>
+      db.ocrScans.createAlias('candidate_entries__scan_id__ocr_scans__id');
+
+  $$OcrScansTableProcessedTableManager get scanId {
+    final $_column = $_itemColumn<String>('scan_id')!;
+
+    final manager = $$OcrScansTableTableManager(
+      $_db,
+      $_db.ocrScans,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_scanIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PeopleTable _matchedPersonIdTable(_$AppDatabase db) =>
+      db.people.createAlias('candidate_entries__matched_person_id__people__id');
+
+  $$PeopleTableProcessedTableManager? get matchedPersonId {
+    final $_column = $_itemColumn<String>('matched_person_id');
+    if ($_column == null) return null;
+    final manager = $$PeopleTableTableManager(
+      $_db,
+      $_db.people,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_matchedPersonIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$CandidateEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OcrScansTableFilterComposer get scanId {
+    final $$OcrScansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableFilterComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableFilterComposer get matchedPersonId {
+    final $$PeopleTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableFilterComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OcrScansTableOrderingComposer get scanId {
+    final $$OcrScansTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableOrderingComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableOrderingComposer get matchedPersonId {
+    final $$PeopleTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableOrderingComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get editedAt =>
+      $composableBuilder(column: $table.editedAt, builder: (column) => column);
+
+  $$OcrScansTableAnnotationComposer get scanId {
+    final $$OcrScansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableAnnotationComposer get matchedPersonId {
+    final $$PeopleTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableAnnotationComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CandidateEntriesTable,
+          CandidateEntry,
+          $$CandidateEntriesTableFilterComposer,
+          $$CandidateEntriesTableOrderingComposer,
+          $$CandidateEntriesTableAnnotationComposer,
+          $$CandidateEntriesTableCreateCompanionBuilder,
+          $$CandidateEntriesTableUpdateCompanionBuilder,
+          (CandidateEntry, $$CandidateEntriesTableReferences),
+          CandidateEntry,
+          PrefetchHooks Function({bool scanId, bool matchedPersonId})
+        > {
+  $$CandidateEntriesTableTableManager(
+    _$AppDatabase db,
+    $CandidateEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CandidateEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CandidateEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CandidateEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> scanId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String> personName = const Value.absent(),
+                Value<String> personNameConfidenceKind = const Value.absent(),
+                Value<String> personNameConfidenceLevel = const Value.absent(),
+                Value<String?> matchedPersonId = const Value.absent(),
+                Value<int?> amountMinorUnits = const Value.absent(),
+                Value<String> amountConfidenceKind = const Value.absent(),
+                Value<String> amountConfidenceLevel = const Value.absent(),
+                Value<String?> direction = const Value.absent(),
+                Value<String> directionConfidenceKind = const Value.absent(),
+                Value<String> directionConfidenceLevel = const Value.absent(),
+                Value<int?> date = const Value.absent(),
+                Value<String> dateConfidenceKind = const Value.absent(),
+                Value<String> dateConfidenceLevel = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String> rawOcrText = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> editedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CandidateEntriesCompanion(
+                id: id,
+                scanId: scanId,
+                status: status,
+                personName: personName,
+                personNameConfidenceKind: personNameConfidenceKind,
+                personNameConfidenceLevel: personNameConfidenceLevel,
+                matchedPersonId: matchedPersonId,
+                amountMinorUnits: amountMinorUnits,
+                amountConfidenceKind: amountConfidenceKind,
+                amountConfidenceLevel: amountConfidenceLevel,
+                direction: direction,
+                directionConfidenceKind: directionConfidenceKind,
+                directionConfidenceLevel: directionConfidenceLevel,
+                date: date,
+                dateConfidenceKind: dateConfidenceKind,
+                dateConfidenceLevel: dateConfidenceLevel,
+                notes: notes,
+                rawOcrText: rawOcrText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String scanId,
+                Value<String> status = const Value.absent(),
+                required String personName,
+                required String personNameConfidenceKind,
+                required String personNameConfidenceLevel,
+                Value<String?> matchedPersonId = const Value.absent(),
+                Value<int?> amountMinorUnits = const Value.absent(),
+                required String amountConfidenceKind,
+                required String amountConfidenceLevel,
+                Value<String?> direction = const Value.absent(),
+                required String directionConfidenceKind,
+                required String directionConfidenceLevel,
+                Value<int?> date = const Value.absent(),
+                required String dateConfidenceKind,
+                required String dateConfidenceLevel,
+                Value<String?> notes = const Value.absent(),
+                required String rawOcrText,
+                required int createdAt,
+                Value<int?> editedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CandidateEntriesCompanion.insert(
+                id: id,
+                scanId: scanId,
+                status: status,
+                personName: personName,
+                personNameConfidenceKind: personNameConfidenceKind,
+                personNameConfidenceLevel: personNameConfidenceLevel,
+                matchedPersonId: matchedPersonId,
+                amountMinorUnits: amountMinorUnits,
+                amountConfidenceKind: amountConfidenceKind,
+                amountConfidenceLevel: amountConfidenceLevel,
+                direction: direction,
+                directionConfidenceKind: directionConfidenceKind,
+                directionConfidenceLevel: directionConfidenceLevel,
+                date: date,
+                dateConfidenceKind: dateConfidenceKind,
+                dateConfidenceLevel: dateConfidenceLevel,
+                notes: notes,
+                rawOcrText: rawOcrText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CandidateEntriesTable, CandidateEntry>(table),
+                  $$CandidateEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({scanId = false, matchedPersonId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (scanId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.scanId,
+                                referencedTable:
+                                    $$CandidateEntriesTableReferences
+                                        ._scanIdTable(db),
+                                referencedColumn:
+                                    $$CandidateEntriesTableReferences
+                                        ._scanIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (matchedPersonId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.matchedPersonId,
+                                referencedTable:
+                                    $$CandidateEntriesTableReferences
+                                        ._matchedPersonIdTable(db),
+                                referencedColumn:
+                                    $$CandidateEntriesTableReferences
+                                        ._matchedPersonIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$CandidateEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CandidateEntriesTable,
+      CandidateEntry,
+      $$CandidateEntriesTableFilterComposer,
+      $$CandidateEntriesTableOrderingComposer,
+      $$CandidateEntriesTableAnnotationComposer,
+      $$CandidateEntriesTableCreateCompanionBuilder,
+      $$CandidateEntriesTableUpdateCompanionBuilder,
+      (CandidateEntry, $$CandidateEntriesTableReferences),
+      CandidateEntry,
+      PrefetchHooks Function({bool scanId, bool matchedPersonId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8202,4 +11753,8 @@ class $AppDatabaseManager {
       $$FinanceEntriesTableTableManager(_db, _db.financeEntries);
   $$OccasionAttachmentsTableTableManager get occasionAttachments =>
       $$OccasionAttachmentsTableTableManager(_db, _db.occasionAttachments);
+  $$OcrScansTableTableManager get ocrScans =>
+      $$OcrScansTableTableManager(_db, _db.ocrScans);
+  $$CandidateEntriesTableTableManager get candidateEntries =>
+      $$CandidateEntriesTableTableManager(_db, _db.candidateEntries);
 }

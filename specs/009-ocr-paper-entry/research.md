@@ -51,3 +51,36 @@ All Technical Context unknowns from `plan.md` are resolved below. The spec (009)
 **Rationale**: Directly satisfies constitution Principle XVI (Testability by Design) and keeps the parser's correctness verifiable in CI without a physical device or an ML Kit runtime, which is not available in a typical headless test environment.
 
 **Alternatives considered**: Testing the parser only via `integration_test` against real captured images — rejected as insufficient coverage (slow, flaky, requires a device, cannot enumerate edge cases like OCR character-confusion patterns deterministically) as the *only* test strategy; `integration_test` is still included for true end-to-end confidence, but unit tests carry the correctness burden.
+
+## 7. Platform constraints discovered during implementation (added 2026-09-23)
+
+Three build-level facts about the ML Kit dependency that were not visible at
+planning time. The first two are permanent properties of the engine chosen
+in Decision 1 and should be read as part of that decision's cost.
+
+**iOS deployment target is now 15.5.** `google_mlkit_commons` requires iOS
+15.5, above the 15.0 the app previously targeted. `ios/Podfile` now declares
+`platform :ios, '15.5'` explicitly (it was commented out, so CocoaPods was
+defaulting to 15.0 and `pod install` failed outright), and the three
+`IPHONEOS_DEPLOYMENT_TARGET` entries in `Runner.xcodeproj` were raised to
+match. Anyone on iOS 15.0–15.4 is dropped by this feature; that is a real
+product consequence of Decision 1, not a build detail.
+
+**The iOS Simulator cannot run this feature on Apple Silicon.** ML Kit's
+`MLImage.framework` ships device-only `arm64` slices, so linking for the
+`iOS-simulator` SDK fails with "built for 'iOS'". The usual workaround —
+`EXCLUDED_ARCHS[sdk=iphonesimulator*] = arm64` — only helps on Intel Macs,
+where x86_64 slices exist. On an Apple Silicon machine, iOS verification of
+anything touching the scan pipeline must happen on a physical device.
+This is why `integration_test/ocr_flows_test.dart` stubs only
+`TextRecognitionService`: everything else in the suite then runs anywhere.
+
+**Android integration runs are currently blocked by a toolchain mismatch
+unrelated to this feature.** Flutter resolves the JDK from Android Studio's
+bundle (Java 25) ahead of `JAVA_HOME`, and Gradle 8.14 does not support
+Java 25, so `assembleDebug` fails before any 009 code is reached. Setting
+`JAVA_HOME` does not override it. Resolving this means either upgrading the
+Gradle wrapper or setting `flutter config --jdk-dir` on the machine —
+a repo/environment decision outside this feature's scope, deliberately left
+to whoever owns the Android toolchain rather than pinned to one machine's
+JDK path in `gradle.properties`.

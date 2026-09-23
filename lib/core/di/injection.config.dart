@@ -89,6 +89,39 @@ import '../../features/occasions/presentation/cubit/occasions_list_cubit.dart'
     as _i193;
 import '../../features/occasions/presentation/cubit/participant_form_cubit.dart'
     as _i218;
+import '../../features/ocr/data/datasources/ocr_dao.dart' as _i976;
+import '../../features/ocr/data/parsing/candidate_entry_parser.dart' as _i918;
+import '../../features/ocr/data/preparation/image_preparation_service_impl.dart'
+    as _i450;
+import '../../features/ocr/data/recognition/text_recognition_service_impl.dart'
+    as _i428;
+import '../../features/ocr/data/repositories/ocr_repository_impl.dart' as _i457;
+import '../../features/ocr/domain/repositories/image_preparation_service.dart'
+    as _i235;
+import '../../features/ocr/domain/repositories/ocr_repository.dart' as _i577;
+import '../../features/ocr/domain/repositories/text_recognition_service.dart'
+    as _i176;
+import '../../features/ocr/domain/usecases/cancel_scan.dart' as _i377;
+import '../../features/ocr/domain/usecases/confirm_scan_batch.dart' as _i664;
+import '../../features/ocr/domain/usecases/delete_scan.dart' as _i413;
+import '../../features/ocr/domain/usecases/discard_candidate_entry.dart'
+    as _i256;
+import '../../features/ocr/domain/usecases/edit_candidate_entry.dart' as _i506;
+import '../../features/ocr/domain/usecases/get_candidate_entries.dart' as _i302;
+import '../../features/ocr/domain/usecases/get_possible_duplicate_for_candidate.dart'
+    as _i20;
+import '../../features/ocr/domain/usecases/get_scan_detail.dart' as _i267;
+import '../../features/ocr/domain/usecases/get_scan_history.dart' as _i331;
+import '../../features/ocr/domain/usecases/run_ocr_extraction.dart' as _i350;
+import '../../features/ocr/domain/usecases/set_batch_default_direction.dart'
+    as _i1011;
+import '../../features/ocr/domain/usecases/start_scan.dart' as _i856;
+import '../../features/ocr/domain/usecases/tag_batch_to_occasion.dart' as _i237;
+import '../../features/ocr/presentation/cubit/image_prep_cubit.dart' as _i427;
+import '../../features/ocr/presentation/cubit/scan_capture_cubit.dart' as _i354;
+import '../../features/ocr/presentation/cubit/scan_detail_cubit.dart' as _i919;
+import '../../features/ocr/presentation/cubit/scan_history_cubit.dart' as _i622;
+import '../../features/ocr/presentation/cubit/scan_review_cubit.dart' as _i621;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -181,13 +214,35 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i780.DocumentsDirectory>(
       () => const _i780.DocumentsDirectory(),
     );
+    gh.lazySingleton<_i918.CandidateEntryParser>(
+      () => const _i918.CandidateEntryParser(),
+    );
+    gh.lazySingleton<_i450.ImageCropperClient>(
+      () => const _i450.ImageCropperClient(),
+    );
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
+    );
+    gh.lazySingleton<_i176.TextRecognitionService>(
+      () => _i428.TextRecognitionServiceImpl(),
     );
     gh.lazySingleton<_i780.AttachmentPickerService>(
       () => _i157.AttachmentPickerServiceImpl(
         gh<_i183.ImagePicker>(),
         gh<_i780.DocumentsDirectory>(),
+      ),
+    );
+    gh.lazySingleton<_i235.ImagePreparationService>(
+      () => _i450.ImagePreparationServiceImpl(
+        gh<_i450.ImageCropperClient>(),
+        gh<_i780.DocumentsDirectory>(),
+      ),
+    );
+    gh.factory<_i354.ScanCaptureCubit>(
+      () => _i354.ScanCaptureCubit(
+        gh<_i780.AttachmentPickerService>(),
+        gh<_i235.ImagePreparationService>(),
+        gh<_i176.TextRecognitionService>(),
       ),
     );
     gh.factory<_i443.FinanceDao>(
@@ -196,6 +251,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i791.OccasionsDao>(
       () => _i791.OccasionsDao(gh<_i982.AppDatabase>()),
     );
+    gh.factory<_i976.OcrDao>(() => _i976.OcrDao(gh<_i982.AppDatabase>()));
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
     );
@@ -227,6 +283,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i228.CategoryRepository>(
       () => _i816.CategoryRepositoryImpl(gh<_i443.FinanceDao>()),
+    );
+    gh.factory<_i20.GetPossibleDuplicateForCandidate>(
+      () => _i20.GetPossibleDuplicateForCandidate(
+        gh<_i646.PeopleRepository>(),
+        gh<_i769.FindPossibleDuplicatePerson>(),
+      ),
     );
     gh.lazySingleton<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
@@ -471,6 +533,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
+    gh.lazySingleton<_i577.OcrRepository>(
+      () => _i457.OcrRepositoryImpl(
+        gh<_i976.OcrDao>(),
+        gh<_i176.TextRecognitionService>(),
+        gh<_i918.CandidateEntryParser>(),
+        gh<_i956.TransactionsRepository>(),
+        gh<_i72.OccasionsRepository>(),
+        gh<_i646.PeopleRepository>(),
+      ),
+    );
     gh.factory<_i305.OverviewCubit>(
       () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
     );
@@ -498,8 +570,79 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i490.RemoveCategory>(),
       ),
     );
+    gh.factory<_i377.CancelScan>(
+      () => _i377.CancelScan(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i664.ConfirmScanBatch>(
+      () => _i664.ConfirmScanBatch(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i413.DeleteScan>(
+      () => _i413.DeleteScan(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i256.DiscardCandidateEntry>(
+      () => _i256.DiscardCandidateEntry(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i506.EditCandidateEntry>(
+      () => _i506.EditCandidateEntry(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i302.GetCandidateEntries>(
+      () => _i302.GetCandidateEntries(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i267.GetScanDetail>(
+      () => _i267.GetScanDetail(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i331.GetScanHistory>(
+      () => _i331.GetScanHistory(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i350.RunOcrExtraction>(
+      () => _i350.RunOcrExtraction(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i1011.SetBatchDefaultDirection>(
+      () => _i1011.SetBatchDefaultDirection(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i856.StartScan>(
+      () => _i856.StartScan(gh<_i577.OcrRepository>()),
+    );
+    gh.factory<_i237.TagBatchToOccasion>(
+      () => _i237.TagBatchToOccasion(gh<_i577.OcrRepository>()),
+    );
     gh.factory<_i193.OccasionsListCubit>(
       () => _i193.OccasionsListCubit(gh<_i957.GetOccasionsList>()),
+    );
+    gh.factory<_i621.ScanReviewCubit>(
+      () => _i621.ScanReviewCubit(
+        gh<_i267.GetScanDetail>(),
+        gh<_i302.GetCandidateEntries>(),
+        gh<_i506.EditCandidateEntry>(),
+        gh<_i256.DiscardCandidateEntry>(),
+        gh<_i664.ConfirmScanBatch>(),
+        gh<_i377.CancelScan>(),
+        gh<_i1011.SetBatchDefaultDirection>(),
+        gh<_i237.TagBatchToOccasion>(),
+        gh<_i20.GetPossibleDuplicateForCandidate>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i622.ScanHistoryCubit>(
+      () => _i622.ScanHistoryCubit(
+        gh<_i331.GetScanHistory>(),
+        gh<_i413.DeleteScan>(),
+      ),
+    );
+    gh.factory<_i919.ScanDetailCubit>(
+      () => _i919.ScanDetailCubit(
+        gh<_i267.GetScanDetail>(),
+        gh<_i413.DeleteScan>(),
+      ),
+    );
+    gh.factory<_i427.ImagePrepCubit>(
+      () => _i427.ImagePrepCubit(
+        gh<_i235.ImagePreparationService>(),
+        gh<_i856.StartScan>(),
+        gh<_i350.RunOcrExtraction>(),
+        gh<_i1011.SetBatchDefaultDirection>(),
+        gh<_i377.CancelScan>(),
+      ),
     );
     return this;
   }

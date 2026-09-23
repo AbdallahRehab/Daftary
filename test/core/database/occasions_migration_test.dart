@@ -234,8 +234,7 @@ void main() {
     expect(await db.select(db.occasions).get(), hasLength(1));
   });
 
-  test('a fresh install starts at schemaVersion 6 with both occasions '
-      'tables present', () async {
+  test('a fresh install has both occasions tables present', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
 
@@ -243,6 +242,10 @@ void main() {
     // upgrade branch — `createAll` is what covers it.
     expect(await db.select(db.occasions).get(), isEmpty);
     expect(await db.select(db.occasionAttachments).get(), isEmpty);
-    expect(db.schemaVersion, 6);
+    // At least 6, not exactly 6: this test is about the occasions tables
+    // existing, and pinning the current number here would turn every later
+    // feature's additive migration into a false failure. The version each
+    // feature introduces is pinned by that feature's own migration test.
+    expect(db.schemaVersion, greaterThanOrEqualTo(6));
   });
 }

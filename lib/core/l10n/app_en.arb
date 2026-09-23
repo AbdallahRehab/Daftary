@@ -2,7 +2,6 @@
   "@@locale": "en",
   "appTitle": "Daftary",
   "@appTitle": {},
-
   "commonSave": "Save",
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
@@ -18,7 +17,6 @@
   "errorNotFound": "This item could not be found.",
   "errorValidation": "Please check your input and try again.",
   "errorUnknown": "An unexpected error occurred. Please try again.",
-
   "peopleListTitle": "People",
   "searchPeopleHint": "Search people",
   "filterAll": "All",
@@ -29,7 +27,6 @@
   "emptyPeopleMessage": "Add a person to start tracking money you give or receive with them.",
   "archivedPeopleAction": "Archived people",
   "addPersonAction": "Add person",
-
   "personFormCreateTitle": "New person",
   "personFormEditTitle": "Edit person",
   "nameLabel": "Name",
@@ -41,19 +38,16 @@
   "deleteBlockedTitle": "Can't delete this person",
   "deleteBlockedMessage": "This person has recorded transactions. Archive them instead to keep their history.",
   "archiveInsteadAction": "Archive instead",
-
   "relationshipFamily": "Family",
   "relationshipFriend": "Friend",
   "relationshipColleague": "Colleague",
   "relationshipCustomer": "Customer",
   "relationshipSupplier": "Supplier",
   "relationshipOther": "Other",
-
   "duplicateWarningTitle": "Possible duplicate",
   "duplicateWarningMessage": "This name looks similar to someone you already know.",
   "duplicateUseExisting": "Use existing person",
   "duplicateCreateNew": "Create new person anyway",
-
   "transactionFormCreateTitle": "Record transaction",
   "transactionFormEditTitle": "Edit transaction",
   "amountLabel": "Amount (EGP)",
@@ -67,22 +61,28 @@
   "savedConfirmation": "Saved",
   "editedLabel": "Edited",
   "repaymentLabel": "Repayment",
-
   "repaymentFormTitle": "Record repayment",
   "recordRepaymentAction": "Record repayment",
-
   "personDetailTheyOweYou": "{name} owes you {amount}",
   "@personDetailTheyOweYou": {
     "placeholders": {
-      "name": {"type": "String"},
-      "amount": {"type": "String"}
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "personDetailYouOweThem": "You owe {name} {amount}",
   "@personDetailYouOweThem": {
     "placeholders": {
-      "name": {"type": "String"},
-      "amount": {"type": "String"}
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "personDetailSettled": "Settled",
@@ -90,13 +90,14 @@
   "historyEmptyMessage": "Record a transaction with {name} to start tracking your balance.",
   "@historyEmptyMessage": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "recordTransactionAction": "Record transaction",
   "deleteTransactionConfirmTitle": "Delete this transaction?",
   "deleteTransactionConfirmMessage": "This action cannot be undone.",
-
   "overviewTitle": "Overview",
   "overviewTotalOwedToYou": "Total owed to you",
   "overviewTotalYouOwe": "Total you owe",
@@ -104,13 +105,11 @@
   "overviewSectionYouOweThem": "You owe them",
   "overviewAllSettledTitle": "Everything is settled",
   "overviewAllSettledMessage": "You have no outstanding balances with anyone right now.",
-
   "archivedLabel": "Archived",
   "archivedPeopleTitle": "Archived people",
   "archivedEmptyTitle": "No archived people",
   "archivedEmptyMessage": "People you archive will appear here, with their history intact.",
   "restoreAction": "Restore",
-
   "settingsTitle": "Settings",
   "languageSectionTitle": "Language",
   "languageEnglish": "English",
@@ -121,12 +120,15 @@
   "themeDark": "Dark",
   "themeSystemDefault": "System Default",
   "themeSaveFailed": "Couldn't save your theme choice. It's still active for this session — we'll keep trying.",
-
   "onboardingStepProgress": "Step {current} of {total}",
   "@onboardingStepProgress": {
     "placeholders": {
-      "current": {"type": "int"},
-      "total": {"type": "int"}
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "onboardingUnderstandingMoneyTitle": "Understand your money at a glance",
@@ -149,7 +151,6 @@
   "financeAddIncomeAction": "Add income",
   "financeAddFirstEntryAction": "Add your first entry",
   "financeViewAllAction": "View all",
-
   "financeEntryFormExpenseTitle": "Add expense",
   "financeEntryFormIncomeTitle": "Add income",
   "financeEntryFormEditTitle": "Edit entry",
@@ -160,7 +161,6 @@
   "financeManageCategoriesAction": "Manage categories",
   "financeNoCategoriesTitle": "No categories yet",
   "financeNoCategoriesMessage": "Create a category to start recording entries.",
-
   "financeCategoryManagementTitle": "Categories",
   "financeCategoryFormCreateTitle": "New category",
   "financeCategoryFormEditTitle": "Edit category",
@@ -177,7 +177,6 @@
   "financeRemoveCategoryConfirmTitle": "Remove this category?",
   "financeRemoveCategoryConfirmMessage": "If any entries use this category, it will be archived so their history stays intact. Otherwise it will be deleted.",
   "financeCategoryArchivedNotice": "Archived — hidden from new entries, kept for existing ones.",
-
   "financePeriodThisMonth": "This month",
   "financePeriodLastMonth": "Last month",
   "financePeriodCustom": "Custom range",
@@ -192,17 +191,14 @@
   "financeFilterTypeLabel": "Type",
   "financeFilterCategoryLabel": "Category",
   "financeClearFiltersAction": "Clear filters",
-
   "financeEmptyTitle": "No entries yet",
   "financeEmptyMessage": "Record your income and spending to see where your money goes.",
   "financeNoMatchTitle": "No matching entries",
   "financeNoMatchMessage": "No entries match the filters you picked. Try a different period or category.",
-
   "financeDeleteEntryConfirmTitle": "Delete this entry?",
   "financeDeleteEntryConfirmMessage": "Your totals will update right away. You can undo this for a few seconds.",
   "financeEntryDeletedMessage": "Entry deleted",
   "financeUndoAction": "Undo",
-
   "financeCategoryRent": "Rent",
   "financeCategoryElectricity": "Electricity",
   "financeCategoryWater": "Water",
@@ -225,7 +221,6 @@
   "financeCategoryBonus": "Bonus",
   "financeCategoryGift": "Gift",
   "financeCategoryOtherIncome": "Other income",
-
   "occasionsTitle": "Occasions",
   "occasionsEmptyTitle": "No occasions yet",
   "occasionsEmptyMessage": "Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.",
@@ -247,7 +242,6 @@
   "occasionArchivedEmptyMessage": "Occasions you archive will appear here, with their contributions and balances intact.",
   "occasionArchivedLabel": "Archived",
   "occasionUpcomingLabel": "Upcoming",
-
   "occasionTypeWedding": "Wedding",
   "occasionTypeEngagement": "Engagement",
   "occasionTypeBirthday": "Birthday",
@@ -257,7 +251,6 @@
   "occasionTypeOther": "Other",
   "occasionTypeCustomLabel": "Custom type",
   "occasionTypeCustomHint": "Write your own type, e.g. graduation",
-
   "occasionFormCreateTitle": "New occasion",
   "occasionFormEditTitle": "Edit occasion",
   "occasionNameLabel": "Occasion name",
@@ -273,7 +266,6 @@
   "occasionDeleteAction": "Delete occasion",
   "occasionArchiveAction": "Archive occasion",
   "occasionRestoreAction": "Restore occasion",
-
   "occasionParticipantFormAddTitle": "Add participant",
   "occasionParticipantFormEditTitle": "Edit contribution",
   "occasionParticipantPersonLabel": "Person",
@@ -287,7 +279,6 @@
   "occasionParticipantCountsTowardBalanceHint": "Condolence money isn't expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.",
   "occasionParticipantSaveAction": "Save participant",
   "occasionParticipantUpdateAction": "Save changes",
-
   "occasionDetailTotalReceived": "Total received",
   "occasionDetailTotalGiven": "Total given",
   "occasionDetailNet": "Net",
@@ -301,7 +292,6 @@
   "occasionEditParticipantAction": "Edit contribution",
   "occasionRemoveParticipantAction": "Remove contribution",
   "occasionContributionBadge": "Occasion",
-
   "occasionRemoveParticipantConfirmTitle": "Remove this contribution?",
   "occasionRemoveParticipantConfirmMessage": "It will also disappear from this person's history and balance. This can't be undone.",
   "occasionDeleteConfirmTitle": "Delete this occasion?",
@@ -310,7 +300,6 @@
   "occasionArchiveConfirmMessage": "It moves to archived occasions. Its contributions stay in everyone's history and balances, and you can restore it any time.",
   "occasionRestoreConfirmTitle": "Restore this occasion?",
   "occasionRestoreConfirmMessage": "It will appear in your occasions list again.",
-
   "occasionAttachmentsHeader": "Photos",
   "occasionAttachPhotoAction": "Attach photo",
   "occasionAttachFromCameraAction": "Take a photo",
@@ -325,30 +314,287 @@
   "occasionPhotoLibraryPermissionDeniedTitle": "Photo access is turned off",
   "occasionPhotoLibraryPermissionDeniedMessage": "Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.",
   "occasionOpenSettingsAction": "Open settings",
-
   "@financeCategoryDuplicateError": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "@financeBreakdownShare": {
     "placeholders": {
-      "percent": {"type": "String"}
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "@occasionSettlementMoreReceived": {
     "placeholders": {
-      "amount": {"type": "String"}
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "@occasionSettlementMoreGiven": {
     "placeholders": {
-      "amount": {"type": "String"}
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "@occasionDeleteConfirmMessage": {
     "placeholders": {
-      "count": {"type": "int"}
+      "count": {
+        "type": "int"
+      }
     }
-  }
+  },
+  "ocrCaptureTitle": "Scan paper",
+  "@ocrCaptureTitle": {},
+  "ocrCaptureHeadline": "Turn a paper list into entries",
+  "@ocrCaptureHeadline": {},
+  "ocrCaptureMessage": "Photograph a list of names and amounts. Everything is read on this device, and nothing is saved until you review it.",
+  "@ocrCaptureMessage": {},
+  "ocrCaptureTakePhoto": "Take a photo",
+  "@ocrCaptureTakePhoto": {},
+  "ocrCaptureChooseFromGallery": "Choose from gallery",
+  "@ocrCaptureChooseFromGallery": {},
+  "ocrCaptureUnsupportedTitle": "Scanning isn't available on this device",
+  "@ocrCaptureUnsupportedTitle": {},
+  "ocrCaptureUnsupportedMessage": "This device can't run on-device text recognition, so scanning a paper won't work here. You can still add transactions manually.",
+  "@ocrCaptureUnsupportedMessage": {},
+  "ocrCaptureEnterManually": "Enter manually",
+  "@ocrCaptureEnterManually": {},
+  "ocrPrepTitle": "Prepare the image",
+  "@ocrPrepTitle": {},
+  "ocrPrepHint": "Crop to just the list of names and amounts, then even out the lighting for the best reading.",
+  "@ocrPrepHint": {},
+  "ocrPrepCropRotate": "Crop and rotate",
+  "@ocrPrepCropRotate": {},
+  "ocrPrepRecrop": "Redo the crop",
+  "@ocrPrepRecrop": {},
+  "ocrPrepEnhance": "Enhance",
+  "@ocrPrepEnhance": {},
+  "ocrPrepEnhanceAgain": "Enhance again",
+  "@ocrPrepEnhanceAgain": {},
+  "ocrPrepProcess": "Read the paper",
+  "@ocrPrepProcess": {},
+  "ocrPrepProcessingTitle": "Reading your paper",
+  "@ocrPrepProcessingTitle": {},
+  "ocrPrepProcessingMessage": "Text recognition is running on this device. Nothing is uploaded anywhere.",
+  "@ocrPrepProcessingMessage": {},
+  "ocrPrepCancel": "Cancel",
+  "@ocrPrepCancel": {},
+  "ocrPrepInterruptedTitle": "That didn't finish",
+  "@ocrPrepInterruptedTitle": {},
+  "ocrPrepInterruptedMessage": "Reading stopped before it finished, probably because the app was interrupted. Nothing was saved, so you can try again.",
+  "@ocrPrepInterruptedMessage": {},
+  "ocrPrepRetry": "Try again",
+  "@ocrPrepRetry": {},
+  "ocrPrepDefaultDirectionLabel": "Default direction for this list",
+  "@ocrPrepDefaultDirectionLabel": {},
+  "ocrPrepDefaultDirectionHint": "Applied to every entry whose direction can't be read from the paper. You can change any entry while reviewing.",
+  "@ocrPrepDefaultDirectionHint": {},
+  "ocrPrepDirectionReceived": "Money received",
+  "@ocrPrepDirectionReceived": {},
+  "ocrPrepDirectionGiven": "Money given",
+  "@ocrPrepDirectionGiven": {},
+  "ocrFailureNoTextTitle": "No text found",
+  "@ocrFailureNoTextTitle": {},
+  "ocrFailureNoTextMessage": "No readable text was found in this photo. A sharper, better lit, straight-on shot usually fixes it.",
+  "@ocrFailureNoTextMessage": {},
+  "ocrFailureNoCandidatesTitle": "No entries could be made",
+  "@ocrFailureNoCandidatesTitle": {},
+  "ocrFailureNoCandidatesMessage": "Text was found, but no line looked like a name and an amount. Try cropping to just the list, or enter the entries manually.",
+  "@ocrFailureNoCandidatesMessage": {},
+  "ocrFailurePermissionTitle": "Permission needed",
+  "@ocrFailurePermissionTitle": {},
+  "ocrFailurePermissionMessage": "Scanning needs access to your camera or photos to read the paper. Grant access from the app's settings, then try again.",
+  "@ocrFailurePermissionMessage": {},
+  "ocrFailureUnsupportedTitle": "Scanning isn't available on this device",
+  "@ocrFailureUnsupportedTitle": {},
+  "ocrFailureUnsupportedMessage": "This device can't run on-device text recognition. Manual entry works exactly the same way.",
+  "@ocrFailureUnsupportedMessage": {},
+  "ocrFailureGenericTitle": "The scan didn't work",
+  "@ocrFailureGenericTitle": {},
+  "ocrFailureGenericMessage": "Something went wrong while reading the paper. Nothing was saved, so you can try again or enter the entries manually.",
+  "@ocrFailureGenericMessage": {},
+  "ocrFailureRetakePhoto": "Retake the photo",
+  "@ocrFailureRetakePhoto": {},
+  "ocrFailureRecrop": "Adjust the crop and retry",
+  "@ocrFailureRecrop": {},
+  "ocrFailureManualEntry": "Enter manually",
+  "@ocrFailureManualEntry": {},
+  "ocrFailureOpenSettings": "Open settings",
+  "@ocrFailureOpenSettings": {},
+  "ocrConfidenceLow": "Low confidence",
+  "@ocrConfidenceLow": {},
+  "ocrConfidenceMedium": "Medium confidence",
+  "@ocrConfidenceMedium": {},
+  "ocrConfidenceHigh": "High confidence",
+  "@ocrConfidenceHigh": {},
+  "ocrConfidenceInferred": "Inferred, not read",
+  "@ocrConfidenceInferred": {},
+  "ocrReviewTitle": "Review entries",
+  "@ocrReviewTitle": {},
+  "ocrReviewBatchSectionTitle": "Applies to the whole batch",
+  "@ocrReviewBatchSectionTitle": {},
+  "ocrReviewBatchSectionMessage": "These choices apply to every entry that does not have its own. Nothing is saved until you confirm.",
+  "@ocrReviewBatchSectionMessage": {},
+  "ocrReviewBatchDirectionLabel": "Default direction",
+  "@ocrReviewBatchDirectionLabel": {},
+  "ocrReviewDirectionLabel": "Direction",
+  "@ocrReviewDirectionLabel": {},
+  "ocrReviewDirectionReceived": "Received",
+  "@ocrReviewDirectionReceived": {},
+  "ocrReviewDirectionGiven": "Given",
+  "@ocrReviewDirectionGiven": {},
+  "ocrReviewDirectionRequired": "Choose a direction for this entry, or set a default for the batch.",
+  "@ocrReviewDirectionRequired": {},
+  "ocrReviewPersonLabel": "Person",
+  "@ocrReviewPersonLabel": {},
+  "ocrReviewPersonRequired": "Enter the person's name.",
+  "@ocrReviewPersonRequired": {},
+  "ocrReviewDuplicateWarningAction": "Similar names already saved",
+  "@ocrReviewDuplicateWarningAction": {},
+  "ocrReviewAmountLabel": "Amount",
+  "@ocrReviewAmountLabel": {},
+  "ocrReviewAmountRequired": "Enter an amount greater than zero.",
+  "@ocrReviewAmountRequired": {},
+  "ocrReviewAmountInvalid": "Enter a valid amount, for example 150.50",
+  "@ocrReviewAmountInvalid": {},
+  "ocrReviewDateLabel": "Date",
+  "@ocrReviewDateLabel": {},
+  "ocrReviewNotesLabel": "Notes",
+  "@ocrReviewNotesLabel": {},
+  "ocrReviewRawTextAction": "Original text",
+  "@ocrReviewRawTextAction": {},
+  "ocrReviewRawTextLabel": "Read from the page",
+  "@ocrReviewRawTextLabel": {},
+  "ocrReviewEditedBadge": "Edited",
+  "@ocrReviewEditedBadge": {},
+  "ocrReviewDiscardAction": "Discard this entry",
+  "@ocrReviewDiscardAction": {},
+  "ocrReviewIncompleteTitle": "Not ready to save",
+  "@ocrReviewIncompleteTitle": {},
+  "ocrReviewIncompleteBatchMessage": "Some entries are still missing required details. Nothing was saved.",
+  "@ocrReviewIncompleteBatchMessage": {},
+  "ocrReviewConfirmAction": "Confirm and save",
+  "@ocrReviewConfirmAction": {},
+  "ocrReviewConfirmBlockedHint": "Complete or discard the highlighted entries before saving.",
+  "@ocrReviewConfirmBlockedHint": {},
+  "ocrReviewNothingToConfirm": "There is nothing left to save in this scan.",
+  "@ocrReviewNothingToConfirm": {},
+  "ocrReviewCancelAction": "Cancel scan",
+  "@ocrReviewCancelAction": {},
+  "ocrReviewCancelPromptTitle": "Discard your corrections?",
+  "@ocrReviewCancelPromptTitle": {},
+  "ocrReviewCancelPromptMessage": "You have corrected some entries. Cancelling this scan discards that work and saves nothing.",
+  "@ocrReviewCancelPromptMessage": {},
+  "ocrReviewCancelPromptConfirm": "Discard and cancel",
+  "@ocrReviewCancelPromptConfirm": {},
+  "ocrReviewCancelPromptKeep": "Keep reviewing",
+  "@ocrReviewCancelPromptKeep": {},
+  "ocrReviewEmptyTitle": "No entries left",
+  "@ocrReviewEmptyTitle": {},
+  "ocrReviewEmptyMessage": "You discarded every entry from this scan. Cancel the scan, or go back and photograph the page again.",
+  "@ocrReviewEmptyMessage": {},
+  "ocrReviewLoadErrorTitle": "Could not open this scan",
+  "@ocrReviewLoadErrorTitle": {},
+  "ocrReviewLoadErrorMessage": "The scan and its entries could not be loaded. Nothing was saved.",
+  "@ocrReviewLoadErrorMessage": {},
+  "ocrReviewRetryAction": "Try again",
+  "@ocrReviewRetryAction": {},
+  "ocrReviewSaveErrorMessage": "The entries could not be saved. Nothing was recorded, so you can try again safely.",
+  "@ocrReviewSaveErrorMessage": {},
+  "ocrReviewOccasionLabel": "Occasion",
+  "@ocrReviewOccasionLabel": {},
+  "ocrReviewOccasionNone": "No occasion",
+  "@ocrReviewOccasionNone": {},
+  "ocrReviewOccasionClear": "Remove the occasion tag",
+  "@ocrReviewOccasionClear": {},
+  "ocrReviewOccasionPickerTitle": "Tag this batch to an occasion",
+  "@ocrReviewOccasionPickerTitle": {},
+  "ocrReviewOccasionEmpty": "You have no occasions yet. Create one from the Occasions screen first.",
+  "@ocrReviewOccasionEmpty": {},
+  "ocrHistoryTitle": "Scan history",
+  "@ocrHistoryTitle": {},
+  "ocrHistoryEmptyTitle": "No scans yet",
+  "@ocrHistoryEmptyTitle": {},
+  "ocrHistoryEmptyMessage": "Once you scan a paper list, every scan you keep shows up here with its photo and what came of it.",
+  "@ocrHistoryEmptyMessage": {},
+  "ocrHistoryErrorTitle": "Couldn't load your scans",
+  "@ocrHistoryErrorTitle": {},
+  "ocrHistoryErrorMessage": "Something went wrong while reading your scan history. Try again.",
+  "@ocrHistoryErrorMessage": {},
+  "ocrHistoryStatusProcessing": "Processing",
+  "@ocrHistoryStatusProcessing": {},
+  "ocrHistoryStatusNeedsReview": "Waiting for review",
+  "@ocrHistoryStatusNeedsReview": {},
+  "ocrHistoryStatusConfirmed": "Confirmed",
+  "@ocrHistoryStatusConfirmed": {},
+  "ocrHistoryStatusDiscarded": "Produced nothing",
+  "@ocrHistoryStatusDiscarded": {},
+  "ocrHistoryStatusFailed": "Nothing could be read",
+  "@ocrHistoryStatusFailed": {},
+  "ocrHistoryConfirmedEntries": "{count} entries confirmed",
+  "@ocrHistoryConfirmedEntries": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrHistoryDeleteAction": "Delete scan",
+  "@ocrHistoryDeleteAction": {},
+  "ocrHistoryDeleteTitle": "Delete this scan?",
+  "@ocrHistoryDeleteTitle": {},
+  "ocrHistoryDeleteMessage": "This deletes the scan and its photo from your device. The transactions it created are not deleted and stay in your records.",
+  "@ocrHistoryDeleteMessage": {},
+  "ocrHistoryDeleteConfirm": "Delete scan",
+  "@ocrHistoryDeleteConfirm": {},
+  "ocrScanDetailTitle": "Scan details",
+  "@ocrScanDetailTitle": {},
+  "ocrScanDetailImageMissing": "The photo for this scan is no longer on your device.",
+  "@ocrScanDetailImageMissing": {},
+  "ocrScanDetailEntriesTitle": "Entries read from the paper",
+  "@ocrScanDetailEntriesTitle": {},
+  "ocrScanDetailNoEntries": "No entries were read from this scan.",
+  "@ocrScanDetailNoEntries": {},
+  "ocrScanDetailUnknownPerson": "No name read",
+  "@ocrScanDetailUnknownPerson": {},
+  "ocrScanDetailNoAmount": "No amount read",
+  "@ocrScanDetailNoAmount": {},
+  "ocrScanDetailEntryStatusPending": "Not reviewed",
+  "@ocrScanDetailEntryStatusPending": {},
+  "ocrScanDetailEntryStatusConfirmed": "Confirmed",
+  "@ocrScanDetailEntryStatusConfirmed": {},
+  "ocrScanDetailEntryStatusDiscarded": "Discarded",
+  "@ocrScanDetailEntryStatusDiscarded": {},
+  "ocrScanDetailTransactionsTitle": "Transactions created",
+  "@ocrScanDetailTransactionsTitle": {},
+  "ocrScanDetailNoTransactionsMessage": "This scan created no transactions.",
+  "@ocrScanDetailNoTransactionsMessage": {},
+  "ocrScanDetailTransactionsKeptNote": "These are real transactions in your records. Deleting this scan does not delete them.",
+  "@ocrScanDetailTransactionsKeptNote": {},
+  "ocrScanDetailDeleteAction": "Delete scan",
+  "@ocrScanDetailDeleteAction": {},
+  "ocrScanDetailDeleteTitle": "Delete this scan?",
+  "@ocrScanDetailDeleteTitle": {},
+  "ocrScanDetailDeleteMessage": "This deletes the scan and its photo from your device. The {count} transactions it created are not deleted and stay in your records — you just lose the link back to the original photo.",
+  "@ocrScanDetailDeleteMessage": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrScanDetailDeleteConfirm": "Delete scan",
+  "@ocrScanDetailDeleteConfirm": {},
+  "ocrScanDetailDeletedMessage": "Scan deleted. Its transactions were kept.",
+  "@ocrScanDetailDeletedMessage": {},
+  "ocrScanDetailErrorTitle": "Couldn't load this scan",
+  "@ocrScanDetailErrorTitle": {},
+  "ocrScanDetailErrorMessage": "Something went wrong while reading this scan.",
+  "@ocrScanDetailErrorMessage": {}
 }

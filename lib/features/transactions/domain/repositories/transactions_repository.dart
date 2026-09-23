@@ -72,7 +72,10 @@ abstract class TransactionsRepository {
   /// Presentation goes through `OccasionsRepository.addParticipantContribution`
   /// instead, so the occasion-specific validation (the occasion must exist
   /// and not be deleted) lives in exactly one place. Same idempotency
-  /// contract as [addTransaction].
+  /// contract as [addTransaction]. [ocrScanId] (009, optional) marks the
+  /// row OCR-sourced when the contribution came from a confirmed scan
+  /// batch; `null` for ordinary manual entry, which is unchanged 008
+  /// behaviour.
   Future<Either<Failure, MoneyTransaction>> addOccasionContribution({
     required String idempotencyKey,
     required String personId,
@@ -82,6 +85,7 @@ abstract class TransactionsRepository {
     required bool countsTowardBalance,
     required DateTime date,
     String? note,
+    String? ocrScanId,
   });
 
   /// Every non-deleted contribution row for one occasion, across all
@@ -99,6 +103,36 @@ abstract class TransactionsRepository {
   /// (constitution Principle II: the arrow points one way).
   Future<Either<Failure, Map<String, String>>> getOccasionNamesForPerson(
     String personId,
+  );
+
+  /// Creates a transaction with `source = ocr`, linked to [ocrScanId]
+  /// (009 FR-012).
+  ///
+  /// Called only by `OcrRepositoryImpl.confirmScanBatch` — Presentation
+  /// never calls it, for the same reason Presentation never calls
+  /// [addOccasionContribution]: the review/confirm gate that makes an OCR
+  /// row legitimate (constitution Principle X) lives in exactly one place,
+  /// and a second caller here would be a way around it.
+  ///
+  /// [kind] is always `initialExchange`; an occasion-tagged scan goes
+  /// through `OccasionsRepository.addParticipantContribution` instead, so
+  /// 008's occasion rules stay defined once. Same idempotency contract as
+  /// [addTransaction].
+  Future<Either<Failure, MoneyTransaction>> addOcrSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required String ocrScanId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  });
+
+  /// Every non-deleted transaction this scan produced, oldest first (009
+  /// FR-018) — what the scan-detail screen lists. Read through
+  /// `ocr_scan_id`, the one-way link described in 009 data-model.md.
+  Future<Either<Failure, List<MoneyTransaction>>> getTransactionsForScan(
+    String ocrScanId,
   );
 
   /// FR-010a: whether at least one MoneyTransaction record exists at all —

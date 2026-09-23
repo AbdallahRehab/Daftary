@@ -1,5 +1,66 @@
 {
   "@@locale": "en",
+  "budgetMonthNavPrevious": "Previous month",
+  "budgetMonthNavNext": "Next month",
+  "budgetMonthNavCurrentLabel": "Budget month: {month}",
+  "@budgetMonthNavCurrentLabel": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthAction": "Copy {month}'s budget",
+  "@budgetCopyFromMonthAction": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthMessage": "Start from the plan you made for {month}. You can adjust it afterwards without changing {month}.",
+  "@budgetCopyFromMonthMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyInProgress": "Copying…",
+  "budgetCopySuccess": "Budget copied from {month}",
+  "@budgetCopySuccess": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFailed": "Couldn't copy the budget. Please try again.",
+  "budgetCopyAlreadyExists": "This month already has a budget.",
+  "budgetTrendTitle": "Spending trends",
+  "budgetTrendSubtitle": "Planned vs. actual, last 6 months",
+  "budgetTrendOverall": "Overall",
+  "budgetTrendCategoryLabel": "Category",
+  "budgetTrendPlanned": "Planned",
+  "budgetTrendActual": "Actual",
+  "budgetTrendOverPlan": "Over plan",
+  "budgetTrendNoBudget": "No budget",
+  "budgetTrendInsufficientTitle": "Not enough history yet",
+  "budgetTrendInsufficientMessage": "Trends need a budget in at least 2 months. Keep budgeting and check back next month.",
+  "budgetTrendMonthSummary": "{month}: planned {planned}, actual {actual}",
+  "@budgetTrendMonthSummary": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      },
+      "actual": {
+        "type": "String"
+      }
+    }
+  },
   "appTitle": "Daftary",
   "@appTitle": {},
   "commonSave": "Save",
@@ -596,5 +657,108 @@
   "ocrScanDetailErrorTitle": "Couldn't load this scan",
   "@ocrScanDetailErrorTitle": {},
   "ocrScanDetailErrorMessage": "Something went wrong while reading this scan.",
-  "@ocrScanDetailErrorMessage": {}
+  "@ocrScanDetailErrorMessage": {},
+  "budgetsTitle": "Budgets",
+  "budgetsOverviewEntrySubtitle": "Plan this month's spending by category",
+  "budgetFormCreateTitle": "New budget",
+  "budgetFormEditTitle": "Edit budget",
+  "budgetFormMonthLabel": "Month",
+  "budgetExpectedIncomeLabel": "Expected income (optional)",
+  "budgetExpectedIncomeHelp": "For reference only — it never changes how spending is tracked.",
+  "budgetAllocationsHeader": "Planned spending by category",
+  "budgetAllocationsEmpty": "No categories yet. Pick an expense category below to start planning.",
+  "budgetAddCategoryHeader": "Add a category",
+  "budgetAllCategoriesAdded": "Every active expense category is already in this budget.",
+  "budgetPlannedAmountLabel": "Planned amount",
+  "budgetRemoveAllocationAction": "Remove from budget",
+  "budgetAmountRequiredError": "Enter a planned amount (0 is allowed)",
+  "budgetAmountInvalidError": "Enter a valid amount",
+  "budgetAmountNegativeError": "The amount can't be negative",
+  "budgetTotalPlannedLabel": "Total planned",
+  "budgetExceedsIncomeWarning": "Planned spending exceeds expected income by {amount}",
+  "@budgetExceedsIncomeWarning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceedsIncomeSaveNote": "You can still save this budget.",
+  "budgetDeleteAction": "Delete budget",
+  "budgetDeleteConfirmTitle": "Delete this budget?",
+  "budgetDeleteConfirmMessage": "The plan for {month} will be removed. Your recorded expenses are not affected.",
+  "@budgetDeleteConfirmMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetDeletedConfirmation": "Budget deleted",
+  "budgetAlreadyExistsError": "This month already has a budget. Open it to make changes.",
+  "budgetDuplicateCategoryError": "This category is already in the budget.",
+  "budgetNotFoundError": "This budget no longer exists.",
+  "budgetEmptyTitle": "No budget for {month}",
+  "@budgetEmptyTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetEmptyMessage": "Plan how much you intend to spend in each category, then track it against your real expenses.",
+  "budgetCreateAction": "Create budget",
+  "budgetLoadErrorTitle": "Couldn't load this budget",
+  "budgetOverallTitle": "Overall",
+  "budgetPlannedLabel": "Planned",
+  "budgetActualLabel": "Spent",
+  "budgetRemainingLabel": "Remaining",
+  "budgetOverByLabel": "Over by",
+  "budgetSpentOfPlanned": "{actual} of {planned}",
+  "@budgetSpentOfPlanned": {
+    "placeholders": {
+      "actual": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetRemainingAmount": "{amount} left",
+  "@budgetRemainingAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverByAmount": "{amount} over",
+  "@budgetOverByAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPercentUsed": "{percent}% used",
+  "@budgetPercentUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetPercentNotApplicable": "Nothing planned",
+  "budgetStatusOnTrack": "On track",
+  "budgetStatusNearFull": "Near limit",
+  "budgetStatusOverBudget": "Over budget",
+  "budgetCategoryArchivedTag": "Archived",
+  "budgetCategoryMissingName": "Deleted category",
+  "budgetCategoriesHeader": "Categories",
+  "budgetNoAllocationsMessage": "This budget has no categories yet. Edit it to add planned amounts.",
+  "budgetExpectedIncomeDisplay": "Expected income",
+  "budgetUnbudgetedTitle": "Unbudgeted spending",
+  "budgetUnbudgetedMessage": "Spent this month in categories that aren't in your budget.",
+  "budgetUnbudgetedTotalLabel": "Total unbudgeted"
 }

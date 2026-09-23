@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../features/budgets/domain/entities/budget_month.dart';
+import '../../features/budgets/presentation/pages/budget_form_page.dart';
+import '../../features/budgets/presentation/pages/budget_month_page.dart';
+import '../../features/budgets/presentation/pages/budget_trend_page.dart';
 import '../../features/finance/domain/entities/finance_entry_type.dart';
 import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
@@ -207,6 +211,50 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) =>
                   OccasionDetailPage(occasionId: state.pathParameters['id']!),
             ),
+            // Budgets live in the People branch for the same reason finance
+            // does (research.md Decision 9): reached from the Overview, not
+            // from a bottom-nav tab of their own. Static `/budgets/...`
+            // paths (e.g. US5's `/budgets/trend`) MUST be declared above
+            // `/budgets/:month` so a literal segment is never captured as a
+            // month.
+            GoRoute(
+              path: '/budgets',
+              redirect: (context, state) => '/budgets/${BudgetMonth.current()}',
+            ),
+            // `?month=YYYY-MM` anchors the trend window's last month to
+            // the month page it was opened from; absent, it ends today.
+            GoRoute(
+              path: '/budgets/trend',
+              builder: (context, state) {
+                final month = state.uri.queryParameters['month'];
+                return BudgetTrendPage(
+                  endMonth: month != null && BudgetMonth.isValid(month)
+                      ? month
+                      : null,
+                );
+              },
+            ),
+            GoRoute(
+              path: '/budgets/:month',
+              builder: (context, state) => BudgetMonthPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
+            // `new` and `edit` open the same form: it switches itself into
+            // edit mode when the month already has a budget, so neither
+            // path can ever produce a second budget for one month.
+            GoRoute(
+              path: '/budgets/:month/new',
+              builder: (context, state) => BudgetFormPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
+            GoRoute(
+              path: '/budgets/:month/edit',
+              builder: (context, state) => BudgetFormPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
             // The scan flow lives in the People branch for the same reason
             // finance and occasions do (research.md Decision 9): it is
             // reached from the quick actions and from People, not from a
@@ -270,3 +318,9 @@ final GoRouter appRouter = GoRouter(
 /// form, not fail.
 FinanceEntryType _financeEntryTypeFrom(String? value) =>
     value == 'income' ? FinanceEntryType.income : FinanceEntryType.expense;
+
+/// Resolves a `:month` path segment to a `'YYYY-MM'` budget month. A
+/// malformed segment falls back to the current month — a bad URL should
+/// open a usable budget screen, not throw inside a month parser.
+String _budgetMonthFrom(String? value) =>
+    value != null && BudgetMonth.isValid(value) ? value : BudgetMonth.current();

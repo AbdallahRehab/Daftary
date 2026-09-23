@@ -98,6 +98,126 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @budgetMonthNavPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get budgetMonthNavPrevious;
+
+  /// No description provided for @budgetMonthNavNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get budgetMonthNavNext;
+
+  /// No description provided for @budgetMonthNavCurrentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget month: {month}'**
+  String budgetMonthNavCurrentLabel(String month);
+
+  /// No description provided for @budgetCopyFromMonthAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy {month}\'s budget'**
+  String budgetCopyFromMonthAction(String month);
+
+  /// No description provided for @budgetCopyFromMonthMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from the plan you made for {month}. You can adjust it afterwards without changing {month}.'**
+  String budgetCopyFromMonthMessage(String month);
+
+  /// No description provided for @budgetCopyInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copying…'**
+  String get budgetCopyInProgress;
+
+  /// No description provided for @budgetCopySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget copied from {month}'**
+  String budgetCopySuccess(String month);
+
+  /// No description provided for @budgetCopyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t copy the budget. Please try again.'**
+  String get budgetCopyFailed;
+
+  /// No description provided for @budgetCopyAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'This month already has a budget.'**
+  String get budgetCopyAlreadyExists;
+
+  /// No description provided for @budgetTrendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending trends'**
+  String get budgetTrendTitle;
+
+  /// No description provided for @budgetTrendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned vs. actual, last 6 months'**
+  String get budgetTrendSubtitle;
+
+  /// No description provided for @budgetTrendOverall.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get budgetTrendOverall;
+
+  /// No description provided for @budgetTrendCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get budgetTrendCategoryLabel;
+
+  /// No description provided for @budgetTrendPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get budgetTrendPlanned;
+
+  /// No description provided for @budgetTrendActual.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual'**
+  String get budgetTrendActual;
+
+  /// No description provided for @budgetTrendOverPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Over plan'**
+  String get budgetTrendOverPlan;
+
+  /// No description provided for @budgetTrendNoBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget'**
+  String get budgetTrendNoBudget;
+
+  /// No description provided for @budgetTrendInsufficientTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough history yet'**
+  String get budgetTrendInsufficientTitle;
+
+  /// No description provided for @budgetTrendInsufficientMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Trends need a budget in at least 2 months. Keep budgeting and check back next month.'**
+  String get budgetTrendInsufficientMessage;
+
+  /// No description provided for @budgetTrendMonthSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}: planned {planned}, actual {actual}'**
+  String budgetTrendMonthSummary(String month, String planned, String actual);
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
@@ -2461,6 +2581,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Something went wrong while reading this scan.'**
   String get ocrScanDetailErrorMessage;
+
+  /// No description provided for @budgetsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets'**
+  String get budgetsTitle;
+
+  /// No description provided for @budgetsOverviewEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan this month\'s spending by category'**
+  String get budgetsOverviewEntrySubtitle;
+
+  /// No description provided for @budgetFormCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New budget'**
+  String get budgetFormCreateTitle;
+
+  /// No description provided for @budgetFormEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit budget'**
+  String get budgetFormEditTitle;
+
+  /// No description provided for @budgetFormMonthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get budgetFormMonthLabel;
+
+  /// No description provided for @budgetExpectedIncomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected income (optional)'**
+  String get budgetExpectedIncomeLabel;
+
+  /// No description provided for @budgetExpectedIncomeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'For reference only — it never changes how spending is tracked.'**
+  String get budgetExpectedIncomeHelp;
+
+  /// No description provided for @budgetAllocationsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned spending by category'**
+  String get budgetAllocationsHeader;
+
+  /// No description provided for @budgetAllocationsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet. Pick an expense category below to start planning.'**
+  String get budgetAllocationsEmpty;
+
+  /// No description provided for @budgetAddCategoryHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a category'**
+  String get budgetAddCategoryHeader;
+
+  /// No description provided for @budgetAllCategoriesAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Every active expense category is already in this budget.'**
+  String get budgetAllCategoriesAdded;
+
+  /// No description provided for @budgetPlannedAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned amount'**
+  String get budgetPlannedAmountLabel;
+
+  /// No description provided for @budgetRemoveAllocationAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from budget'**
+  String get budgetRemoveAllocationAction;
+
+  /// No description provided for @budgetAmountRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a planned amount (0 is allowed)'**
+  String get budgetAmountRequiredError;
+
+  /// No description provided for @budgetAmountInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount'**
+  String get budgetAmountInvalidError;
+
+  /// No description provided for @budgetAmountNegativeError.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount can\'t be negative'**
+  String get budgetAmountNegativeError;
+
+  /// No description provided for @budgetTotalPlannedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total planned'**
+  String get budgetTotalPlannedLabel;
+
+  /// No description provided for @budgetExceedsIncomeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned spending exceeds expected income by {amount}'**
+  String budgetExceedsIncomeWarning(String amount);
+
+  /// No description provided for @budgetExceedsIncomeSaveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'You can still save this budget.'**
+  String get budgetExceedsIncomeSaveNote;
+
+  /// No description provided for @budgetDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete budget'**
+  String get budgetDeleteAction;
+
+  /// No description provided for @budgetDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this budget?'**
+  String get budgetDeleteConfirmTitle;
+
+  /// No description provided for @budgetDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The plan for {month} will be removed. Your recorded expenses are not affected.'**
+  String budgetDeleteConfirmMessage(String month);
+
+  /// No description provided for @budgetDeletedConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget deleted'**
+  String get budgetDeletedConfirmation;
+
+  /// No description provided for @budgetAlreadyExistsError.
+  ///
+  /// In en, this message translates to:
+  /// **'This month already has a budget. Open it to make changes.'**
+  String get budgetAlreadyExistsError;
+
+  /// No description provided for @budgetDuplicateCategoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'This category is already in the budget.'**
+  String get budgetDuplicateCategoryError;
+
+  /// No description provided for @budgetNotFoundError.
+  ///
+  /// In en, this message translates to:
+  /// **'This budget no longer exists.'**
+  String get budgetNotFoundError;
+
+  /// No description provided for @budgetEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget for {month}'**
+  String budgetEmptyTitle(String month);
+
+  /// No description provided for @budgetEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan how much you intend to spend in each category, then track it against your real expenses.'**
+  String get budgetEmptyMessage;
+
+  /// No description provided for @budgetCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create budget'**
+  String get budgetCreateAction;
+
+  /// No description provided for @budgetLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this budget'**
+  String get budgetLoadErrorTitle;
+
+  /// No description provided for @budgetOverallTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get budgetOverallTitle;
+
+  /// No description provided for @budgetPlannedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get budgetPlannedLabel;
+
+  /// No description provided for @budgetActualLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get budgetActualLabel;
+
+  /// No description provided for @budgetRemainingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get budgetRemainingLabel;
+
+  /// No description provided for @budgetOverByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Over by'**
+  String get budgetOverByLabel;
+
+  /// No description provided for @budgetSpentOfPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'{actual} of {planned}'**
+  String budgetSpentOfPlanned(String actual, String planned);
+
+  /// No description provided for @budgetRemainingAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left'**
+  String budgetRemainingAmount(String amount);
+
+  /// No description provided for @budgetOverByAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} over'**
+  String budgetOverByAmount(String amount);
+
+  /// No description provided for @budgetPercentUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% used'**
+  String budgetPercentUsed(int percent);
+
+  /// No description provided for @budgetPercentNotApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned'**
+  String get budgetPercentNotApplicable;
+
+  /// No description provided for @budgetStatusOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get budgetStatusOnTrack;
+
+  /// No description provided for @budgetStatusNearFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Near limit'**
+  String get budgetStatusNearFull;
+
+  /// No description provided for @budgetStatusOverBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget'**
+  String get budgetStatusOverBudget;
+
+  /// No description provided for @budgetCategoryArchivedTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get budgetCategoryArchivedTag;
+
+  /// No description provided for @budgetCategoryMissingName.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted category'**
+  String get budgetCategoryMissingName;
+
+  /// No description provided for @budgetCategoriesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get budgetCategoriesHeader;
+
+  /// No description provided for @budgetNoAllocationsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This budget has no categories yet. Edit it to add planned amounts.'**
+  String get budgetNoAllocationsMessage;
+
+  /// No description provided for @budgetExpectedIncomeDisplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected income'**
+  String get budgetExpectedIncomeDisplay;
+
+  /// No description provided for @budgetUnbudgetedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unbudgeted spending'**
+  String get budgetUnbudgetedTitle;
+
+  /// No description provided for @budgetUnbudgetedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month in categories that aren\'t in your budget.'**
+  String get budgetUnbudgetedMessage;
+
+  /// No description provided for @budgetUnbudgetedTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total unbudgeted'**
+  String get budgetUnbudgetedTotalLabel;
 }
 
 class _AppLocalizationsDelegate

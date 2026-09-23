@@ -1,5 +1,66 @@
 {
   "@@locale": "ar",
+  "budgetMonthNavPrevious": "الشهر السابق",
+  "budgetMonthNavNext": "الشهر التالي",
+  "budgetMonthNavCurrentLabel": "شهر الميزانية: {month}",
+  "@budgetMonthNavCurrentLabel": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthAction": "نسخ ميزانية {month}",
+  "@budgetCopyFromMonthAction": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthMessage": "ابدأ من الخطة التي وضعتها لشهر {month}. يمكنك تعديلها لاحقًا دون تغيير ميزانية {month}.",
+  "@budgetCopyFromMonthMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyInProgress": "جارٍ النسخ…",
+  "budgetCopySuccess": "تم نسخ الميزانية من {month}",
+  "@budgetCopySuccess": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFailed": "تعذّر نسخ الميزانية. يرجى المحاولة مرة أخرى.",
+  "budgetCopyAlreadyExists": "يوجد بالفعل ميزانية لهذا الشهر.",
+  "budgetTrendTitle": "اتجاهات الإنفاق",
+  "budgetTrendSubtitle": "المخطط مقابل الفعلي، آخر 6 أشهر",
+  "budgetTrendOverall": "الإجمالي",
+  "budgetTrendCategoryLabel": "الفئة",
+  "budgetTrendPlanned": "المخطط",
+  "budgetTrendActual": "الفعلي",
+  "budgetTrendOverPlan": "تجاوز المخطط",
+  "budgetTrendNoBudget": "لا توجد ميزانية",
+  "budgetTrendInsufficientTitle": "لا يوجد سجل كافٍ بعد",
+  "budgetTrendInsufficientMessage": "تحتاج الاتجاهات إلى ميزانية لشهرين على الأقل. استمر في وضع ميزانيتك وعُد الشهر القادم.",
+  "budgetTrendMonthSummary": "{month}: المخطط {planned}، الفعلي {actual}",
+  "@budgetTrendMonthSummary": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      },
+      "actual": {
+        "type": "String"
+      }
+    }
+  },
   "appTitle": "دفتري",
   "commonSave": "حفظ",
   "commonCancel": "إلغاء",
@@ -595,5 +656,108 @@
         "type": "int"
       }
     }
-  }
+  },
+  "budgetsTitle": "الميزانيات",
+  "budgetsOverviewEntrySubtitle": "خطّط لمصروفات هذا الشهر حسب الفئة",
+  "budgetFormCreateTitle": "ميزانية جديدة",
+  "budgetFormEditTitle": "تعديل الميزانية",
+  "budgetFormMonthLabel": "الشهر",
+  "budgetExpectedIncomeLabel": "الدخل المتوقع (اختياري)",
+  "budgetExpectedIncomeHelp": "للرجوع إليه فقط — لا يغيّر طريقة متابعة المصروفات.",
+  "budgetAllocationsHeader": "المصروفات المخططة حسب الفئة",
+  "budgetAllocationsEmpty": "لا توجد فئات بعد. اختر فئة مصروفات بالأسفل لتبدأ التخطيط.",
+  "budgetAddCategoryHeader": "إضافة فئة",
+  "budgetAllCategoriesAdded": "كل فئات المصروفات النشطة موجودة بالفعل في هذه الميزانية.",
+  "budgetPlannedAmountLabel": "المبلغ المخطط",
+  "budgetRemoveAllocationAction": "إزالة من الميزانية",
+  "budgetAmountRequiredError": "أدخل المبلغ المخطط (يُسمح بالصفر)",
+  "budgetAmountInvalidError": "أدخل مبلغًا صحيحًا",
+  "budgetAmountNegativeError": "لا يمكن أن يكون المبلغ سالبًا",
+  "budgetTotalPlannedLabel": "إجمالي المخطط",
+  "budgetExceedsIncomeWarning": "المصروفات المخططة تتجاوز الدخل المتوقع بمقدار {amount}",
+  "@budgetExceedsIncomeWarning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceedsIncomeSaveNote": "لا يزال بإمكانك حفظ هذه الميزانية.",
+  "budgetDeleteAction": "حذف الميزانية",
+  "budgetDeleteConfirmTitle": "حذف هذه الميزانية؟",
+  "budgetDeleteConfirmMessage": "سيتم حذف خطة {month}. لن تتأثر مصروفاتك المسجلة.",
+  "@budgetDeleteConfirmMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetDeletedConfirmation": "تم حذف الميزانية",
+  "budgetAlreadyExistsError": "يوجد بالفعل ميزانية لهذا الشهر. افتحها لإجراء التعديلات.",
+  "budgetDuplicateCategoryError": "هذه الفئة موجودة بالفعل في الميزانية.",
+  "budgetNotFoundError": "هذه الميزانية لم تعد موجودة.",
+  "budgetEmptyTitle": "لا توجد ميزانية لشهر {month}",
+  "@budgetEmptyTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetEmptyMessage": "خطّط لما تنوي إنفاقه في كل فئة، ثم تابعه مقابل مصروفاتك الفعلية.",
+  "budgetCreateAction": "إنشاء ميزانية",
+  "budgetLoadErrorTitle": "تعذّر تحميل الميزانية",
+  "budgetOverallTitle": "الإجمالي",
+  "budgetPlannedLabel": "المخطط",
+  "budgetActualLabel": "المصروف",
+  "budgetRemainingLabel": "المتبقي",
+  "budgetOverByLabel": "تجاوز بمقدار",
+  "budgetSpentOfPlanned": "{actual} من {planned}",
+  "@budgetSpentOfPlanned": {
+    "placeholders": {
+      "actual": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetRemainingAmount": "متبقٍ {amount}",
+  "@budgetRemainingAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverByAmount": "تجاوز بمقدار {amount}",
+  "@budgetOverByAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPercentUsed": "مُستخدم {percent}٪",
+  "@budgetPercentUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetPercentNotApplicable": "لا يوجد مبلغ مخطط",
+  "budgetStatusOnTrack": "ضمن الخطة",
+  "budgetStatusNearFull": "يقترب من الحد",
+  "budgetStatusOverBudget": "تجاوز الميزانية",
+  "budgetCategoryArchivedTag": "مؤرشفة",
+  "budgetCategoryMissingName": "فئة محذوفة",
+  "budgetCategoriesHeader": "الفئات",
+  "budgetNoAllocationsMessage": "لا تحتوي هذه الميزانية على فئات بعد. عدّلها لإضافة المبالغ المخططة.",
+  "budgetExpectedIncomeDisplay": "الدخل المتوقع",
+  "budgetUnbudgetedTitle": "مصروفات خارج الميزانية",
+  "budgetUnbudgetedMessage": "ما أُنفق هذا الشهر في فئات غير مدرجة في ميزانيتك.",
+  "budgetUnbudgetedTotalLabel": "إجمالي خارج الميزانية"
 }

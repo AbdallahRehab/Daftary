@@ -162,7 +162,7 @@ void main() {
 
     expect(await db.select(db.ocrScans).get(), isEmpty);
     expect(await db.select(db.candidateEntries).get(), isEmpty);
-    expect(db.schemaVersion, 7);
+    expect(db.schemaVersion, greaterThanOrEqualTo(7));
   });
 
   test('an existing transaction survives the upgrade and reports itself as '
@@ -215,6 +215,6 @@ void main() {
 
     expect(await db.select(db.ocrScans).get(), isEmpty);
     expect(await db.select(db.candidateEntries).get(), isEmpty);
-    expect(db.schemaVersion, 7);
+    expect(db.schemaVersion, greaterThanOrEqualTo(7));
   });
 }

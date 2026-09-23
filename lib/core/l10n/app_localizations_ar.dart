@@ -9,6 +9,77 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get budgetMonthNavPrevious => 'الشهر السابق';
+
+  @override
+  String get budgetMonthNavNext => 'الشهر التالي';
+
+  @override
+  String budgetMonthNavCurrentLabel(String month) {
+    return 'شهر الميزانية: $month';
+  }
+
+  @override
+  String budgetCopyFromMonthAction(String month) {
+    return 'نسخ ميزانية $month';
+  }
+
+  @override
+  String budgetCopyFromMonthMessage(String month) {
+    return 'ابدأ من الخطة التي وضعتها لشهر $month. يمكنك تعديلها لاحقًا دون تغيير ميزانية $month.';
+  }
+
+  @override
+  String get budgetCopyInProgress => 'جارٍ النسخ…';
+
+  @override
+  String budgetCopySuccess(String month) {
+    return 'تم نسخ الميزانية من $month';
+  }
+
+  @override
+  String get budgetCopyFailed => 'تعذّر نسخ الميزانية. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get budgetCopyAlreadyExists => 'يوجد بالفعل ميزانية لهذا الشهر.';
+
+  @override
+  String get budgetTrendTitle => 'اتجاهات الإنفاق';
+
+  @override
+  String get budgetTrendSubtitle => 'المخطط مقابل الفعلي، آخر 6 أشهر';
+
+  @override
+  String get budgetTrendOverall => 'الإجمالي';
+
+  @override
+  String get budgetTrendCategoryLabel => 'الفئة';
+
+  @override
+  String get budgetTrendPlanned => 'المخطط';
+
+  @override
+  String get budgetTrendActual => 'الفعلي';
+
+  @override
+  String get budgetTrendOverPlan => 'تجاوز المخطط';
+
+  @override
+  String get budgetTrendNoBudget => 'لا توجد ميزانية';
+
+  @override
+  String get budgetTrendInsufficientTitle => 'لا يوجد سجل كافٍ بعد';
+
+  @override
+  String get budgetTrendInsufficientMessage =>
+      'تحتاج الاتجاهات إلى ميزانية لشهرين على الأقل. استمر في وضع ميزانيتك وعُد الشهر القادم.';
+
+  @override
+  String budgetTrendMonthSummary(String month, String planned, String actual) {
+    return '$month: المخطط $planned، الفعلي $actual';
+  }
+
+  @override
   String get appTitle => 'دفتري';
 
   @override
@@ -1289,4 +1360,181 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get ocrScanDetailErrorMessage =>
       'حدث خطأ أثناء قراءة عملية المسح هذه.';
+
+  @override
+  String get budgetsTitle => 'الميزانيات';
+
+  @override
+  String get budgetsOverviewEntrySubtitle =>
+      'خطّط لمصروفات هذا الشهر حسب الفئة';
+
+  @override
+  String get budgetFormCreateTitle => 'ميزانية جديدة';
+
+  @override
+  String get budgetFormEditTitle => 'تعديل الميزانية';
+
+  @override
+  String get budgetFormMonthLabel => 'الشهر';
+
+  @override
+  String get budgetExpectedIncomeLabel => 'الدخل المتوقع (اختياري)';
+
+  @override
+  String get budgetExpectedIncomeHelp =>
+      'للرجوع إليه فقط — لا يغيّر طريقة متابعة المصروفات.';
+
+  @override
+  String get budgetAllocationsHeader => 'المصروفات المخططة حسب الفئة';
+
+  @override
+  String get budgetAllocationsEmpty =>
+      'لا توجد فئات بعد. اختر فئة مصروفات بالأسفل لتبدأ التخطيط.';
+
+  @override
+  String get budgetAddCategoryHeader => 'إضافة فئة';
+
+  @override
+  String get budgetAllCategoriesAdded =>
+      'كل فئات المصروفات النشطة موجودة بالفعل في هذه الميزانية.';
+
+  @override
+  String get budgetPlannedAmountLabel => 'المبلغ المخطط';
+
+  @override
+  String get budgetRemoveAllocationAction => 'إزالة من الميزانية';
+
+  @override
+  String get budgetAmountRequiredError => 'أدخل المبلغ المخطط (يُسمح بالصفر)';
+
+  @override
+  String get budgetAmountInvalidError => 'أدخل مبلغًا صحيحًا';
+
+  @override
+  String get budgetAmountNegativeError => 'لا يمكن أن يكون المبلغ سالبًا';
+
+  @override
+  String get budgetTotalPlannedLabel => 'إجمالي المخطط';
+
+  @override
+  String budgetExceedsIncomeWarning(String amount) {
+    return 'المصروفات المخططة تتجاوز الدخل المتوقع بمقدار $amount';
+  }
+
+  @override
+  String get budgetExceedsIncomeSaveNote =>
+      'لا يزال بإمكانك حفظ هذه الميزانية.';
+
+  @override
+  String get budgetDeleteAction => 'حذف الميزانية';
+
+  @override
+  String get budgetDeleteConfirmTitle => 'حذف هذه الميزانية؟';
+
+  @override
+  String budgetDeleteConfirmMessage(String month) {
+    return 'سيتم حذف خطة $month. لن تتأثر مصروفاتك المسجلة.';
+  }
+
+  @override
+  String get budgetDeletedConfirmation => 'تم حذف الميزانية';
+
+  @override
+  String get budgetAlreadyExistsError =>
+      'يوجد بالفعل ميزانية لهذا الشهر. افتحها لإجراء التعديلات.';
+
+  @override
+  String get budgetDuplicateCategoryError =>
+      'هذه الفئة موجودة بالفعل في الميزانية.';
+
+  @override
+  String get budgetNotFoundError => 'هذه الميزانية لم تعد موجودة.';
+
+  @override
+  String budgetEmptyTitle(String month) {
+    return 'لا توجد ميزانية لشهر $month';
+  }
+
+  @override
+  String get budgetEmptyMessage =>
+      'خطّط لما تنوي إنفاقه في كل فئة، ثم تابعه مقابل مصروفاتك الفعلية.';
+
+  @override
+  String get budgetCreateAction => 'إنشاء ميزانية';
+
+  @override
+  String get budgetLoadErrorTitle => 'تعذّر تحميل الميزانية';
+
+  @override
+  String get budgetOverallTitle => 'الإجمالي';
+
+  @override
+  String get budgetPlannedLabel => 'المخطط';
+
+  @override
+  String get budgetActualLabel => 'المصروف';
+
+  @override
+  String get budgetRemainingLabel => 'المتبقي';
+
+  @override
+  String get budgetOverByLabel => 'تجاوز بمقدار';
+
+  @override
+  String budgetSpentOfPlanned(String actual, String planned) {
+    return '$actual من $planned';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return 'متبقٍ $amount';
+  }
+
+  @override
+  String budgetOverByAmount(String amount) {
+    return 'تجاوز بمقدار $amount';
+  }
+
+  @override
+  String budgetPercentUsed(int percent) {
+    return 'مُستخدم $percent٪';
+  }
+
+  @override
+  String get budgetPercentNotApplicable => 'لا يوجد مبلغ مخطط';
+
+  @override
+  String get budgetStatusOnTrack => 'ضمن الخطة';
+
+  @override
+  String get budgetStatusNearFull => 'يقترب من الحد';
+
+  @override
+  String get budgetStatusOverBudget => 'تجاوز الميزانية';
+
+  @override
+  String get budgetCategoryArchivedTag => 'مؤرشفة';
+
+  @override
+  String get budgetCategoryMissingName => 'فئة محذوفة';
+
+  @override
+  String get budgetCategoriesHeader => 'الفئات';
+
+  @override
+  String get budgetNoAllocationsMessage =>
+      'لا تحتوي هذه الميزانية على فئات بعد. عدّلها لإضافة المبالغ المخططة.';
+
+  @override
+  String get budgetExpectedIncomeDisplay => 'الدخل المتوقع';
+
+  @override
+  String get budgetUnbudgetedTitle => 'مصروفات خارج الميزانية';
+
+  @override
+  String get budgetUnbudgetedMessage =>
+      'ما أُنفق هذا الشهر في فئات غير مدرجة في ميزانيتك.';
+
+  @override
+  String get budgetUnbudgetedTotalLabel => 'إجمالي خارج الميزانية';
 }

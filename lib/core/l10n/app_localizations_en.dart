@@ -9,6 +9,77 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get budgetMonthNavPrevious => 'Previous month';
+
+  @override
+  String get budgetMonthNavNext => 'Next month';
+
+  @override
+  String budgetMonthNavCurrentLabel(String month) {
+    return 'Budget month: $month';
+  }
+
+  @override
+  String budgetCopyFromMonthAction(String month) {
+    return 'Copy $month\'s budget';
+  }
+
+  @override
+  String budgetCopyFromMonthMessage(String month) {
+    return 'Start from the plan you made for $month. You can adjust it afterwards without changing $month.';
+  }
+
+  @override
+  String get budgetCopyInProgress => 'Copying…';
+
+  @override
+  String budgetCopySuccess(String month) {
+    return 'Budget copied from $month';
+  }
+
+  @override
+  String get budgetCopyFailed => 'Couldn\'t copy the budget. Please try again.';
+
+  @override
+  String get budgetCopyAlreadyExists => 'This month already has a budget.';
+
+  @override
+  String get budgetTrendTitle => 'Spending trends';
+
+  @override
+  String get budgetTrendSubtitle => 'Planned vs. actual, last 6 months';
+
+  @override
+  String get budgetTrendOverall => 'Overall';
+
+  @override
+  String get budgetTrendCategoryLabel => 'Category';
+
+  @override
+  String get budgetTrendPlanned => 'Planned';
+
+  @override
+  String get budgetTrendActual => 'Actual';
+
+  @override
+  String get budgetTrendOverPlan => 'Over plan';
+
+  @override
+  String get budgetTrendNoBudget => 'No budget';
+
+  @override
+  String get budgetTrendInsufficientTitle => 'Not enough history yet';
+
+  @override
+  String get budgetTrendInsufficientMessage =>
+      'Trends need a budget in at least 2 months. Keep budgeting and check back next month.';
+
+  @override
+  String budgetTrendMonthSummary(String month, String planned, String actual) {
+    return '$month: planned $planned, actual $actual';
+  }
+
+  @override
   String get appTitle => 'Daftary';
 
   @override
@@ -1290,4 +1361,181 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ocrScanDetailErrorMessage =>
       'Something went wrong while reading this scan.';
+
+  @override
+  String get budgetsTitle => 'Budgets';
+
+  @override
+  String get budgetsOverviewEntrySubtitle =>
+      'Plan this month\'s spending by category';
+
+  @override
+  String get budgetFormCreateTitle => 'New budget';
+
+  @override
+  String get budgetFormEditTitle => 'Edit budget';
+
+  @override
+  String get budgetFormMonthLabel => 'Month';
+
+  @override
+  String get budgetExpectedIncomeLabel => 'Expected income (optional)';
+
+  @override
+  String get budgetExpectedIncomeHelp =>
+      'For reference only — it never changes how spending is tracked.';
+
+  @override
+  String get budgetAllocationsHeader => 'Planned spending by category';
+
+  @override
+  String get budgetAllocationsEmpty =>
+      'No categories yet. Pick an expense category below to start planning.';
+
+  @override
+  String get budgetAddCategoryHeader => 'Add a category';
+
+  @override
+  String get budgetAllCategoriesAdded =>
+      'Every active expense category is already in this budget.';
+
+  @override
+  String get budgetPlannedAmountLabel => 'Planned amount';
+
+  @override
+  String get budgetRemoveAllocationAction => 'Remove from budget';
+
+  @override
+  String get budgetAmountRequiredError =>
+      'Enter a planned amount (0 is allowed)';
+
+  @override
+  String get budgetAmountInvalidError => 'Enter a valid amount';
+
+  @override
+  String get budgetAmountNegativeError => 'The amount can\'t be negative';
+
+  @override
+  String get budgetTotalPlannedLabel => 'Total planned';
+
+  @override
+  String budgetExceedsIncomeWarning(String amount) {
+    return 'Planned spending exceeds expected income by $amount';
+  }
+
+  @override
+  String get budgetExceedsIncomeSaveNote => 'You can still save this budget.';
+
+  @override
+  String get budgetDeleteAction => 'Delete budget';
+
+  @override
+  String get budgetDeleteConfirmTitle => 'Delete this budget?';
+
+  @override
+  String budgetDeleteConfirmMessage(String month) {
+    return 'The plan for $month will be removed. Your recorded expenses are not affected.';
+  }
+
+  @override
+  String get budgetDeletedConfirmation => 'Budget deleted';
+
+  @override
+  String get budgetAlreadyExistsError =>
+      'This month already has a budget. Open it to make changes.';
+
+  @override
+  String get budgetDuplicateCategoryError =>
+      'This category is already in the budget.';
+
+  @override
+  String get budgetNotFoundError => 'This budget no longer exists.';
+
+  @override
+  String budgetEmptyTitle(String month) {
+    return 'No budget for $month';
+  }
+
+  @override
+  String get budgetEmptyMessage =>
+      'Plan how much you intend to spend in each category, then track it against your real expenses.';
+
+  @override
+  String get budgetCreateAction => 'Create budget';
+
+  @override
+  String get budgetLoadErrorTitle => 'Couldn\'t load this budget';
+
+  @override
+  String get budgetOverallTitle => 'Overall';
+
+  @override
+  String get budgetPlannedLabel => 'Planned';
+
+  @override
+  String get budgetActualLabel => 'Spent';
+
+  @override
+  String get budgetRemainingLabel => 'Remaining';
+
+  @override
+  String get budgetOverByLabel => 'Over by';
+
+  @override
+  String budgetSpentOfPlanned(String actual, String planned) {
+    return '$actual of $planned';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String budgetOverByAmount(String amount) {
+    return '$amount over';
+  }
+
+  @override
+  String budgetPercentUsed(int percent) {
+    return '$percent% used';
+  }
+
+  @override
+  String get budgetPercentNotApplicable => 'Nothing planned';
+
+  @override
+  String get budgetStatusOnTrack => 'On track';
+
+  @override
+  String get budgetStatusNearFull => 'Near limit';
+
+  @override
+  String get budgetStatusOverBudget => 'Over budget';
+
+  @override
+  String get budgetCategoryArchivedTag => 'Archived';
+
+  @override
+  String get budgetCategoryMissingName => 'Deleted category';
+
+  @override
+  String get budgetCategoriesHeader => 'Categories';
+
+  @override
+  String get budgetNoAllocationsMessage =>
+      'This budget has no categories yet. Edit it to add planned amounts.';
+
+  @override
+  String get budgetExpectedIncomeDisplay => 'Expected income';
+
+  @override
+  String get budgetUnbudgetedTitle => 'Unbudgeted spending';
+
+  @override
+  String get budgetUnbudgetedMessage =>
+      'Spent this month in categories that aren\'t in your budget.';
+
+  @override
+  String get budgetUnbudgetedTotalLabel => 'Total unbudgeted';
 }

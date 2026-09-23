@@ -8,6 +8,7 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../budgets/domain/entities/budget_month.dart';
 import '../../../finance/presentation/widgets/finance_month_summary_card.dart';
 import '../../domain/entities/overview_summary.dart';
 import '../cubit/overview_cubit.dart';
@@ -62,6 +63,7 @@ class _OverviewView extends StatelessWidget {
                   // month, so the finance link stays visible here.
                   const FinanceMonthSummaryCard(),
                   const SizedBox(height: AppSpacing.md),
+                  const _BudgetsEntryCard(),
                   // The occasions section's entry point, alongside finance's
                   // and for the same reason (008 research.md Decision 9): the
                   // section is reached from here rather than from a fourth
@@ -126,6 +128,7 @@ class _OverviewView extends StatelessWidget {
                 // OverviewCubit's existing behavior changes.
                 const FinanceMonthSummaryCard(),
                 const SizedBox(height: AppSpacing.md),
+                const _BudgetsEntryCard(),
                 // The occasions section's entry point, alongside finance's
                 // and for the same reason (008 research.md Decision 9): the
                 // section is reached from here rather than from a fourth
@@ -180,6 +183,28 @@ class _OverviewView extends StatelessWidget {
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// The budgets section's entry point (010 T026), beside finance's and for
+/// the same reason (research.md Decision 9): budgets are reached from here
+/// rather than from a fourth bottom-nav tab. Always opens the current
+/// month, which offers to create a budget when there is none (FR-018).
+class _BudgetsEntryCard extends StatelessWidget {
+  const _BudgetsEntryCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Card(
+      child: ListTile(
+        leading: const Icon(Icons.account_balance_wallet_outlined),
+        title: Text(l10n.budgetsTitle),
+        subtitle: Text(l10n.budgetsOverviewEntrySubtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => context.push('/budgets/${BudgetMonth.current()}'),
       ),
     );
   }

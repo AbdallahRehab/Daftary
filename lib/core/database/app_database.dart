@@ -291,6 +291,72 @@ class FinanceEntries extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// A user's spending plan for one calendar month (010). Carries planned
+/// figures only — every "actual" figure is derived at read time from 007's
+/// `FinanceEntries` through `FinanceRepository`, never stored here, and no
+/// 007 table gains a column for it (010 FR-022).
+@TableIndex(
+  name: 'idx_budgets_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+// Partial: a soft-deleted budget must not block re-creating one for the
+// same month (010 data-model.md Lifecycle).
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX idx_budgets_month ON budgets (month) '
+  'WHERE deleted_at IS NULL',
+)
+class Budgets extends Table {
+  TextColumn get id => text()();
+  TextColumn get idempotencyKey => text()();
+
+  /// `'YYYY-MM'` — at most one active budget per calendar month.
+  TextColumn get month => text()();
+
+  /// Optional reference figure (010 FR-003); never aggregated from income
+  /// entries.
+  IntColumn get expectedIncomeMinorUnits => integer().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One expense category's planned amount within a [Budgets] row (010).
+/// Removed by hard delete: it is plan data with no financial history of its
+/// own (010 research.md Decision 5).
+@TableIndex(
+  name: 'idx_budget_allocations_budget_category',
+  columns: {#budgetId, #categoryId},
+  unique: true,
+)
+@TableIndex(
+  name: 'idx_budget_allocations_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(name: 'idx_budget_allocations_budget_id', columns: {#budgetId})
+class BudgetCategoryAllocations extends Table {
+  TextColumn get id => text()();
+
+  /// What lets a retried "add allocation" return the row it already wrote
+  /// instead of tripping the `(budget_id, category_id)` duplicate guard —
+  /// without it a retry and a genuine duplicate would be indistinguishable.
+  TextColumn get idempotencyKey => text()();
+  TextColumn get budgetId => text().references(Budgets, #id)();
+  TextColumn get categoryId => text().references(FinanceCategories, #id)();
+
+  /// `>= 0`; zero is a valid plan (010 FR-002).
+  IntColumn get plannedAmountMinorUnits => integer()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The user's language preference. Single-row table (data-model.md): the
 /// app always reads/writes the fixed `id` `'singleton'` — there is never
 /// more than one row.
@@ -334,6 +400,8 @@ class OnboardingStatus extends Table {
     OccasionAttachments,
     OcrScans,
     CandidateEntries,
+    Budgets,
+    BudgetCategoryAllocations,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -342,7 +410,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -400,6 +468,19 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(moneyTransactions, moneyTransactions.source);
         await m.addColumn(moneyTransactions, moneyTransactions.ocrScanId);
         await m.createIndex(idxTransactionsOcrScanId);
+      }
+      if (from < 8) {
+        // Purely additive (010 FR-022): two new tables, no existing table
+        // touched. The indexes are created explicitly for the same reason
+        // as the 008/009 blocks above — here the UNIQUE ones are what
+        // enforce one budget per month and FR-017's idempotent saves.
+        await m.createTable(budgets);
+        await m.createTable(budgetCategoryAllocations);
+        await m.createIndex(idxBudgetsIdempotencyKey);
+        await m.createIndex(idxBudgetsMonth);
+        await m.createIndex(idxBudgetAllocationsBudgetCategory);
+        await m.createIndex(idxBudgetAllocationsIdempotencyKey);
+        await m.createIndex(idxBudgetAllocationsBudgetId);
       }
     },
     beforeOpen: (details) async {

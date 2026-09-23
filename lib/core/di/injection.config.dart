@@ -14,6 +14,35 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/budgets/data/datasources/budgets_dao.dart' as _i757;
+import '../../features/budgets/data/repositories/budgets_repository_impl.dart'
+    as _i249;
+import '../../features/budgets/domain/repositories/budgets_repository.dart'
+    as _i855;
+import '../../features/budgets/domain/usecases/add_budget_category_allocation.dart'
+    as _i552;
+import '../../features/budgets/domain/usecases/copy_budget_to_month.dart'
+    as _i809;
+import '../../features/budgets/domain/usecases/create_budget.dart' as _i251;
+import '../../features/budgets/domain/usecases/delete_budget.dart' as _i150;
+import '../../features/budgets/domain/usecases/edit_budget.dart' as _i755;
+import '../../features/budgets/domain/usecases/edit_budget_category_allocation.dart'
+    as _i934;
+import '../../features/budgets/domain/usecases/get_budget_for_month.dart'
+    as _i587;
+import '../../features/budgets/domain/usecases/get_budget_trend.dart' as _i438;
+import '../../features/budgets/domain/usecases/get_most_recent_budget_before.dart'
+    as _i654;
+import '../../features/budgets/domain/usecases/remove_budget_category_allocation.dart'
+    as _i316;
+import '../../features/budgets/presentation/cubit/budget_form_cubit.dart'
+    as _i720;
+import '../../features/budgets/presentation/cubit/budget_month_cubit.dart'
+    as _i1031;
+import '../../features/budgets/presentation/cubit/budget_trend_cubit.dart'
+    as _i178;
+import '../../features/budgets/presentation/cubit/copy_budget_cubit.dart'
+    as _i28;
 import '../../features/finance/data/datasources/finance_dao.dart' as _i443;
 import '../../features/finance/data/repositories/category_repository_impl.dart'
     as _i816;
@@ -244,6 +273,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i235.ImagePreparationService>(),
         gh<_i176.TextRecognitionService>(),
       ),
+    );
+    gh.factory<_i757.BudgetsDao>(
+      () => _i757.BudgetsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i443.FinanceDao>(
       () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
@@ -480,6 +512,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i46.ChangeThemeMode>(),
       ),
     );
+    gh.lazySingleton<_i855.BudgetsRepository>(
+      () => _i249.BudgetsRepositoryImpl(
+        gh<_i757.BudgetsDao>(),
+        gh<_i137.FinanceRepository>(),
+        gh<_i228.CategoryRepository>(),
+      ),
+    );
     gh.factory<_i505.FinanceEntryFormCubit>(
       () => _i505.FinanceEntryFormCubit(
         gh<_i159.AddFinanceEntry>(),
@@ -543,6 +582,36 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i646.PeopleRepository>(),
       ),
     );
+    gh.factory<_i552.AddBudgetCategoryAllocation>(
+      () => _i552.AddBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i809.CopyBudgetToMonth>(
+      () => _i809.CopyBudgetToMonth(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i251.CreateBudget>(
+      () => _i251.CreateBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i150.DeleteBudget>(
+      () => _i150.DeleteBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i755.EditBudget>(
+      () => _i755.EditBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i934.EditBudgetCategoryAllocation>(
+      () => _i934.EditBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i587.GetBudgetForMonth>(
+      () => _i587.GetBudgetForMonth(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i438.GetBudgetTrend>(
+      () => _i438.GetBudgetTrend(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i654.GetMostRecentBudgetBefore>(
+      () => _i654.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i316.RemoveBudgetCategoryAllocation>(
+      () => _i316.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
     gh.factory<_i305.OverviewCubit>(
       () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
     );
@@ -550,6 +619,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i185.ArchivedOccasionsCubit(
         gh<_i957.GetOccasionsList>(),
         gh<_i154.RestoreOccasion>(),
+      ),
+    );
+    gh.factory<_i178.BudgetTrendCubit>(
+      () => _i178.BudgetTrendCubit(
+        gh<_i438.GetBudgetTrend>(),
+        gh<_i1.GetCategories>(),
       ),
     );
     gh.factory<_i1030.CategoryFormCubit>(
@@ -609,6 +684,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i193.OccasionsListCubit>(
       () => _i193.OccasionsListCubit(gh<_i957.GetOccasionsList>()),
     );
+    gh.factory<_i28.CopyBudgetCubit>(
+      () => _i28.CopyBudgetCubit(
+        gh<_i654.GetMostRecentBudgetBefore>(),
+        gh<_i809.CopyBudgetToMonth>(),
+      ),
+    );
     gh.factory<_i621.ScanReviewCubit>(
       () => _i621.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
@@ -620,6 +701,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1011.SetBatchDefaultDirection>(),
         gh<_i237.TagBatchToOccasion>(),
         gh<_i20.GetPossibleDuplicateForCandidate>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i1031.BudgetMonthCubit>(
+      () => _i1031.BudgetMonthCubit(gh<_i587.GetBudgetForMonth>()),
+    );
+    gh.factory<_i720.BudgetFormCubit>(
+      () => _i720.BudgetFormCubit(
+        gh<_i587.GetBudgetForMonth>(),
+        gh<_i251.CreateBudget>(),
+        gh<_i755.EditBudget>(),
+        gh<_i150.DeleteBudget>(),
+        gh<_i552.AddBudgetCategoryAllocation>(),
+        gh<_i934.EditBudgetCategoryAllocation>(),
+        gh<_i316.RemoveBudgetCategoryAllocation>(),
+        gh<_i1.GetCategories>(),
         gh<_i999.EgpFormatter>(),
       ),
     );

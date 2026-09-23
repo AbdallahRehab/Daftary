@@ -58,7 +58,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(currentBrightness(tester), Brightness.dark);
 
-      // Still Dark after navigating to People and Overview — no restart,
+      // Still Dark after navigating to People and Home — no restart,
       // no per-screen flash of Light.
       await tester.tap(
         find.descendant(
@@ -72,7 +72,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byType(NavigationBar),
-          matching: find.text(en.overviewTitle),
+          matching: find.text(en.homeTitle),
         ),
       );
       await tester.pumpAndSettle();

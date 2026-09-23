@@ -2887,6 +2887,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total unbudgeted'**
   String get budgetUnbudgetedTotalLabel;
+
+  /// No description provided for @homeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeTitle;
+
+  /// No description provided for @homeFinancialSnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial snapshot'**
+  String get homeFinancialSnapshotTitle;
+
+  /// No description provided for @homeFinanceThisMonthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get homeFinanceThisMonthTitle;
+
+  /// No description provided for @homeFinanceIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get homeFinanceIncome;
+
+  /// No description provided for @homeFinanceExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get homeFinanceExpenses;
+
+  /// No description provided for @homeFinanceNet.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get homeFinanceNet;
+
+  /// No description provided for @homeQuickActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get homeQuickActionsTitle;
+
+  /// No description provided for @homeQuickAddExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get homeQuickAddExpense;
+
+  /// No description provided for @homeQuickAddIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Add income'**
+  String get homeQuickAddIncome;
+
+  /// No description provided for @homeQuickAddPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Add person'**
+  String get homeQuickAddPerson;
+
+  /// No description provided for @homeQuickMoneyReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Money received'**
+  String get homeQuickMoneyReceived;
+
+  /// No description provided for @homeQuickMoneyGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Money given'**
+  String get homeQuickMoneyGiven;
+
+  /// No description provided for @homeQuickAddOccasion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add occasion'**
+  String get homeQuickAddOccasion;
+
+  /// No description provided for @homeQuickScanPaper.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan paper'**
+  String get homeQuickScanPaper;
+
+  /// No description provided for @homeSectionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get homeSectionsTitle;
+
+  /// No description provided for @homeInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get homeInsightsTitle;
+
+  /// No description provided for @homeInsightsPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights will appear here once the AI Assistant is set up.'**
+  String get homeInsightsPlaceholder;
+
+  /// No description provided for @homeUpcomingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get homeUpcomingTitle;
+
+  /// No description provided for @homeUpcomingPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.'**
+  String get homeUpcomingPlaceholder;
+
+  /// No description provided for @homeOverviewLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your balances.'**
+  String get homeOverviewLoadError;
+
+  /// No description provided for @homeFinanceLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this month\'s income and expenses.'**
+  String get homeFinanceLoadError;
+
+  /// No description provided for @homeFullErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your dashboard couldn\'t be loaded. Please try again.'**
+  String get homeFullErrorMessage;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Daftary'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep track of who owes you, what you owe, and where your money goes each month — all on your device.'**
+  String get homeEmptyMessage;
+
+  /// No description provided for @homeEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first person'**
+  String get homeEmptyAction;
 }
 
 class _AppLocalizationsDelegate

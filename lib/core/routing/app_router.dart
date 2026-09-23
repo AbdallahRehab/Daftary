@@ -8,6 +8,7 @@ import '../../features/budgets/domain/entities/budget_month.dart';
 import '../../features/budgets/presentation/pages/budget_form_page.dart';
 import '../../features/budgets/presentation/pages/budget_month_page.dart';
 import '../../features/budgets/presentation/pages/budget_trend_page.dart';
+import '../../features/dashboard/presentation/pages/home_page.dart';
 import '../../features/finance/domain/entities/finance_entry_type.dart';
 import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
@@ -28,7 +29,7 @@ import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
 import '../../features/people/presentation/pages/person_form_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
-import '../../features/transactions/presentation/pages/overview_page.dart';
+import '../../features/transactions/domain/entities/money_transaction.dart';
 import '../../features/transactions/presentation/pages/person_detail_page.dart';
 import '../../features/transactions/presentation/pages/repayment_form_page.dart';
 import '../../features/transactions/presentation/pages/transaction_edit_page.dart';
@@ -109,6 +110,9 @@ final GoRouter appRouter = GoRouter(
               path: '/transactions/new',
               builder: (context, state) => TransactionFormPage(
                 personId: state.uri.queryParameters['personId'],
+                initialDirection: _transactionDirectionFrom(
+                  state.uri.queryParameters['direction'],
+                ),
               ),
             ),
             GoRoute(
@@ -294,7 +298,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/overview',
-              builder: (context, state) => const OverviewPage(),
+              builder: (context, state) => const HomePage(),
             ),
           ],
         ),
@@ -318,6 +322,16 @@ final GoRouter appRouter = GoRouter(
 /// form, not fail.
 FinanceEntryType _financeEntryTypeFrom(String? value) =>
     value == 'income' ? FinanceEntryType.income : FinanceEntryType.expense;
+
+/// Resolves a `direction` query parameter (e.g. from a Home quick action,
+/// 012) to a preset [TransactionDirection]. Anything unrecognized yields
+/// `null`, leaving the form on its own default.
+TransactionDirection? _transactionDirectionFrom(String? value) =>
+    switch (value) {
+      'given' => TransactionDirection.given,
+      'received' => TransactionDirection.received,
+      _ => null,
+    };
 
 /// Resolves a `:month` path segment to a `'YYYY-MM'` budget month. A
 /// malformed segment falls back to the current month — a bad URL should

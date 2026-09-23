@@ -43,6 +43,10 @@ import '../../features/budgets/presentation/cubit/budget_trend_cubit.dart'
     as _i178;
 import '../../features/budgets/presentation/cubit/copy_budget_cubit.dart'
     as _i28;
+import '../../features/dashboard/domain/usecases/get_dashboard_snapshot.dart'
+    as _i719;
+import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart'
+    as _i25;
 import '../../features/finance/data/datasources/finance_dao.dart' as _i443;
 import '../../features/finance/data/repositories/category_repository_impl.dart'
     as _i816;
@@ -79,8 +83,6 @@ import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
     as _i505;
 import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
     as _i987;
-import '../../features/finance/presentation/cubit/finance_month_summary_cubit.dart'
-    as _i231;
 import '../../features/occasions/data/datasources/occasions_dao.dart' as _i791;
 import '../../features/occasions/data/repositories/occasions_repository_impl.dart'
     as _i454;
@@ -211,8 +213,6 @@ import '../../features/transactions/domain/usecases/get_person_history.dart'
     as _i610;
 import '../../features/transactions/domain/usecases/record_repayment.dart'
     as _i426;
-import '../../features/transactions/presentation/cubit/overview_cubit.dart'
-    as _i305;
 import '../../features/transactions/presentation/cubit/person_detail_cubit.dart'
     as _i992;
 import '../../features/transactions/presentation/cubit/repayment_form_cubit.dart'
@@ -464,6 +464,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i430.OnboardingRepository>(),
       ),
     );
+    gh.factory<_i719.GetDashboardSnapshot>(
+      () => _i719.GetDashboardSnapshot(
+        gh<_i941.GetOverview>(),
+        gh<_i844.GetFinanceSummary>(),
+        gh<_i27.GetFinanceHistory>(),
+      ),
+    );
     gh.factory<_i247.AddOccasionAttachment>(
       () => _i247.AddOccasionAttachment(gh<_i72.OccasionsRepository>()),
     );
@@ -500,9 +507,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i154.RestoreOccasion>(
       () => _i154.RestoreOccasion(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i231.FinanceMonthSummaryCubit>(
-      () => _i231.FinanceMonthSummaryCubit(gh<_i844.GetFinanceSummary>()),
-    );
     gh.lazySingleton<_i793.SettingsCubit>(
       () => _i793.SettingsCubit(
         gh<_i1032.GetLanguagePreference>(),
@@ -517,6 +521,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i757.BudgetsDao>(),
         gh<_i137.FinanceRepository>(),
         gh<_i228.CategoryRepository>(),
+      ),
+    );
+    gh.factory<_i25.DashboardCubit>(
+      () => _i25.DashboardCubit(
+        gh<_i719.GetDashboardSnapshot>(),
+        gh<_i941.GetOverview>(),
+        gh<_i844.GetFinanceSummary>(),
       ),
     );
     gh.factory<_i505.FinanceEntryFormCubit>(
@@ -611,9 +622,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i316.RemoveBudgetCategoryAllocation>(
       () => _i316.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i305.OverviewCubit>(
-      () => _i305.OverviewCubit(gh<_i941.GetOverview>()),
     );
     gh.factory<_i185.ArchivedOccasionsCubit>(
       () => _i185.ArchivedOccasionsCubit(

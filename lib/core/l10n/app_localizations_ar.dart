@@ -1537,4 +1537,83 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get budgetUnbudgetedTotalLabel => 'إجمالي خارج الميزانية';
+
+  @override
+  String get homeTitle => 'الرئيسية';
+
+  @override
+  String get homeFinancialSnapshotTitle => 'لمحة مالية';
+
+  @override
+  String get homeFinanceThisMonthTitle => 'هذا الشهر';
+
+  @override
+  String get homeFinanceIncome => 'الدخل';
+
+  @override
+  String get homeFinanceExpenses => 'المصروفات';
+
+  @override
+  String get homeFinanceNet => 'الصافي';
+
+  @override
+  String get homeQuickActionsTitle => 'إجراءات سريعة';
+
+  @override
+  String get homeQuickAddExpense => 'إضافة مصروف';
+
+  @override
+  String get homeQuickAddIncome => 'إضافة دخل';
+
+  @override
+  String get homeQuickAddPerson => 'إضافة شخص';
+
+  @override
+  String get homeQuickMoneyReceived => 'مبلغ استلمته';
+
+  @override
+  String get homeQuickMoneyGiven => 'مبلغ أعطيته';
+
+  @override
+  String get homeQuickAddOccasion => 'إضافة مناسبة';
+
+  @override
+  String get homeQuickScanPaper => 'مسح ورقة';
+
+  @override
+  String get homeSectionsTitle => 'الأقسام';
+
+  @override
+  String get homeInsightsTitle => 'رؤى';
+
+  @override
+  String get homeInsightsPlaceholder =>
+      'ستظهر الرؤى هنا بعد إعداد المساعد الذكي.';
+
+  @override
+  String get homeUpcomingTitle => 'القادم';
+
+  @override
+  String get homeUpcomingPlaceholder =>
+      'ستظهر هنا الفواتير القادمة ومحطات أهداف الادخار بعد توفر التذكيرات وأهداف الادخار.';
+
+  @override
+  String get homeOverviewLoadError => 'تعذر تحميل الأرصدة.';
+
+  @override
+  String get homeFinanceLoadError => 'تعذر تحميل دخل ومصروفات هذا الشهر.';
+
+  @override
+  String get homeFullErrorMessage =>
+      'تعذر تحميل لوحتك الرئيسية. حاول مرة أخرى.';
+
+  @override
+  String get homeEmptyTitle => 'مرحبًا بك في دفتري';
+
+  @override
+  String get homeEmptyMessage =>
+      'تابع من عليه مال لك، وما عليك، وأين تذهب أموالك كل شهر — وكل ذلك على جهازك.';
+
+  @override
+  String get homeEmptyAction => 'أضف أول شخص';
 }

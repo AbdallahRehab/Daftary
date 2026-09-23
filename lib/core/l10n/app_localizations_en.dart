@@ -1538,4 +1538,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get budgetUnbudgetedTotalLabel => 'Total unbudgeted';
+
+  @override
+  String get homeTitle => 'Home';
+
+  @override
+  String get homeFinancialSnapshotTitle => 'Financial snapshot';
+
+  @override
+  String get homeFinanceThisMonthTitle => 'This month';
+
+  @override
+  String get homeFinanceIncome => 'Income';
+
+  @override
+  String get homeFinanceExpenses => 'Expenses';
+
+  @override
+  String get homeFinanceNet => 'Net';
+
+  @override
+  String get homeQuickActionsTitle => 'Quick actions';
+
+  @override
+  String get homeQuickAddExpense => 'Add expense';
+
+  @override
+  String get homeQuickAddIncome => 'Add income';
+
+  @override
+  String get homeQuickAddPerson => 'Add person';
+
+  @override
+  String get homeQuickMoneyReceived => 'Money received';
+
+  @override
+  String get homeQuickMoneyGiven => 'Money given';
+
+  @override
+  String get homeQuickAddOccasion => 'Add occasion';
+
+  @override
+  String get homeQuickScanPaper => 'Scan paper';
+
+  @override
+  String get homeSectionsTitle => 'Sections';
+
+  @override
+  String get homeInsightsTitle => 'Insights';
+
+  @override
+  String get homeInsightsPlaceholder =>
+      'Insights will appear here once the AI Assistant is set up.';
+
+  @override
+  String get homeUpcomingTitle => 'Upcoming';
+
+  @override
+  String get homeUpcomingPlaceholder =>
+      'Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.';
+
+  @override
+  String get homeOverviewLoadError => 'Couldn\'t load your balances.';
+
+  @override
+  String get homeFinanceLoadError =>
+      'Couldn\'t load this month\'s income and expenses.';
+
+  @override
+  String get homeFullErrorMessage =>
+      'Your dashboard couldn\'t be loaded. Please try again.';
+
+  @override
+  String get homeEmptyTitle => 'Welcome to Daftary';
+
+  @override
+  String get homeEmptyMessage =>
+      'Keep track of who owes you, what you owe, and where your money goes each month — all on your device.';
+
+  @override
+  String get homeEmptyAction => 'Add your first person';
 }

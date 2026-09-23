@@ -37,7 +37,7 @@ class MainShell extends StatelessWidget {
           NavigationDestination(
             icon: const Icon(Icons.pie_chart_outline),
             selectedIcon: const Icon(Icons.pie_chart),
-            label: l10n.overviewTitle,
+            label: l10n.homeTitle,
           ),
           NavigationDestination(
             icon: const Icon(Icons.settings_outlined),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -20,7 +21,8 @@ class RepaymentFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<RepaymentFormCubit>(param1: personId),
+      create: (_) =>
+          getIt<RepaymentFormCubit>(param1: personId)..loadDefaultCurrency(),
       child: const _RepaymentFormView(),
     );
   }
@@ -68,6 +70,12 @@ class _RepaymentFormView extends StatelessWidget {
                       ? l10n.amountInvalidError
                       : null,
                   onChanged: cubit.amountChanged,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                CurrencyPicker(
+                  key: ValueKey(state.currency),
+                  value: state.currency,
+                  onChanged: cubit.currencyChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppDateField(

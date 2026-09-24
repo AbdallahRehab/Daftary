@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/money/currency.dart';
+
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
@@ -13,6 +15,7 @@ class PersonDetailState extends Equatable {
     this.person,
     this.balance,
     this.history = const [],
+    this.primaryCurrency = Currency.egp,
     this.errorMessage,
   });
 
@@ -22,6 +25,10 @@ class PersonDetailState extends Equatable {
 
   /// Chronological (oldest first) — mirrors `GetPersonHistory` (FR-010).
   final List<MoneyTransaction> history;
+
+  /// The current primary currency (018): history rows in any other
+  /// currency show a `CurrencyIndicatorChip` (FR-010).
+  final Currency primaryCurrency;
   final String? errorMessage;
 
   bool get isLoading => status == PersonDetailStatus.loading;
@@ -31,6 +38,7 @@ class PersonDetailState extends Equatable {
     Person? person,
     PersonBalance? balance,
     List<MoneyTransaction>? history,
+    Currency? primaryCurrency,
     String? errorMessage,
   }) {
     return PersonDetailState(
@@ -38,10 +46,18 @@ class PersonDetailState extends Equatable {
       person: person ?? this.person,
       balance: balance ?? this.balance,
       history: history ?? this.history,
+      primaryCurrency: primaryCurrency ?? this.primaryCurrency,
       errorMessage: errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [status, person, balance, history, errorMessage];
+  List<Object?> get props => [
+    status,
+    person,
+    balance,
+    history,
+    primaryCurrency,
+    errorMessage,
+  ];
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/date/app_date_formatter.dart';
+import '../../../../core/design_system/currency_indicator_chip.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/money/currency.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../domain/entities/money_transaction.dart';
 
@@ -10,15 +12,21 @@ import '../../domain/entities/money_transaction.dart';
 /// date, note, and an "edited" marker when `editedAt != null` (FR-010,
 /// FR-015). A repayment renders visibly distinct from a regular exchange
 /// (User Story 3, Acceptance Scenario 1).
+///
+/// 018: the amount always renders in the record's own currency (FR-010);
+/// a record whose currency differs from [primaryCurrency] also gets a
+/// [CurrencyIndicatorChip], so an EGP-only history looks exactly as before.
 class TransactionListTile extends StatelessWidget {
   const TransactionListTile({
     required this.transaction,
     super.key,
     this.onTap,
     this.onDelete,
+    this.primaryCurrency = Currency.egp,
   });
 
   final MoneyTransaction transaction;
+  final Currency primaryCurrency;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
@@ -86,6 +94,10 @@ class TransactionListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (transaction.amount.currency != primaryCurrency) ...[
+            CurrencyIndicatorChip(currency: transaction.amount.currency),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           Text(
             formatter.formatWithSymbol(transaction.amount),
             style: AppTypography.body.copyWith(

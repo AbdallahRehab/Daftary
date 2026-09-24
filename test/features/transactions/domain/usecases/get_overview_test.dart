@@ -21,19 +21,19 @@ void main() {
   test('delegates to the repository, including archived people with a non-zero '
       'balance in the totals/groupings (FR-024, Clarifications)', () async {
     const summary = OverviewSummary(
-      totalOwedToUser: Money.fromMinorUnits(150000),
-      totalUserOwes: Money.fromMinorUnits(20000),
+      totalOwedToUser: Money.egp(150000),
+      totalUserOwes: Money.egp(20000),
       peopleTheyOweYou: [
         PersonSummary(
           personId: 'p1',
           name: 'Ahmed',
-          net: Money.fromMinorUnits(150000),
+          net: Money.egp(150000),
           isArchived: false,
         ),
         PersonSummary(
           personId: 'p2',
           name: 'Old Contact',
-          net: Money.fromMinorUnits(0), // never reached; see below
+          net: Money.egp(0), // never reached; see below
           isArchived: true,
         ),
       ],
@@ -41,7 +41,7 @@ void main() {
         PersonSummary(
           personId: 'p3',
           name: 'Sara',
-          net: Money.fromMinorUnits(-20000),
+          net: Money.egp(-20000),
           isArchived: false,
         ),
       ],
@@ -54,8 +54,8 @@ void main() {
     final result = await getOverview();
 
     final overview = result.getOrElse((_) => throw StateError('x'));
-    expect(overview.totalOwedToUser, const Money.fromMinorUnits(150000));
-    expect(overview.totalUserOwes, const Money.fromMinorUnits(20000));
+    expect(overview.totalOwedToUser, const Money.egp(150000));
+    expect(overview.totalUserOwes, const Money.egp(20000));
     expect(
       overview.peopleTheyOweYou.any((p) => p.personId == 'p2' && p.isArchived),
       isTrue,
@@ -66,8 +66,8 @@ void main() {
     'settledCount counts people with a zero net; isAllSettled reflects empty groupings',
     () {
       const allSettled = OverviewSummary(
-        totalOwedToUser: Money.fromMinorUnits(0),
-        totalUserOwes: Money.fromMinorUnits(0),
+        totalOwedToUser: Money.egp(0),
+        totalUserOwes: Money.egp(0),
         peopleTheyOweYou: [],
         peopleYouOweThem: [],
         settledCount: 3,
@@ -75,13 +75,13 @@ void main() {
       expect(allSettled.isAllSettled, isTrue);
 
       const notSettled = OverviewSummary(
-        totalOwedToUser: Money.fromMinorUnits(1),
-        totalUserOwes: Money.fromMinorUnits(0),
+        totalOwedToUser: Money.egp(1),
+        totalUserOwes: Money.egp(0),
         peopleTheyOweYou: [
           PersonSummary(
             personId: 'p1',
             name: 'Ahmed',
-            net: Money.fromMinorUnits(1),
+            net: Money.egp(1),
             isArchived: false,
           ),
         ],

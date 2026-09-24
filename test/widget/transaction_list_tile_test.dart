@@ -1,3 +1,4 @@
+import 'package:daftary/core/design_system/currency_indicator_chip.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/money/money.dart';
@@ -12,7 +13,7 @@ void main() {
       id: 't1',
       idempotencyKey: 'k1',
       personId: 'p1',
-      amount: const Money.fromMinorUnits(1000),
+      amount: const Money.egp(1000),
       direction: direction,
       kind: TransactionKind.initialExchange,
       date: DateTime(2026, 1, 1),
@@ -65,4 +66,55 @@ void main() {
       );
     });
   }
+
+  group('currency indicator (018 FR-010)', () {
+    Widget tile(Money amount, {Currency primary = Currency.egp}) => MaterialApp(
+      theme: buildLightTheme(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: TransactionListTile(
+          primaryCurrency: primary,
+          transaction: MoneyTransaction(
+            id: 't1',
+            idempotencyKey: 'k1',
+            personId: 'p1',
+            amount: amount,
+            direction: TransactionDirection.given,
+            kind: TransactionKind.initialExchange,
+            date: DateTime(2026, 1, 1),
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('a primary-currency record shows no chip (EGP-only UI '
+        'unchanged)', (tester) async {
+      await tester.pumpWidget(tile(const Money.egp(1000)));
+
+      expect(find.byType(CurrencyIndicatorChip), findsNothing);
+      expect(find.text('10.00 EGP'), findsOneWidget);
+    });
+
+    testWidgets('a non-primary record shows its own currency chip and '
+        'amount', (tester) async {
+      await tester.pumpWidget(
+        tile(const Money.fromMinorUnits(1050, Currency.usd)),
+      );
+
+      expect(find.byKey(const Key('currency_chip_USD')), findsOneWidget);
+      expect(find.text('10.50 USD'), findsOneWidget);
+    });
+
+    testWidgets('an EGP record under a USD primary shows the EGP chip', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        tile(const Money.egp(1000), primary: Currency.usd),
+      );
+
+      expect(find.byKey(const Key('currency_chip_EGP')), findsOneWidget);
+    });
+  });
 }

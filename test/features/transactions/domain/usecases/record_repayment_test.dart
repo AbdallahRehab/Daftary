@@ -29,7 +29,7 @@ void main() {
         id: 't1',
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(50000),
+        amount: const Money.egp(50000),
         direction: TransactionDirection.received,
         kind: TransactionKind.repayment,
         date: date,
@@ -39,7 +39,7 @@ void main() {
         () => repository.recordRepayment(
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(50000),
+          amount: const Money.egp(50000),
           date: date,
           note: null,
         ),
@@ -48,7 +48,7 @@ void main() {
       final result = await recordRepayment(
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(50000),
+        amount: const Money.egp(50000),
         date: date,
       );
 

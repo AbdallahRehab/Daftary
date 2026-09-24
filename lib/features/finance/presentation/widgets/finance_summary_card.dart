@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../domain/entities/finance_summary.dart';
 
 /// Total income, total expenses, and net for the selected period (FR-014).
@@ -12,6 +14,11 @@ import '../../domain/entities/finance_summary.dart';
 /// so the income/expense distinction (FR-005) survives a theme switch —
 /// and the net reads in the *negative* role whenever the period overspent,
 /// which is the number the user most needs to not misread.
+///
+/// 018: totals are in the primary currency. When a contributing currency has
+/// no exchange rate the summary is blocked, and the card shows a
+/// [RateNeededBanner] naming the missing currencies instead of any figure —
+/// never a partial or 1:1-converted total (FR-009).
 class FinanceSummaryCard extends StatelessWidget {
   const FinanceSummaryCard({required this.summary, super.key});
 
@@ -24,7 +31,18 @@ class FinanceSummaryCard extends StatelessWidget {
     final formatter = EgpFormatter(
       locale: Localizations.localeOf(context).languageCode,
     );
+    final totalIncome = summary.totalIncome;
+    final totalExpense = summary.totalExpense;
     final net = summary.net;
+    if (summary.isBlocked ||
+        totalIncome == null ||
+        totalExpense == null ||
+        net == null) {
+      return RateNeededBanner(
+        missingRatesFor: summary.missingRatesFor,
+        onSetRate: () => context.push('/settings/currency/rates'),
+      );
+    }
     final netColor = net.isNegative
         ? financeColors.negative
         : net.isZero
@@ -40,14 +58,14 @@ class FinanceSummaryCard extends StatelessWidget {
               Expanded(
                 child: _SummaryFigure(
                   label: l10n.financeSummaryTotalIncome,
-                  value: formatter.formatWithSymbol(summary.totalIncome),
+                  value: formatter.formatWithSymbol(totalIncome),
                   color: financeColors.positive,
                 ),
               ),
               Expanded(
                 child: _SummaryFigure(
                   label: l10n.financeSummaryTotalExpense,
-                  value: formatter.formatWithSymbol(summary.totalExpense),
+                  value: formatter.formatWithSymbol(totalExpense),
                   color: financeColors.negative,
                 ),
               ),

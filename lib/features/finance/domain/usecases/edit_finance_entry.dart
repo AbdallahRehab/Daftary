@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/money/money.dart';
 import '../entities/finance_entry.dart';
 import '../repositories/finance_repository.dart';
 
@@ -19,14 +20,14 @@ class EditFinanceEntry {
   Future<Either<Failure, FinanceEntry>> call({
     required String entryId,
     required String categoryId,
-    required int amountMinorUnits,
+    required Money amount,
     required DateTime date,
     String? note,
   }) {
     return _repository.editEntry(
       entryId: entryId,
       categoryId: categoryId,
-      amountMinorUnits: amountMinorUnits,
+      amount: amount,
       date: date,
       note: note,
     );

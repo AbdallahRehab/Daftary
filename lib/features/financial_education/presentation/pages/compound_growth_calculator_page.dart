@@ -44,7 +44,7 @@ class _CompoundGrowthCalculatorView extends StatelessWidget {
       locale: Localizations.localeOf(context).languageCode,
     );
     String money(int minorUnits) =>
-        formatter.formatWithSymbol(Money.fromMinorUnits(minorUnits));
+        formatter.formatWithSymbol(Money.egp(minorUnits));
 
     return EducationPageScaffold(
       title: l10n.finEduCalcCompoundTitle,

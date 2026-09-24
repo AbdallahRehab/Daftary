@@ -24,7 +24,7 @@ void main() {
     id: 't1',
     idempotencyKey: 'key-1',
     personId: 'p1',
-    amount: const Money.fromMinorUnits(200000),
+    amount: const Money.egp(200000),
     direction: TransactionDirection.received,
     kind: TransactionKind.initialExchange,
     date: date,
@@ -38,7 +38,7 @@ void main() {
         () => repository.addTransaction(
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(200000),
+          amount: const Money.egp(200000),
           direction: TransactionDirection.received,
           date: date,
           note: null,
@@ -48,7 +48,7 @@ void main() {
       final result = await addTransaction(
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(200000),
+        amount: const Money.egp(200000),
         direction: TransactionDirection.received,
         date: date,
       );
@@ -64,7 +64,7 @@ void main() {
         () => repository.addTransaction(
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(0),
+          amount: const Money.egp(0),
           direction: TransactionDirection.given,
           date: date,
           note: null,
@@ -78,7 +78,7 @@ void main() {
       final result = await addTransaction(
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(0),
+        amount: const Money.egp(0),
         direction: TransactionDirection.given,
         date: date,
       );
@@ -99,7 +99,7 @@ void main() {
         () => repository.addTransaction(
           idempotencyKey: 'key-1',
           personId: '',
-          amount: const Money.fromMinorUnits(1000),
+          amount: const Money.egp(1000),
           direction: TransactionDirection.given,
           date: date,
           note: null,
@@ -113,7 +113,7 @@ void main() {
       final result = await addTransaction(
         idempotencyKey: 'key-1',
         personId: '',
-        amount: const Money.fromMinorUnits(1000),
+        amount: const Money.egp(1000),
         direction: TransactionDirection.given,
         date: date,
       );
@@ -134,7 +134,7 @@ void main() {
         () => repository.addTransaction(
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(200000),
+          amount: const Money.egp(200000),
           direction: TransactionDirection.received,
           date: date,
           note: null,
@@ -144,14 +144,14 @@ void main() {
       final first = await addTransaction(
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(200000),
+        amount: const Money.egp(200000),
         direction: TransactionDirection.received,
         date: date,
       );
       final retried = await addTransaction(
         idempotencyKey: 'key-1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(200000),
+        amount: const Money.egp(200000),
         direction: TransactionDirection.received,
         date: date,
       );
@@ -161,7 +161,7 @@ void main() {
         () => repository.addTransaction(
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(200000),
+          amount: const Money.egp(200000),
           direction: TransactionDirection.received,
           date: date,
           note: null,

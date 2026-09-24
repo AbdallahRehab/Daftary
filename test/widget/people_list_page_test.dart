@@ -105,13 +105,58 @@ void main() {
       (invocation) async => Right(
         PersonBalance(
           personId: invocation.positionalArguments.first as String,
-          net: const Money.fromMinorUnits(0),
+          net: const Money.egp(0),
         ),
       ),
     );
   });
 
   tearDown(() => getIt.reset());
+
+  testWidgets(
+    'a balance blocked on a missing rate shows its native amount and a '
+    'compact rate-needed label instead of crashing (018 FR-009)',
+    (tester) async {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      ).thenAnswer((_) async => Right([ahmed, sara]));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance.blocked(
+            personId: 'p1',
+            nativeNets: [Money.fromMinorUnits(2500, Currency.usd)],
+            missingRatesFor: [Currency.usd],
+          ),
+        ),
+      );
+      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance.blocked(
+            personId: 'p2',
+            nativeNets: [
+              Money.egp(1000),
+              Money.fromMinorUnits(-300, Currency.eur),
+            ],
+            missingRatesFor: [Currency.eur],
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(_wrap());
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('25.00 USD'), findsOneWidget);
+      expect(find.text('10.00 EGP + 3.00 EUR'), findsOneWidget);
+      expect(
+        find.byKey(const Key('person_rate_needed_label')),
+        findsNWidgets(2),
+      );
+    },
+  );
 
   testWidgets(
     'reloads the active list after returning from the archived-list push '

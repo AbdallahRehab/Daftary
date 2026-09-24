@@ -1735,6 +1735,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'That savings goal no longer exists.'**
   String get notificationSavingsGoalNoLongerExists;
+
+  /// No description provided for @currencyFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currencyFieldLabel;
+
+  /// No description provided for @currencyPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a currency'**
+  String get currencyPickerTitle;
+
+  /// No description provided for @rateNeededTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total unavailable — exchange rate needed'**
+  String get rateNeededTitle;
+
+  /// No description provided for @rateNeededMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an exchange rate for {currencies} to see this total. Your records are safe and unchanged.'**
+  String rateNeededMessage(String currencies);
+
+  /// No description provided for @rateNeededAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Set exchange rate'**
+  String get rateNeededAction;
+
+  /// No description provided for @currencySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currencySettingsTitle;
+
+  /// No description provided for @currencySettingsEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary currency and exchange rates'**
+  String get currencySettingsEntrySubtitle;
+
+  /// No description provided for @primaryCurrencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary currency'**
+  String get primaryCurrencyLabel;
+
+  /// No description provided for @primaryCurrencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'All totals and balances are shown in this currency.'**
+  String get primaryCurrencyDescription;
+
+  /// No description provided for @primaryCurrencyChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get primaryCurrencyChange;
+
+  /// No description provided for @primaryCurrencyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary currency updated'**
+  String get primaryCurrencyChanged;
+
+  /// No description provided for @primaryCurrencySwitchRateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate needed'**
+  String get primaryCurrencySwitchRateTitle;
+
+  /// No description provided for @primaryCurrencySwitchRateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have records in {previous}. Enter how many {next} one {previous} is worth so your totals stay correct.'**
+  String primaryCurrencySwitchRateMessage(String previous, String next);
+
+  /// No description provided for @exchangeRatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rates'**
+  String get exchangeRatesTitle;
+
+  /// No description provided for @exchangeRatesManualDisclosure.
+  ///
+  /// In en, this message translates to:
+  /// **'Rates are entered by you and never fetched automatically. Update them whenever you like.'**
+  String get exchangeRatesManualDisclosure;
+
+  /// No description provided for @exchangeRatesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No exchange rates yet'**
+  String get exchangeRatesEmpty;
+
+  /// No description provided for @exchangeRateAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add rate'**
+  String get exchangeRateAdd;
+
+  /// No description provided for @exchangeRateEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate'**
+  String get exchangeRateEditTitle;
+
+  /// No description provided for @exchangeRateValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'1 {from} equals ({to})'**
+  String exchangeRateValueLabel(String from, String to);
+
+  /// No description provided for @exchangeRateLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {date}'**
+  String exchangeRateLastUpdated(String date);
+
+  /// No description provided for @exchangeRateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a rate greater than zero'**
+  String get exchangeRateInvalid;
+
+  /// No description provided for @exchangeRateSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get exchangeRateSave;
+
+  /// No description provided for @exchangeRateRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove rate'**
+  String get exchangeRateRemove;
+
+  /// No description provided for @exchangeRateRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals that need this rate will be unavailable until you add it again. Your records won\'t change.'**
+  String get exchangeRateRemoveConfirm;
+
+  /// No description provided for @exchangeRateSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the exchange rate. Please try again.'**
+  String get exchangeRateSaveFailed;
+
+  /// No description provided for @currencySettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your currency settings.'**
+  String get currencySettingsLoadFailed;
+
+  /// No description provided for @primaryCurrencyChangeFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t change the primary currency. Please try again.'**
+  String get primaryCurrencyChangeFailed;
 }
 
 class _AppLocalizationsDelegate

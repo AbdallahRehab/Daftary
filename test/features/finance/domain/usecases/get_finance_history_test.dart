@@ -117,7 +117,7 @@ void main() {
         idempotencyKey: key,
         categoryId: categoryId,
         type: type,
-        amountMinorUnits: amount,
+        amount: Money.egp(amount),
         date: date,
       );
       expect(result.isRight(), isTrue, reason: 'failed to seed $key');
@@ -169,7 +169,7 @@ void main() {
           ),
         )).toNullable()!;
         expect(combined.map((e) => e.idempotencyKey), ['match']);
-        expect(combined.single.amount, const Money.fromMinorUnits(4575));
+        expect(combined.single.amount, const Money.egp(4575));
       },
     );
 

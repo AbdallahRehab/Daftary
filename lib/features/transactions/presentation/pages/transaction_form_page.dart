@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -45,8 +46,13 @@ class TransactionFormPage extends StatelessWidget {
         final person = editingPerson;
         if (transaction != null && person != null) {
           cubit.loadForEdit(transaction, person);
-        } else if (personId != null) {
-          unawaited(cubit.initializeWithPerson(personId!));
+        } else {
+          // New records default to the primary currency (018 FR-003);
+          // edits keep the record's own currency (set by loadForEdit).
+          unawaited(cubit.loadDefaultCurrency());
+          if (personId != null) {
+            unawaited(cubit.initializeWithPerson(personId!));
+          }
         }
         return cubit;
       },
@@ -182,6 +188,15 @@ class _TransactionFormView extends StatelessWidget {
                       ? l10n.amountInvalidError
                       : state.amountErrorMessage,
                   onChanged: cubit.amountChanged,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                CurrencyPicker(
+                  // Keyed by value: the underlying form field only reads
+                  // its initial value once, so a late-arriving primary-
+                  // currency default must rebuild it.
+                  key: ValueKey(state.currency),
+                  value: state.currency,
+                  onChanged: cubit.currencyChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppDateField(

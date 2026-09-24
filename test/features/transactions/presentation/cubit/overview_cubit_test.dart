@@ -22,13 +22,13 @@ void main() {
   OverviewCubit buildCubit() => OverviewCubit(GetOverview(repository));
 
   const withBalances = OverviewSummary(
-    totalOwedToUser: Money.fromMinorUnits(150000),
-    totalUserOwes: Money.fromMinorUnits(0),
+    totalOwedToUser: Money.egp(150000),
+    totalUserOwes: Money.egp(0),
     peopleTheyOweYou: [
       PersonSummary(
         personId: 'p1',
         name: 'Ahmed',
-        net: Money.fromMinorUnits(150000),
+        net: Money.egp(150000),
         isArchived: false,
       ),
     ],
@@ -37,8 +37,8 @@ void main() {
   );
 
   const allSettled = OverviewSummary(
-    totalOwedToUser: Money.fromMinorUnits(0),
-    totalUserOwes: Money.fromMinorUnits(0),
+    totalOwedToUser: Money.egp(0),
+    totalUserOwes: Money.egp(0),
     peopleTheyOweYou: [],
     peopleYouOweThem: [],
     settledCount: 2,
@@ -64,7 +64,7 @@ void main() {
           .having(
             (s) => s.summary?.totalOwedToUser,
             'summary.totalOwedToUser',
-            const Money.fromMinorUnits(150000),
+            const Money.egp(150000),
           )
           .having((s) => s.isAllSettled, 'isAllSettled', isFalse),
     ],
@@ -100,6 +100,43 @@ void main() {
     verify: (cubit) {
       expect(cubit.state.status, OverviewStatus.success);
       expect(cubit.state.isAllSettled, isTrue);
+    },
+  );
+
+  blocTest<OverviewCubit, OverviewState>(
+    'a blocked overview (missing rate) loads successfully, naming the '
+    'currency, and is not "all settled" (018 FR-009)',
+    build: buildCubit,
+    setUp: () {
+      when(() => repository.getOverview()).thenAnswer(
+        (_) async => const Right(
+          OverviewSummary(
+            totalOwedToUser: null,
+            totalUserOwes: Money.egp(0),
+            peopleTheyOweYou: [
+              PersonSummary(
+                personId: 'p1',
+                name: 'Ahmed',
+                net: null,
+                isArchived: false,
+                nativeNets: [Money.fromMinorUnits(500, Currency.usd)],
+                missingRatesFor: [Currency.usd],
+              ),
+            ],
+            peopleYouOweThem: [],
+            settledCount: 0,
+            missingRatesFor: [Currency.usd],
+          ),
+        ),
+      );
+    },
+    act: (cubit) => cubit.load(),
+    verify: (cubit) {
+      expect(cubit.state.status, OverviewStatus.success);
+      expect(cubit.state.isAllSettled, isFalse);
+      expect(cubit.state.summary!.isBlocked, isTrue);
+      expect(cubit.state.summary!.missingRatesFor, [Currency.usd]);
+      expect(cubit.state.summary!.totalOwedToUser, isNull);
     },
   );
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/date/app_date_formatter.dart';
+import '../../../../core/design_system/currency_indicator_chip.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../../core/money/money.dart';
 import '../../domain/entities/finance_entry.dart';
 import 'category_icon_registry.dart';
 
@@ -19,6 +21,7 @@ class FinanceEntryListTile extends StatelessWidget {
     required this.entry,
     required this.categoryName,
     required this.categoryIconKey,
+    this.primaryCurrency = Currency.egp,
     super.key,
     this.onTap,
     this.onEdit,
@@ -31,6 +34,11 @@ class FinanceEntryListTile extends StatelessWidget {
   /// has to look a category up itself while scrolling.
   final String categoryName;
   final String categoryIconKey;
+
+  /// The user's primary currency (018 FR-005). An entry in any other
+  /// currency carries a [CurrencyIndicatorChip] next to its amount
+  /// (FR-010); primary-currency rows render exactly as before 018.
+  final Currency primaryCurrency;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -106,6 +114,10 @@ class FinanceEntryListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (entry.amount.currency != primaryCurrency) ...[
+            CurrencyIndicatorChip(currency: entry.amount.currency),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           Text(
             isIncome ? '+$amountLabel' : '-$amountLabel',
             style: AppTypography.body.copyWith(

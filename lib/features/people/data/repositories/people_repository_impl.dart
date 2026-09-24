@@ -5,7 +5,10 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/balance_queries.dart';
 import '../../../../core/error/failure.dart';
+import '../../../currency/domain/entities/conversion_context.dart';
+import '../../../currency/domain/usecases/get_conversion_context.dart';
 import '../../../transactions/domain/entities/person_balance.dart';
+import '../../../transactions/domain/services/person_balance_calculator.dart';
 import '../../domain/entities/people_failures.dart';
 import '../../domain/entities/person.dart';
 import '../../domain/repositories/people_repository.dart';
@@ -15,12 +18,23 @@ import '../models/person_mapper.dart';
 
 @LazySingleton(as: PeopleRepository)
 class PeopleRepositoryImpl implements PeopleRepository {
-  PeopleRepositoryImpl(this._dao, this._findPossibleDuplicatePerson, this._db);
+  /// [getConversionContext] supplies the primary currency + rates used to
+  /// derive each person's status for [searchActivePeople]'s status filter
+  /// (018). Always injected in the app; when omitted (single-currency tests
+  /// only) the EGP-only context is used.
+  PeopleRepositoryImpl(
+    this._dao,
+    this._findPossibleDuplicatePerson,
+    this._db, {
+    GetConversionContext? getConversionContext,
+  }) : _getConversionContext = getConversionContext;
 
   final PeopleDao _dao;
   final FindPossibleDuplicatePerson _findPossibleDuplicatePerson;
   final AppDatabase _db;
+  final GetConversionContext? _getConversionContext;
   static const _uuid = Uuid();
+  static const _calculator = PersonBalanceCalculator();
 
   @override
   Future<Either<Failure, Person>> createPerson({
@@ -43,7 +57,7 @@ class PeopleRepositoryImpl implements PeopleRepository {
       if (matches.isNotEmpty) {
         return Left(PossibleDuplicateFailure(matches));
       }
-      return _insertPerson(
+      return await _insertPerson(
         name: trimmedName,
         phoneNumber: phoneNumber,
         avatarPath: avatarPath,
@@ -68,7 +82,7 @@ class PeopleRepositoryImpl implements PeopleRepository {
       return const Left(ValidationFailure('Name is required'));
     }
     try {
-      return _insertPerson(
+      return await _insertPerson(
         name: trimmedName,
         phoneNumber: phoneNumber,
         avatarPath: avatarPath,
@@ -187,15 +201,25 @@ class PeopleRepositoryImpl implements PeopleRepository {
       final rows = await _dao.searchActivePeople(nameQuery: nameQuery);
       var people = rows.map((row) => row.toDomain()).toList();
       if (statusFilter != null) {
-        final balances = await _db.netBalanceMinorUnitsForAllPeople();
+        final getContext = _getConversionContext;
+        final contextResult = getContext == null
+            ? const Right<Failure, ConversionContext>(ConversionContext.egpOnly)
+            : await getContext();
+        if (contextResult case Left(:final value)) return Left(value);
+        final context = contextResult.getOrElse(
+          (_) => ConversionContext.egpOnly,
+        );
+        final balances = await _db.netBalanceMinorUnitsByCurrencyForAllPeople();
+        // A blocked balance whose currencies point in opposite directions
+        // has a `null` status and so matches no status filter — it still
+        // appears under "All".
         people = people.where((person) {
-          final net = balances[person.id] ?? 0;
-          final status = net > 0
-              ? RelationshipStatus.theyOweYou
-              : net < 0
-              ? RelationshipStatus.youOweThem
-              : RelationshipStatus.settled;
-          return status == statusFilter;
+          final balance = _calculator.calculate(
+            personId: person.id,
+            nativeNetsByCode: balances[person.id] ?? const {},
+            context: context,
+          );
+          return balance.status == statusFilter;
         }).toList();
       }
       return Right(people);

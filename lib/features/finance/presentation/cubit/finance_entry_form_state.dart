@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/money/currency.dart';
+
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry.dart';
 import '../../domain/entities/finance_entry_type.dart';
@@ -19,6 +21,7 @@ class FinanceEntryFormState extends Equatable {
     this.categories = const [],
     this.isLoadingCategories = false,
     this.selectedCategoryId,
+    this.currency = Currency.egp,
     DateTime? date,
     this.amountInput = '',
     this.note,
@@ -48,6 +51,12 @@ class FinanceEntryFormState extends Equatable {
   final List<Category> categories;
   final bool isLoadingCategories;
   final String? selectedCategoryId;
+
+  /// The currency the amount is entered in (018 FR-001/FR-003). A new entry
+  /// starts on the primary currency, loaded by the cubit — `EGP` here is
+  /// only the pre-load placeholder. Edit mode starts on the entry's own
+  /// currency.
+  final Currency currency;
   final DateTime date;
   final String amountInput;
   final String? note;
@@ -82,6 +91,7 @@ class FinanceEntryFormState extends Equatable {
     bool? isLoadingCategories,
     String? selectedCategoryId,
     bool clearSelectedCategory = false,
+    Currency? currency,
     DateTime? date,
     String? amountInput,
     String? note,
@@ -105,6 +115,7 @@ class FinanceEntryFormState extends Equatable {
       selectedCategoryId: clearSelectedCategory
           ? null
           : (selectedCategoryId ?? this.selectedCategoryId),
+      currency: currency ?? this.currency,
       date: date ?? this.date,
       amountInput: amountInput ?? this.amountInput,
       note: note ?? this.note,
@@ -132,6 +143,7 @@ class FinanceEntryFormState extends Equatable {
     categories,
     isLoadingCategories,
     selectedCategoryId,
+    currency,
     date,
     amountInput,
     note,

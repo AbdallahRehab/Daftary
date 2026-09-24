@@ -8,21 +8,53 @@ import '../../../../core/database/app_database.dart' as db;
 import '../../../../core/database/balance_queries.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
+import '../../../currency/domain/entities/conversion_context.dart';
+import '../../../currency/domain/usecases/get_conversion_context.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/overview_summary.dart';
 import '../../domain/entities/person_balance.dart';
 import '../../domain/entities/transaction_audit_entry.dart';
 import '../../domain/repositories/transactions_repository.dart';
+import '../../domain/services/person_balance_calculator.dart';
 import '../datasources/transactions_dao.dart';
 import '../models/transaction_mapper.dart';
 
 @LazySingleton(as: TransactionsRepository)
 class TransactionsRepositoryImpl implements TransactionsRepository {
-  TransactionsRepositoryImpl(this._dao, this._db);
+  /// [getConversionContext] supplies the primary currency + exchange rates
+  /// every balance/overview aggregate converts into (018). It is always
+  /// injected in the app; when omitted (single-currency tests only) the
+  /// EGP-only context is used, under which any non-EGP amount is reported
+  /// as blocked — never converted at 1:1.
+  TransactionsRepositoryImpl(
+    this._dao,
+    this._db, {
+    GetConversionContext? getConversionContext,
+  }) : _getConversionContext = getConversionContext;
 
   final TransactionsDao _dao;
   final db.AppDatabase _db;
+  final GetConversionContext? _getConversionContext;
   static const _uuid = Uuid();
+  static const _calculator = PersonBalanceCalculator();
+
+  Future<Either<Failure, ConversionContext>> _conversionContext() async {
+    final getContext = _getConversionContext;
+    if (getContext == null) return const Right(ConversionContext.egpOnly);
+    return getContext();
+  }
+
+  Future<PersonBalance> _balanceFor(
+    String personId,
+    ConversionContext context,
+  ) async {
+    final nativeNets = await _dao.netBalanceMinorUnitsByCurrency(personId);
+    return _calculator.calculate(
+      personId: personId,
+      nativeNetsByCode: nativeNets,
+      context: context,
+    );
+  }
 
   @override
   Future<Either<Failure, MoneyTransaction>> addTransaction({
@@ -41,6 +73,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         idempotencyKey: idempotencyKey,
         personId: personId,
         amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
         direction: direction.dbValue,
         kind: TransactionKind.initialExchange.dbValue,
         date: _dateOnlyMillis(date),
@@ -65,28 +98,33 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   }) async {
     final validation = _validateAmountAndPerson(amount, personId);
     if (validation != null) return Left(validation);
-    try {
-      final currentNet = await _dao.netBalanceMinorUnits(personId);
-      final direction = currentNet > 0
-          ? TransactionDirection.received
-          : TransactionDirection.given;
-      final companion = db.MoneyTransactionsCompanion.insert(
-        id: _uuid.v4(),
-        idempotencyKey: idempotencyKey,
-        personId: personId,
-        amountMinorUnits: amount.minorUnits,
-        direction: direction.dbValue,
-        kind: TransactionKind.repayment.dbValue,
-        date: _dateOnlyMillis(date),
-        note: db.Value(note),
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-      );
-      final row = await _dao.insertTransactionIdempotent(companion);
-      await _writeCreatedAuditEntry(row.id);
-      return Right(row.toDomain());
-    } catch (e) {
-      return Left(CacheFailure('Failed to record repayment: $e'));
-    }
+    final contextResult = await _conversionContext();
+    return contextResult.fold(left, (context) async {
+      try {
+        final direction = await _repaymentDirection(
+          personId,
+          amount.currency,
+          context,
+        );
+        final companion = db.MoneyTransactionsCompanion.insert(
+          id: _uuid.v4(),
+          idempotencyKey: idempotencyKey,
+          personId: personId,
+          amountMinorUnits: amount.minorUnits,
+          currencyCode: db.Value(amount.currency.code),
+          direction: direction.dbValue,
+          kind: TransactionKind.repayment.dbValue,
+          date: _dateOnlyMillis(date),
+          note: db.Value(note),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+        );
+        final row = await _dao.insertTransactionIdempotent(companion);
+        await _writeCreatedAuditEntry(row.id);
+        return Right(row.toDomain());
+      } catch (e) {
+        return Left(CacheFailure('Failed to record repayment: $e'));
+      }
+    });
   }
 
   @override
@@ -107,6 +145,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       }
       final previousValuesJson = jsonEncode({
         'amountMinorUnits': existing.amountMinorUnits,
+        'currencyCode': existing.currencyCode,
         'direction': existing.direction,
         'date': existing.date,
         'note': existing.note,
@@ -114,6 +153,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       final now = DateTime.now();
       final companion = db.MoneyTransactionsCompanion(
         amountMinorUnits: db.Value(amount.minorUnits),
+        currencyCode: db.Value(amount.currency.code),
         direction: db.Value(direction.dbValue),
         date: db.Value(_dateOnlyMillis(date)),
         note: db.Value(note),
@@ -144,6 +184,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       }
       final previousValuesJson = jsonEncode({
         'amountMinorUnits': existing.amountMinorUnits,
+        'currencyCode': existing.currencyCode,
         'direction': existing.direction,
         'date': existing.date,
         'note': existing.note,
@@ -181,73 +222,129 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   Future<Either<Failure, PersonBalance>> getPersonBalance(
     String personId,
   ) async {
-    try {
-      final net = await _dao.netBalanceMinorUnits(personId);
-      return Right(
-        PersonBalance(personId: personId, net: Money.fromMinorUnits(net)),
-      );
-    } catch (e) {
-      return Left(CacheFailure('Failed to compute balance: $e'));
-    }
+    final context = await _conversionContext();
+    return context.fold(left, (context) async {
+      try {
+        return Right(await _balanceFor(personId, context));
+      } catch (e) {
+        return Left(CacheFailure('Failed to compute balance: $e'));
+      }
+    });
   }
 
   @override
   Future<Either<Failure, OverviewSummary>> getOverview() async {
-    try {
-      final balances = await _dao.netBalanceMinorUnitsForAllPeople();
-      final lastActivity = await _db.lastActivityMillisForAllPeople();
-      final peopleRows = await _db.select(_db.people).get();
-
-      final theyOweYou = <PersonSummary>[];
-      final youOweThem = <PersonSummary>[];
-      var settledCount = 0;
-      var totalOwed = 0;
-      var totalOwes = 0;
-
-      for (final row in peopleRows) {
-        final net = balances[row.id] ?? 0;
-        if (net > 0) {
-          totalOwed += net;
-          theyOweYou.add(
-            PersonSummary(
-              personId: row.id,
-              name: row.name,
-              net: Money.fromMinorUnits(net),
-              isArchived: row.isArchived,
-            ),
-          );
-        } else if (net < 0) {
-          totalOwes += -net;
-          youOweThem.add(
-            PersonSummary(
-              personId: row.id,
-              name: row.name,
-              net: Money.fromMinorUnits(net),
-              isArchived: row.isArchived,
-            ),
-          );
-        } else {
-          settledCount++;
-        }
+    final context = await _conversionContext();
+    return context.fold(left, (context) async {
+      try {
+        return Right(await _computeOverview(context));
+      } catch (e) {
+        return Left(CacheFailure('Failed to compute overview: $e'));
       }
+    });
+  }
 
-      int activityOf(PersonSummary summary) =>
-          lastActivity[summary.personId] ?? 0;
-      theyOweYou.sort((a, b) => activityOf(b).compareTo(activityOf(a)));
-      youOweThem.sort((a, b) => activityOf(b).compareTo(activityOf(a)));
+  Future<OverviewSummary> _computeOverview(ConversionContext context) async {
+    final balances = await _dao.netBalanceMinorUnitsByCurrencyForAllPeople();
+    final lastActivity = await _db.lastActivityMillisForAllPeople();
+    final peopleRows = await _db.select(_db.people).get();
 
-      return Right(
-        OverviewSummary(
-          totalOwedToUser: Money.fromMinorUnits(totalOwed),
-          totalUserOwes: Money.fromMinorUnits(totalOwes),
-          peopleTheyOweYou: theyOweYou,
-          peopleYouOweThem: youOweThem,
-          settledCount: settledCount,
-        ),
+    final theyOweYou = <PersonSummary>[];
+    final youOweThem = <PersonSummary>[];
+    final rateNeeded = <PersonSummary>[];
+    final missing = <Currency>[];
+    var settledCount = 0;
+    var totalOwed = 0;
+    var totalOwes = 0;
+    var owedBlocked = false;
+    var owesBlocked = false;
+
+    for (final row in peopleRows) {
+      final balance = _calculator.calculate(
+        personId: row.id,
+        nativeNetsByCode: balances[row.id] ?? const {},
+        context: context,
       );
-    } catch (e) {
-      return Left(CacheFailure('Failed to compute overview: $e'));
+      final summary = PersonSummary(
+        personId: row.id,
+        name: row.name,
+        net: balance.net,
+        isArchived: row.isArchived,
+        nativeNets: balance.nativeNets,
+        missingRatesFor: balance.missingRatesFor,
+      );
+      for (final currency in balance.missingRatesFor) {
+        if (!missing.contains(currency)) missing.add(currency);
+      }
+      final net = balance.net;
+      switch (balance.status) {
+        case RelationshipStatus.theyOweYou:
+          if (net == null) {
+            owedBlocked = true;
+          } else {
+            totalOwed += net.minorUnits;
+          }
+          theyOweYou.add(summary);
+        case RelationshipStatus.youOweThem:
+          if (net == null) {
+            owesBlocked = true;
+          } else {
+            totalOwes += -net.minorUnits;
+          }
+          youOweThem.add(summary);
+        case RelationshipStatus.settled:
+          settledCount++;
+        case null:
+          // Opposite-direction per-currency nets with a missing rate: the
+          // direction itself is unknown, so both totals are incomplete.
+          owedBlocked = true;
+          owesBlocked = true;
+          rateNeeded.add(summary);
+      }
     }
+
+    int activityOf(PersonSummary summary) =>
+        lastActivity[summary.personId] ?? 0;
+    theyOweYou.sort((a, b) => activityOf(b).compareTo(activityOf(a)));
+    youOweThem.sort((a, b) => activityOf(b).compareTo(activityOf(a)));
+    rateNeeded.sort((a, b) => activityOf(b).compareTo(activityOf(a)));
+
+    return OverviewSummary(
+      totalOwedToUser: owedBlocked
+          ? null
+          : Money.fromMinorUnits(totalOwed, context.primary),
+      totalUserOwes: owesBlocked
+          ? null
+          : Money.fromMinorUnits(totalOwes, context.primary),
+      peopleTheyOweYou: theyOweYou,
+      peopleYouOweThem: youOweThem,
+      peopleRateNeeded: rateNeeded,
+      settledCount: settledCount,
+      missingRatesFor: missing,
+    );
+  }
+
+  /// A repayment settles (part of) the current balance, so its direction is
+  /// the opposite of whoever currently owes: they owe you ⇒ you *receive*,
+  /// otherwise you *give* (FR-011). When the converted balance is blocked
+  /// and its direction unknown (opposite-direction currencies), the sign of
+  /// the balance in the repayment's own [currency] decides instead.
+  Future<TransactionDirection> _repaymentDirection(
+    String personId,
+    Currency currency,
+    ConversionContext context,
+  ) async {
+    final balance = await _balanceFor(personId, context);
+    final status =
+        balance.status ??
+        (balance.nativeNets
+                .where((m) => m.currency == currency)
+                .any((m) => m.isPositive)
+            ? RelationshipStatus.theyOweYou
+            : RelationshipStatus.youOweThem);
+    return status == RelationshipStatus.theyOweYou
+        ? TransactionDirection.received
+        : TransactionDirection.given;
   }
 
   @override

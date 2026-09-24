@@ -2,9 +2,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../../core/money/currency_formatter.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/money/numeral_parser.dart';
+import '../../../currency/domain/usecases/get_primary_currency.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry.dart';
 import '../../domain/entities/finance_entry_type.dart';
@@ -26,14 +28,17 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
     this._editFinanceEntry,
     this._getCategories,
     this._egpFormatter,
+    this._getPrimaryCurrency,
   ) : super(FinanceEntryFormState(idempotencyKey: const Uuid().v4()));
 
   final AddFinanceEntry _addFinanceEntry;
   final EditFinanceEntry _editFinanceEntry;
   final GetCategories _getCategories;
   final EgpFormatter _egpFormatter;
+  final GetPrimaryCurrency _getPrimaryCurrency;
 
-  /// Opens the form for a new entry of [type] and loads that direction's
+  /// Opens the form for a new entry of [type], defaults the currency to the
+  /// user's primary currency (018 FR-003), and loads that direction's
   /// active categories. Call once, right after construction.
   Future<void> initialize({required FinanceEntryType type}) async {
     emit(
@@ -43,7 +48,13 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
         clearErrorMessage: true,
       ),
     );
+    await _loadPrimaryCurrency();
     await _loadCategories(type);
+  }
+
+  /// The user picked a different currency for this entry (018 FR-001).
+  void currencyChanged(Currency currency) {
+    emit(state.copyWith(currency: currency, clearAmountError: true));
   }
 
   /// Swaps the form between income and expense (T031). The category set is
@@ -79,6 +90,9 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
         isEdited: entry.isEdited,
         isLoadingCategories: true,
         selectedCategoryId: entry.categoryId,
+        // An edit keeps the entry's own currency (018 FR-002) — never the
+        // current primary currency.
+        currency: entry.amount.currency,
         date: entry.date,
         amountInput: _egpFormatter.format(entry.amount),
         note: entry.note,
@@ -122,7 +136,9 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
     final Money amount;
     try {
       final normalized = NumeralParser.toWesternDigits(state.amountInput);
-      final parsed = _egpFormatter.parse(normalized);
+      final parsed = CurrencyFormatter(
+        currency: state.currency,
+      ).parse(normalized);
       if (!parsed.isPositive) {
         throw const FormatException('Amount must be greater than zero');
       }
@@ -143,7 +159,7 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
         ? await _editFinanceEntry(
             entryId: state.editingEntryId!,
             categoryId: categoryId,
-            amountMinorUnits: amount.minorUnits,
+            amount: amount,
             date: state.date,
             note: state.note,
           )
@@ -151,7 +167,7 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
             idempotencyKey: state.idempotencyKey,
             categoryId: categoryId,
             type: state.type,
-            amountMinorUnits: amount.minorUnits,
+            amount: amount,
             date: state.date,
             note: state.note,
           );
@@ -175,6 +191,17 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
           savedEntry: entry,
         ),
       ),
+    );
+  }
+
+  /// A failed read leaves the placeholder default in place rather than
+  /// blocking the form: the picker is still there for the user to choose.
+  Future<void> _loadPrimaryCurrency() async {
+    final result = await _getPrimaryCurrency();
+    if (isClosed) return;
+    result.match(
+      (_) {},
+      (setting) => emit(state.copyWith(currency: setting.currency)),
     );
   }
 

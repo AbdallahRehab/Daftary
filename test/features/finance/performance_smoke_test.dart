@@ -5,6 +5,8 @@ import 'package:daftary/features/finance/domain/entities/finance_history_filter.
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/conversion_fakes.dart';
+
 /// T079 — the Scale/Scope ceiling from plan.md: ~5,000 finance entries, with
 /// summary, breakdown, and history each expected inside 1s.
 ///
@@ -68,12 +70,12 @@ void main() {
     'getSummary over $entryCount entries stays well inside budget',
     () async {
       final stopwatch = Stopwatch()..start();
-      final result = await repository.getSummary(wholeYear);
+      final result = await summaryUseCase(repository)(wholeYear);
       stopwatch.stop();
 
       final summary = result.getOrElse((f) => throw StateError(f.message));
       expect(
-        summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
+        summary.totalIncome!.minorUnits + summary.totalExpense!.minorUnits,
         greaterThan(0),
       );
       expect(stopwatch.elapsedMilliseconds, lessThan(10000));
@@ -84,16 +86,18 @@ void main() {
     'getCategoryBreakdown over $entryCount entries stays well inside budget',
     () async {
       final stopwatch = Stopwatch()..start();
-      final result = await repository.getCategoryBreakdown(wholeYear);
+      final result = await breakdownUseCase(repository)(wholeYear);
       stopwatch.stop();
 
-      final breakdown = result.getOrElse((f) => throw StateError(f.message));
+      final breakdown = result
+          .getOrElse((f) => throw StateError(f.message))
+          .items;
       expect(breakdown, isNotEmpty);
       // Descending by amount, as FR-015 requires.
       for (var i = 1; i < breakdown.length; i++) {
         expect(
-          breakdown[i - 1].total.minorUnits,
-          greaterThanOrEqualTo(breakdown[i].total.minorUnits),
+          breakdown[i - 1].total!.minorUnits,
+          greaterThanOrEqualTo(breakdown[i].total!.minorUnits),
         );
       }
       expect(stopwatch.elapsedMilliseconds, lessThan(10000));
@@ -119,7 +123,7 @@ void main() {
   test(
     'totals are exact integer minor units — no rounding drift (SC-003)',
     () async {
-      final result = await repository.getSummary(wholeYear);
+      final result = await summaryUseCase(repository)(wholeYear);
       final summary = result.getOrElse((f) => throw StateError(f.message));
 
       // The expected total is computed independently, in pure integer
@@ -130,7 +134,7 @@ void main() {
       }
 
       expect(
-        summary.totalIncome.minorUnits + summary.totalExpense.minorUnits,
+        summary.totalIncome!.minorUnits + summary.totalExpense!.minorUnits,
         expectedTotal,
       );
     },

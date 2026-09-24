@@ -30,7 +30,7 @@ void main() {
         );
         final fromWestern = formatter.parse('150.50');
         expect(fromArabic, fromWestern);
-        expect(fromArabic, const Money.fromMinorUnits(15050));
+        expect(fromArabic, const Money.egp(15050));
       },
     );
   });

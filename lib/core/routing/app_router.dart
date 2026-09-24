@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/currency/presentation/pages/currency_settings_page.dart';
+import '../../features/currency/presentation/pages/exchange_rate_form_page.dart';
+import '../../features/currency/presentation/pages/exchange_rate_list_page.dart';
 import '../../features/insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
@@ -186,6 +189,31 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: NotificationSettingsRoutes.settings,
               builder: (context, state) => const NotificationSettingsPage(),
+            ),
+            // Currency settings (018): primary currency and the manual
+            // exchange rates. `new` is declared before `:code/edit`; the
+            // segment counts differ anyway, so it can never be captured as
+            // a currency code.
+            GoRoute(
+              path: CurrencyRoutes.settings,
+              builder: (context, state) => const CurrencySettingsPage(),
+            ),
+            GoRoute(
+              path: CurrencyRoutes.rates,
+              builder: (context, state) => const ExchangeRateListPage(),
+            ),
+            GoRoute(
+              path: CurrencyRoutes.newRate,
+              builder: (context, state) => ExchangeRateFormPage(
+                initialCode: state.uri.queryParameters['code'],
+              ),
+            ),
+            GoRoute(
+              path: '/settings/currency/rates/:code/edit',
+              builder: (context, state) => ExchangeRateFormPage(
+                editingCode: state.pathParameters['code']!,
+                relativeToCode: state.uri.queryParameters['to'],
+              ),
             ),
             // Financial Education (016) is reached from a Settings row
             // (research.md Decision 5), so it lives in the Settings branch.

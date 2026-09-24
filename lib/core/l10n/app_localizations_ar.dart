@@ -929,4 +929,97 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get notificationSavingsGoalNoLongerExists =>
       'هدف الادخار هذا لم يعد موجودًا.';
+
+  @override
+  String get currencyFieldLabel => 'العملة';
+
+  @override
+  String get currencyPickerTitle => 'اختر العملة';
+
+  @override
+  String get rateNeededTitle => 'الإجمالي غير متاح — يلزم سعر صرف';
+
+  @override
+  String rateNeededMessage(String currencies) {
+    return 'أضف سعر صرف لـ $currencies لعرض هذا الإجمالي. سجلاتك آمنة ولم تتغير.';
+  }
+
+  @override
+  String get rateNeededAction => 'تعيين سعر الصرف';
+
+  @override
+  String get currencySettingsTitle => 'العملة';
+
+  @override
+  String get currencySettingsEntrySubtitle => 'العملة الأساسية وأسعار الصرف';
+
+  @override
+  String get primaryCurrencyLabel => 'العملة الأساسية';
+
+  @override
+  String get primaryCurrencyDescription =>
+      'تُعرض كل الإجماليات والأرصدة بهذه العملة.';
+
+  @override
+  String get primaryCurrencyChange => 'تغيير';
+
+  @override
+  String get primaryCurrencyChanged => 'تم تحديث العملة الأساسية';
+
+  @override
+  String get primaryCurrencySwitchRateTitle => 'يلزم سعر صرف';
+
+  @override
+  String primaryCurrencySwitchRateMessage(String previous, String next) {
+    return 'لديك سجلات بعملة $previous. أدخل قيمة واحد $previous بعملة $next حتى تظل إجمالياتك صحيحة.';
+  }
+
+  @override
+  String get exchangeRatesTitle => 'أسعار الصرف';
+
+  @override
+  String get exchangeRatesManualDisclosure =>
+      'أنت من يُدخل الأسعار ولا تُجلب تلقائيًا أبدًا. حدّثها متى شئت.';
+
+  @override
+  String get exchangeRatesEmpty => 'لا توجد أسعار صرف بعد';
+
+  @override
+  String get exchangeRateAdd => 'إضافة سعر';
+
+  @override
+  String get exchangeRateEditTitle => 'سعر الصرف';
+
+  @override
+  String exchangeRateValueLabel(String from, String to) {
+    return '1 $from يساوي ($to)';
+  }
+
+  @override
+  String exchangeRateLastUpdated(String date) {
+    return 'آخر تحديث $date';
+  }
+
+  @override
+  String get exchangeRateInvalid => 'أدخل سعرًا أكبر من صفر';
+
+  @override
+  String get exchangeRateSave => 'حفظ';
+
+  @override
+  String get exchangeRateRemove => 'حذف السعر';
+
+  @override
+  String get exchangeRateRemoveConfirm =>
+      'ستصبح الإجماليات التي تحتاج هذا السعر غير متاحة حتى تضيفه مرة أخرى. لن تتغير سجلاتك.';
+
+  @override
+  String get exchangeRateSaveFailed => 'تعذر حفظ سعر الصرف. حاول مرة أخرى.';
+
+  @override
+  String get currencySettingsLoadFailed => 'تعذر تحميل إعدادات العملة.';
+
+  @override
+  String get primaryCurrencyChangeFailed =>
+      'تعذر تغيير العملة الأساسية. حاول مرة أخرى.';
 }

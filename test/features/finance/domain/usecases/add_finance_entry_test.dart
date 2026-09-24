@@ -27,7 +27,7 @@ void main() {
       idempotencyKey: idempotencyKey,
       categoryId: categoryId,
       type: type,
-      amount: Money.fromMinorUnits(amountMinorUnits),
+      amount: Money.egp(amountMinorUnits),
       date: date ?? DateTime(2026, 1, 1),
       createdAt: DateTime(2026, 1, 1),
     );
@@ -39,7 +39,7 @@ void main() {
         idempotencyKey: any(named: 'idempotencyKey'),
         categoryId: any(named: 'categoryId'),
         type: any(named: 'type'),
-        amountMinorUnits: any(named: 'amountMinorUnits'),
+        amount: any(named: 'amount'),
         date: any(named: 'date'),
         note: any(named: 'note'),
       ),
@@ -52,7 +52,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: captureAny(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -61,6 +61,7 @@ void main() {
   }
 
   setUpAll(() {
+    registerFallbackValue(const Money.egp(0));
     registerFallbackValue(FinanceEntryType.expense);
     registerFallbackValue(DateTime(2026));
   });
@@ -80,7 +81,7 @@ void main() {
       idempotencyKey: 'key-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 0,
+      amount: Money.egp(0),
     );
 
     expect(result.isLeft(), isTrue);
@@ -102,7 +103,7 @@ void main() {
       // An income category used for an expense entry.
       categoryId: 'seed_salary',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 15050,
+      amount: Money.egp(15050),
     );
 
     expect(result.isLeft(), isTrue);
@@ -111,7 +112,7 @@ void main() {
         idempotencyKey: 'key-1',
         categoryId: 'seed_salary',
         type: FinanceEntryType.expense,
-        amountMinorUnits: 15050,
+        amount: Money.egp(15050),
         date: any(named: 'date'),
         note: null,
       ),
@@ -125,7 +126,7 @@ void main() {
       idempotencyKey: 'key-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 15050,
+      amount: Money.egp(15050),
     );
 
     final date = capturedDate();
@@ -143,7 +144,7 @@ void main() {
       idempotencyKey: 'key-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 15050,
+      amount: Money.egp(15050),
       date: future,
     );
 
@@ -160,13 +161,13 @@ void main() {
       idempotencyKey: 'key-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 15050,
+      amount: Money.egp(15050),
     );
     final retried = await addFinanceEntry(
       idempotencyKey: 'key-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 15050,
+      amount: Money.egp(15050),
     );
 
     expect(first.toNullable()!.id, retried.toNullable()!.id);
@@ -187,7 +188,7 @@ void main() {
       idempotencyKey: 'key-2',
       categoryId: 'seed_salary',
       type: FinanceEntryType.income,
-      amountMinorUnits: 800000,
+      amount: Money.egp(800000),
     );
 
     expect(result.toNullable(), income);
@@ -198,7 +199,7 @@ void main() {
         idempotencyKey: 'key-2',
         categoryId: 'seed_salary',
         type: FinanceEntryType.income,
-        amountMinorUnits: 800000,
+        amount: Money.egp(800000),
         date: any(named: 'date'),
         note: null,
       ),
@@ -215,7 +216,7 @@ void main() {
       idempotencyKey: 'key-3',
       categoryId: 'seed_salary',
       type: FinanceEntryType.income,
-      amountMinorUnits: -1,
+      amount: Money.egp(-1),
     );
 
     expect(result.getLeft().toNullable(), isA<ValidationFailure>());

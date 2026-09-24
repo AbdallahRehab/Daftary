@@ -13,10 +13,13 @@ import 'package:daftary/features/transactions/domain/usecases/get_person_history
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
 import 'package:daftary/features/transactions/presentation/pages/person_detail_page.dart';
 import 'package:daftary/features/transactions/presentation/widgets/transaction_list_tile.dart';
+import 'package:daftary/features/currency/presentation/widgets/rate_needed_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../features/transactions/helpers/currency_test_doubles.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -46,6 +49,7 @@ void main() {
         GetPersonBalance(transactionsRepository),
         GetPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
+        getPrimaryCurrencyReturning(),
       ),
     );
   });
@@ -68,7 +72,7 @@ void main() {
         id: 't1',
         idempotencyKey: 'k1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(200000),
+        amount: const Money.egp(200000),
         direction: TransactionDirection.given,
         kind: TransactionKind.initialExchange,
         date: DateTime(2026, 1, 1),
@@ -78,7 +82,7 @@ void main() {
         id: 't2',
         idempotencyKey: 'k2',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(50000),
+        amount: const Money.egp(50000),
         direction: TransactionDirection.received,
         kind: TransactionKind.initialExchange,
         date: DateTime(2026, 1, 2),
@@ -89,9 +93,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(150000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(150000))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -114,9 +117,8 @@ void main() {
       () => peopleRepository.getPersonById('p1'),
     ).thenAnswer((_) async => Right(ahmed));
     when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-      (_) async => const Right(
-        PersonBalance(personId: 'p1', net: Money.fromMinorUnits(0)),
-      ),
+      (_) async =>
+          const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
     );
     when(
       () => transactionsRepository.getPersonHistory('p1'),
@@ -127,4 +129,33 @@ void main() {
 
     expect(find.text('Settled'), findsWidgets);
   });
+
+  testWidgets(
+    'a balance blocked on a missing rate shows the RateNeededBanner naming '
+    'the currency and the known per-currency amount (018 FR-009)',
+    (tester) async {
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance.blocked(
+            personId: 'p1',
+            nativeNets: [Money.fromMinorUnits(2500, Currency.usd)],
+            missingRatesFor: [Currency.usd],
+          ),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => const Right([]));
+
+      await tester.pumpWidget(wrap(const PersonDetailPage(personId: 'p1')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(RateNeededBanner.rootKey), findsOneWidget);
+      expect(find.textContaining('USD'), findsWidgets);
+      expect(find.text('Ahmed owes you 25.00 USD'), findsOneWidget);
+    },
+  );
 }

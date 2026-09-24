@@ -31,7 +31,7 @@ void main() {
       idempotencyKey: 'k1',
       categoryId: 'seed_rent',
       type: FinanceEntryType.expense,
-      amount: const Money.fromMinorUnits(120000),
+      amount: const Money.egp(120000),
       date: date,
       createdAt: DateTime(2026, 3, 1),
       editedAt: DateTime(2026, 3, 4),
@@ -47,7 +47,7 @@ void main() {
         () => repository.editEntry(
           entryId: 'e1',
           categoryId: 'seed_rent',
-          amountMinorUnits: 120000,
+          amount: Money.egp(120000),
           date: date,
           note: 'March rent',
         ),
@@ -56,7 +56,7 @@ void main() {
       final result = await editFinanceEntry(
         entryId: 'e1',
         categoryId: 'seed_rent',
-        amountMinorUnits: 120000,
+        amount: Money.egp(120000),
         date: date,
         note: 'March rent',
       );
@@ -69,7 +69,7 @@ void main() {
         () => repository.editEntry(
           entryId: 'e1',
           categoryId: 'seed_rent',
-          amountMinorUnits: 0,
+          amount: Money.egp(0),
           date: date,
           note: null,
         ),
@@ -82,7 +82,7 @@ void main() {
       final result = await editFinanceEntry(
         entryId: 'e1',
         categoryId: 'seed_rent',
-        amountMinorUnits: 0,
+        amount: Money.egp(0),
         date: date,
       );
 
@@ -108,7 +108,7 @@ void main() {
         idempotencyKey: 'k-edit',
         categoryId: 'seed_groceries',
         type: FinanceEntryType.expense,
-        amountMinorUnits: 5000,
+        amount: Money.egp(5000),
         date: DateTime(2026, 3, 1),
       );
       return result.getOrElse((f) => throw StateError(f.message));
@@ -123,7 +123,7 @@ void main() {
         final result = await editFinanceEntry(
           entryId: entry.id,
           categoryId: 'seed_rent',
-          amountMinorUnits: 99900,
+          amount: Money.egp(99900),
           date: DateTime(2026, 3, 15),
           note: 'moved to rent',
         );
@@ -146,7 +146,7 @@ void main() {
       final result = await editFinanceEntry(
         entryId: entry.id,
         categoryId: 'seed_salary',
-        amountMinorUnits: 5000,
+        amount: Money.egp(5000),
         date: entry.date,
       );
       final edited = result.getOrElse((f) => throw StateError(f.message));
@@ -166,7 +166,7 @@ void main() {
         final result = await editFinanceEntry(
           entryId: entry.id,
           categoryId: 'seed_groceries',
-          amountMinorUnits: 0,
+          amount: Money.egp(0),
           date: entry.date,
         );
         expect(result.isLeft(), isTrue);
@@ -182,7 +182,7 @@ void main() {
       final result = await editFinanceEntry(
         entryId: 'does-not-exist',
         categoryId: 'seed_groceries',
-        amountMinorUnits: 1000,
+        amount: Money.egp(1000),
         date: DateTime(2026, 3, 1),
       );
       expect(result.isLeft(), isTrue);

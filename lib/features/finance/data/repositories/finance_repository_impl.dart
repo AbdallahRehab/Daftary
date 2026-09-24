@@ -26,11 +26,11 @@ class FinanceRepositoryImpl implements FinanceRepository {
     required String idempotencyKey,
     required String categoryId,
     required FinanceEntryType type,
-    required int amountMinorUnits,
+    required Money amount,
     required DateTime date,
     String? note,
   }) async {
-    if (amountMinorUnits <= 0) {
+    if (!amount.isPositive) {
       return const Left(ValidationFailure('Amount must be greater than zero'));
     }
     if (categoryId.trim().isEmpty) {
@@ -45,7 +45,8 @@ class FinanceRepositoryImpl implements FinanceRepository {
         idempotencyKey: idempotencyKey,
         categoryId: categoryId,
         type: type.dbValue,
-        amountMinorUnits: amountMinorUnits,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
         date: dateOnlyMillis(date),
         note: db.Value(note),
         createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -61,11 +62,11 @@ class FinanceRepositoryImpl implements FinanceRepository {
   Future<Either<Failure, FinanceEntry>> editEntry({
     required String entryId,
     required String categoryId,
-    required int amountMinorUnits,
+    required Money amount,
     required DateTime date,
     String? note,
   }) async {
-    if (amountMinorUnits <= 0) {
+    if (!amount.isPositive) {
       return const Left(ValidationFailure('Amount must be greater than zero'));
     }
     if (categoryId.trim().isEmpty) {
@@ -88,7 +89,8 @@ class FinanceRepositoryImpl implements FinanceRepository {
         // to an income category *is* what makes it an income entry, so
         // there is no way for the two to disagree after an edit.
         type: db.Value(category.type),
-        amountMinorUnits: db.Value(amountMinorUnits),
+        amountMinorUnits: db.Value(amount.minorUnits),
+        currencyCode: db.Value(amount.currency.code),
         date: db.Value(dateOnlyMillis(date)),
         note: db.Value(note),
         editedAt: db.Value(DateTime.now().millisecondsSinceEpoch),
@@ -167,50 +169,55 @@ class FinanceRepositoryImpl implements FinanceRepository {
   }
 
   @override
-  Future<Either<Failure, FinanceSummary>> getSummary(DateRange period) async {
+  Future<Either<Failure, FinancePeriodTotals>> getSummaryTotals(
+    DateRange period,
+  ) async {
     try {
-      final totals = await _dao.getSummaryTotals(period);
-      return Right(
-        FinanceSummary(
-          totalIncome: Money.fromMinorUnits(
-            totals[FinanceEntryType.income.dbValue] ?? 0,
-          ),
-          totalExpense: Money.fromMinorUnits(
-            totals[FinanceEntryType.expense.dbValue] ?? 0,
-          ),
-          period: period,
-        ),
-      );
+      final rows = await _dao.getSummaryTotals(period);
+      final income = <Money>[];
+      final expense = <Money>[];
+      for (final row in rows) {
+        final amount = Money.fromMinorUnits(
+          row.totalMinorUnits,
+          Currency.fromCode(row.currencyCode),
+        );
+        if (row.type == FinanceEntryType.income.dbValue) {
+          income.add(amount);
+        } else if (row.type == FinanceEntryType.expense.dbValue) {
+          expense.add(amount);
+        }
+      }
+      return Right(FinancePeriodTotals(income: income, expense: expense));
     } catch (e) {
       return Left(CacheFailure('Failed to compute summary: $e'));
     }
   }
 
   @override
-  Future<Either<Failure, List<CategoryBreakdownItem>>> getCategoryBreakdown(
+  Future<Either<Failure, List<CategoryCurrencyTotals>>> getCategoryTotals(
     DateRange period, {
     FinanceEntryType? type,
   }) async {
     try {
       final rows = await _dao.getCategoryBreakdown(period, type: type);
-      final periodTotal = rows.fold<int>(
-        0,
-        (sum, row) => sum + row.totalMinorUnits,
-      );
-      return Right([
-        for (final row in rows)
-          CategoryBreakdownItem(
-            categoryId: row.categoryId,
-            categoryName: row.categoryName,
-            icon: row.icon,
-            total: Money.fromMinorUnits(row.totalMinorUnits),
-            // Zero rather than a division by zero when the period is empty
-            // — which can only happen if every row summed to 0.
-            shareOfPeriod: periodTotal == 0
-                ? 0
-                : row.totalMinorUnits / periodTotal,
-          ),
-      ]);
+      // Rows arrive ordered by their single-currency SUM descending; folding
+      // them by category in first-seen order keeps that order for the
+      // single-currency (EGP-only) case exactly as before 018.
+      final byCategory = <String, CategoryCurrencyTotals>{};
+      for (final row in rows) {
+        final amount = Money.fromMinorUnits(
+          row.totalMinorUnits,
+          Currency.fromCode(row.currencyCode),
+        );
+        final existing = byCategory[row.categoryId];
+        byCategory[row.categoryId] = CategoryCurrencyTotals(
+          categoryId: row.categoryId,
+          categoryName: row.categoryName,
+          icon: row.icon,
+          totals: [...?existing?.totals, amount],
+        );
+      }
+      return Right(byCategory.values.toList());
     } catch (e) {
       return Left(CacheFailure('Failed to compute category breakdown: $e'));
     }

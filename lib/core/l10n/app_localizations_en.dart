@@ -931,4 +931,100 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationSavingsGoalNoLongerExists =>
       'That savings goal no longer exists.';
+
+  @override
+  String get currencyFieldLabel => 'Currency';
+
+  @override
+  String get currencyPickerTitle => 'Choose a currency';
+
+  @override
+  String get rateNeededTitle => 'Total unavailable — exchange rate needed';
+
+  @override
+  String rateNeededMessage(String currencies) {
+    return 'Add an exchange rate for $currencies to see this total. Your records are safe and unchanged.';
+  }
+
+  @override
+  String get rateNeededAction => 'Set exchange rate';
+
+  @override
+  String get currencySettingsTitle => 'Currency';
+
+  @override
+  String get currencySettingsEntrySubtitle =>
+      'Primary currency and exchange rates';
+
+  @override
+  String get primaryCurrencyLabel => 'Primary currency';
+
+  @override
+  String get primaryCurrencyDescription =>
+      'All totals and balances are shown in this currency.';
+
+  @override
+  String get primaryCurrencyChange => 'Change';
+
+  @override
+  String get primaryCurrencyChanged => 'Primary currency updated';
+
+  @override
+  String get primaryCurrencySwitchRateTitle => 'Exchange rate needed';
+
+  @override
+  String primaryCurrencySwitchRateMessage(String previous, String next) {
+    return 'You have records in $previous. Enter how many $next one $previous is worth so your totals stay correct.';
+  }
+
+  @override
+  String get exchangeRatesTitle => 'Exchange rates';
+
+  @override
+  String get exchangeRatesManualDisclosure =>
+      'Rates are entered by you and never fetched automatically. Update them whenever you like.';
+
+  @override
+  String get exchangeRatesEmpty => 'No exchange rates yet';
+
+  @override
+  String get exchangeRateAdd => 'Add rate';
+
+  @override
+  String get exchangeRateEditTitle => 'Exchange rate';
+
+  @override
+  String exchangeRateValueLabel(String from, String to) {
+    return '1 $from equals ($to)';
+  }
+
+  @override
+  String exchangeRateLastUpdated(String date) {
+    return 'Updated $date';
+  }
+
+  @override
+  String get exchangeRateInvalid => 'Enter a rate greater than zero';
+
+  @override
+  String get exchangeRateSave => 'Save';
+
+  @override
+  String get exchangeRateRemove => 'Remove rate';
+
+  @override
+  String get exchangeRateRemoveConfirm =>
+      'Totals that need this rate will be unavailable until you add it again. Your records won\'t change.';
+
+  @override
+  String get exchangeRateSaveFailed =>
+      'Couldn\'t save the exchange rate. Please try again.';
+
+  @override
+  String get currencySettingsLoadFailed =>
+      'Couldn\'t load your currency settings.';
+
+  @override
+  String get primaryCurrencyChangeFailed =>
+      'Couldn\'t change the primary currency. Please try again.';
 }

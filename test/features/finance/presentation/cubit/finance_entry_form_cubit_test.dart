@@ -13,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../helpers/conversion_fakes.dart';
+
 class MockAddFinanceEntry extends Mock implements AddFinanceEntry {}
 
 class MockEditFinanceEntry extends Mock implements EditFinanceEntry {}
@@ -24,6 +26,7 @@ void main() {
   late MockEditFinanceEntry editFinanceEntry;
   late MockGetCategories getCategories;
   late EgpFormatter egpFormatter;
+  late FakeGetPrimaryCurrency getPrimaryCurrency;
 
   final now = DateTime(2026, 1, 1);
 
@@ -69,7 +72,7 @@ void main() {
     idempotencyKey: 'ignored-in-test',
     categoryId: groceries.id,
     type: FinanceEntryType.expense,
-    amount: const Money.fromMinorUnits(15050),
+    amount: const Money.egp(15050),
     date: now,
     createdAt: now,
   );
@@ -92,7 +95,7 @@ void main() {
         idempotencyKey: any(named: 'idempotencyKey'),
         categoryId: any(named: 'categoryId'),
         type: any(named: 'type'),
-        amountMinorUnits: any(named: 'amountMinorUnits'),
+        amount: any(named: 'amount'),
         date: any(named: 'date'),
         note: any(named: 'note'),
       ),
@@ -100,6 +103,7 @@ void main() {
   }
 
   setUpAll(() {
+    registerFallbackValue(const Money.egp(0));
     registerFallbackValue(FinanceEntryType.expense);
     registerFallbackValue(DateTime(2026));
   });
@@ -109,6 +113,7 @@ void main() {
     editFinanceEntry = MockEditFinanceEntry();
     getCategories = MockGetCategories();
     egpFormatter = EgpFormatter();
+    getPrimaryCurrency = FakeGetPrimaryCurrency();
     stubCategories({
       FinanceEntryType.expense: [groceries, rent],
       FinanceEntryType.income: [salary],
@@ -120,6 +125,7 @@ void main() {
     editFinanceEntry,
     getCategories,
     egpFormatter,
+    getPrimaryCurrency,
   );
 
   group('add mode', () {
@@ -166,7 +172,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: groceries.id,
             type: FinanceEntryType.expense,
-            amountMinorUnits: 15050,
+            amount: Money.egp(15050),
             date: any(named: 'date'),
             note: null,
           ),
@@ -203,7 +209,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -254,7 +260,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -291,7 +297,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: groceries.id,
             type: FinanceEntryType.expense,
-            amountMinorUnits: 15050,
+            amount: Money.egp(15050),
             date: DateTime(2030, 6, 1),
             note: null,
           ),
@@ -317,7 +323,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -348,7 +354,7 @@ void main() {
       idempotencyKey: 'k9',
       categoryId: archivedGadgets.id,
       type: FinanceEntryType.expense,
-      amount: const Money.fromMinorUnits(45075),
+      amount: const Money.egp(45075),
       date: DateTime(2026, 1, 5),
       createdAt: DateTime(2026, 1, 5),
       note: 'Headphones',
@@ -359,7 +365,7 @@ void main() {
         () => editFinanceEntry(
           entryId: any(named: 'entryId'),
           categoryId: any(named: 'categoryId'),
-          amountMinorUnits: any(named: 'amountMinorUnits'),
+          amount: any(named: 'amount'),
           date: any(named: 'date'),
           note: any(named: 'note'),
         ),
@@ -401,7 +407,7 @@ void main() {
           () => editFinanceEntry(
             entryId: 'e9',
             categoryId: rent.id,
-            amountMinorUnits: 50000,
+            amount: Money.egp(50000),
             date: DateTime(2026, 1, 5),
             note: 'Headphones',
           ),
@@ -411,11 +417,87 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
         );
+      },
+    );
+  });
+
+  group('currency (018)', () {
+    blocTest<FinanceEntryFormCubit, FinanceEntryFormState>(
+      'a new entry defaults to the primary currency loaded via '
+      'GetPrimaryCurrency, not a hardcoded EGP (FR-003)',
+      build: () {
+        getPrimaryCurrency.currency = Currency.usd;
+        return buildCubit();
+      },
+      act: (cubit) => cubit.initialize(type: FinanceEntryType.expense),
+      verify: (cubit) => expect(cubit.state.currency, Currency.usd),
+    );
+
+    blocTest<FinanceEntryFormCubit, FinanceEntryFormState>(
+      'the amount is parsed and saved in the selected currency',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => addFinanceEntry(
+            idempotencyKey: any(named: 'idempotencyKey'),
+            categoryId: any(named: 'categoryId'),
+            type: any(named: 'type'),
+            amount: any(named: 'amount'),
+            date: any(named: 'date'),
+            note: any(named: 'note'),
+          ),
+        ).thenAnswer((_) async => Right(savedEntry));
+      },
+      act: (cubit) async {
+        await cubit.initialize(type: FinanceEntryType.expense);
+        cubit
+          ..currencyChanged(Currency.eur)
+          ..categorySelected(groceries.id)
+          ..amountChanged('12.34');
+        await cubit.submit();
+      },
+      verify: (cubit) {
+        expect(cubit.state.currency, Currency.eur);
+        verify(
+          () => addFinanceEntry(
+            idempotencyKey: any(named: 'idempotencyKey'),
+            categoryId: groceries.id,
+            type: FinanceEntryType.expense,
+            amount: Money.fromMinorUnits(1234, Currency.eur),
+            date: any(named: 'date'),
+            note: null,
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<FinanceEntryFormCubit, FinanceEntryFormState>(
+      'edit mode keeps the entry\'s own currency, even when the primary '
+      'currency differs (FR-004)',
+      build: () {
+        getPrimaryCurrency.currency = Currency.egp;
+        return buildCubit();
+      },
+      act: (cubit) => cubit.loadForEdit(
+        FinanceEntry(
+          id: 'usd1',
+          idempotencyKey: 'k',
+          categoryId: groceries.id,
+          type: FinanceEntryType.expense,
+          amount: Money.fromMinorUnits(2550, Currency.usd),
+          date: now,
+          createdAt: now,
+        ),
+        groceries,
+      ),
+      verify: (cubit) {
+        expect(cubit.state.currency, Currency.usd);
+        expect(cubit.state.amountInput, '25.50');
       },
     );
   });

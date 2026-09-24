@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../currency/domain/usecases/get_primary_currency.dart';
 import '../../../people/domain/repositories/people_repository.dart';
 import '../../domain/usecases/delete_transaction.dart';
 import '../../domain/usecases/get_person_balance.dart';
@@ -17,12 +18,14 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     this._getPersonBalance,
     this._getPersonHistory,
     this._deleteTransaction,
+    this._getPrimaryCurrency,
   ) : super(const PersonDetailState());
 
   final PeopleRepository _peopleRepository;
   final GetPersonBalance _getPersonBalance;
   final GetPersonHistory _getPersonHistory;
   final DeleteTransaction _deleteTransaction;
+  final GetPrimaryCurrency _getPrimaryCurrency;
 
   String? _personId;
 
@@ -33,6 +36,13 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     final personResult = await _peopleRepository.getPersonById(personId);
     final balanceResult = await _getPersonBalance(personId);
     final historyResult = await _getPersonHistory(personId);
+    // Only decides which history rows get a currency chip — a failed read
+    // keeps the previous value rather than failing the whole page.
+    final primaryResult = await _getPrimaryCurrency();
+    final primaryCurrency = primaryResult.match(
+      (_) => state.primaryCurrency,
+      (setting) => setting.currency,
+    );
 
     final failure = personResult.isLeft()
         ? personResult
@@ -62,6 +72,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
         history: historyResult.getOrElse(
           (_) => throw StateError('unreachable'),
         ),
+        primaryCurrency: primaryCurrency,
       ),
     );
   }

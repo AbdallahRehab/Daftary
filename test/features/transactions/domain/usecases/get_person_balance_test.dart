@@ -20,10 +20,7 @@ void main() {
   });
 
   test('delegates to the repository', () async {
-    const balance = PersonBalance(
-      personId: 'p1',
-      net: Money.fromMinorUnits(150000),
-    );
+    const balance = PersonBalance(personId: 'p1', net: Money.egp(150000));
     when(
       () => repository.getPersonBalance('p1'),
     ).thenAnswer((_) async => const Right<Failure, PersonBalance>(balance));
@@ -35,23 +32,20 @@ void main() {
 
   group('PersonBalance.status (FR-008, FR-009)', () {
     test('a positive net (given > received) means they owe you', () {
-      const balance = PersonBalance(
-        personId: 'p1',
-        net: Money.fromMinorUnits(150000),
-      );
+      const balance = PersonBalance(personId: 'p1', net: Money.egp(150000));
       expect(balance.status, RelationshipStatus.theyOweYou);
     });
 
     test('a negative net (received > given) means you owe them', () {
-      const balance = PersonBalance(
-        personId: 'p1',
-        net: Money.fromMinorUnits(-50000),
-      );
+      const balance = PersonBalance(personId: 'p1', net: Money.egp(-50000));
       expect(balance.status, RelationshipStatus.youOweThem);
     });
 
     test('a zero net means settled', () {
-      final balance = PersonBalance(personId: 'p1', net: Money.zero());
+      final balance = PersonBalance(
+        personId: 'p1',
+        net: Money.zero(Currency.egp),
+      );
       expect(balance.status, RelationshipStatus.settled);
     });
   });

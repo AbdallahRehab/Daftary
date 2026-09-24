@@ -114,7 +114,7 @@ void main() {
         await getIt<TransactionsRepository>().addTransaction(
           idempotencyKey: 'onboarding-seed-1',
           personId: personId,
-          amount: const Money.fromMinorUnits(10000),
+          amount: const Money.egp(10000),
           direction: TransactionDirection.given,
           date: DateTime.now(),
         );
@@ -171,7 +171,7 @@ void main() {
         final added = await getIt<TransactionsRepository>().addTransaction(
           idempotencyKey: 'onboarding-seed-2',
           personId: personId,
-          amount: const Money.fromMinorUnits(10000),
+          amount: const Money.egp(10000),
           direction: TransactionDirection.given,
           date: DateTime.now(),
         );

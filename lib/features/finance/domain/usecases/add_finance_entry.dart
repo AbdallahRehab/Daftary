@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/money/money.dart';
 import '../entities/finance_entry.dart';
 import '../entities/finance_entry_type.dart';
 import '../repositories/finance_repository.dart';
@@ -21,7 +22,7 @@ class AddFinanceEntry {
     required String idempotencyKey,
     required String categoryId,
     required FinanceEntryType type,
-    required int amountMinorUnits,
+    required Money amount,
     DateTime? date,
     String? note,
   }) {
@@ -29,7 +30,7 @@ class AddFinanceEntry {
       idempotencyKey: idempotencyKey,
       categoryId: categoryId,
       type: type,
-      amountMinorUnits: amountMinorUnits,
+      amount: amount,
       // FR-001: today is the default, and the caller passing nothing means
       // "today" rather than an error.
       date: date ?? DateTime.now(),

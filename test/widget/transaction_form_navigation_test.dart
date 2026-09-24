@@ -5,7 +5,6 @@ import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
-import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
@@ -32,6 +31,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../features/transactions/helpers/currency_test_doubles.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -95,7 +96,7 @@ void main() {
   );
 
   setUpAll(() {
-    registerFallbackValue(const Money.fromMinorUnits(0));
+    registerFallbackValue(const Money.egp(0));
     registerFallbackValue(TransactionDirection.given);
     registerFallbackValue(DateTime(2026));
   });
@@ -113,6 +114,7 @@ void main() {
         GetPersonBalance(transactionsRepository),
         GetPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
+        getPrimaryCurrencyReturning(),
       ),
     );
     getIt.registerFactory<TransactionFormCubit>(
@@ -121,7 +123,7 @@ void main() {
         createPerson,
         addTransaction,
         editTransaction,
-        EgpFormatter(),
+        getPrimaryCurrencyReturning(),
       ),
     );
     getIt.registerFactory<PersonListCubit>(
@@ -155,7 +157,7 @@ void main() {
             ? t.amount.minorUnits
             : -t.amount.minorUnits;
       }
-      return Money.fromMinorUnits(minor);
+      return Money.egp(minor);
     }
 
     when(
@@ -219,6 +221,14 @@ void main() {
       matching: find.byType(TextField),
     );
     await tester.enterText(amountField, amount);
+    // 018 added a currency field above Save, which puts Save inside the
+    // snackbar region of the 800x600 test viewport. A previous save's
+    // "Saved" snackbar can still be showing on this fresh form, so
+    // dismiss it first, as a user would, instead of tapping through it.
+    ScaffoldMessenger.of(
+      tester.element(find.byType(TransactionFormPage)),
+    ).hideCurrentSnackBar();
+    await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(AppButton, l10n.commonSave));
     await tester.pumpAndSettle();
   }
@@ -231,7 +241,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.received,
-          amount: const Money.fromMinorUnits(50000),
+          amount: const Money.egp(50000),
         );
 
         await tester.pumpWidget(_wrap());
@@ -265,7 +275,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.given,
-          amount: const Money.fromMinorUnits(75000),
+          amount: const Money.egp(75000),
         );
 
         await tester.pumpWidget(_wrap());
@@ -297,7 +307,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.given,
-          amount: const Money.fromMinorUnits(10000),
+          amount: const Money.egp(10000),
         );
         await openAddTransactionForm(tester);
         await fillAmountAndSave(tester, l10n, amount: '100');
@@ -306,7 +316,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.received,
-          amount: const Money.fromMinorUnits(20000),
+          amount: const Money.egp(20000),
         );
         await openAddTransactionForm(tester);
         await fillAmountAndSave(
@@ -334,7 +344,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.given,
-          amount: const Money.fromMinorUnits(30000),
+          amount: const Money.egp(30000),
         );
 
         await tester.pumpWidget(_wrap(initialLocation: '/'));
@@ -378,7 +388,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.given,
-          amount: const Money.fromMinorUnits(150000),
+          amount: const Money.egp(150000),
         );
 
         await tester.pumpWidget(_wrap());
@@ -414,7 +424,7 @@ void main() {
             id: 'seed',
             idempotencyKey: 'seed-key',
             personId: 'p1',
-            amount: const Money.fromMinorUnits(10000),
+            amount: const Money.egp(10000),
             direction: TransactionDirection.received,
             kind: TransactionKind.initialExchange,
             date: now,
@@ -424,7 +434,7 @@ void main() {
         wireSuccessfulAdd(
           store,
           direction: TransactionDirection.given,
-          amount: const Money.fromMinorUnits(500000),
+          amount: const Money.egp(500000),
         );
 
         await tester.pumpWidget(_wrap());
@@ -461,7 +471,7 @@ void main() {
               id: 'seed',
               idempotencyKey: 'seed-key',
               personId: 'p1',
-              amount: const Money.fromMinorUnits(20000),
+              amount: const Money.egp(20000),
               direction: TransactionDirection.given,
               kind: TransactionKind.initialExchange,
               date: now,
@@ -515,7 +525,7 @@ void main() {
           wireSuccessfulAdd(
             store,
             direction: TransactionDirection.given,
-            amount: const Money.fromMinorUnits(10000),
+            amount: const Money.egp(10000),
           );
 
           await tester.pumpWidget(_wrap());
@@ -596,7 +606,7 @@ void main() {
           id: 't1',
           idempotencyKey: 'key-1',
           personId: 'p1',
-          amount: const Money.fromMinorUnits(10000),
+          amount: const Money.egp(10000),
           direction: TransactionDirection.given,
           kind: TransactionKind.initialExchange,
           date: now,

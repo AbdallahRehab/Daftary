@@ -72,11 +72,14 @@ class TransactionsDao {
     db.TransactionAuditEntriesCompanion companion,
   ) => _db.into(_db.transactionAuditEntries).insert(companion);
 
-  Future<int> netBalanceMinorUnits(String personId) =>
-      _db.netBalanceMinorUnitsForPerson(personId);
+  /// Per-currency native nets for [personId] (currency code → minor
+  /// units); conversion into the primary currency happens in the Domain.
+  Future<Map<String, int>> netBalanceMinorUnitsByCurrency(String personId) =>
+      _db.netBalanceMinorUnitsByCurrencyForPerson(personId);
 
-  Future<Map<String, int>> netBalanceMinorUnitsForAllPeople() =>
-      _db.netBalanceMinorUnitsForAllPeople();
+  Future<Map<String, Map<String, int>>>
+  netBalanceMinorUnitsByCurrencyForAllPeople() =>
+      _db.netBalanceMinorUnitsByCurrencyForAllPeople();
 
   /// FR-010a: whether at least one `MoneyTransaction` row exists at all —
   /// including soft-deleted rows (`deletedAt IS NOT NULL`). A cheap

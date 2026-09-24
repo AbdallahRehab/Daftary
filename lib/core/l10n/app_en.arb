@@ -31,9 +31,21 @@
   "finEduCalcResultDoublingYears": "Approximate doubling time",
   "finEduCalcResultSavingsRate": "Savings rate",
   "finEduCalcYearsValue": "{years} years",
-  "@finEduCalcYearsValue": {"placeholders": {"years": {"type": "String"}}},
+  "@finEduCalcYearsValue": {
+    "placeholders": {
+      "years": {
+        "type": "String"
+      }
+    }
+  },
   "finEduCalcPercentValue": "{percent}%",
-  "@finEduCalcPercentValue": {"placeholders": {"percent": {"type": "String"}}},
+  "@finEduCalcPercentValue": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
   "finEduCalcIllustrativeNote": "Illustrative only — assumes a constant rate; real returns vary and are not guaranteed",
   "finEduCalcHighRateNote": "This rate is unusually high. The result is purely illustrative — sustained returns this high are rare.",
   "finEduCalcRuleOf72Note": "An approximation using the rule of 72 (72 ÷ annual rate), not an exact figure.",
@@ -58,7 +70,6 @@
   "finEduEmptyCategoryMessage": "Articles for this topic will appear here.",
   "appTitle": "Daftary",
   "@appTitle": {},
-
   "commonSave": "Save",
   "commonCancel": "Cancel",
   "commonDelete": "Delete",
@@ -74,7 +85,6 @@
   "errorNotFound": "This item could not be found.",
   "errorValidation": "Please check your input and try again.",
   "errorUnknown": "An unexpected error occurred. Please try again.",
-
   "peopleListTitle": "People",
   "searchPeopleHint": "Search people",
   "filterAll": "All",
@@ -85,7 +95,6 @@
   "emptyPeopleMessage": "Add a person to start tracking money you give or receive with them.",
   "archivedPeopleAction": "Archived people",
   "addPersonAction": "Add person",
-
   "personFormCreateTitle": "New person",
   "personFormEditTitle": "Edit person",
   "nameLabel": "Name",
@@ -97,19 +106,16 @@
   "deleteBlockedTitle": "Can't delete this person",
   "deleteBlockedMessage": "This person has recorded transactions. Archive them instead to keep their history.",
   "archiveInsteadAction": "Archive instead",
-
   "relationshipFamily": "Family",
   "relationshipFriend": "Friend",
   "relationshipColleague": "Colleague",
   "relationshipCustomer": "Customer",
   "relationshipSupplier": "Supplier",
   "relationshipOther": "Other",
-
   "duplicateWarningTitle": "Possible duplicate",
   "duplicateWarningMessage": "This name looks similar to someone you already know.",
   "duplicateUseExisting": "Use existing person",
   "duplicateCreateNew": "Create new person anyway",
-
   "transactionFormCreateTitle": "Record transaction",
   "transactionFormEditTitle": "Edit transaction",
   "amountLabel": "Amount (EGP)",
@@ -123,22 +129,28 @@
   "savedConfirmation": "Saved",
   "editedLabel": "Edited",
   "repaymentLabel": "Repayment",
-
   "repaymentFormTitle": "Record repayment",
   "recordRepaymentAction": "Record repayment",
-
   "personDetailTheyOweYou": "{name} owes you {amount}",
   "@personDetailTheyOweYou": {
     "placeholders": {
-      "name": {"type": "String"},
-      "amount": {"type": "String"}
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "personDetailYouOweThem": "You owe {name} {amount}",
   "@personDetailYouOweThem": {
     "placeholders": {
-      "name": {"type": "String"},
-      "amount": {"type": "String"}
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
     }
   },
   "personDetailSettled": "Settled",
@@ -146,13 +158,14 @@
   "historyEmptyMessage": "Record a transaction with {name} to start tracking your balance.",
   "@historyEmptyMessage": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "recordTransactionAction": "Record transaction",
   "deleteTransactionConfirmTitle": "Delete this transaction?",
   "deleteTransactionConfirmMessage": "This action cannot be undone.",
-
   "overviewTitle": "Overview",
   "overviewTotalOwedToYou": "Total owed to you",
   "overviewTotalYouOwe": "Total you owe",
@@ -160,13 +173,11 @@
   "overviewSectionYouOweThem": "You owe them",
   "overviewAllSettledTitle": "Everything is settled",
   "overviewAllSettledMessage": "You have no outstanding balances with anyone right now.",
-
   "archivedLabel": "Archived",
   "archivedPeopleTitle": "Archived people",
   "archivedEmptyTitle": "No archived people",
   "archivedEmptyMessage": "People you archive will appear here, with their history intact.",
   "restoreAction": "Restore",
-
   "settingsTitle": "Settings",
   "languageSectionTitle": "Language",
   "languageEnglish": "English",
@@ -177,12 +188,15 @@
   "themeDark": "Dark",
   "themeSystemDefault": "System Default",
   "themeSaveFailed": "Couldn't save your theme choice. It's still active for this session — we'll keep trying.",
-
   "onboardingStepProgress": "Step {current} of {total}",
   "@onboardingStepProgress": {
     "placeholders": {
-      "current": {"type": "int"},
-      "total": {"type": "int"}
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "onboardingUnderstandingMoneyTitle": "Understand your money at a glance",
@@ -205,7 +219,6 @@
   "financeAddIncomeAction": "Add income",
   "financeAddFirstEntryAction": "Add your first entry",
   "financeViewAllAction": "View all",
-
   "financeEntryFormExpenseTitle": "Add expense",
   "financeEntryFormIncomeTitle": "Add income",
   "financeEntryFormEditTitle": "Edit entry",
@@ -216,7 +229,6 @@
   "financeManageCategoriesAction": "Manage categories",
   "financeNoCategoriesTitle": "No categories yet",
   "financeNoCategoriesMessage": "Create a category to start recording entries.",
-
   "financeCategoryManagementTitle": "Categories",
   "financeCategoryFormCreateTitle": "New category",
   "financeCategoryFormEditTitle": "Edit category",
@@ -233,7 +245,6 @@
   "financeRemoveCategoryConfirmTitle": "Remove this category?",
   "financeRemoveCategoryConfirmMessage": "If any entries use this category, it will be archived so their history stays intact. Otherwise it will be deleted.",
   "financeCategoryArchivedNotice": "Archived — hidden from new entries, kept for existing ones.",
-
   "financePeriodThisMonth": "This month",
   "financePeriodLastMonth": "Last month",
   "financePeriodCustom": "Custom range",
@@ -248,17 +259,14 @@
   "financeFilterTypeLabel": "Type",
   "financeFilterCategoryLabel": "Category",
   "financeClearFiltersAction": "Clear filters",
-
   "financeEmptyTitle": "No entries yet",
   "financeEmptyMessage": "Record your income and spending to see where your money goes.",
   "financeNoMatchTitle": "No matching entries",
   "financeNoMatchMessage": "No entries match the filters you picked. Try a different period or category.",
-
   "financeDeleteEntryConfirmTitle": "Delete this entry?",
   "financeDeleteEntryConfirmMessage": "Your totals will update right away. You can undo this for a few seconds.",
   "financeEntryDeletedMessage": "Entry deleted",
   "financeUndoAction": "Undo",
-
   "financeCategoryRent": "Rent",
   "financeCategoryElectricity": "Electricity",
   "financeCategoryWater": "Water",
@@ -283,56 +291,118 @@
   "financeCategoryOtherIncome": "Other income",
   "@financeCategoryDuplicateError": {
     "placeholders": {
-      "name": {"type": "String"}
+      "name": {
+        "type": "String"
+      }
     }
   },
   "@financeBreakdownShare": {
     "placeholders": {
-      "percent": {"type": "String"}
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "notificationBudgetNearLimitTitle": "{category} is close to its limit",
-  "@notificationBudgetNearLimitTitle": {"placeholders": {"category": {"type": "String"}}},
+  "@notificationBudgetNearLimitTitle": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
   "notificationBudgetNearLimitBody": "You've used {percent}% of your {category} budget this month.",
   "@notificationBudgetNearLimitBody": {
     "placeholders": {
-      "category": {"type": "String"},
-      "percent": {"type": "String"}
+      "category": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "notificationBudgetExceededTitle": "{category} is over budget",
-  "@notificationBudgetExceededTitle": {"placeholders": {"category": {"type": "String"}}},
+  "@notificationBudgetExceededTitle": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
   "notificationBudgetExceededBody": "You've spent {percent}% of your {category} budget this month.",
   "@notificationBudgetExceededBody": {
     "placeholders": {
-      "category": {"type": "String"},
-      "percent": {"type": "String"}
+      "category": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "notificationBudgetExceededNoPlanBody": "You've spent on {category} this month, but no amount was planned for it.",
-  "@notificationBudgetExceededNoPlanBody": {"placeholders": {"category": {"type": "String"}}},
+  "@notificationBudgetExceededNoPlanBody": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
   "notificationSavingsBehindPaceTitle": "{goal} is falling behind",
-  "@notificationSavingsBehindPaceTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "@notificationSavingsBehindPaceTitle": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
   "notificationSavingsBehindPaceBody": "At your current pace, you'll reach {goal} {months, plural, =1{1 month} other{{months} months}} later than planned.",
   "@notificationSavingsBehindPaceBody": {
     "placeholders": {
-      "goal": {"type": "String"},
-      "months": {"type": "int"}
+      "goal": {
+        "type": "String"
+      },
+      "months": {
+        "type": "int"
+      }
     }
   },
   "notificationSavingsAheadOfPaceTitle": "{goal} is ahead of schedule",
-  "@notificationSavingsAheadOfPaceTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "@notificationSavingsAheadOfPaceTitle": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
   "notificationSavingsAheadOfPaceBody": "Nice work — you're on track to reach {goal} {months, plural, =1{1 month} other{{months} months}} early.",
   "@notificationSavingsAheadOfPaceBody": {
     "placeholders": {
-      "goal": {"type": "String"},
-      "months": {"type": "int"}
+      "goal": {
+        "type": "String"
+      },
+      "months": {
+        "type": "int"
+      }
     }
   },
   "notificationSavingsAchievedTitle": "Goal reached: {goal}",
-  "@notificationSavingsAchievedTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "@notificationSavingsAchievedTitle": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
   "notificationSavingsAchievedBody": "You've saved the full amount for {goal}. Well done!",
-  "@notificationSavingsAchievedBody": {"placeholders": {"goal": {"type": "String"}}},
+  "@notificationSavingsAchievedBody": {
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
   "notificationSettingsTitle": "Notifications",
   "@notificationSettingsTitle": {},
   "notificationSettingsEntrySubtitle": "Budget warnings, savings check-ins and quiet hours",
@@ -386,5 +456,89 @@
   "notificationSavingsGoalNoLongerExists": "That savings goal no longer exists.",
   "@notificationSavingsGoalNoLongerExists": {
     "description": "Shown when the user taps a savings-goal notification whose goal has since been deleted."
-  }
+  },
+  "currencyFieldLabel": "Currency",
+  "@currencyFieldLabel": {},
+  "currencyPickerTitle": "Choose a currency",
+  "@currencyPickerTitle": {},
+  "rateNeededTitle": "Total unavailable — exchange rate needed",
+  "@rateNeededTitle": {},
+  "rateNeededMessage": "Add an exchange rate for {currencies} to see this total. Your records are safe and unchanged.",
+  "@rateNeededMessage": {
+    "placeholders": {
+      "currencies": {
+        "type": "String"
+      }
+    }
+  },
+  "rateNeededAction": "Set exchange rate",
+  "@rateNeededAction": {},
+  "currencySettingsTitle": "Currency",
+  "@currencySettingsTitle": {},
+  "currencySettingsEntrySubtitle": "Primary currency and exchange rates",
+  "@currencySettingsEntrySubtitle": {},
+  "primaryCurrencyLabel": "Primary currency",
+  "@primaryCurrencyLabel": {},
+  "primaryCurrencyDescription": "All totals and balances are shown in this currency.",
+  "@primaryCurrencyDescription": {},
+  "primaryCurrencyChange": "Change",
+  "@primaryCurrencyChange": {},
+  "primaryCurrencyChanged": "Primary currency updated",
+  "@primaryCurrencyChanged": {},
+  "primaryCurrencySwitchRateTitle": "Exchange rate needed",
+  "@primaryCurrencySwitchRateTitle": {},
+  "primaryCurrencySwitchRateMessage": "You have records in {previous}. Enter how many {next} one {previous} is worth so your totals stay correct.",
+  "@primaryCurrencySwitchRateMessage": {
+    "placeholders": {
+      "previous": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "exchangeRatesTitle": "Exchange rates",
+  "@exchangeRatesTitle": {},
+  "exchangeRatesManualDisclosure": "Rates are entered by you and never fetched automatically. Update them whenever you like.",
+  "@exchangeRatesManualDisclosure": {},
+  "exchangeRatesEmpty": "No exchange rates yet",
+  "@exchangeRatesEmpty": {},
+  "exchangeRateAdd": "Add rate",
+  "@exchangeRateAdd": {},
+  "exchangeRateEditTitle": "Exchange rate",
+  "@exchangeRateEditTitle": {},
+  "exchangeRateValueLabel": "1 {from} equals ({to})",
+  "@exchangeRateValueLabel": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "exchangeRateLastUpdated": "Updated {date}",
+  "@exchangeRateLastUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "exchangeRateInvalid": "Enter a rate greater than zero",
+  "@exchangeRateInvalid": {},
+  "exchangeRateSave": "Save",
+  "@exchangeRateSave": {},
+  "exchangeRateRemove": "Remove rate",
+  "@exchangeRateRemove": {},
+  "exchangeRateRemoveConfirm": "Totals that need this rate will be unavailable until you add it again. Your records won't change.",
+  "@exchangeRateRemoveConfirm": {},
+  "exchangeRateSaveFailed": "Couldn't save the exchange rate. Please try again.",
+  "@exchangeRateSaveFailed": {},
+  "currencySettingsLoadFailed": "Couldn't load your currency settings.",
+  "@currencySettingsLoadFailed": {},
+  "primaryCurrencyChangeFailed": "Couldn't change the primary currency. Please try again.",
+  "@primaryCurrencyChangeFailed": {}
 }

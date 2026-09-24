@@ -2,9 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/money/egp_formatter.dart';
+import '../../../../core/money/currency_formatter.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/money/numeral_parser.dart';
+import '../../../currency/domain/usecases/get_primary_currency.dart';
 import '../../../people/domain/entities/people_failures.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../../people/domain/repositories/people_repository.dart';
@@ -25,14 +26,39 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     this._createPerson,
     this._addTransaction,
     this._editTransaction,
-    this._egpFormatter,
+    this._getPrimaryCurrency,
   ) : super(TransactionFormState(idempotencyKey: const Uuid().v4()));
 
   final PeopleRepository _peopleRepository;
   final CreatePerson _createPerson;
   final AddTransaction _addTransaction;
   final EditTransaction _editTransaction;
-  final EgpFormatter _egpFormatter;
+  final GetPrimaryCurrency _getPrimaryCurrency;
+
+  /// Defaults the currency picker to the current primary currency (018
+  /// FR-003) — never a hardcoded EGP. A no-op in edit mode (the record
+  /// keeps its own currency) or once the user has picked a currency.
+  Future<void> loadDefaultCurrency() async {
+    if (state.isEditMode || state.currencyChosenByUser) return;
+    final result = await _getPrimaryCurrency();
+    if (isClosed || state.isEditMode || state.currencyChosenByUser) return;
+    result.match(
+      // A failed read leaves the placeholder default in place; the user can
+      // still pick any currency explicitly.
+      (_) {},
+      (setting) => emit(state.copyWith(currency: setting.currency)),
+    );
+  }
+
+  void currencyChanged(Currency currency) {
+    emit(
+      state.copyWith(
+        currency: currency,
+        currencyChosenByUser: true,
+        clearAmountError: true,
+      ),
+    );
+  }
 
   /// Pre-binds the form to an already-known person (e.g. opened from that
   /// person's own detail page), skipping the picker entirely.
@@ -57,7 +83,10 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
         direction: transaction.direction,
         kind: transaction.kind,
         date: transaction.date,
-        amountInput: _egpFormatter.format(transaction.amount),
+        amountInput: CurrencyFormatter(
+          currency: transaction.amount.currency,
+        ).format(transaction.amount),
+        currency: transaction.amount.currency,
         note: transaction.note,
       ),
     );
@@ -180,7 +209,9 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     final Money amount;
     try {
       final normalized = NumeralParser.toWesternDigits(state.amountInput);
-      final parsed = _egpFormatter.parse(normalized);
+      final parsed = CurrencyFormatter(
+        currency: state.currency,
+      ).parse(normalized);
       if (!parsed.isPositive) {
         throw const FormatException('Amount must be greater than zero');
       }

@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'finance_category_seed.dart';
+import 'migrations/v7_currency_support.dart';
 
 part 'app_database.g.dart';
 
@@ -37,6 +38,10 @@ class MoneyTransactions extends Table {
   TextColumn get idempotencyKey => text().unique()();
   TextColumn get personId => text().references(People, #id)();
   IntColumn get amountMinorUnits => integer()();
+
+  /// 018: ISO 4217 code of [amountMinorUnits]. Pre-018 rows are backfilled
+  /// to explicit `'EGP'` by the v7 migration (FR-002).
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
   TextColumn get direction => text()();
   TextColumn get kind => text()();
   IntColumn get date => integer()();
@@ -110,6 +115,9 @@ class FinanceEntries extends Table {
   /// `type` (enforced in the repository, not only by the schema).
   TextColumn get type => text()();
   IntColumn get amountMinorUnits => integer()();
+
+  /// 018: ISO 4217 code of [amountMinorUnits] (backfilled to `'EGP'`).
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
   IntColumn get date => integer()();
   TextColumn get note => text().nullable()();
   IntColumn get createdAt => integer()();
@@ -198,6 +206,38 @@ class NotificationHistory extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// 018 Multi-Currency: the device-wide primary currency. Single-row table —
+/// the app always reads/writes the fixed `id` `'singleton'`; an absent row
+/// means the EGP default (FR-005).
+class PrimaryCurrencySettings extends Table {
+  TextColumn get id => text()();
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// 018: user-maintained manual exchange rates — "1 [currencyCode] =
+/// [rateMicros] / 10^6 [relativeToCurrencyCode]". Stored as a scaled integer,
+/// never REAL (constitution Principle VIII). Unique per currency pair, so an
+/// edit upserts rather than duplicating (data-model.md).
+@TableIndex(
+  name: 'idx_exchange_rates_pair',
+  columns: {#currencyCode, #relativeToCurrencyCode},
+  unique: true,
+)
+class ExchangeRates extends Table {
+  TextColumn get id => text()();
+  TextColumn get currencyCode => text()();
+  TextColumn get relativeToCurrencyCode => text()();
+  IntColumn get rateMicros => integer()();
+  IntColumn get lastUpdatedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
@@ -213,6 +253,8 @@ class NotificationHistory extends Table {
     FinanceEntries,
     NotificationPreferences,
     NotificationHistory,
+    PrimaryCurrencySettings,
+    ExchangeRates,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -221,7 +263,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -245,6 +287,9 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(notificationPreferences);
         await m.createTable(notificationHistory);
         await m.createIndex(idxNotificationHistorySource);
+      }
+      if (from < 7) {
+        await migrateToCurrencySupport(this, m);
       }
     },
     beforeOpen: (details) async {

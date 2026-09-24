@@ -55,7 +55,6 @@
   "finEduEmptyCategoryTitle": "لا توجد مقالات بعد",
   "finEduEmptyCategoryMessage": "ستظهر مقالات هذا الموضوع هنا.",
   "appTitle": "دفتري",
-
   "commonSave": "حفظ",
   "commonCancel": "إلغاء",
   "commonDelete": "حذف",
@@ -71,7 +70,6 @@
   "errorNotFound": "تعذر العثور على هذا العنصر.",
   "errorValidation": "من فضلك راجع البيانات المدخلة وحاول مرة أخرى.",
   "errorUnknown": "حدث خطأ غير متوقع. من فضلك حاول مرة أخرى.",
-
   "peopleListTitle": "الأشخاص",
   "searchPeopleHint": "ابحث عن شخص",
   "filterAll": "الكل",
@@ -82,7 +80,6 @@
   "emptyPeopleMessage": "أضف شخصًا لتبدأ في تتبع الأموال التي تعطيها أو تستلمها معه.",
   "archivedPeopleAction": "الأشخاص المؤرشفون",
   "addPersonAction": "إضافة شخص",
-
   "personFormCreateTitle": "شخص جديد",
   "personFormEditTitle": "تعديل الشخص",
   "nameLabel": "الاسم",
@@ -94,19 +91,16 @@
   "deleteBlockedTitle": "لا يمكن حذف هذا الشخص",
   "deleteBlockedMessage": "لهذا الشخص معاملات مسجلة. قم بأرشفته بدلًا من ذلك للحفاظ على سجله.",
   "archiveInsteadAction": "أرشفة بدلًا من الحذف",
-
   "relationshipFamily": "عائلة",
   "relationshipFriend": "صديق",
   "relationshipColleague": "زميل",
   "relationshipCustomer": "عميل",
   "relationshipSupplier": "مورّد",
   "relationshipOther": "أخرى",
-
   "duplicateWarningTitle": "تكرار محتمل",
   "duplicateWarningMessage": "هذا الاسم يشبه شخصًا تعرفه بالفعل.",
   "duplicateUseExisting": "استخدام الشخص الموجود",
   "duplicateCreateNew": "إنشاء شخص جديد على أي حال",
-
   "transactionFormCreateTitle": "تسجيل معاملة",
   "transactionFormEditTitle": "تعديل المعاملة",
   "amountLabel": "المبلغ (جنيه مصري)",
@@ -120,10 +114,8 @@
   "savedConfirmation": "تم الحفظ",
   "editedLabel": "معدَّل",
   "repaymentLabel": "سداد",
-
   "repaymentFormTitle": "تسجيل سداد",
   "recordRepaymentAction": "تسجيل سداد",
-
   "personDetailTheyOweYou": "{name} مديون لك بمبلغ {amount}",
   "personDetailYouOweThem": "أنت مدين لـ {name} بمبلغ {amount}",
   "personDetailSettled": "تمت التسوية",
@@ -132,7 +124,6 @@
   "recordTransactionAction": "تسجيل معاملة",
   "deleteTransactionConfirmTitle": "هل تريد حذف هذه المعاملة؟",
   "deleteTransactionConfirmMessage": "لا يمكن التراجع عن هذا الإجراء.",
-
   "overviewTitle": "نظرة عامة",
   "overviewTotalOwedToYou": "إجمالي المستحق لك",
   "overviewTotalYouOwe": "إجمالي المستحق عليك",
@@ -140,13 +131,11 @@
   "overviewSectionYouOweThem": "عليك لهم",
   "overviewAllSettledTitle": "كل شيء تمت تسويته",
   "overviewAllSettledMessage": "ليس لديك أي أرصدة مستحقة مع أي شخص الآن.",
-
   "archivedLabel": "مؤرشف",
   "archivedPeopleTitle": "الأشخاص المؤرشفون",
   "archivedEmptyTitle": "لا يوجد أشخاص مؤرشفون",
   "archivedEmptyMessage": "الأشخاص الذين تقوم بأرشفتهم سيظهرون هنا، مع الاحتفاظ الكامل بسجلهم.",
   "restoreAction": "استعادة",
-
   "settingsTitle": "الإعدادات",
   "languageSectionTitle": "اللغة",
   "languageEnglish": "الإنجليزية",
@@ -157,7 +146,6 @@
   "themeDark": "داكن",
   "themeSystemDefault": "افتراضي النظام",
   "themeSaveFailed": "تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.",
-
   "onboardingStepProgress": "الخطوة {current} من {total}",
   "onboardingUnderstandingMoneyTitle": "افهم وضعك المالي بنظرة واحدة",
   "onboardingUnderstandingMoneyDescription": "شاهد من يدين لك، ومن تدين له، والوضع العام كله في مكان واحد.",
@@ -179,7 +167,6 @@
   "financeAddIncomeAction": "إضافة دخل",
   "financeAddFirstEntryAction": "أضف أول سجل",
   "financeViewAllAction": "عرض الكل",
-
   "financeEntryFormExpenseTitle": "إضافة مصروف",
   "financeEntryFormIncomeTitle": "إضافة دخل",
   "financeEntryFormEditTitle": "تعديل السجل",
@@ -190,7 +177,6 @@
   "financeManageCategoriesAction": "إدارة الفئات",
   "financeNoCategoriesTitle": "لا توجد فئات بعد",
   "financeNoCategoriesMessage": "أنشئ فئة لتبدأ تسجيل مدخلاتك.",
-
   "financeCategoryManagementTitle": "الفئات",
   "financeCategoryFormCreateTitle": "فئة جديدة",
   "financeCategoryFormEditTitle": "تعديل الفئة",
@@ -207,7 +193,6 @@
   "financeRemoveCategoryConfirmTitle": "إزالة هذه الفئة؟",
   "financeRemoveCategoryConfirmMessage": "إذا كانت هناك أي مدخلات تستخدم هذه الفئة، فسيتم أرشفتها للحفاظ على سجلّها. وإلا فسيتم حذفها.",
   "financeCategoryArchivedNotice": "مؤرشفة — مخفية عن المدخلات الجديدة، ومحفوظة للمدخلات الحالية.",
-
   "financePeriodThisMonth": "هذا الشهر",
   "financePeriodLastMonth": "الشهر الماضي",
   "financePeriodCustom": "نطاق مخصص",
@@ -222,17 +207,14 @@
   "financeFilterTypeLabel": "النوع",
   "financeFilterCategoryLabel": "الفئة",
   "financeClearFiltersAction": "مسح عوامل التصفية",
-
   "financeEmptyTitle": "لا توجد مدخلات بعد",
   "financeEmptyMessage": "سجّل دخلك ومصروفاتك لترى أين تذهب أموالك.",
   "financeNoMatchTitle": "لا توجد مدخلات مطابقة",
   "financeNoMatchMessage": "لا توجد مدخلات تطابق عوامل التصفية التي اخترتها. جرّب فترة أو فئة مختلفة.",
-
   "financeDeleteEntryConfirmTitle": "حذف هذا السجل؟",
   "financeDeleteEntryConfirmMessage": "سيتم تحديث إجمالياتك فورًا. يمكنك التراجع خلال ثوانٍ قليلة.",
   "financeEntryDeletedMessage": "تم حذف السجل",
   "financeUndoAction": "تراجع",
-
   "financeCategoryRent": "الإيجار",
   "financeCategoryElectricity": "الكهرباء",
   "financeCategoryWater": "المياه",
@@ -290,5 +272,32 @@
   "notificationSettingsSaveFailed": "تعذّر حفظ إعدادات الإشعارات. حاول مرة أخرى.",
   "notificationSettingsLoadFailed": "تعذّر تحميل إعدادات الإشعارات.",
   "notificationBudgetNoLongerExists": "هذه الميزانية لم تعد موجودة.",
-  "notificationSavingsGoalNoLongerExists": "هدف الادخار هذا لم يعد موجودًا."
+  "notificationSavingsGoalNoLongerExists": "هدف الادخار هذا لم يعد موجودًا.",
+  "currencyFieldLabel": "العملة",
+  "currencyPickerTitle": "اختر العملة",
+  "rateNeededTitle": "الإجمالي غير متاح — يلزم سعر صرف",
+  "rateNeededMessage": "أضف سعر صرف لـ {currencies} لعرض هذا الإجمالي. سجلاتك آمنة ولم تتغير.",
+  "rateNeededAction": "تعيين سعر الصرف",
+  "currencySettingsTitle": "العملة",
+  "currencySettingsEntrySubtitle": "العملة الأساسية وأسعار الصرف",
+  "primaryCurrencyLabel": "العملة الأساسية",
+  "primaryCurrencyDescription": "تُعرض كل الإجماليات والأرصدة بهذه العملة.",
+  "primaryCurrencyChange": "تغيير",
+  "primaryCurrencyChanged": "تم تحديث العملة الأساسية",
+  "primaryCurrencySwitchRateTitle": "يلزم سعر صرف",
+  "primaryCurrencySwitchRateMessage": "لديك سجلات بعملة {previous}. أدخل قيمة واحد {previous} بعملة {next} حتى تظل إجمالياتك صحيحة.",
+  "exchangeRatesTitle": "أسعار الصرف",
+  "exchangeRatesManualDisclosure": "أنت من يُدخل الأسعار ولا تُجلب تلقائيًا أبدًا. حدّثها متى شئت.",
+  "exchangeRatesEmpty": "لا توجد أسعار صرف بعد",
+  "exchangeRateAdd": "إضافة سعر",
+  "exchangeRateEditTitle": "سعر الصرف",
+  "exchangeRateValueLabel": "1 {from} يساوي ({to})",
+  "exchangeRateLastUpdated": "آخر تحديث {date}",
+  "exchangeRateInvalid": "أدخل سعرًا أكبر من صفر",
+  "exchangeRateSave": "حفظ",
+  "exchangeRateRemove": "حذف السعر",
+  "exchangeRateRemoveConfirm": "ستصبح الإجماليات التي تحتاج هذا السعر غير متاحة حتى تضيفه مرة أخرى. لن تتغير سجلاتك.",
+  "exchangeRateSaveFailed": "تعذر حفظ سعر الصرف. حاول مرة أخرى.",
+  "currencySettingsLoadFailed": "تعذر تحميل إعدادات العملة.",
+  "primaryCurrencyChangeFailed": "تعذر تغيير العملة الأساسية. حاول مرة أخرى."
 }

@@ -14,7 +14,7 @@ void main() {
       idempotencyKey: 'k1',
       categoryId: 'c1',
       type: type,
-      amount: const Money.fromMinorUnits(15050),
+      amount: const Money.egp(15050),
       date: DateTime(2026, 1, 1),
       createdAt: DateTime(2026, 1, 1),
     );
@@ -84,7 +84,7 @@ void main() {
           idempotencyKey: 'k2',
           categoryId: 'c1',
           type: FinanceEntryType.expense,
-          amount: const Money.fromMinorUnits(15050),
+          amount: const Money.egp(15050),
           date: DateTime(2026, 1, 1),
           createdAt: DateTime(2026, 1, 1),
           editedAt: DateTime(2026, 1, 2),
@@ -96,4 +96,55 @@ void main() {
       });
     });
   }
+
+  group('currency indicator (018 FR-010)', () {
+    Widget wrapWith(FinanceEntry entry, Currency primary) => MaterialApp(
+      theme: buildLightTheme(),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: Scaffold(
+        body: FinanceEntryListTile(
+          entry: entry,
+          categoryName: sharedCategoryName,
+          categoryIconKey: sharedIconKey,
+          primaryCurrency: primary,
+        ),
+      ),
+    );
+
+    FinanceEntry entryIn(Money amount) => FinanceEntry(
+      id: 'e1',
+      idempotencyKey: 'k1',
+      categoryId: 'c1',
+      type: FinanceEntryType.expense,
+      amount: amount,
+      date: DateTime(2026, 1, 1),
+      createdAt: DateTime(2026, 1, 1),
+    );
+
+    testWidgets('a primary-currency row shows no chip (unchanged UI)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWith(entryIn(const Money.egp(15050)), Currency.egp),
+      );
+
+      expect(find.byKey(const Key('currency_chip_EGP')), findsNothing);
+      expect(find.text('-150.50 EGP'), findsOneWidget);
+    });
+
+    testWidgets('a non-primary row shows its own currency, unconverted', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        wrapWith(
+          entryIn(Money.fromMinorUnits(2599, Currency.usd)),
+          Currency.egp,
+        ),
+      );
+
+      expect(find.byKey(const Key('currency_chip_USD')), findsOneWidget);
+      expect(find.text('-25.99 USD'), findsOneWidget);
+    });
+  });
 }

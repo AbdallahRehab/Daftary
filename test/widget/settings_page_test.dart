@@ -115,4 +115,17 @@ void main() {
 
     verify(() => cubit.changeThemeMode(AppThemeMode.system)).called(1);
   });
+
+  testWidgets('shows the Currency entry (018) with its subtitle', (
+    tester,
+  ) async {
+    when(() => cubit.state).thenReturn(const SettingsState());
+    await tester.pumpWidget(wrap());
+    await tester.pumpAndSettle();
+
+    final entry = find.byKey(const Key('settings_currency_entry'));
+    await tester.scrollUntilVisible(entry, 100);
+    expect(entry, findsOneWidget);
+    expect(find.text('Primary currency and exchange rates'), findsOneWidget);
+  });
 }

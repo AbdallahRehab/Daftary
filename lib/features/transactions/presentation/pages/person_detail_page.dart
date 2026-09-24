@@ -7,11 +7,13 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
 import '../cubit/person_detail_cubit.dart';
 import '../cubit/person_detail_state.dart';
+import '../widgets/balance_amount_text.dart';
 import '../widgets/balance_status_badge.dart';
 import '../widgets/delete_transaction_confirm_dialog.dart';
 import '../widgets/transaction_list_tile.dart';
@@ -98,28 +100,38 @@ class _PersonDetailView extends StatelessWidget {
 
           final person = state.person!;
           final balance = state.balance!;
-          final formatter = EgpFormatter(
-            locale: Localizations.localeOf(context).languageCode,
-          );
-          final headline = switch (balance.status) {
+          final locale = Localizations.localeOf(context).languageCode;
+          final formatter = EgpFormatter(locale: locale);
+          final net = balance.net;
+          // 018: a blocked balance (a currency with no exchange rate) has
+          // no primary-currency net; its per-currency amounts are shown in
+          // their own currencies instead (FR-009/FR-010).
+          final amountText = net != null
+              ? formatter.formatWithSymbol(net.abs())
+              : formatNativeNets(balance.nativeNets, locale: locale);
+          final status = balance.status;
+          final headline = switch (status) {
             RelationshipStatus.theyOweYou => l10n.personDetailTheyOweYou(
               person.name,
-              formatter.formatWithSymbol(balance.net),
+              amountText,
             ),
             RelationshipStatus.youOweThem => l10n.personDetailYouOweThem(
               person.name,
-              formatter.formatWithSymbol(balance.net.abs()),
+              amountText,
             ),
             RelationshipStatus.settled => l10n.personDetailSettled,
+            // Opposite-direction currencies with a missing rate: the
+            // direction itself is unknown until a rate is set.
+            null => person.name,
           };
           // The headline is the single most important number on this
           // screen — color it the same way its amount is colored
           // everywhere else (Overview rows, the balance badge, transaction
           // amounts) instead of leaving it in the default text color.
-          final headlineColor = switch (balance.status) {
+          final headlineColor = switch (status) {
             RelationshipStatus.theyOweYou => context.financeColors.positive,
             RelationshipStatus.youOweThem => context.financeColors.negative,
-            RelationshipStatus.settled => null,
+            RelationshipStatus.settled || null => null,
           };
 
           return Column(
@@ -138,9 +150,9 @@ class _PersonDetailView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.sm),
                     Row(
                       children: [
-                        BalanceStatusBadge(status: balance.status),
+                        if (status != null) BalanceStatusBadge(status: status),
                         const Spacer(),
-                        if (balance.status != RelationshipStatus.settled)
+                        if (status != RelationshipStatus.settled)
                           TextButton.icon(
                             onPressed: () => _recordRepayment(context),
                             icon: const Icon(Icons.undo),
@@ -148,6 +160,13 @@ class _PersonDetailView extends StatelessWidget {
                           ),
                       ],
                     ),
+                    if (balance.isBlocked) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      RateNeededBanner(
+                        missingRatesFor: balance.missingRatesFor,
+                        onSetRate: () => openExchangeRateSettings(context),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -174,6 +193,7 @@ class _PersonDetailView extends StatelessWidget {
                           final transaction = state.history[index];
                           return TransactionListTile(
                             transaction: transaction,
+                            primaryCurrency: state.primaryCurrency,
                             onTap: () =>
                                 _editTransaction(context, transaction, person),
                             onDelete: () =>

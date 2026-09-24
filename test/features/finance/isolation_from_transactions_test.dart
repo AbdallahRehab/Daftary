@@ -13,6 +13,8 @@ import 'package:daftary/core/money/money.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/conversion_fakes.dart';
+
 /// T075 / FR-023 — the boundary between this feature and the existing
 /// person-to-person ledger.
 ///
@@ -58,14 +60,14 @@ void main() {
     await transactions.addTransaction(
       idempotencyKey: 'tx-1',
       personId: 'p1',
-      amount: const Money.fromMinorUnits(50000),
+      amount: const Money.egp(50000),
       direction: TransactionDirection.given,
       date: DateTime(2026, 9, 1),
     );
     await transactions.addTransaction(
       idempotencyKey: 'tx-2',
       personId: 'p2',
-      amount: const Money.fromMinorUnits(20000),
+      amount: const Money.egp(20000),
       direction: TransactionDirection.received,
       date: DateTime(2026, 9, 2),
     );
@@ -82,8 +84,8 @@ void main() {
     final p1 = await transactions.getPersonBalance('p1');
     final p2 = await transactions.getPersonBalance('p2');
     return {
-      'p1': p1.getOrElse((f) => throw StateError(f.message)).net.minorUnits,
-      'p2': p2.getOrElse((f) => throw StateError(f.message)).net.minorUnits,
+      'p1': p1.getOrElse((f) => throw StateError(f.message)).net!.minorUnits,
+      'p2': p2.getOrElse((f) => throw StateError(f.message)).net!.minorUnits,
     };
   }
 
@@ -96,7 +98,7 @@ void main() {
       idempotencyKey: 'fin-1',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: 75000,
+      amount: Money.egp(75000),
       date: DateTime(2026, 9, 3),
     );
     final entry = added.getOrElse((f) => throw StateError(f.message));
@@ -105,7 +107,7 @@ void main() {
       idempotencyKey: 'fin-2',
       categoryId: 'seed_salary',
       type: FinanceEntryType.income,
-      amountMinorUnits: 900000,
+      amount: Money.egp(900000),
       date: DateTime(2026, 9, 4),
     );
 
@@ -115,7 +117,7 @@ void main() {
     await finance.editEntry(
       entryId: entry.id,
       categoryId: 'seed_rent',
-      amountMinorUnits: 120000,
+      amount: Money.egp(120000),
       date: DateTime(2026, 9, 5),
     );
     expect(await readBalances(), balancesBefore);
@@ -137,17 +139,20 @@ void main() {
       end: DateTime(2026, 9, 30),
     );
 
-    final emptySummary = await finance.getSummary(period);
+    final emptySummary = await summaryUseCase(finance)(period);
     final summary = emptySummary.getOrElse((f) => throw StateError(f.message));
     expect(
-      summary.totalExpense.minorUnits,
+      summary.totalExpense!.minorUnits,
       0,
       reason: 'two MoneyTransactions exist, but no FinanceEntries do',
     );
-    expect(summary.totalIncome.minorUnits, 0);
+    expect(summary.totalIncome!.minorUnits, 0);
 
-    final breakdown = await finance.getCategoryBreakdown(period);
-    expect(breakdown.getOrElse((f) => throw StateError(f.message)), isEmpty);
+    final breakdown = await breakdownUseCase(finance)(period);
+    expect(
+      breakdown.getOrElse((f) => throw StateError(f.message)).items,
+      isEmpty,
+    );
 
     final history = await finance.getHistory();
     expect(history.getOrElse((f) => throw StateError(f.message)), isEmpty);

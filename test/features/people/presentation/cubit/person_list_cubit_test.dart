@@ -60,14 +60,12 @@ void main() {
         ),
       ).thenAnswer((_) async => Right([ahmed, sara]));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(150000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(150000))),
       );
       when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
     act: (cubit) => cubit.load(),
@@ -92,9 +90,8 @@ void main() {
         ),
       ).thenAnswer((_) async => Right([sara]));
       when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
     act: (cubit) => cubit.nameQueryChanged('Sara'),
@@ -115,9 +112,8 @@ void main() {
         ),
       ).thenAnswer((_) async => Right([sara]));
       when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
     act: (cubit) => cubit.statusFilterChanged(RelationshipStatus.youOweThem),
@@ -144,9 +140,8 @@ void main() {
         ),
       ).thenAnswer((_) async => Right([sara]));
       when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
     act: (cubit) => cubit.load(),
@@ -194,9 +189,8 @@ void main() {
         ),
       ).thenAnswer((_) async => Right([sara]));
       when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p2', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
     act: (cubit) => cubit.archive('p1'),
@@ -277,5 +271,43 @@ void main() {
         PersonListStatus.failure,
       ),
     ],
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'lists a person whose balance is blocked on a missing rate, with an '
+    'unknown status, without failing (018 FR-009)',
+    build: buildCubit,
+    setUp: () {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([ahmed, sara]));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance.blocked(
+            personId: 'p1',
+            nativeNets: [
+              Money.egp(1000),
+              Money.fromMinorUnits(-500, Currency.usd),
+            ],
+            missingRatesFor: [Currency.usd],
+          ),
+        ),
+      );
+      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
+      );
+    },
+    act: (cubit) => cubit.load(),
+    verify: (cubit) {
+      expect(cubit.state.status, PersonListStatus.success);
+      final blocked = cubit.state.items.firstWhere((i) => i.person.id == 'p1');
+      expect(blocked.balance.isBlocked, isTrue);
+      expect(blocked.balance.status, isNull);
+      expect(blocked.balance.missingRatesFor, [Currency.usd]);
+    },
   );
 }

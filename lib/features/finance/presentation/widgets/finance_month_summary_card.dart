@@ -8,6 +8,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../../core/money/money.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../cubit/finance_month_summary_cubit.dart';
 import '../cubit/finance_month_summary_state.dart';
 
@@ -48,6 +49,8 @@ class _FinanceMonthSummaryView extends StatelessWidget {
           return const SizedBox.shrink();
         }
         final summary = state.summary!;
+        final totalIncome = summary.totalIncome;
+        final totalExpense = summary.totalExpense;
 
         return AppCard(
           onTap: () => context.push('/finance'),
@@ -78,28 +81,38 @@ class _FinanceMonthSummaryView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Expanded(
-                    child: _Total(
-                      label: l10n.financeSummaryTotalIncome,
-                      amount: summary.totalIncome,
-                      color: financeColors.positive,
-                      icon: Icons.south_west,
-                      formatter: formatter,
+              // 018 FR-009: a month with an unconvertible currency shows
+              // which rate is missing, never a partial total.
+              if (summary.isBlocked ||
+                  totalIncome == null ||
+                  totalExpense == null)
+                RateNeededBanner(
+                  missingRatesFor: summary.missingRatesFor,
+                  onSetRate: () => context.push('/settings/currency/rates'),
+                )
+              else
+                Row(
+                  children: [
+                    Expanded(
+                      child: _Total(
+                        label: l10n.financeSummaryTotalIncome,
+                        amount: totalIncome,
+                        color: financeColors.positive,
+                        icon: Icons.south_west,
+                        formatter: formatter,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: _Total(
-                      label: l10n.financeSummaryTotalExpense,
-                      amount: summary.totalExpense,
-                      color: financeColors.negative,
-                      icon: Icons.north_east,
-                      formatter: formatter,
+                    Expanded(
+                      child: _Total(
+                        label: l10n.financeSummaryTotalExpense,
+                        amount: totalExpense,
+                        color: financeColors.negative,
+                        icon: Icons.north_east,
+                        formatter: formatter,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
             ],
           ),
         );

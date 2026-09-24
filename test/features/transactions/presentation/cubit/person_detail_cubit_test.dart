@@ -15,6 +15,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../helpers/currency_test_doubles.dart';
+
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
 class MockTransactionsRepository extends Mock
@@ -43,6 +45,7 @@ void main() {
     GetPersonBalance(transactionsRepository),
     GetPersonHistory(transactionsRepository),
     DeleteTransaction(transactionsRepository),
+    getPrimaryCurrencyReturning(),
   );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
@@ -53,9 +56,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(150000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(150000))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -86,9 +88,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(-50000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(-50000))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -113,9 +114,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(0)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -140,7 +140,7 @@ void main() {
         id: 't1',
         idempotencyKey: 'k1',
         personId: 'p1',
-        amount: const Money.fromMinorUnits(200000),
+        amount: const Money.egp(200000),
         direction: TransactionDirection.given,
         kind: TransactionKind.initialExchange,
         date: now,
@@ -150,9 +150,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(200000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(200000))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -173,9 +172,8 @@ void main() {
         (_) async => const Left(NotFoundFailure('Person not found')),
       );
       when(() => transactionsRepository.getPersonBalance('missing')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'missing', net: Money.fromMinorUnits(0)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'missing', net: Money.egp(0))),
       );
       when(
         () => transactionsRepository.getPersonHistory('missing'),
@@ -201,9 +199,8 @@ void main() {
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(200000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(200000))),
       );
       when(
         () => transactionsRepository.getPersonHistory('p1'),
@@ -217,9 +214,8 @@ void main() {
       // The balance drops after the delete — refresh() must be re-run to
       // pick up the new value, not just report success.
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(0)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
       );
       await cubit.deleteTransaction('t1');
     },
@@ -241,22 +237,61 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(100000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(100000))),
       );
     },
     act: (cubit) async {
       await cubit.load('p1');
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async => const Right(
-          PersonBalance(personId: 'p1', net: Money.fromMinorUnits(300000)),
-        ),
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(300000))),
       );
       await cubit.refresh();
     },
     verify: (cubit) {
-      expect(cubit.state.balance?.net, const Money.fromMinorUnits(300000));
+      expect(cubit.state.balance?.net, const Money.egp(300000));
+    },
+  );
+
+  blocTest<PersonDetailCubit, PersonDetailState>(
+    'a balance blocked on a missing rate is surfaced as-is with the primary '
+    'currency (018 FR-009)',
+    build: () => PersonDetailCubit(
+      peopleRepository,
+      GetPersonBalance(transactionsRepository),
+      GetPersonHistory(transactionsRepository),
+      DeleteTransaction(transactionsRepository),
+      getPrimaryCurrencyReturning(Currency.usd),
+    ),
+    setUp: () {
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance.blocked(
+            personId: 'p1',
+            nativeNets: [
+              Money.fromMinorUnits(500, Currency.usd),
+              Money.fromMinorUnits(700, Currency.eur),
+            ],
+            missingRatesFor: [Currency.eur],
+          ),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => const Right([]));
+    },
+    act: (cubit) => cubit.load('p1'),
+    verify: (cubit) {
+      final balance = cubit.state.balance!;
+      expect(cubit.state.status, PersonDetailStatus.success);
+      expect(cubit.state.primaryCurrency, Currency.usd);
+      expect(balance.isBlocked, isTrue);
+      expect(balance.missingRatesFor, [Currency.eur]);
+      expect(balance.status, RelationshipStatus.theyOweYou);
     },
   );
 }

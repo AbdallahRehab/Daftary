@@ -136,6 +136,7 @@ class _FinanceHistoryView extends StatelessWidget {
                       ? l10n.financeCategoryOther
                       : categoryDisplayName(l10n, category),
                   categoryIconKey: category?.icon ?? 'other',
+                  primaryCurrency: state.primaryCurrency,
                   onEdit: () => _pushAndReload(
                     context,
                     '/finance/entries/${entry.id}/edit',
@@ -211,7 +212,7 @@ class _HistoryHeader extends StatelessWidget {
         _FilterControls(state: state),
         const SizedBox(height: AppSpacing.md),
         CategoryBreakdownBar(
-          items: state.breakdown,
+          breakdown: state.breakdown,
           categoriesById: state.categoriesById,
         ),
       ],

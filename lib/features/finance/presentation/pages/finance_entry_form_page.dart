@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -179,6 +180,18 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
                       ? l10n.amountInvalidError
                       : null,
                   onChanged: cubit.amountChanged,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                // 018 FR-003: defaults to the primary currency (new entry)
+                // or the entry's own currency (edit), both resolved by the
+                // cubit. Keyed on the value because the dropdown only reads
+                // its initial value once, and the default arrives async.
+                CurrencyPicker(
+                  key: ValueKey(
+                    'finance_entry_currency_${state.currency.code}',
+                  ),
+                  value: state.currency,
+                  onChanged: cubit.currencyChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),
                 AppDateField(

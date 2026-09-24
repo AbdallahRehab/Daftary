@@ -11,7 +11,10 @@ extension MoneyTransactionMapper on db.MoneyTransaction {
     id: id,
     idempotencyKey: idempotencyKey,
     personId: personId,
-    amount: Money.fromMinorUnits(amountMinorUnits),
+    amount: Money.fromMinorUnits(
+      amountMinorUnits,
+      Currency.fromCode(currencyCode),
+    ),
     direction: direction == 'given'
         ? domain.TransactionDirection.given
         : domain.TransactionDirection.received,

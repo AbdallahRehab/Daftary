@@ -1,3 +1,4 @@
+import 'package:daftary/core/design_system/currency_picker.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/money/egp_formatter.dart';
@@ -18,6 +19,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../features/finance/helpers/conversion_fakes.dart';
+
 class MockAddFinanceEntry extends Mock implements AddFinanceEntry {}
 
 class MockEditFinanceEntry extends Mock implements EditFinanceEntry {}
@@ -32,6 +35,7 @@ void main() {
   late MockAddFinanceEntry addFinanceEntry;
   late MockEditFinanceEntry editFinanceEntry;
   late MockGetCategories getCategories;
+  late FakeGetPrimaryCurrency getPrimaryCurrency;
 
   final groceries = Category(
     id: 'seed_groceries',
@@ -44,6 +48,7 @@ void main() {
   );
 
   setUpAll(() {
+    registerFallbackValue(const Money.egp(0));
     // `any(named: 'type')` / `any(named: 'date')` need a concrete fallback
     // for each non-nullable matched type.
     registerFallbackValue(FinanceEntryType.expense);
@@ -54,6 +59,7 @@ void main() {
     addFinanceEntry = MockAddFinanceEntry();
     editFinanceEntry = MockEditFinanceEntry();
     getCategories = MockGetCategories();
+    getPrimaryCurrency = FakeGetPrimaryCurrency();
 
     when(
       () => getCategories(
@@ -68,6 +74,7 @@ void main() {
     editFinanceEntry,
     getCategories,
     EgpFormatter(),
+    getPrimaryCurrency,
   );
 
   /// The form's own widget tree, driven by a real cubit over mocked use
@@ -98,7 +105,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -109,7 +116,7 @@ void main() {
               idempotencyKey: 'k1',
               categoryId: groceries.id,
               type: FinanceEntryType.expense,
-              amount: const Money.fromMinorUnits(15050),
+              amount: const Money.egp(15050),
               date: DateTime(2026, 1, 1),
               createdAt: DateTime(2026, 1, 1),
             ),
@@ -132,7 +139,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: captureAny(named: 'amountMinorUnits'),
+            amount: captureAny(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -140,7 +147,7 @@ void main() {
 
         expect(
           captured,
-          15050,
+          const Money.egp(15050),
           reason: '١٥٠٫٥٠ EGP is 15050 piastres, exactly as "150.50" would be',
         );
       },
@@ -152,7 +159,7 @@ void main() {
           idempotencyKey: any(named: 'idempotencyKey'),
           categoryId: any(named: 'categoryId'),
           type: any(named: 'type'),
-          amountMinorUnits: any(named: 'amountMinorUnits'),
+          amount: any(named: 'amount'),
           date: any(named: 'date'),
           note: any(named: 'note'),
         ),
@@ -163,7 +170,7 @@ void main() {
             idempotencyKey: 'k1',
             categoryId: groceries.id,
             type: FinanceEntryType.expense,
-            amount: const Money.fromMinorUnits(15050),
+            amount: const Money.egp(15050),
             date: DateTime(2026, 1, 1),
             createdAt: DateTime(2026, 1, 1),
           ),
@@ -185,13 +192,36 @@ void main() {
           idempotencyKey: any(named: 'idempotencyKey'),
           categoryId: any(named: 'categoryId'),
           type: any(named: 'type'),
-          amountMinorUnits: captureAny(named: 'amountMinorUnits'),
+          amount: captureAny(named: 'amount'),
           date: any(named: 'date'),
           note: any(named: 'note'),
         ),
       ).captured.single;
 
-      expect(captured, 15050);
+      expect(captured, const Money.egp(15050));
+    });
+  });
+
+  group('currency picker (018)', () {
+    testWidgets('a new entry opens on the primary currency, and a picked '
+        'currency is what the amount is saved in', (tester) async {
+      getPrimaryCurrency.currency = Currency.usd;
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.initialize(type: FinanceEntryType.expense);
+      await tester.pumpWidget(wrap(cubit, locale: const Locale('en')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(CurrencyPicker.fieldKey), findsOneWidget);
+      expect(find.text('US Dollar (USD)'), findsOneWidget);
+
+      await tester.tap(find.byKey(CurrencyPicker.fieldKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Euro (EUR)').last);
+      await tester.pumpAndSettle();
+
+      expect(cubit.state.currency, Currency.eur);
+      expect(find.text('Euro (EUR)'), findsOneWidget);
     });
   });
 
@@ -216,7 +246,7 @@ void main() {
             idempotencyKey: any(named: 'idempotencyKey'),
             categoryId: any(named: 'categoryId'),
             type: any(named: 'type'),
-            amountMinorUnits: any(named: 'amountMinorUnits'),
+            amount: any(named: 'amount'),
             date: any(named: 'date'),
             note: any(named: 'note'),
           ),
@@ -282,6 +312,12 @@ class _FormHarness extends StatelessWidget {
         return Column(
           children: [
             if (state.amountInvalid) Text(l10n.amountInvalidError),
+            // Mirrors the page's picker wiring (018 FR-003).
+            CurrencyPicker(
+              key: ValueKey('finance_entry_currency_${state.currency.code}'),
+              value: state.currency,
+              onChanged: context.read<FinanceEntryFormCubit>().currencyChanged,
+            ),
             CategoryPickerField(
               categories: state.categories,
               type: state.type,

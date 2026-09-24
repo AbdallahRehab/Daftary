@@ -1,4 +1,5 @@
 import 'package:daftary/core/database/app_database.dart' show AppDatabase;
+import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
@@ -8,6 +9,8 @@ import 'package:daftary/features/finance/domain/usecases/delete_finance_entry.da
 import 'package:daftary/features/finance/domain/usecases/restore_finance_entry.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../../helpers/conversion_fakes.dart';
 
 /// T065 — `DeleteFinanceEntry` / `RestoreFinanceEntry` (FR-020).
 ///
@@ -43,17 +46,17 @@ void main() {
       idempotencyKey: 'k-${DateTime.now().microsecondsSinceEpoch}',
       categoryId: 'seed_groceries',
       type: FinanceEntryType.expense,
-      amountMinorUnits: amount,
+      amount: Money.egp(amount),
       date: DateTime(2026, 4, 10),
     );
     return result.getOrElse((f) => throw StateError(f.message));
   }
 
   Future<int> expenseTotal() async {
-    final summary = await repository.getSummary(period);
+    final summary = await summaryUseCase(repository)(period);
     return summary
         .getOrElse((f) => throw StateError(f.message))
-        .totalExpense
+        .totalExpense!
         .minorUnits;
   }
 

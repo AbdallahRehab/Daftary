@@ -1,5 +1,6 @@
 import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/error/failure.dart';
+import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
@@ -41,7 +42,7 @@ void main() {
         idempotencyKey: 'key-1',
         categoryId: expenseCategoryId,
         type: FinanceEntryType.expense,
-        amountMinorUnits: 15050,
+        amount: Money.egp(15050),
         date: DateTime(2026, 1, 15),
         note: 'Weekly shop',
       );
@@ -59,7 +60,7 @@ void main() {
         idempotencyKey: 'key-1',
         categoryId: expenseCategoryId,
         type: FinanceEntryType.expense,
-        amountMinorUnits: 15050,
+        amount: Money.egp(15050),
         date: DateTime(2026, 1, 15),
       );
       final retried = await repository.addEntry(
@@ -68,7 +69,7 @@ void main() {
         type: FinanceEntryType.expense,
         // Deliberately different: the retry must return the persisted row
         // untouched, not overwrite it.
-        amountMinorUnits: 999999,
+        amount: Money.egp(999999),
         date: DateTime(2026, 2, 20),
       );
 
@@ -89,7 +90,7 @@ void main() {
           // An income category on an expense entry.
           categoryId: incomeCategoryId,
           type: FinanceEntryType.expense,
-          amountMinorUnits: 15050,
+          amount: Money.egp(15050),
           date: DateTime(2026, 1, 15),
         );
 
@@ -103,14 +104,14 @@ void main() {
         idempotencyKey: 'key-3',
         categoryId: expenseCategoryId,
         type: FinanceEntryType.expense,
-        amountMinorUnits: 0,
+        amount: Money.egp(0),
         date: DateTime(2026, 1, 15),
       );
       final negative = await repository.addEntry(
         idempotencyKey: 'key-4',
         categoryId: expenseCategoryId,
         type: FinanceEntryType.expense,
-        amountMinorUnits: -500,
+        amount: Money.egp(-500),
         date: DateTime(2026, 1, 15),
       );
 
@@ -125,11 +126,95 @@ void main() {
         idempotencyKey: 'key-5',
         categoryId: incomeCategoryId,
         type: FinanceEntryType.income,
-        amountMinorUnits: 800000,
+        amount: Money.egp(800000),
         date: DateTime(2026, 1, 1),
       );
 
       expect(result.toNullable()!.type, FinanceEntryType.income);
+    });
+  });
+
+  group('currency_code (018, T026)', () {
+    test('a non-EGP amount round-trips its currency through the column '
+        'and back into the domain', () async {
+      final added = (await repository.addEntry(
+        idempotencyKey: 'usd-1',
+        categoryId: expenseCategoryId,
+        type: FinanceEntryType.expense,
+        amount: Money.fromMinorUnits(4999, Currency.usd),
+        date: DateTime(2026, 2, 1),
+      )).toNullable()!;
+
+      expect(added.amount, Money.fromMinorUnits(4999, Currency.usd));
+      final row = await (db.select(
+        db.financeEntries,
+      )..where((t) => t.id.equals(added.id))).getSingle();
+      expect(row.currencyCode, 'USD');
+      expect(row.amountMinorUnits, 4999);
+
+      final reloaded = (await repository.getEntryById(added.id)).toNullable()!;
+      expect(reloaded.amount.currency, Currency.usd);
+    });
+
+    test('an EGP amount is stored as EGP, exactly as before 018', () async {
+      final added = (await repository.addEntry(
+        idempotencyKey: 'egp-1',
+        categoryId: expenseCategoryId,
+        type: FinanceEntryType.expense,
+        amount: const Money.egp(15050),
+        date: DateTime(2026, 2, 1),
+      )).toNullable()!;
+
+      final row = await (db.select(
+        db.financeEntries,
+      )..where((t) => t.id.equals(added.id))).getSingle();
+      expect(row.currencyCode, 'EGP');
+      expect(added.amount, const Money.egp(15050));
+    });
+
+    test('a row inserted without a currency (pre-018 shape) reads back as '
+        'EGP via the column default (FR-002)', () async {
+      await db
+          .into(db.financeEntries)
+          .insert(
+            FinanceEntriesCompanion.insert(
+              id: 'legacy',
+              idempotencyKey: 'legacy',
+              categoryId: expenseCategoryId,
+              type: FinanceEntryType.expense.dbValue,
+              amountMinorUnits: 700,
+              date: DateTime(2026, 2, 1).millisecondsSinceEpoch,
+              createdAt: DateTime(2026, 2, 1).millisecondsSinceEpoch,
+              note: const Value(null),
+            ),
+          );
+
+      final entry = (await repository.getEntryById('legacy')).toNullable()!;
+      expect(entry.amount, const Money.egp(700));
+    });
+
+    test('editing an entry can change its currency — only by the user\'s '
+        'direct edit (FR-004)', () async {
+      final added = (await repository.addEntry(
+        idempotencyKey: 'edit-ccy',
+        categoryId: expenseCategoryId,
+        type: FinanceEntryType.expense,
+        amount: const Money.egp(1000),
+        date: DateTime(2026, 2, 1),
+      )).toNullable()!;
+
+      final edited = (await repository.editEntry(
+        entryId: added.id,
+        categoryId: expenseCategoryId,
+        amount: Money.fromMinorUnits(1000, Currency.sar),
+        date: DateTime(2026, 2, 1),
+      )).toNullable()!;
+
+      expect(edited.amount, Money.fromMinorUnits(1000, Currency.sar));
+      final row = await (db.select(
+        db.financeEntries,
+      )..where((t) => t.id.equals(added.id))).getSingle();
+      expect(row.currencyCode, 'SAR');
     });
   });
 }

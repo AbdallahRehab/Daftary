@@ -25,7 +25,7 @@ void main() {
     id: 't1',
     idempotencyKey: 'key-1',
     personId: 'p1',
-    amount: const Money.fromMinorUnits(300000),
+    amount: const Money.egp(300000),
     direction: TransactionDirection.received,
     kind: TransactionKind.initialExchange,
     date: editedDate,
@@ -39,7 +39,7 @@ void main() {
     when(
       () => repository.editTransaction(
         transactionId: 't1',
-        amount: const Money.fromMinorUnits(300000),
+        amount: const Money.egp(300000),
         direction: TransactionDirection.received,
         date: editedDate,
         note: 'corrected amount',
@@ -48,7 +48,7 @@ void main() {
 
     final result = await editTransaction(
       transactionId: 't1',
-      amount: const Money.fromMinorUnits(300000),
+      amount: const Money.egp(300000),
       direction: TransactionDirection.received,
       date: editedDate,
       note: 'corrected amount',
@@ -72,7 +72,7 @@ void main() {
     when(
       () => repository.editTransaction(
         transactionId: 't1',
-        amount: const Money.fromMinorUnits(0),
+        amount: const Money.egp(0),
         direction: TransactionDirection.given,
         date: editedDate,
         note: null,
@@ -85,7 +85,7 @@ void main() {
 
     final result = await editTransaction(
       transactionId: 't1',
-      amount: const Money.fromMinorUnits(0),
+      amount: const Money.egp(0),
       direction: TransactionDirection.given,
       date: editedDate,
     );
@@ -104,7 +104,7 @@ void main() {
       when(
         () => repository.editTransaction(
           transactionId: 'missing',
-          amount: const Money.fromMinorUnits(1000),
+          amount: const Money.egp(1000),
           direction: TransactionDirection.given,
           date: editedDate,
           note: null,
@@ -117,7 +117,7 @@ void main() {
 
       final result = await editTransaction(
         transactionId: 'missing',
-        amount: const Money.fromMinorUnits(1000),
+        amount: const Money.egp(1000),
         direction: TransactionDirection.given,
         date: editedDate,
       );

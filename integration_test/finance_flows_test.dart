@@ -1,10 +1,12 @@
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/money.dart';
 import 'package:daftary/core/routing/app_router.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
 import 'package:daftary/features/finance/domain/repositories/finance_repository.dart';
+import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/main.dart';
 import 'package:flutter/material.dart';
@@ -264,7 +266,7 @@ void main() {
       idempotencyKey: unique('idem'),
       categoryId: category.id,
       type: FinanceEntryType.expense,
-      amountMinorUnits: 5000,
+      amount: Money.egp(5000),
       date: DateTime.now(),
     );
     await categoryRepository.removeCategory(category.id);
@@ -307,14 +309,14 @@ void main() {
       idempotencyKey: key,
       categoryId: category.id,
       type: FinanceEntryType.expense,
-      amountMinorUnits: 7700,
+      amount: Money.egp(7700),
       date: DateTime.now(),
     );
     final retried = await financeRepository.addEntry(
       idempotencyKey: key,
       categoryId: category.id,
       type: FinanceEntryType.expense,
-      amountMinorUnits: 7700,
+      amount: Money.egp(7700),
       date: DateTime.now(),
     );
     final entry = first.getOrElse((f) => throw StateError(f.message));
@@ -328,7 +330,7 @@ void main() {
     final editedResult = await financeRepository.editEntry(
       entryId: entry.id,
       categoryId: category.id,
-      amountMinorUnits: 8800,
+      amount: Money.egp(8800),
       date: entry.date,
     );
     final edited = editedResult.getOrElse((f) => throw StateError(f.message));
@@ -374,7 +376,7 @@ void main() {
       idempotencyKey: unique('idem-isolation'),
       categoryId: category.id,
       type: FinanceEntryType.expense,
-      amountMinorUnits: 123400,
+      amount: Money.egp(123400),
       date: DateTime.now(),
     );
     final entry = added.getOrElse((f) => throw StateError(f.message));
@@ -382,7 +384,7 @@ void main() {
     await financeRepository.editEntry(
       entryId: entry.id,
       categoryId: category.id,
-      amountMinorUnits: 567800,
+      amount: Money.egp(567800),
       date: entry.date,
     );
     await financeRepository.deleteEntry(entry.id);
@@ -401,6 +403,9 @@ void main() {
     await pumpFinance(tester);
     final financeRepository = getIt<FinanceRepository>();
     final categoryRepository = getIt<CategoryRepository>();
+    // 018: summaries are composed (per-currency SQL + conversion) by the use
+    // case, not the repository.
+    final getSummary = getIt<GetFinanceSummary>();
 
     final categories = await categoryRepository.getCategories(
       type: CategoryType.income,
@@ -408,36 +413,36 @@ void main() {
     final category = categories.getOrElse((_) => const []).first;
     final period = DateRange.thisMonth();
 
-    final summaryBefore = await financeRepository.getSummary(period);
+    final summaryBefore = await getSummary(period);
     final incomeBefore = summaryBefore
         .getOrElse((f) => throw StateError(f.message))
-        .totalIncome
+        .totalIncome!
         .minorUnits;
 
     final added = await financeRepository.addEntry(
       idempotencyKey: unique('idem-summary'),
       categoryId: category.id,
       type: FinanceEntryType.income,
-      amountMinorUnits: 50000,
+      amount: Money.egp(50000),
       date: DateTime.now(),
     );
     final entry = added.getOrElse((f) => throw StateError(f.message));
 
-    final summaryWith = await financeRepository.getSummary(period);
+    final summaryWith = await getSummary(period);
     expect(
       summaryWith
           .getOrElse((f) => throw StateError(f.message))
-          .totalIncome
+          .totalIncome!
           .minorUnits,
       incomeBefore + 50000,
     );
 
     await financeRepository.deleteEntry(entry.id);
-    final summaryAfter = await financeRepository.getSummary(period);
+    final summaryAfter = await getSummary(period);
     expect(
       summaryAfter
           .getOrElse((f) => throw StateError(f.message))
-          .totalIncome
+          .totalIncome!
           .minorUnits,
       incomeBefore,
     );

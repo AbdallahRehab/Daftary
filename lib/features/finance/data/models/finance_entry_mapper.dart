@@ -10,7 +10,10 @@ extension FinanceEntryMapper on db.FinanceEntry {
     idempotencyKey: idempotencyKey,
     categoryId: categoryId,
     type: financeEntryTypeFromDb(type),
-    amount: Money.fromMinorUnits(amountMinorUnits),
+    amount: Money.fromMinorUnits(
+      amountMinorUnits,
+      Currency.fromCode(currencyCode),
+    ),
     date: DateTime.fromMillisecondsSinceEpoch(date),
     note: note,
     createdAt: DateTime.fromMillisecondsSinceEpoch(createdAt),

@@ -8,10 +8,12 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../finance/presentation/widgets/finance_month_summary_card.dart';
 import '../../domain/entities/overview_summary.dart';
 import '../cubit/overview_cubit.dart';
 import '../cubit/overview_state.dart';
+import '../widgets/balance_amount_text.dart';
 import '../widgets/overview_summary_card.dart';
 
 /// A single screen that totals and groups every person into "owes me," "I
@@ -79,6 +81,15 @@ class _OverviewView extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(AppSpacing.md),
               children: [
+                // 018 FR-009: a total that depends on a currency with no
+                // exchange rate is shown as blocked, naming the currencies.
+                if (summary.isBlocked) ...[
+                  RateNeededBanner(
+                    missingRatesFor: summary.missingRatesFor,
+                    onSetRate: () => openExchangeRateSettings(context),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
                 OverviewSummaryCard(
                   totalOwedToUser: summary.totalOwedToUser,
                   totalUserOwes: summary.totalUserOwes,
@@ -92,13 +103,29 @@ class _OverviewView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
                   _SectionHeader(title: l10n.overviewSectionTheyOweYou),
                   ...summary.peopleTheyOweYou.map(
-                    (p) => _PersonSummaryRow(summary: p),
+                    (p) => _PersonSummaryRow(
+                      summary: p,
+                      color: context.financeColors.positive,
+                    ),
                   ),
                 ],
                 if (summary.peopleYouOweThem.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.lg),
                   _SectionHeader(title: l10n.overviewSectionYouOweThem),
                   ...summary.peopleYouOweThem.map(
+                    (p) => _PersonSummaryRow(
+                      summary: p,
+                      color: context.financeColors.negative,
+                    ),
+                  ),
+                ],
+                // Blocked balances whose currencies point in opposite
+                // directions: neither "owes you" nor "you owe" is knowable
+                // until a rate is set.
+                if (summary.peopleRateNeeded.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.lg),
+                  _SectionHeader(title: l10n.rateNeededTitle),
+                  ...summary.peopleRateNeeded.map(
                     (p) => _PersonSummaryRow(summary: p),
                   ),
                 ],
@@ -126,19 +153,21 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _PersonSummaryRow extends StatelessWidget {
-  const _PersonSummaryRow({required this.summary});
+  const _PersonSummaryRow({required this.summary, this.color});
 
   final PersonSummary summary;
+
+  /// The amount's color; `null` for a row whose direction is unknown.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final formatter = EgpFormatter(
-      locale: Localizations.localeOf(context).languageCode,
-    );
-    final color = summary.net.isPositive
-        ? context.financeColors.positive
-        : context.financeColors.negative;
+    final locale = Localizations.localeOf(context).languageCode;
+    final net = summary.net;
+    final amountText = net != null
+        ? EgpFormatter(locale: locale).formatWithSymbol(net.abs())
+        : formatNativeNets(summary.nativeNets, locale: locale);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: AppCard(
@@ -161,16 +190,34 @@ class _PersonSummaryRow extends StatelessWidget {
                 ],
               ),
             ),
-            Text(
-              formatter.formatWithSymbol(summary.net.abs()),
-              style: AppTypography.body.copyWith(
-                color: color,
-                fontWeight: FontWeight.w600,
+            if (summary.isBlocked) ...[
+              Icon(
+                Icons.currency_exchange,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                semanticLabel: l10n.rateNeededTitle,
               ),
-            ),
+              const SizedBox(width: AppSpacing.xs),
+            ],
+            // Only a blocked row's multi-currency text can grow long, so
+            // only it is allowed to shrink/wrap — single-amount rows keep
+            // their intrinsic width exactly as before 018.
+            if (summary.isBlocked)
+              Flexible(child: _amount(amountText))
+            else
+              _amount(amountText),
           ],
         ),
       ),
     );
   }
+
+  Widget _amount(String text) => Text(
+    text,
+    textAlign: TextAlign.end,
+    style: AppTypography.body.copyWith(
+      color: color,
+      fontWeight: FontWeight.w600,
+    ),
+  );
 }

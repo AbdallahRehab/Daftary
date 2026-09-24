@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../currency/presentation/pages/currency_settings_page.dart';
 import '../../../insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../domain/entities/app_language.dart';
 import '../../domain/entities/app_theme_mode.dart';
@@ -91,6 +92,21 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Currency entry point (018): primary currency + the manual
+              // exchange rates, on their own screens.
+              _SettingsSection(
+                icon: Icons.payments_outlined,
+                title: l10n.currencySettingsTitle,
+                child: ListTile(
+                  key: const Key('settings_currency_entry'),
+                  leading: const Icon(Icons.currency_exchange_outlined),
+                  title: Text(l10n.currencySettingsTitle),
+                  subtitle: Text(l10n.currencySettingsEntrySubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(CurrencyRoutes.settings),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

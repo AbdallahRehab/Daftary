@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/people_failures.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
@@ -14,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../helpers/currency_test_doubles.dart';
+
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
 class MockCreatePerson extends Mock implements CreatePerson {}
@@ -27,7 +28,6 @@ void main() {
   late MockCreatePerson createPerson;
   late MockAddTransaction addTransaction;
   late MockEditTransaction editTransaction;
-  late EgpFormatter egpFormatter;
 
   final now = DateTime(2026, 1, 1);
   final ahmed = Person(
@@ -41,7 +41,7 @@ void main() {
     id: 't1',
     idempotencyKey: 'ignored-in-test',
     personId: 'p1',
-    amount: const Money.fromMinorUnits(200000),
+    amount: const Money.egp(200000),
     direction: TransactionDirection.given,
     kind: TransactionKind.initialExchange,
     date: now,
@@ -49,7 +49,7 @@ void main() {
   );
 
   setUpAll(() {
-    registerFallbackValue(const Money.fromMinorUnits(0));
+    registerFallbackValue(const Money.egp(0));
     registerFallbackValue(TransactionDirection.given);
     registerFallbackValue(DateTime(2026));
   });
@@ -59,7 +59,6 @@ void main() {
     createPerson = MockCreatePerson();
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
-    egpFormatter = EgpFormatter();
   });
 
   TransactionFormCubit buildCubit() => TransactionFormCubit(
@@ -67,7 +66,7 @@ void main() {
     createPerson,
     addTransaction,
     editTransaction,
-    egpFormatter,
+    getPrimaryCurrencyReturning(),
   );
 
   blocTest<TransactionFormCubit, TransactionFormState>(
@@ -276,4 +275,112 @@ void main() {
           .having((s) => s.pendingPersonName, 'pendingPersonName', isNull),
     ],
   );
+
+  group('currency (018)', () {
+    TransactionFormCubit buildWithPrimary(Currency primary) =>
+        TransactionFormCubit(
+          peopleRepository,
+          createPerson,
+          addTransaction,
+          editTransaction,
+          getPrimaryCurrencyReturning(primary),
+        );
+
+    void stubAdd() {
+      when(
+        () => addTransaction(
+          idempotencyKey: any(named: 'idempotencyKey'),
+          personId: any(named: 'personId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+          note: any(named: 'note'),
+        ),
+      ).thenAnswer((_) async => Right(savedTransaction));
+    }
+
+    blocTest<TransactionFormCubit, TransactionFormState>(
+      'loadDefaultCurrency defaults the picker to the primary currency, and '
+      'submit parses the amount in it (FR-003)',
+      build: () => buildWithPrimary(Currency.usd),
+      seed: () => TransactionFormState(
+        idempotencyKey: 'key-1',
+        selectedPerson: ahmed,
+        amountInput: '12.5',
+      ),
+      setUp: stubAdd,
+      act: (cubit) async {
+        await cubit.loadDefaultCurrency();
+        await cubit.submit();
+      },
+      verify: (cubit) {
+        expect(cubit.state.currency, Currency.usd);
+        verify(
+          () => addTransaction(
+            idempotencyKey: 'key-1',
+            personId: 'p1',
+            amount: const Money.fromMinorUnits(1250, Currency.usd),
+            direction: any(named: 'direction'),
+            date: any(named: 'date'),
+            note: any(named: 'note'),
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<TransactionFormCubit, TransactionFormState>(
+      'a currency the user picked is used and never overwritten by a '
+      'late-arriving primary default',
+      build: () => buildWithPrimary(Currency.usd),
+      seed: () => TransactionFormState(
+        idempotencyKey: 'key-1',
+        selectedPerson: ahmed,
+        amountInput: '3',
+      ),
+      setUp: stubAdd,
+      act: (cubit) async {
+        cubit.currencyChanged(Currency.eur);
+        await cubit.loadDefaultCurrency();
+        await cubit.submit();
+      },
+      verify: (cubit) {
+        expect(cubit.state.currency, Currency.eur);
+        verify(
+          () => addTransaction(
+            idempotencyKey: any(named: 'idempotencyKey'),
+            personId: any(named: 'personId'),
+            amount: const Money.fromMinorUnits(300, Currency.eur),
+            direction: any(named: 'direction'),
+            date: any(named: 'date'),
+            note: any(named: 'note'),
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<TransactionFormCubit, TransactionFormState>(
+      'editing keeps the record\'s own currency, even when it is not primary',
+      build: () => buildWithPrimary(Currency.egp),
+      act: (cubit) async {
+        cubit.loadForEdit(
+          MoneyTransaction(
+            id: 't1',
+            idempotencyKey: 'k',
+            personId: 'p1',
+            amount: const Money.fromMinorUnits(1999, Currency.gbp),
+            direction: TransactionDirection.given,
+            kind: TransactionKind.initialExchange,
+            date: now,
+            createdAt: now,
+          ),
+          ahmed,
+        );
+        await cubit.loadDefaultCurrency();
+      },
+      verify: (cubit) {
+        expect(cubit.state.currency, Currency.gbp);
+        expect(cubit.state.amountInput, '19.99');
+      },
+    );
+  });
 }

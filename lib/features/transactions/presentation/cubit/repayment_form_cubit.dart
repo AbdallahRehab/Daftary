@@ -2,9 +2,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/money/egp_formatter.dart';
+import '../../../../core/money/currency_formatter.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/money/numeral_parser.dart';
+import '../../../currency/domain/usecases/get_primary_currency.dart';
 import '../../domain/usecases/record_repayment.dart';
 import 'repayment_form_state.dart';
 
@@ -15,7 +16,7 @@ import 'repayment_form_state.dart';
 class RepaymentFormCubit extends Cubit<RepaymentFormState> {
   RepaymentFormCubit(
     this._recordRepayment,
-    this._egpFormatter,
+    this._getPrimaryCurrency,
     @factoryParam String personId,
   ) : super(
         RepaymentFormState(
@@ -25,7 +26,29 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
       );
 
   final RecordRepayment _recordRepayment;
-  final EgpFormatter _egpFormatter;
+  final GetPrimaryCurrency _getPrimaryCurrency;
+
+  /// Defaults the currency picker to the current primary currency (018
+  /// FR-003). A no-op once the user has picked a currency.
+  Future<void> loadDefaultCurrency() async {
+    if (state.currencyChosenByUser) return;
+    final result = await _getPrimaryCurrency();
+    if (isClosed || state.currencyChosenByUser) return;
+    result.match(
+      (_) {},
+      (setting) => emit(state.copyWith(currency: setting.currency)),
+    );
+  }
+
+  void currencyChanged(Currency currency) {
+    emit(
+      state.copyWith(
+        currency: currency,
+        currencyChosenByUser: true,
+        clearAmountError: true,
+      ),
+    );
+  }
 
   void amountChanged(String text) {
     emit(state.copyWith(amountInput: text, clearAmountError: true));
@@ -45,7 +68,9 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
     final Money amount;
     try {
       final normalized = NumeralParser.toWesternDigits(state.amountInput);
-      final parsed = _egpFormatter.parse(normalized);
+      final parsed = CurrencyFormatter(
+        currency: state.currency,
+      ).parse(normalized);
       if (!parsed.isPositive) {
         throw const FormatException('Amount must be greater than zero');
       }

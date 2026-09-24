@@ -104,11 +104,8 @@ void main() {
     final overview = result.getOrElse(
       (_) => throw StateError('expected Right'),
     );
-    expect(
-      overview.totalOwedToUser,
-      Money.fromMinorUnits(expectedTotalOwedToUser),
-    );
-    expect(overview.totalUserOwes, Money.fromMinorUnits(expectedTotalUserOwes));
+    expect(overview.totalOwedToUser, Money.egp(expectedTotalOwedToUser));
+    expect(overview.totalUserOwes, Money.egp(expectedTotalUserOwes));
     expect(overview.settledCount, expectedSettledCount);
     expect(
       overview.peopleTheyOweYou,

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/money/currency.dart';
+
 import '../../domain/entities/category.dart';
 import '../../domain/entities/category_breakdown_item.dart';
 import '../../domain/entities/finance_entry.dart';
@@ -22,7 +24,7 @@ class FinanceHistoryState extends Equatable {
     this.status = FinanceHistoryStatus.loading,
     this.periodPreset = FinancePeriodPreset.thisMonth,
     this.summary,
-    this.breakdown = const [],
+    this.breakdown = CategoryBreakdown.empty,
     this.entries = const [],
     this.categories = const [],
     this.typeFilter,
@@ -40,7 +42,7 @@ class FinanceHistoryState extends Equatable {
   final FinancePeriodPreset periodPreset;
 
   final FinanceSummary? summary;
-  final List<CategoryBreakdownItem> breakdown;
+  final CategoryBreakdown breakdown;
   final List<FinanceEntry> entries;
 
   /// Every category of both directions, archived ones included, so a row
@@ -63,6 +65,11 @@ class FinanceHistoryState extends Equatable {
   final String? errorMessage;
 
   bool get isLoading => status == FinanceHistoryStatus.loading;
+
+  /// The currency the summary and breakdown are expressed in (018 FR-005)
+  /// — what a history row compares its own currency against to decide
+  /// whether it needs a currency chip.
+  Currency get primaryCurrency => summary?.currency ?? breakdown.currency;
   bool get isFailure => status == FinanceHistoryStatus.failure;
 
   /// Category lookup for rendering a history row's name/icon without a
@@ -106,7 +113,7 @@ class FinanceHistoryState extends Equatable {
     DateRange? period,
     FinancePeriodPreset? periodPreset,
     FinanceSummary? summary,
-    List<CategoryBreakdownItem>? breakdown,
+    CategoryBreakdown? breakdown,
     List<FinanceEntry>? entries,
     List<Category>? categories,
     FinanceEntryType? typeFilter,

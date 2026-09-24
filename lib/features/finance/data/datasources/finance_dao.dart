@@ -4,20 +4,38 @@ import '../../../../core/database/app_database.dart' as db;
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_history_filter.dart';
 
-/// One category's aggregate within a period, straight off the `GROUP BY`
-/// — the category's display fields ride along from the join so the
-/// repository needs no second lookup per row.
+/// One category's aggregate in one currency within a period, straight off
+/// the `GROUP BY category_id, currency_code` — the category's display
+/// fields ride along from the join so the repository needs no second lookup
+/// per row.
 class CategoryTotalRow {
   const CategoryTotalRow({
     required this.categoryId,
     required this.categoryName,
     required this.icon,
+    required this.currencyCode,
     required this.totalMinorUnits,
   });
 
   final String categoryId;
   final String categoryName;
   final String icon;
+  final String currencyCode;
+  final int totalMinorUnits;
+}
+
+/// One direction's aggregate in one currency, straight off the
+/// `GROUP BY type, currency_code`.
+class SummaryTotalRow {
+  const SummaryTotalRow({
+    required this.type,
+    required this.currencyCode,
+    required this.totalMinorUnits,
+  });
+
+  /// `'income'` or `'expense'`.
+  final String type;
+  final String currencyCode;
   final int totalMinorUnits;
 }
 
@@ -135,12 +153,18 @@ class FinanceDao {
   }
 
   /// `SUM(amount_minor_units) ... WHERE date BETWEEN ? AND ? AND deleted_at
-  /// IS NULL GROUP BY type` — one round trip for both totals, keyed by
-  /// `'income'`/`'expense'` (research.md Decision 6).
-  Future<Map<String, int>> getSummaryTotals(DateRange period) async {
+  /// IS NULL GROUP BY type, currency_code` — one round trip for every
+  /// direction/currency total (research.md Decision 6). Amounts in
+  /// different currencies are never summed together here (018 FR-008): the
+  /// per-currency rows are converted by the domain layer.
+  Future<List<SummaryTotalRow>> getSummaryTotals(DateRange period) async {
     final total = _db.financeEntries.amountMinorUnits.sum();
     final query = _db.selectOnly(_db.financeEntries)
-      ..addColumns([_db.financeEntries.type, total])
+      ..addColumns([
+        _db.financeEntries.type,
+        _db.financeEntries.currencyCode,
+        total,
+      ])
       ..where(
         _db.financeEntries.deletedAt.isNull() &
             _db.financeEntries.date.isBetweenValues(
@@ -148,16 +172,21 @@ class FinanceDao {
               period.endMillis,
             ),
       )
-      ..groupBy([_db.financeEntries.type]);
+      ..groupBy([_db.financeEntries.type, _db.financeEntries.currencyCode]);
 
     final rows = await query.get();
-    return {
+    return [
       for (final row in rows)
-        row.read(_db.financeEntries.type)!: row.read(total) ?? 0,
-    };
+        SummaryTotalRow(
+          type: row.read(_db.financeEntries.type)!,
+          currencyCode: row.read(_db.financeEntries.currencyCode)!,
+          totalMinorUnits: row.read(total) ?? 0,
+        ),
+    ];
   }
 
-  /// Per-category totals for [period], descending by amount (FR-015).
+  /// Per-category, per-currency totals for [period], descending by amount
+  /// (FR-015) — one row per `(category, currency)` pair (018 FR-008).
   /// Joined to `finance_categories` so an archived category's entries still
   /// resolve a name and icon — the breakdown must not drop them.
   Future<List<CategoryTotalRow>> getCategoryBreakdown(
@@ -166,7 +195,11 @@ class FinanceDao {
   }) async {
     final total = _db.financeEntries.amountMinorUnits.sum();
     final query = _db.selectOnly(_db.financeEntries)
-      ..addColumns([_db.financeEntries.categoryId, total]);
+      ..addColumns([
+        _db.financeEntries.categoryId,
+        _db.financeEntries.currencyCode,
+        total,
+      ]);
 
     query.join([
       db.innerJoin(
@@ -187,7 +220,10 @@ class FinanceDao {
     }
     query
       ..where(predicate)
-      ..groupBy([_db.financeEntries.categoryId])
+      ..groupBy([
+        _db.financeEntries.categoryId,
+        _db.financeEntries.currencyCode,
+      ])
       ..orderBy([
         db.OrderingTerm(expression: total, mode: db.OrderingMode.desc),
       ]);
@@ -199,6 +235,7 @@ class FinanceDao {
           categoryId: row.read(_db.financeEntries.categoryId)!,
           categoryName: row.read(_db.financeCategories.name)!,
           icon: row.read(_db.financeCategories.icon)!,
+          currencyCode: row.read(_db.financeEntries.currencyCode)!,
           totalMinorUnits: row.read(total) ?? 0,
         ),
     ];

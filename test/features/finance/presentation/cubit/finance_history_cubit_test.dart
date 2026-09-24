@@ -1,6 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
+import 'package:daftary/features/currency/domain/entities/conversion_context.dart';
+import 'package:daftary/features/currency/domain/services/currency_converter.dart';
 import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/category_breakdown_item.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
@@ -21,6 +23,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../helpers/conversion_fakes.dart';
+
 class MockFinanceRepository extends Mock implements FinanceRepository {}
 
 class MockCategoryRepository extends Mock implements CategoryRepository {}
@@ -33,6 +37,7 @@ class _FilterFallback extends Fake implements FinanceHistoryFilter {}
 /// window (FR-020, research.md Decision 8).
 void main() {
   late MockFinanceRepository financeRepository;
+  late FakeGetConversionContext getConversionContext;
   late MockCategoryRepository categoryRepository;
 
   final now = DateTime.now();
@@ -65,7 +70,7 @@ void main() {
             ? 'seed_salary'
             : 'seed_groceries',
         type: type,
-        amount: Money.fromMinorUnits(amount),
+        amount: Money.egp(amount),
         date: today,
         createdAt: today,
       );
@@ -74,20 +79,36 @@ void main() {
   final incomeEntry = entry('i1', FinanceEntryType.income, 1000000);
 
   final summary = FinanceSummary(
-    totalIncome: const Money.fromMinorUnits(1000000),
-    totalExpense: const Money.fromMinorUnits(4575),
+    totalIncome: const Money.egp(1000000),
+    totalExpense: const Money.egp(4575),
     period: DateRange.thisMonth(),
   );
 
-  const breakdown = [
-    CategoryBreakdownItem(
+  const periodTotals = FinancePeriodTotals(
+    income: [Money.egp(1000000)],
+    expense: [Money.egp(4575)],
+  );
+
+  const categoryTotals = [
+    CategoryCurrencyTotals(
       categoryId: 'seed_groceries',
       categoryName: 'Groceries',
       icon: 'groceries',
-      total: Money.fromMinorUnits(4575),
-      shareOfPeriod: 1,
+      totals: [Money.egp(4575)],
     ),
   ];
+
+  const breakdown = CategoryBreakdown(
+    items: [
+      CategoryBreakdownItem(
+        categoryId: 'seed_groceries',
+        categoryName: 'Groceries',
+        icon: 'groceries',
+        total: Money.egp(4575),
+        shareOfPeriod: 1,
+      ),
+    ],
+  );
 
   setUpAll(() {
     registerFallbackValue(DateRange.thisMonth());
@@ -95,6 +116,7 @@ void main() {
   });
 
   setUp(() {
+    getConversionContext = FakeGetConversionContext();
     financeRepository = MockFinanceRepository();
     categoryRepository = MockCategoryRepository();
 
@@ -114,14 +136,12 @@ void main() {
       () => financeRepository.hasAnyEntry(),
     ).thenAnswer((_) async => const Right(true));
     when(
-      () => financeRepository.getSummary(any()),
-    ).thenAnswer((_) async => Right(summary));
+      () => financeRepository.getSummaryTotals(any()),
+    ).thenAnswer((_) async => const Right(periodTotals));
     when(
-      () => financeRepository.getCategoryBreakdown(
-        any(),
-        type: any(named: 'type'),
-      ),
-    ).thenAnswer((_) async => const Right(breakdown));
+      () =>
+          financeRepository.getCategoryTotals(any(), type: any(named: 'type')),
+    ).thenAnswer((_) async => const Right(categoryTotals));
     when(
       () => financeRepository.getHistory(
         filter: any(named: 'filter'),
@@ -132,8 +152,16 @@ void main() {
   });
 
   FinanceHistoryCubit buildCubit() => FinanceHistoryCubit(
-    GetFinanceSummary(financeRepository),
-    GetCategoryBreakdown(financeRepository),
+    GetFinanceSummary(
+      financeRepository,
+      getConversionContext,
+      const CurrencyConverterImpl(),
+    ),
+    GetCategoryBreakdown(
+      financeRepository,
+      getConversionContext,
+      const CurrencyConverterImpl(),
+    ),
     GetFinanceHistory(financeRepository),
     GetCategories(categoryRepository),
     DeleteFinanceEntry(financeRepository),
@@ -174,10 +202,10 @@ void main() {
     ],
     verify: (_) {
       verify(
-        () => financeRepository.getSummary(DateRange.thisMonth()),
+        () => financeRepository.getSummaryTotals(DateRange.thisMonth()),
       ).called(1);
       verify(
-        () => financeRepository.getCategoryBreakdown(
+        () => financeRepository.getCategoryTotals(
           DateRange.thisMonth(),
           type: null,
         ),
@@ -204,10 +232,10 @@ void main() {
       expect(cubit.state.periodPreset, FinancePeriodPreset.lastMonth);
       expect(cubit.state.period, DateRange.lastMonth());
       verify(
-        () => financeRepository.getSummary(DateRange.lastMonth()),
+        () => financeRepository.getSummaryTotals(DateRange.lastMonth()),
       ).called(1);
       verify(
-        () => financeRepository.getCategoryBreakdown(
+        () => financeRepository.getCategoryTotals(
           DateRange.lastMonth(),
           type: null,
         ),
@@ -244,7 +272,7 @@ void main() {
       expect(cubit.state.period.start, DateTime(2026, 1, 3));
       expect(cubit.state.period.end, DateTime(2026, 2, 9));
       verify(
-        () => financeRepository.getSummary(
+        () => financeRepository.getSummaryTotals(
           DateRange(start: DateTime(2026, 1, 3), end: DateTime(2026, 2, 9)),
         ),
       ).called(1);
@@ -348,7 +376,7 @@ void main() {
     build: buildCubit,
     setUp: () {
       when(
-        () => financeRepository.getSummary(any()),
+        () => financeRepository.getSummaryTotals(any()),
       ).thenAnswer((_) async => const Left(CacheFailure('db is unhappy')));
     },
     act: (cubit) => cubit.load(),
@@ -418,7 +446,7 @@ void main() {
         verify(() => financeRepository.restoreEntry('e1')).called(1);
         // Three loads: the initial one, the post-delete one, the post-undo
         // one — the totals never lag behind the list.
-        verify(() => financeRepository.getSummary(any())).called(3);
+        verify(() => financeRepository.getSummaryTotals(any())).called(3);
       },
     );
 
@@ -435,6 +463,56 @@ void main() {
         expect(cubit.state.pendingUndoEntryId, isNull);
         expect(cubit.state.entries.map((e) => e.id), ['i1']);
         verifyNever(() => financeRepository.restoreEntry(any()));
+      },
+    );
+  });
+
+  group('multi-currency (018)', () {
+    setUp(() {
+      when(() => financeRepository.getSummaryTotals(any())).thenAnswer(
+        (_) async => Right(
+          FinancePeriodTotals(
+            income: const [Money.egp(1000000)],
+            expense: [
+              const Money.egp(4575),
+              Money.fromMinorUnits(2000, Currency.usd),
+            ],
+          ),
+        ),
+      );
+    });
+
+    blocTest<FinanceHistoryCubit, FinanceHistoryState>(
+      'a missing rate carries the blocked summary, naming the currency, up '
+      'to the state (FR-009)',
+      build: buildCubit,
+      act: (cubit) => cubit.load(),
+      verify: (cubit) {
+        final summary = cubit.state.summary!;
+        expect(cubit.state.status, FinanceHistoryStatus.success);
+        expect(summary.isBlocked, isTrue);
+        expect(summary.missingRatesFor, [Currency.usd]);
+        expect(summary.totalIncome, isNull);
+        expect(summary.net, isNull);
+        expect(cubit.state.primaryCurrency, Currency.egp);
+      },
+    );
+
+    blocTest<FinanceHistoryCubit, FinanceHistoryState>(
+      'with the rate set, the summary is converted into the primary currency',
+      build: () {
+        getConversionContext.context = ConversionContext(
+          primary: Currency.egp,
+          rates: [rate(Currency.usd, Currency.egp, 50)],
+        );
+        return buildCubit();
+      },
+      act: (cubit) => cubit.load(),
+      verify: (cubit) {
+        final summary = cubit.state.summary!;
+        expect(summary.isBlocked, isFalse);
+        // 4,575 piastres + 20.00 USD × 50 = 45.75 + 1,000.00 EGP.
+        expect(summary.totalExpense, const Money.egp(4575 + 100000));
       },
     );
   });

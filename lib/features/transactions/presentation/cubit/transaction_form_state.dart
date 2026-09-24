@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/money/currency.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 
@@ -22,6 +23,8 @@ class TransactionFormState extends Equatable {
     this.kind = TransactionKind.initialExchange,
     DateTime? date,
     this.amountInput = '',
+    this.currency = Currency.egp,
+    this.currencyChosenByUser = false,
     this.note,
     this.amountErrorMessage,
     this.amountInvalid = false,
@@ -53,6 +56,16 @@ class TransactionFormState extends Equatable {
   final TransactionKind kind;
   final DateTime date;
   final String amountInput;
+
+  /// The currency the amount is entered and stored in (018 FR-001). Starts
+  /// as a placeholder and is replaced by the primary currency once
+  /// `TransactionFormCubit.loadDefaultCurrency` resolves (FR-003); in edit
+  /// mode it is the record's own currency.
+  final Currency currency;
+
+  /// True once the user picked a currency themselves, so a late-arriving
+  /// primary-currency default never overwrites their choice.
+  final bool currencyChosenByUser;
   final String? note;
 
   /// Set by a repository call (e.g. a search failure); already carries the
@@ -86,6 +99,8 @@ class TransactionFormState extends Equatable {
     TransactionDirection? direction,
     DateTime? date,
     String? amountInput,
+    Currency? currency,
+    bool? currencyChosenByUser,
     String? note,
     String? amountErrorMessage,
     bool? amountInvalid,
@@ -115,6 +130,8 @@ class TransactionFormState extends Equatable {
       kind: kind,
       date: date ?? this.date,
       amountInput: amountInput ?? this.amountInput,
+      currency: currency ?? this.currency,
+      currencyChosenByUser: currencyChosenByUser ?? this.currencyChosenByUser,
       note: note ?? this.note,
       amountErrorMessage: clearAmountError
           ? null
@@ -150,6 +167,8 @@ class TransactionFormState extends Equatable {
     kind,
     date,
     amountInput,
+    currency,
+    currencyChosenByUser,
     note,
     amountErrorMessage,
     amountInvalid,

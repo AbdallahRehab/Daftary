@@ -7,6 +7,10 @@ import '../../../../core/money/egp_formatter.dart';
 import '../../../../core/money/money.dart';
 
 /// Renders the total-owed-to-you / total-you-owe headline figures (FR-013).
+///
+/// 018: a `null` total is blocked on a missing exchange rate (FR-009) and
+/// renders as an em dash — never a partial or 1:1-converted figure. The
+/// page pairs it with a `RateNeededBanner` naming the missing currencies.
 class OverviewSummaryCard extends StatelessWidget {
   const OverviewSummaryCard({
     required this.totalOwedToUser,
@@ -14,8 +18,10 @@ class OverviewSummaryCard extends StatelessWidget {
     super.key,
   });
 
-  final Money totalOwedToUser;
-  final Money totalUserOwes;
+  final Money? totalOwedToUser;
+  final Money? totalUserOwes;
+
+  static const String unavailablePlaceholder = '—';
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,7 @@ class OverviewSummaryCard extends StatelessWidget {
           Expanded(
             child: _Figure(
               label: l10n.overviewTotalOwedToYou,
-              amountText: formatter.formatWithSymbol(totalOwedToUser),
+              amountText: _format(formatter, totalOwedToUser),
               color: financeColors.positive,
             ),
           ),
@@ -42,7 +48,7 @@ class OverviewSummaryCard extends StatelessWidget {
           Expanded(
             child: _Figure(
               label: l10n.overviewTotalYouOwe,
-              amountText: formatter.formatWithSymbol(totalUserOwes),
+              amountText: _format(formatter, totalUserOwes),
               color: financeColors.negative,
             ),
           ),
@@ -51,6 +57,10 @@ class OverviewSummaryCard extends StatelessWidget {
     );
   }
 }
+
+String _format(EgpFormatter formatter, Money? total) => total == null
+    ? OverviewSummaryCard.unavailablePlaceholder
+    : formatter.formatWithSymbol(total);
 
 class _Figure extends StatelessWidget {
   const _Figure({

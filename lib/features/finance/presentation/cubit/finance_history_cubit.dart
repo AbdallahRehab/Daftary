@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
+import '../../domain/entities/category_breakdown_item.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_history_filter.dart';
 import '../../domain/repositories/finance_repository.dart';
@@ -200,7 +201,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         hasAnyEntry: hasAnyEntry,
         categories: categories,
         summary: summaryResult.toNullable(),
-        breakdown: breakdownResult.toNullable() ?? const [],
+        breakdown: breakdownResult.toNullable() ?? CategoryBreakdown.empty,
         entries: historyResult.toNullable() ?? const [],
         clearErrorMessage: true,
       ),

@@ -777,4 +777,158 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get financeCategoryOtherIncome => 'Other income';
+
+  @override
+  String notificationBudgetNearLimitTitle(String category) {
+    return '$category is close to its limit';
+  }
+
+  @override
+  String notificationBudgetNearLimitBody(String category, String percent) {
+    return 'You\'ve used $percent% of your $category budget this month.';
+  }
+
+  @override
+  String notificationBudgetExceededTitle(String category) {
+    return '$category is over budget';
+  }
+
+  @override
+  String notificationBudgetExceededBody(String category, String percent) {
+    return 'You\'ve spent $percent% of your $category budget this month.';
+  }
+
+  @override
+  String notificationBudgetExceededNoPlanBody(String category) {
+    return 'You\'ve spent on $category this month, but no amount was planned for it.';
+  }
+
+  @override
+  String notificationSavingsBehindPaceTitle(String goal) {
+    return '$goal is falling behind';
+  }
+
+  @override
+  String notificationSavingsBehindPaceBody(String goal, int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months months',
+      one: '1 month',
+    );
+    return 'At your current pace, you\'ll reach $goal $_temp0 later than planned.';
+  }
+
+  @override
+  String notificationSavingsAheadOfPaceTitle(String goal) {
+    return '$goal is ahead of schedule';
+  }
+
+  @override
+  String notificationSavingsAheadOfPaceBody(String goal, int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months months',
+      one: '1 month',
+    );
+    return 'Nice work — you\'re on track to reach $goal $_temp0 early.';
+  }
+
+  @override
+  String notificationSavingsAchievedTitle(String goal) {
+    return 'Goal reached: $goal';
+  }
+
+  @override
+  String notificationSavingsAchievedBody(String goal) {
+    return 'You\'ve saved the full amount for $goal. Well done!';
+  }
+
+  @override
+  String get notificationSettingsTitle => 'Notifications';
+
+  @override
+  String get notificationSettingsEntrySubtitle =>
+      'Budget warnings, savings check-ins and quiet hours';
+
+  @override
+  String get notificationSettingsMasterTitle => 'Budget & savings reminders';
+
+  @override
+  String get notificationSettingsMasterOffDescription =>
+      'Off by default. Turn on to get a heads-up when a budget is nearly used up or a savings goal drifts from its plan. Everything is worked out on this device from your own data.';
+
+  @override
+  String get notificationSettingsMasterOnDescription =>
+      'You\'ll only hear from us when something about your budgets or goals actually changes.';
+
+  @override
+  String get notificationSettingsCategoriesHeader => 'What to notify me about';
+
+  @override
+  String get notificationBudgetWarningsTitle => 'Budget warnings';
+
+  @override
+  String get notificationBudgetWarningsSubtitle =>
+      'When a category is close to or over its monthly limit';
+
+  @override
+  String get notificationSavingsCheckInsTitle => 'Savings goal check-ins';
+
+  @override
+  String get notificationSavingsCheckInsSubtitle =>
+      'When a goal falls behind or gets ahead of its plan, or is reached';
+
+  @override
+  String get notificationQuietHoursTitle => 'Quiet hours';
+
+  @override
+  String get notificationQuietHoursSubtitle =>
+      'Hold notifications during these hours and deliver them afterwards';
+
+  @override
+  String get notificationQuietHoursFrom => 'From';
+
+  @override
+  String get notificationQuietHoursTo => 'To';
+
+  @override
+  String get notificationQuietHoursNextDay => 'next day';
+
+  @override
+  String get notificationPermissionRationaleTitle => 'Allow notifications?';
+
+  @override
+  String get notificationPermissionRationaleMessage =>
+      'Daftary needs your permission to show these reminders. They\'re only about your own budgets and savings goals, and nothing leaves your device.';
+
+  @override
+  String get notificationPermissionRationaleConfirm => 'Continue';
+
+  @override
+  String get notificationPermissionDeniedTitle => 'Notifications are blocked';
+
+  @override
+  String get notificationPermissionDeniedMessage =>
+      'Your device isn\'t letting Daftary show notifications, so nothing will be delivered even though reminders are on. Allow notifications in your device settings to start receiving them.';
+
+  @override
+  String get notificationPermissionDeniedAction => 'Open device settings';
+
+  @override
+  String get notificationSettingsSaveFailed =>
+      'Couldn\'t save your notification settings. Please try again.';
+
+  @override
+  String get notificationSettingsLoadFailed =>
+      'Couldn\'t load your notification settings.';
+
+  @override
+  String get notificationBudgetNoLongerExists =>
+      'That budget no longer exists.';
+
+  @override
+  String get notificationSavingsGoalNoLongerExists =>
+      'That savings goal no longer exists.';
 }

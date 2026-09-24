@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,6 +8,8 @@ import 'core/design_system/tokens.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
+import 'core/routing/notification_tap_router.dart';
+import 'features/insights_notifications/presentation/notification_recompute_trigger.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/settings/domain/entities/app_theme_mode.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
@@ -22,6 +26,8 @@ Future<void> main() async {
   // FR-010a) already has a settled OnboardingCubit state on the very
   // first navigation — no async redirect/refreshListenable needed.
   await getIt<OnboardingCubit>().initialize();
+  getIt<NotificationRecomputeTrigger>().start();
+  unawaited(getIt<NotificationTapRouter>().start(appRouter));
   runApp(const DaftaryApp());
 }
 
@@ -48,6 +54,7 @@ class DaftaryApp extends StatelessWidget {
               AppThemeMode.system => ThemeMode.system,
             },
             routerConfig: appRouter,
+            scaffoldMessengerKey: appScaffoldMessengerKey,
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,

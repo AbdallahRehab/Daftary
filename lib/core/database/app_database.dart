@@ -146,6 +146,58 @@ class OnboardingStatus extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// 017 Proactive Insights & Reminders: the device-level notification
+/// configuration. Single-row table — the app always reads/writes the fixed
+/// `id` `'singleton'`, same pattern as [AppSettings]. Quiet hours are
+/// minutes since local midnight, both null or both set (data-model.md).
+class NotificationPreferences extends Table {
+  TextColumn get id => text()();
+  BoolColumn get isEnabled => boolean().withDefault(const Constant(false))();
+  BoolColumn get budgetWarningsEnabled =>
+      boolean().withDefault(const Constant(true))();
+  BoolColumn get savingsCheckInsEnabled =>
+      boolean().withDefault(const Constant(true))();
+  IntColumn get quietHoursStartMinutes => integer().nullable()();
+  IntColumn get quietHoursEndMinutes => integer().nullable()();
+  BoolColumn get osPermissionGranted =>
+      boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// 017: the band each notification source was in when it was last notified
+/// about — the cooldown bookkeeping behind FR-015/FR-016. `sourceId` is
+/// deliberately not a foreign key into 010's/011's tables (data-model.md
+/// "Relationships"); a stale id is handled at read time.
+///
+/// Unique on `(source_type, source_id, applicable_period)`. The period is
+/// indexed through `COALESCE(..., '')` because SQLite treats NULLs as
+/// distinct in a unique index — without it, savings-goal rows (whose period
+/// is always null) could be duplicated.
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX idx_notification_history_source '
+  'ON notification_history '
+  "(source_type, source_id, COALESCE(applicable_period, ''))",
+)
+class NotificationHistory extends Table {
+  TextColumn get id => text()();
+
+  /// `'budgetCategory'` | `'savingsGoal'`.
+  TextColumn get sourceType => text()();
+  TextColumn get sourceId => text()();
+
+  /// `'YYYY-MM'` for budget categories, null for savings goals.
+  TextColumn get applicablePeriod => text().nullable()();
+
+  /// A `ThresholdBand` name.
+  TextColumn get lastNotifiedBand => text()();
+  IntColumn get lastNotifiedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
@@ -159,6 +211,8 @@ class OnboardingStatus extends Table {
     OnboardingStatus,
     FinanceCategories,
     FinanceEntries,
+    NotificationPreferences,
+    NotificationHistory,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -167,7 +221,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -185,6 +239,12 @@ class AppDatabase extends _$AppDatabase {
       if (from < 5) {
         await m.createTable(financeCategories);
         await m.createTable(financeEntries);
+      }
+      if (from < 6) {
+        // 017: purely additive — no existing table is touched.
+        await m.createTable(notificationPreferences);
+        await m.createTable(notificationHistory);
+        await m.createIndex(idxNotificationHistorySource);
       }
     },
     beforeOpen: (details) async {

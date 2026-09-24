@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
@@ -180,6 +181,12 @@ final GoRouter appRouter = GoRouter(
               path: '/settings',
               builder: (context, state) => const SettingsPage(),
             ),
+            // Notification settings (017) live under Settings, alongside
+            // Language/Theme (spec.md Assumptions "Navigation placement").
+            GoRoute(
+              path: NotificationSettingsRoutes.settings,
+              builder: (context, state) => const NotificationSettingsPage(),
+            ),
             // Financial Education (016) is reached from a Settings row
             // (research.md Decision 5), so it lives in the Settings branch.
             // The fixed calculator paths are declared before the
@@ -191,8 +198,7 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: '/financial-education/calculators/compound-growth',
-              builder: (context, state) =>
-                  const CompoundGrowthCalculatorPage(),
+              builder: (context, state) => const CompoundGrowthCalculatorPage(),
             ),
             GoRoute(
               path: '/financial-education/calculators/doubling-time',
@@ -204,9 +210,8 @@ final GoRouter appRouter = GoRouter(
             ),
             GoRoute(
               path: '/financial-education/:categoryId',
-              builder: (context, state) => CategoryPage(
-                categoryId: state.pathParameters['categoryId']!,
-              ),
+              builder: (context, state) =>
+                  CategoryPage(categoryId: state.pathParameters['categoryId']!),
             ),
             GoRoute(
               path: '/financial-education/:categoryId/:articleId',

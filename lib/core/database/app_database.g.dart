@@ -3475,6 +3475,980 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
   }
 }
 
+class $NotificationPreferencesTable extends NotificationPreferences
+    with TableInfo<$NotificationPreferencesTable, NotificationPreference> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationPreferencesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isEnabledMeta = const VerificationMeta(
+    'isEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> isEnabled = GeneratedColumn<bool>(
+    'is_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _budgetWarningsEnabledMeta =
+      const VerificationMeta('budgetWarningsEnabled');
+  @override
+  late final GeneratedColumn<bool> budgetWarningsEnabled =
+      GeneratedColumn<bool>(
+        'budget_warnings_enabled',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("budget_warnings_enabled" IN (0, 1))',
+        ),
+        defaultValue: const Constant(true),
+      );
+  static const VerificationMeta _savingsCheckInsEnabledMeta =
+      const VerificationMeta('savingsCheckInsEnabled');
+  @override
+  late final GeneratedColumn<bool> savingsCheckInsEnabled =
+      GeneratedColumn<bool>(
+        'savings_check_ins_enabled',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("savings_check_ins_enabled" IN (0, 1))',
+        ),
+        defaultValue: const Constant(true),
+      );
+  static const VerificationMeta _quietHoursStartMinutesMeta =
+      const VerificationMeta('quietHoursStartMinutes');
+  @override
+  late final GeneratedColumn<int> quietHoursStartMinutes = GeneratedColumn<int>(
+    'quiet_hours_start_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _quietHoursEndMinutesMeta =
+      const VerificationMeta('quietHoursEndMinutes');
+  @override
+  late final GeneratedColumn<int> quietHoursEndMinutes = GeneratedColumn<int>(
+    'quiet_hours_end_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _osPermissionGrantedMeta =
+      const VerificationMeta('osPermissionGranted');
+  @override
+  late final GeneratedColumn<bool> osPermissionGranted = GeneratedColumn<bool>(
+    'os_permission_granted',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("os_permission_granted" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    isEnabled,
+    budgetWarningsEnabled,
+    savingsCheckInsEnabled,
+    quietHoursStartMinutes,
+    quietHoursEndMinutes,
+    osPermissionGranted,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notification_preferences';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NotificationPreference> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('is_enabled')) {
+      context.handle(
+        _isEnabledMeta,
+        isEnabled.isAcceptableOrUnknown(data['is_enabled']!, _isEnabledMeta),
+      );
+    }
+    if (data.containsKey('budget_warnings_enabled')) {
+      context.handle(
+        _budgetWarningsEnabledMeta,
+        budgetWarningsEnabled.isAcceptableOrUnknown(
+          data['budget_warnings_enabled']!,
+          _budgetWarningsEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('savings_check_ins_enabled')) {
+      context.handle(
+        _savingsCheckInsEnabledMeta,
+        savingsCheckInsEnabled.isAcceptableOrUnknown(
+          data['savings_check_ins_enabled']!,
+          _savingsCheckInsEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quiet_hours_start_minutes')) {
+      context.handle(
+        _quietHoursStartMinutesMeta,
+        quietHoursStartMinutes.isAcceptableOrUnknown(
+          data['quiet_hours_start_minutes']!,
+          _quietHoursStartMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quiet_hours_end_minutes')) {
+      context.handle(
+        _quietHoursEndMinutesMeta,
+        quietHoursEndMinutes.isAcceptableOrUnknown(
+          data['quiet_hours_end_minutes']!,
+          _quietHoursEndMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('os_permission_granted')) {
+      context.handle(
+        _osPermissionGrantedMeta,
+        osPermissionGranted.isAcceptableOrUnknown(
+          data['os_permission_granted']!,
+          _osPermissionGrantedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NotificationPreference map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotificationPreference(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      isEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_enabled'],
+      )!,
+      budgetWarningsEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}budget_warnings_enabled'],
+      )!,
+      savingsCheckInsEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}savings_check_ins_enabled'],
+      )!,
+      quietHoursStartMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quiet_hours_start_minutes'],
+      ),
+      quietHoursEndMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quiet_hours_end_minutes'],
+      ),
+      osPermissionGranted: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}os_permission_granted'],
+      )!,
+    );
+  }
+
+  @override
+  $NotificationPreferencesTable createAlias(String alias) {
+    return $NotificationPreferencesTable(attachedDatabase, alias);
+  }
+}
+
+class NotificationPreference extends DataClass
+    implements Insertable<NotificationPreference> {
+  final String id;
+  final bool isEnabled;
+  final bool budgetWarningsEnabled;
+  final bool savingsCheckInsEnabled;
+  final int? quietHoursStartMinutes;
+  final int? quietHoursEndMinutes;
+  final bool osPermissionGranted;
+  const NotificationPreference({
+    required this.id,
+    required this.isEnabled,
+    required this.budgetWarningsEnabled,
+    required this.savingsCheckInsEnabled,
+    this.quietHoursStartMinutes,
+    this.quietHoursEndMinutes,
+    required this.osPermissionGranted,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['is_enabled'] = Variable<bool>(isEnabled);
+    map['budget_warnings_enabled'] = Variable<bool>(budgetWarningsEnabled);
+    map['savings_check_ins_enabled'] = Variable<bool>(savingsCheckInsEnabled);
+    if (!nullToAbsent || quietHoursStartMinutes != null) {
+      map['quiet_hours_start_minutes'] = Variable<int>(quietHoursStartMinutes);
+    }
+    if (!nullToAbsent || quietHoursEndMinutes != null) {
+      map['quiet_hours_end_minutes'] = Variable<int>(quietHoursEndMinutes);
+    }
+    map['os_permission_granted'] = Variable<bool>(osPermissionGranted);
+    return map;
+  }
+
+  NotificationPreferencesCompanion toCompanion(bool nullToAbsent) {
+    return NotificationPreferencesCompanion(
+      id: Value(id),
+      isEnabled: Value(isEnabled),
+      budgetWarningsEnabled: Value(budgetWarningsEnabled),
+      savingsCheckInsEnabled: Value(savingsCheckInsEnabled),
+      quietHoursStartMinutes: quietHoursStartMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(quietHoursStartMinutes),
+      quietHoursEndMinutes: quietHoursEndMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(quietHoursEndMinutes),
+      osPermissionGranted: Value(osPermissionGranted),
+    );
+  }
+
+  factory NotificationPreference.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotificationPreference(
+      id: serializer.fromJson<String>(json['id']),
+      isEnabled: serializer.fromJson<bool>(json['isEnabled']),
+      budgetWarningsEnabled: serializer.fromJson<bool>(
+        json['budgetWarningsEnabled'],
+      ),
+      savingsCheckInsEnabled: serializer.fromJson<bool>(
+        json['savingsCheckInsEnabled'],
+      ),
+      quietHoursStartMinutes: serializer.fromJson<int?>(
+        json['quietHoursStartMinutes'],
+      ),
+      quietHoursEndMinutes: serializer.fromJson<int?>(
+        json['quietHoursEndMinutes'],
+      ),
+      osPermissionGranted: serializer.fromJson<bool>(
+        json['osPermissionGranted'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'isEnabled': serializer.toJson<bool>(isEnabled),
+      'budgetWarningsEnabled': serializer.toJson<bool>(budgetWarningsEnabled),
+      'savingsCheckInsEnabled': serializer.toJson<bool>(savingsCheckInsEnabled),
+      'quietHoursStartMinutes': serializer.toJson<int?>(quietHoursStartMinutes),
+      'quietHoursEndMinutes': serializer.toJson<int?>(quietHoursEndMinutes),
+      'osPermissionGranted': serializer.toJson<bool>(osPermissionGranted),
+    };
+  }
+
+  NotificationPreference copyWith({
+    String? id,
+    bool? isEnabled,
+    bool? budgetWarningsEnabled,
+    bool? savingsCheckInsEnabled,
+    Value<int?> quietHoursStartMinutes = const Value.absent(),
+    Value<int?> quietHoursEndMinutes = const Value.absent(),
+    bool? osPermissionGranted,
+  }) => NotificationPreference(
+    id: id ?? this.id,
+    isEnabled: isEnabled ?? this.isEnabled,
+    budgetWarningsEnabled: budgetWarningsEnabled ?? this.budgetWarningsEnabled,
+    savingsCheckInsEnabled:
+        savingsCheckInsEnabled ?? this.savingsCheckInsEnabled,
+    quietHoursStartMinutes: quietHoursStartMinutes.present
+        ? quietHoursStartMinutes.value
+        : this.quietHoursStartMinutes,
+    quietHoursEndMinutes: quietHoursEndMinutes.present
+        ? quietHoursEndMinutes.value
+        : this.quietHoursEndMinutes,
+    osPermissionGranted: osPermissionGranted ?? this.osPermissionGranted,
+  );
+  NotificationPreference copyWithCompanion(
+    NotificationPreferencesCompanion data,
+  ) {
+    return NotificationPreference(
+      id: data.id.present ? data.id.value : this.id,
+      isEnabled: data.isEnabled.present ? data.isEnabled.value : this.isEnabled,
+      budgetWarningsEnabled: data.budgetWarningsEnabled.present
+          ? data.budgetWarningsEnabled.value
+          : this.budgetWarningsEnabled,
+      savingsCheckInsEnabled: data.savingsCheckInsEnabled.present
+          ? data.savingsCheckInsEnabled.value
+          : this.savingsCheckInsEnabled,
+      quietHoursStartMinutes: data.quietHoursStartMinutes.present
+          ? data.quietHoursStartMinutes.value
+          : this.quietHoursStartMinutes,
+      quietHoursEndMinutes: data.quietHoursEndMinutes.present
+          ? data.quietHoursEndMinutes.value
+          : this.quietHoursEndMinutes,
+      osPermissionGranted: data.osPermissionGranted.present
+          ? data.osPermissionGranted.value
+          : this.osPermissionGranted,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationPreference(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('budgetWarningsEnabled: $budgetWarningsEnabled, ')
+          ..write('savingsCheckInsEnabled: $savingsCheckInsEnabled, ')
+          ..write('quietHoursStartMinutes: $quietHoursStartMinutes, ')
+          ..write('quietHoursEndMinutes: $quietHoursEndMinutes, ')
+          ..write('osPermissionGranted: $osPermissionGranted')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    isEnabled,
+    budgetWarningsEnabled,
+    savingsCheckInsEnabled,
+    quietHoursStartMinutes,
+    quietHoursEndMinutes,
+    osPermissionGranted,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotificationPreference &&
+          other.id == this.id &&
+          other.isEnabled == this.isEnabled &&
+          other.budgetWarningsEnabled == this.budgetWarningsEnabled &&
+          other.savingsCheckInsEnabled == this.savingsCheckInsEnabled &&
+          other.quietHoursStartMinutes == this.quietHoursStartMinutes &&
+          other.quietHoursEndMinutes == this.quietHoursEndMinutes &&
+          other.osPermissionGranted == this.osPermissionGranted);
+}
+
+class NotificationPreferencesCompanion
+    extends UpdateCompanion<NotificationPreference> {
+  final Value<String> id;
+  final Value<bool> isEnabled;
+  final Value<bool> budgetWarningsEnabled;
+  final Value<bool> savingsCheckInsEnabled;
+  final Value<int?> quietHoursStartMinutes;
+  final Value<int?> quietHoursEndMinutes;
+  final Value<bool> osPermissionGranted;
+  final Value<int> rowid;
+  const NotificationPreferencesCompanion({
+    this.id = const Value.absent(),
+    this.isEnabled = const Value.absent(),
+    this.budgetWarningsEnabled = const Value.absent(),
+    this.savingsCheckInsEnabled = const Value.absent(),
+    this.quietHoursStartMinutes = const Value.absent(),
+    this.quietHoursEndMinutes = const Value.absent(),
+    this.osPermissionGranted = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationPreferencesCompanion.insert({
+    required String id,
+    this.isEnabled = const Value.absent(),
+    this.budgetWarningsEnabled = const Value.absent(),
+    this.savingsCheckInsEnabled = const Value.absent(),
+    this.quietHoursStartMinutes = const Value.absent(),
+    this.quietHoursEndMinutes = const Value.absent(),
+    this.osPermissionGranted = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<NotificationPreference> custom({
+    Expression<String>? id,
+    Expression<bool>? isEnabled,
+    Expression<bool>? budgetWarningsEnabled,
+    Expression<bool>? savingsCheckInsEnabled,
+    Expression<int>? quietHoursStartMinutes,
+    Expression<int>? quietHoursEndMinutes,
+    Expression<bool>? osPermissionGranted,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isEnabled != null) 'is_enabled': isEnabled,
+      if (budgetWarningsEnabled != null)
+        'budget_warnings_enabled': budgetWarningsEnabled,
+      if (savingsCheckInsEnabled != null)
+        'savings_check_ins_enabled': savingsCheckInsEnabled,
+      if (quietHoursStartMinutes != null)
+        'quiet_hours_start_minutes': quietHoursStartMinutes,
+      if (quietHoursEndMinutes != null)
+        'quiet_hours_end_minutes': quietHoursEndMinutes,
+      if (osPermissionGranted != null)
+        'os_permission_granted': osPermissionGranted,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationPreferencesCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? isEnabled,
+    Value<bool>? budgetWarningsEnabled,
+    Value<bool>? savingsCheckInsEnabled,
+    Value<int?>? quietHoursStartMinutes,
+    Value<int?>? quietHoursEndMinutes,
+    Value<bool>? osPermissionGranted,
+    Value<int>? rowid,
+  }) {
+    return NotificationPreferencesCompanion(
+      id: id ?? this.id,
+      isEnabled: isEnabled ?? this.isEnabled,
+      budgetWarningsEnabled:
+          budgetWarningsEnabled ?? this.budgetWarningsEnabled,
+      savingsCheckInsEnabled:
+          savingsCheckInsEnabled ?? this.savingsCheckInsEnabled,
+      quietHoursStartMinutes:
+          quietHoursStartMinutes ?? this.quietHoursStartMinutes,
+      quietHoursEndMinutes: quietHoursEndMinutes ?? this.quietHoursEndMinutes,
+      osPermissionGranted: osPermissionGranted ?? this.osPermissionGranted,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (isEnabled.present) {
+      map['is_enabled'] = Variable<bool>(isEnabled.value);
+    }
+    if (budgetWarningsEnabled.present) {
+      map['budget_warnings_enabled'] = Variable<bool>(
+        budgetWarningsEnabled.value,
+      );
+    }
+    if (savingsCheckInsEnabled.present) {
+      map['savings_check_ins_enabled'] = Variable<bool>(
+        savingsCheckInsEnabled.value,
+      );
+    }
+    if (quietHoursStartMinutes.present) {
+      map['quiet_hours_start_minutes'] = Variable<int>(
+        quietHoursStartMinutes.value,
+      );
+    }
+    if (quietHoursEndMinutes.present) {
+      map['quiet_hours_end_minutes'] = Variable<int>(
+        quietHoursEndMinutes.value,
+      );
+    }
+    if (osPermissionGranted.present) {
+      map['os_permission_granted'] = Variable<bool>(osPermissionGranted.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationPreferencesCompanion(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('budgetWarningsEnabled: $budgetWarningsEnabled, ')
+          ..write('savingsCheckInsEnabled: $savingsCheckInsEnabled, ')
+          ..write('quietHoursStartMinutes: $quietHoursStartMinutes, ')
+          ..write('quietHoursEndMinutes: $quietHoursEndMinutes, ')
+          ..write('osPermissionGranted: $osPermissionGranted, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $NotificationHistoryTable extends NotificationHistory
+    with TableInfo<$NotificationHistoryTable, NotificationHistoryData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $NotificationHistoryTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceTypeMeta = const VerificationMeta(
+    'sourceType',
+  );
+  @override
+  late final GeneratedColumn<String> sourceType = GeneratedColumn<String>(
+    'source_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceIdMeta = const VerificationMeta(
+    'sourceId',
+  );
+  @override
+  late final GeneratedColumn<String> sourceId = GeneratedColumn<String>(
+    'source_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _applicablePeriodMeta = const VerificationMeta(
+    'applicablePeriod',
+  );
+  @override
+  late final GeneratedColumn<String> applicablePeriod = GeneratedColumn<String>(
+    'applicable_period',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastNotifiedBandMeta = const VerificationMeta(
+    'lastNotifiedBand',
+  );
+  @override
+  late final GeneratedColumn<String> lastNotifiedBand = GeneratedColumn<String>(
+    'last_notified_band',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastNotifiedAtMeta = const VerificationMeta(
+    'lastNotifiedAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastNotifiedAt = GeneratedColumn<int>(
+    'last_notified_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    sourceType,
+    sourceId,
+    applicablePeriod,
+    lastNotifiedBand,
+    lastNotifiedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'notification_history';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<NotificationHistoryData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('source_type')) {
+      context.handle(
+        _sourceTypeMeta,
+        sourceType.isAcceptableOrUnknown(data['source_type']!, _sourceTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceTypeMeta);
+    }
+    if (data.containsKey('source_id')) {
+      context.handle(
+        _sourceIdMeta,
+        sourceId.isAcceptableOrUnknown(data['source_id']!, _sourceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceIdMeta);
+    }
+    if (data.containsKey('applicable_period')) {
+      context.handle(
+        _applicablePeriodMeta,
+        applicablePeriod.isAcceptableOrUnknown(
+          data['applicable_period']!,
+          _applicablePeriodMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_notified_band')) {
+      context.handle(
+        _lastNotifiedBandMeta,
+        lastNotifiedBand.isAcceptableOrUnknown(
+          data['last_notified_band']!,
+          _lastNotifiedBandMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastNotifiedBandMeta);
+    }
+    if (data.containsKey('last_notified_at')) {
+      context.handle(
+        _lastNotifiedAtMeta,
+        lastNotifiedAt.isAcceptableOrUnknown(
+          data['last_notified_at']!,
+          _lastNotifiedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastNotifiedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  NotificationHistoryData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return NotificationHistoryData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      sourceType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_type'],
+      )!,
+      sourceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_id'],
+      )!,
+      applicablePeriod: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}applicable_period'],
+      ),
+      lastNotifiedBand: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_notified_band'],
+      )!,
+      lastNotifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_notified_at'],
+      )!,
+    );
+  }
+
+  @override
+  $NotificationHistoryTable createAlias(String alias) {
+    return $NotificationHistoryTable(attachedDatabase, alias);
+  }
+}
+
+class NotificationHistoryData extends DataClass
+    implements Insertable<NotificationHistoryData> {
+  final String id;
+
+  /// `'budgetCategory'` | `'savingsGoal'`.
+  final String sourceType;
+  final String sourceId;
+
+  /// `'YYYY-MM'` for budget categories, null for savings goals.
+  final String? applicablePeriod;
+
+  /// A `ThresholdBand` name.
+  final String lastNotifiedBand;
+  final int lastNotifiedAt;
+  const NotificationHistoryData({
+    required this.id,
+    required this.sourceType,
+    required this.sourceId,
+    this.applicablePeriod,
+    required this.lastNotifiedBand,
+    required this.lastNotifiedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['source_type'] = Variable<String>(sourceType);
+    map['source_id'] = Variable<String>(sourceId);
+    if (!nullToAbsent || applicablePeriod != null) {
+      map['applicable_period'] = Variable<String>(applicablePeriod);
+    }
+    map['last_notified_band'] = Variable<String>(lastNotifiedBand);
+    map['last_notified_at'] = Variable<int>(lastNotifiedAt);
+    return map;
+  }
+
+  NotificationHistoryCompanion toCompanion(bool nullToAbsent) {
+    return NotificationHistoryCompanion(
+      id: Value(id),
+      sourceType: Value(sourceType),
+      sourceId: Value(sourceId),
+      applicablePeriod: applicablePeriod == null && nullToAbsent
+          ? const Value.absent()
+          : Value(applicablePeriod),
+      lastNotifiedBand: Value(lastNotifiedBand),
+      lastNotifiedAt: Value(lastNotifiedAt),
+    );
+  }
+
+  factory NotificationHistoryData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return NotificationHistoryData(
+      id: serializer.fromJson<String>(json['id']),
+      sourceType: serializer.fromJson<String>(json['sourceType']),
+      sourceId: serializer.fromJson<String>(json['sourceId']),
+      applicablePeriod: serializer.fromJson<String?>(json['applicablePeriod']),
+      lastNotifiedBand: serializer.fromJson<String>(json['lastNotifiedBand']),
+      lastNotifiedAt: serializer.fromJson<int>(json['lastNotifiedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'sourceType': serializer.toJson<String>(sourceType),
+      'sourceId': serializer.toJson<String>(sourceId),
+      'applicablePeriod': serializer.toJson<String?>(applicablePeriod),
+      'lastNotifiedBand': serializer.toJson<String>(lastNotifiedBand),
+      'lastNotifiedAt': serializer.toJson<int>(lastNotifiedAt),
+    };
+  }
+
+  NotificationHistoryData copyWith({
+    String? id,
+    String? sourceType,
+    String? sourceId,
+    Value<String?> applicablePeriod = const Value.absent(),
+    String? lastNotifiedBand,
+    int? lastNotifiedAt,
+  }) => NotificationHistoryData(
+    id: id ?? this.id,
+    sourceType: sourceType ?? this.sourceType,
+    sourceId: sourceId ?? this.sourceId,
+    applicablePeriod: applicablePeriod.present
+        ? applicablePeriod.value
+        : this.applicablePeriod,
+    lastNotifiedBand: lastNotifiedBand ?? this.lastNotifiedBand,
+    lastNotifiedAt: lastNotifiedAt ?? this.lastNotifiedAt,
+  );
+  NotificationHistoryData copyWithCompanion(NotificationHistoryCompanion data) {
+    return NotificationHistoryData(
+      id: data.id.present ? data.id.value : this.id,
+      sourceType: data.sourceType.present
+          ? data.sourceType.value
+          : this.sourceType,
+      sourceId: data.sourceId.present ? data.sourceId.value : this.sourceId,
+      applicablePeriod: data.applicablePeriod.present
+          ? data.applicablePeriod.value
+          : this.applicablePeriod,
+      lastNotifiedBand: data.lastNotifiedBand.present
+          ? data.lastNotifiedBand.value
+          : this.lastNotifiedBand,
+      lastNotifiedAt: data.lastNotifiedAt.present
+          ? data.lastNotifiedAt.value
+          : this.lastNotifiedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationHistoryData(')
+          ..write('id: $id, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('applicablePeriod: $applicablePeriod, ')
+          ..write('lastNotifiedBand: $lastNotifiedBand, ')
+          ..write('lastNotifiedAt: $lastNotifiedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    sourceType,
+    sourceId,
+    applicablePeriod,
+    lastNotifiedBand,
+    lastNotifiedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is NotificationHistoryData &&
+          other.id == this.id &&
+          other.sourceType == this.sourceType &&
+          other.sourceId == this.sourceId &&
+          other.applicablePeriod == this.applicablePeriod &&
+          other.lastNotifiedBand == this.lastNotifiedBand &&
+          other.lastNotifiedAt == this.lastNotifiedAt);
+}
+
+class NotificationHistoryCompanion
+    extends UpdateCompanion<NotificationHistoryData> {
+  final Value<String> id;
+  final Value<String> sourceType;
+  final Value<String> sourceId;
+  final Value<String?> applicablePeriod;
+  final Value<String> lastNotifiedBand;
+  final Value<int> lastNotifiedAt;
+  final Value<int> rowid;
+  const NotificationHistoryCompanion({
+    this.id = const Value.absent(),
+    this.sourceType = const Value.absent(),
+    this.sourceId = const Value.absent(),
+    this.applicablePeriod = const Value.absent(),
+    this.lastNotifiedBand = const Value.absent(),
+    this.lastNotifiedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  NotificationHistoryCompanion.insert({
+    required String id,
+    required String sourceType,
+    required String sourceId,
+    this.applicablePeriod = const Value.absent(),
+    required String lastNotifiedBand,
+    required int lastNotifiedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       sourceType = Value(sourceType),
+       sourceId = Value(sourceId),
+       lastNotifiedBand = Value(lastNotifiedBand),
+       lastNotifiedAt = Value(lastNotifiedAt);
+  static Insertable<NotificationHistoryData> custom({
+    Expression<String>? id,
+    Expression<String>? sourceType,
+    Expression<String>? sourceId,
+    Expression<String>? applicablePeriod,
+    Expression<String>? lastNotifiedBand,
+    Expression<int>? lastNotifiedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (sourceType != null) 'source_type': sourceType,
+      if (sourceId != null) 'source_id': sourceId,
+      if (applicablePeriod != null) 'applicable_period': applicablePeriod,
+      if (lastNotifiedBand != null) 'last_notified_band': lastNotifiedBand,
+      if (lastNotifiedAt != null) 'last_notified_at': lastNotifiedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  NotificationHistoryCompanion copyWith({
+    Value<String>? id,
+    Value<String>? sourceType,
+    Value<String>? sourceId,
+    Value<String?>? applicablePeriod,
+    Value<String>? lastNotifiedBand,
+    Value<int>? lastNotifiedAt,
+    Value<int>? rowid,
+  }) {
+    return NotificationHistoryCompanion(
+      id: id ?? this.id,
+      sourceType: sourceType ?? this.sourceType,
+      sourceId: sourceId ?? this.sourceId,
+      applicablePeriod: applicablePeriod ?? this.applicablePeriod,
+      lastNotifiedBand: lastNotifiedBand ?? this.lastNotifiedBand,
+      lastNotifiedAt: lastNotifiedAt ?? this.lastNotifiedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (sourceType.present) {
+      map['source_type'] = Variable<String>(sourceType.value);
+    }
+    if (sourceId.present) {
+      map['source_id'] = Variable<String>(sourceId.value);
+    }
+    if (applicablePeriod.present) {
+      map['applicable_period'] = Variable<String>(applicablePeriod.value);
+    }
+    if (lastNotifiedBand.present) {
+      map['last_notified_band'] = Variable<String>(lastNotifiedBand.value);
+    }
+    if (lastNotifiedAt.present) {
+      map['last_notified_at'] = Variable<int>(lastNotifiedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('NotificationHistoryCompanion(')
+          ..write('id: $id, ')
+          ..write('sourceType: $sourceType, ')
+          ..write('sourceId: $sourceId, ')
+          ..write('applicablePeriod: $applicablePeriod, ')
+          ..write('lastNotifiedBand: $lastNotifiedBand, ')
+          ..write('lastNotifiedAt: $lastNotifiedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3490,6 +4464,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $FinanceCategoriesTable financeCategories =
       $FinanceCategoriesTable(this);
   late final $FinanceEntriesTable financeEntries = $FinanceEntriesTable(this);
+  late final $NotificationPreferencesTable notificationPreferences =
+      $NotificationPreferencesTable(this);
+  late final $NotificationHistoryTable notificationHistory =
+      $NotificationHistoryTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -3514,6 +4492,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_finance_entries_date',
     'CREATE INDEX idx_finance_entries_date ON finance_entries (date, deleted_at)',
   );
+  late final Index idxNotificationHistorySource = Index(
+    'idx_notification_history_source',
+    'CREATE UNIQUE INDEX idx_notification_history_source ON notification_history (source_type, source_id, COALESCE(applicable_period, \'\'))',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3526,12 +4508,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     onboardingStatus,
     financeCategories,
     financeEntries,
+    notificationPreferences,
+    notificationHistory,
     idxPeopleNormalizedName,
     idxTransactionsPersonId,
     idxAuditTransactionId,
     idxFinanceCategoriesNormalizedName,
     idxFinanceEntriesCategoryId,
     idxFinanceEntriesDate,
+    idxNotificationHistorySource,
   ];
 }
 
@@ -6054,6 +7039,540 @@ typedef $$FinanceEntriesTableProcessedTableManager =
       FinanceEntry,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $$NotificationPreferencesTableCreateCompanionBuilder =
+    NotificationPreferencesCompanion Function({
+      required String id,
+      Value<bool> isEnabled,
+      Value<bool> budgetWarningsEnabled,
+      Value<bool> savingsCheckInsEnabled,
+      Value<int?> quietHoursStartMinutes,
+      Value<int?> quietHoursEndMinutes,
+      Value<bool> osPermissionGranted,
+      Value<int> rowid,
+    });
+typedef $$NotificationPreferencesTableUpdateCompanionBuilder =
+    NotificationPreferencesCompanion Function({
+      Value<String> id,
+      Value<bool> isEnabled,
+      Value<bool> budgetWarningsEnabled,
+      Value<bool> savingsCheckInsEnabled,
+      Value<int?> quietHoursStartMinutes,
+      Value<int?> quietHoursEndMinutes,
+      Value<bool> osPermissionGranted,
+      Value<int> rowid,
+    });
+
+class $$NotificationPreferencesTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationPreferencesTable> {
+  $$NotificationPreferencesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get budgetWarningsEnabled => $composableBuilder(
+    column: $table.budgetWarningsEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get savingsCheckInsEnabled => $composableBuilder(
+    column: $table.savingsCheckInsEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quietHoursStartMinutes => $composableBuilder(
+    column: $table.quietHoursStartMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quietHoursEndMinutes => $composableBuilder(
+    column: $table.quietHoursEndMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get osPermissionGranted => $composableBuilder(
+    column: $table.osPermissionGranted,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationPreferencesTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationPreferencesTable> {
+  $$NotificationPreferencesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get budgetWarningsEnabled => $composableBuilder(
+    column: $table.budgetWarningsEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get savingsCheckInsEnabled => $composableBuilder(
+    column: $table.savingsCheckInsEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quietHoursStartMinutes => $composableBuilder(
+    column: $table.quietHoursStartMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quietHoursEndMinutes => $composableBuilder(
+    column: $table.quietHoursEndMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get osPermissionGranted => $composableBuilder(
+    column: $table.osPermissionGranted,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationPreferencesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationPreferencesTable> {
+  $$NotificationPreferencesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get isEnabled =>
+      $composableBuilder(column: $table.isEnabled, builder: (column) => column);
+
+  GeneratedColumn<bool> get budgetWarningsEnabled => $composableBuilder(
+    column: $table.budgetWarningsEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get savingsCheckInsEnabled => $composableBuilder(
+    column: $table.savingsCheckInsEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get quietHoursStartMinutes => $composableBuilder(
+    column: $table.quietHoursStartMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get quietHoursEndMinutes => $composableBuilder(
+    column: $table.quietHoursEndMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get osPermissionGranted => $composableBuilder(
+    column: $table.osPermissionGranted,
+    builder: (column) => column,
+  );
+}
+
+class $$NotificationPreferencesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationPreferencesTable,
+          NotificationPreference,
+          $$NotificationPreferencesTableFilterComposer,
+          $$NotificationPreferencesTableOrderingComposer,
+          $$NotificationPreferencesTableAnnotationComposer,
+          $$NotificationPreferencesTableCreateCompanionBuilder,
+          $$NotificationPreferencesTableUpdateCompanionBuilder,
+          (
+            NotificationPreference,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationPreferencesTable,
+              NotificationPreference
+            >,
+          ),
+          NotificationPreference,
+          PrefetchHooks Function()
+        > {
+  $$NotificationPreferencesTableTableManager(
+    _$AppDatabase db,
+    $NotificationPreferencesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationPreferencesTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$NotificationPreferencesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationPreferencesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> isEnabled = const Value.absent(),
+                Value<bool> budgetWarningsEnabled = const Value.absent(),
+                Value<bool> savingsCheckInsEnabled = const Value.absent(),
+                Value<int?> quietHoursStartMinutes = const Value.absent(),
+                Value<int?> quietHoursEndMinutes = const Value.absent(),
+                Value<bool> osPermissionGranted = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationPreferencesCompanion(
+                id: id,
+                isEnabled: isEnabled,
+                budgetWarningsEnabled: budgetWarningsEnabled,
+                savingsCheckInsEnabled: savingsCheckInsEnabled,
+                quietHoursStartMinutes: quietHoursStartMinutes,
+                quietHoursEndMinutes: quietHoursEndMinutes,
+                osPermissionGranted: osPermissionGranted,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> isEnabled = const Value.absent(),
+                Value<bool> budgetWarningsEnabled = const Value.absent(),
+                Value<bool> savingsCheckInsEnabled = const Value.absent(),
+                Value<int?> quietHoursStartMinutes = const Value.absent(),
+                Value<int?> quietHoursEndMinutes = const Value.absent(),
+                Value<bool> osPermissionGranted = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationPreferencesCompanion.insert(
+                id: id,
+                isEnabled: isEnabled,
+                budgetWarningsEnabled: budgetWarningsEnabled,
+                savingsCheckInsEnabled: savingsCheckInsEnabled,
+                quietHoursStartMinutes: quietHoursStartMinutes,
+                quietHoursEndMinutes: quietHoursEndMinutes,
+                osPermissionGranted: osPermissionGranted,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $NotificationPreferencesTable,
+                    NotificationPreference
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $NotificationPreferencesTable,
+                    NotificationPreference
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationPreferencesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationPreferencesTable,
+      NotificationPreference,
+      $$NotificationPreferencesTableFilterComposer,
+      $$NotificationPreferencesTableOrderingComposer,
+      $$NotificationPreferencesTableAnnotationComposer,
+      $$NotificationPreferencesTableCreateCompanionBuilder,
+      $$NotificationPreferencesTableUpdateCompanionBuilder,
+      (
+        NotificationPreference,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationPreferencesTable,
+          NotificationPreference
+        >,
+      ),
+      NotificationPreference,
+      PrefetchHooks Function()
+    >;
+typedef $$NotificationHistoryTableCreateCompanionBuilder =
+    NotificationHistoryCompanion Function({
+      required String id,
+      required String sourceType,
+      required String sourceId,
+      Value<String?> applicablePeriod,
+      required String lastNotifiedBand,
+      required int lastNotifiedAt,
+      Value<int> rowid,
+    });
+typedef $$NotificationHistoryTableUpdateCompanionBuilder =
+    NotificationHistoryCompanion Function({
+      Value<String> id,
+      Value<String> sourceType,
+      Value<String> sourceId,
+      Value<String?> applicablePeriod,
+      Value<String> lastNotifiedBand,
+      Value<int> lastNotifiedAt,
+      Value<int> rowid,
+    });
+
+class $$NotificationHistoryTableFilterComposer
+    extends Composer<_$AppDatabase, $NotificationHistoryTable> {
+  $$NotificationHistoryTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceType => $composableBuilder(
+    column: $table.sourceType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get applicablePeriod => $composableBuilder(
+    column: $table.applicablePeriod,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastNotifiedBand => $composableBuilder(
+    column: $table.lastNotifiedBand,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastNotifiedAt => $composableBuilder(
+    column: $table.lastNotifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$NotificationHistoryTableOrderingComposer
+    extends Composer<_$AppDatabase, $NotificationHistoryTable> {
+  $$NotificationHistoryTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceType => $composableBuilder(
+    column: $table.sourceType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceId => $composableBuilder(
+    column: $table.sourceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get applicablePeriod => $composableBuilder(
+    column: $table.applicablePeriod,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastNotifiedBand => $composableBuilder(
+    column: $table.lastNotifiedBand,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastNotifiedAt => $composableBuilder(
+    column: $table.lastNotifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$NotificationHistoryTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NotificationHistoryTable> {
+  $$NotificationHistoryTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceType => $composableBuilder(
+    column: $table.sourceType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceId =>
+      $composableBuilder(column: $table.sourceId, builder: (column) => column);
+
+  GeneratedColumn<String> get applicablePeriod => $composableBuilder(
+    column: $table.applicablePeriod,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastNotifiedBand => $composableBuilder(
+    column: $table.lastNotifiedBand,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastNotifiedAt => $composableBuilder(
+    column: $table.lastNotifiedAt,
+    builder: (column) => column,
+  );
+}
+
+class $$NotificationHistoryTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $NotificationHistoryTable,
+          NotificationHistoryData,
+          $$NotificationHistoryTableFilterComposer,
+          $$NotificationHistoryTableOrderingComposer,
+          $$NotificationHistoryTableAnnotationComposer,
+          $$NotificationHistoryTableCreateCompanionBuilder,
+          $$NotificationHistoryTableUpdateCompanionBuilder,
+          (
+            NotificationHistoryData,
+            BaseReferences<
+              _$AppDatabase,
+              $NotificationHistoryTable,
+              NotificationHistoryData
+            >,
+          ),
+          NotificationHistoryData,
+          PrefetchHooks Function()
+        > {
+  $$NotificationHistoryTableTableManager(
+    _$AppDatabase db,
+    $NotificationHistoryTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$NotificationHistoryTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$NotificationHistoryTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$NotificationHistoryTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> sourceType = const Value.absent(),
+                Value<String> sourceId = const Value.absent(),
+                Value<String?> applicablePeriod = const Value.absent(),
+                Value<String> lastNotifiedBand = const Value.absent(),
+                Value<int> lastNotifiedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationHistoryCompanion(
+                id: id,
+                sourceType: sourceType,
+                sourceId: sourceId,
+                applicablePeriod: applicablePeriod,
+                lastNotifiedBand: lastNotifiedBand,
+                lastNotifiedAt: lastNotifiedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String sourceType,
+                required String sourceId,
+                Value<String?> applicablePeriod = const Value.absent(),
+                required String lastNotifiedBand,
+                required int lastNotifiedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => NotificationHistoryCompanion.insert(
+                id: id,
+                sourceType: sourceType,
+                sourceId: sourceId,
+                applicablePeriod: applicablePeriod,
+                lastNotifiedBand: lastNotifiedBand,
+                lastNotifiedAt: lastNotifiedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $NotificationHistoryTable,
+                    NotificationHistoryData
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $NotificationHistoryTable,
+                    NotificationHistoryData
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$NotificationHistoryTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $NotificationHistoryTable,
+      NotificationHistoryData,
+      $$NotificationHistoryTableFilterComposer,
+      $$NotificationHistoryTableOrderingComposer,
+      $$NotificationHistoryTableAnnotationComposer,
+      $$NotificationHistoryTableCreateCompanionBuilder,
+      $$NotificationHistoryTableUpdateCompanionBuilder,
+      (
+        NotificationHistoryData,
+        BaseReferences<
+          _$AppDatabase,
+          $NotificationHistoryTable,
+          NotificationHistoryData
+        >,
+      ),
+      NotificationHistoryData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6075,4 +7594,11 @@ class $AppDatabaseManager {
       $$FinanceCategoriesTableTableManager(_db, _db.financeCategories);
   $$FinanceEntriesTableTableManager get financeEntries =>
       $$FinanceEntriesTableTableManager(_db, _db.financeEntries);
+  $$NotificationPreferencesTableTableManager get notificationPreferences =>
+      $$NotificationPreferencesTableTableManager(
+        _db,
+        _db.notificationPreferences,
+      );
+  $$NotificationHistoryTableTableManager get notificationHistory =>
+      $$NotificationHistoryTableTableManager(_db, _db.notificationHistory);
 }

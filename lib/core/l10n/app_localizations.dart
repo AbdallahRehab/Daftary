@@ -1519,6 +1519,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Other income'**
   String get financeCategoryOtherIncome;
+
+  /// No description provided for @notificationBudgetNearLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is close to its limit'**
+  String notificationBudgetNearLimitTitle(String category);
+
+  /// No description provided for @notificationBudgetNearLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {percent}% of your {category} budget this month.'**
+  String notificationBudgetNearLimitBody(String category, String percent);
+
+  /// No description provided for @notificationBudgetExceededTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{category} is over budget'**
+  String notificationBudgetExceededTitle(String category);
+
+  /// No description provided for @notificationBudgetExceededBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve spent {percent}% of your {category} budget this month.'**
+  String notificationBudgetExceededBody(String category, String percent);
+
+  /// No description provided for @notificationBudgetExceededNoPlanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve spent on {category} this month, but no amount was planned for it.'**
+  String notificationBudgetExceededNoPlanBody(String category);
+
+  /// No description provided for @notificationSavingsBehindPaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{goal} is falling behind'**
+  String notificationSavingsBehindPaceTitle(String goal);
+
+  /// No description provided for @notificationSavingsBehindPaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'At your current pace, you\'ll reach {goal} {months, plural, =1{1 month} other{{months} months}} later than planned.'**
+  String notificationSavingsBehindPaceBody(String goal, int months);
+
+  /// No description provided for @notificationSavingsAheadOfPaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{goal} is ahead of schedule'**
+  String notificationSavingsAheadOfPaceTitle(String goal);
+
+  /// No description provided for @notificationSavingsAheadOfPaceBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nice work — you\'re on track to reach {goal} {months, plural, =1{1 month} other{{months} months}} early.'**
+  String notificationSavingsAheadOfPaceBody(String goal, int months);
+
+  /// No description provided for @notificationSavingsAchievedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached: {goal}'**
+  String notificationSavingsAchievedTitle(String goal);
+
+  /// No description provided for @notificationSavingsAchievedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve saved the full amount for {goal}. Well done!'**
+  String notificationSavingsAchievedBody(String goal);
+
+  /// No description provided for @notificationSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationSettingsTitle;
+
+  /// No description provided for @notificationSettingsEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget warnings, savings check-ins and quiet hours'**
+  String get notificationSettingsEntrySubtitle;
+
+  /// No description provided for @notificationSettingsMasterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget & savings reminders'**
+  String get notificationSettingsMasterTitle;
+
+  /// No description provided for @notificationSettingsMasterOffDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default. Turn on to get a heads-up when a budget is nearly used up or a savings goal drifts from its plan. Everything is worked out on this device from your own data.'**
+  String get notificationSettingsMasterOffDescription;
+
+  /// No description provided for @notificationSettingsMasterOnDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll only hear from us when something about your budgets or goals actually changes.'**
+  String get notificationSettingsMasterOnDescription;
+
+  /// No description provided for @notificationSettingsCategoriesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'What to notify me about'**
+  String get notificationSettingsCategoriesHeader;
+
+  /// No description provided for @notificationBudgetWarningsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget warnings'**
+  String get notificationBudgetWarningsTitle;
+
+  /// No description provided for @notificationBudgetWarningsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When a category is close to or over its monthly limit'**
+  String get notificationBudgetWarningsSubtitle;
+
+  /// No description provided for @notificationSavingsCheckInsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings goal check-ins'**
+  String get notificationSavingsCheckInsTitle;
+
+  /// No description provided for @notificationSavingsCheckInsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When a goal falls behind or gets ahead of its plan, or is reached'**
+  String get notificationSavingsCheckInsSubtitle;
+
+  /// No description provided for @notificationQuietHoursTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get notificationQuietHoursTitle;
+
+  /// No description provided for @notificationQuietHoursSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold notifications during these hours and deliver them afterwards'**
+  String get notificationQuietHoursSubtitle;
+
+  /// No description provided for @notificationQuietHoursFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get notificationQuietHoursFrom;
+
+  /// No description provided for @notificationQuietHoursTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get notificationQuietHoursTo;
+
+  /// No description provided for @notificationQuietHoursNextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'next day'**
+  String get notificationQuietHoursNextDay;
+
+  /// No description provided for @notificationPermissionRationaleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications?'**
+  String get notificationPermissionRationaleTitle;
+
+  /// No description provided for @notificationPermissionRationaleMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary needs your permission to show these reminders. They\'re only about your own budgets and savings goals, and nothing leaves your device.'**
+  String get notificationPermissionRationaleMessage;
+
+  /// No description provided for @notificationPermissionRationaleConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get notificationPermissionRationaleConfirm;
+
+  /// No description provided for @notificationPermissionDeniedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are blocked'**
+  String get notificationPermissionDeniedTitle;
+
+  /// No description provided for @notificationPermissionDeniedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device isn\'t letting Daftary show notifications, so nothing will be delivered even though reminders are on. Allow notifications in your device settings to start receiving them.'**
+  String get notificationPermissionDeniedMessage;
+
+  /// No description provided for @notificationPermissionDeniedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open device settings'**
+  String get notificationPermissionDeniedAction;
+
+  /// No description provided for @notificationSettingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your notification settings. Please try again.'**
+  String get notificationSettingsSaveFailed;
+
+  /// No description provided for @notificationSettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your notification settings.'**
+  String get notificationSettingsLoadFailed;
+
+  /// Shown when the user taps a budget notification whose budget or category has since been deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'That budget no longer exists.'**
+  String get notificationBudgetNoLongerExists;
+
+  /// Shown when the user taps a savings-goal notification whose goal has since been deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'That savings goal no longer exists.'**
+  String get notificationSavingsGoalNoLongerExists;
 }
 
 class _AppLocalizationsDelegate

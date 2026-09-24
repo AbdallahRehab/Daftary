@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../domain/entities/app_language.dart';
 import '../../domain/entities/app_theme_mode.dart';
 import '../cubit/settings_cubit.dart';
@@ -90,6 +91,22 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Notifications entry point (017): its own screen, since it
+              // holds a master switch, two categories and quiet hours.
+              _SettingsSection(
+                icon: Icons.notifications_outlined,
+                title: l10n.notificationSettingsTitle,
+                child: ListTile(
+                  key: const Key('settings_notifications_entry'),
+                  leading: const Icon(Icons.notifications_active_outlined),
+                  title: Text(l10n.notificationSettingsTitle),
+                  subtitle: Text(l10n.notificationSettingsEntrySubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () =>
+                      context.push(NotificationSettingsRoutes.settings),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

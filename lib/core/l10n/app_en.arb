@@ -290,5 +290,101 @@
     "placeholders": {
       "percent": {"type": "String"}
     }
+  },
+  "notificationBudgetNearLimitTitle": "{category} is close to its limit",
+  "@notificationBudgetNearLimitTitle": {"placeholders": {"category": {"type": "String"}}},
+  "notificationBudgetNearLimitBody": "You've used {percent}% of your {category} budget this month.",
+  "@notificationBudgetNearLimitBody": {
+    "placeholders": {
+      "category": {"type": "String"},
+      "percent": {"type": "String"}
+    }
+  },
+  "notificationBudgetExceededTitle": "{category} is over budget",
+  "@notificationBudgetExceededTitle": {"placeholders": {"category": {"type": "String"}}},
+  "notificationBudgetExceededBody": "You've spent {percent}% of your {category} budget this month.",
+  "@notificationBudgetExceededBody": {
+    "placeholders": {
+      "category": {"type": "String"},
+      "percent": {"type": "String"}
+    }
+  },
+  "notificationBudgetExceededNoPlanBody": "You've spent on {category} this month, but no amount was planned for it.",
+  "@notificationBudgetExceededNoPlanBody": {"placeholders": {"category": {"type": "String"}}},
+  "notificationSavingsBehindPaceTitle": "{goal} is falling behind",
+  "@notificationSavingsBehindPaceTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "notificationSavingsBehindPaceBody": "At your current pace, you'll reach {goal} {months, plural, =1{1 month} other{{months} months}} later than planned.",
+  "@notificationSavingsBehindPaceBody": {
+    "placeholders": {
+      "goal": {"type": "String"},
+      "months": {"type": "int"}
+    }
+  },
+  "notificationSavingsAheadOfPaceTitle": "{goal} is ahead of schedule",
+  "@notificationSavingsAheadOfPaceTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "notificationSavingsAheadOfPaceBody": "Nice work — you're on track to reach {goal} {months, plural, =1{1 month} other{{months} months}} early.",
+  "@notificationSavingsAheadOfPaceBody": {
+    "placeholders": {
+      "goal": {"type": "String"},
+      "months": {"type": "int"}
+    }
+  },
+  "notificationSavingsAchievedTitle": "Goal reached: {goal}",
+  "@notificationSavingsAchievedTitle": {"placeholders": {"goal": {"type": "String"}}},
+  "notificationSavingsAchievedBody": "You've saved the full amount for {goal}. Well done!",
+  "@notificationSavingsAchievedBody": {"placeholders": {"goal": {"type": "String"}}},
+  "notificationSettingsTitle": "Notifications",
+  "@notificationSettingsTitle": {},
+  "notificationSettingsEntrySubtitle": "Budget warnings, savings check-ins and quiet hours",
+  "@notificationSettingsEntrySubtitle": {},
+  "notificationSettingsMasterTitle": "Budget & savings reminders",
+  "@notificationSettingsMasterTitle": {},
+  "notificationSettingsMasterOffDescription": "Off by default. Turn on to get a heads-up when a budget is nearly used up or a savings goal drifts from its plan. Everything is worked out on this device from your own data.",
+  "@notificationSettingsMasterOffDescription": {},
+  "notificationSettingsMasterOnDescription": "You'll only hear from us when something about your budgets or goals actually changes.",
+  "@notificationSettingsMasterOnDescription": {},
+  "notificationSettingsCategoriesHeader": "What to notify me about",
+  "@notificationSettingsCategoriesHeader": {},
+  "notificationBudgetWarningsTitle": "Budget warnings",
+  "@notificationBudgetWarningsTitle": {},
+  "notificationBudgetWarningsSubtitle": "When a category is close to or over its monthly limit",
+  "@notificationBudgetWarningsSubtitle": {},
+  "notificationSavingsCheckInsTitle": "Savings goal check-ins",
+  "@notificationSavingsCheckInsTitle": {},
+  "notificationSavingsCheckInsSubtitle": "When a goal falls behind or gets ahead of its plan, or is reached",
+  "@notificationSavingsCheckInsSubtitle": {},
+  "notificationQuietHoursTitle": "Quiet hours",
+  "@notificationQuietHoursTitle": {},
+  "notificationQuietHoursSubtitle": "Hold notifications during these hours and deliver them afterwards",
+  "@notificationQuietHoursSubtitle": {},
+  "notificationQuietHoursFrom": "From",
+  "@notificationQuietHoursFrom": {},
+  "notificationQuietHoursTo": "To",
+  "@notificationQuietHoursTo": {},
+  "notificationQuietHoursNextDay": "next day",
+  "@notificationQuietHoursNextDay": {},
+  "notificationPermissionRationaleTitle": "Allow notifications?",
+  "@notificationPermissionRationaleTitle": {},
+  "notificationPermissionRationaleMessage": "Daftary needs your permission to show these reminders. They're only about your own budgets and savings goals, and nothing leaves your device.",
+  "@notificationPermissionRationaleMessage": {},
+  "notificationPermissionRationaleConfirm": "Continue",
+  "@notificationPermissionRationaleConfirm": {},
+  "notificationPermissionDeniedTitle": "Notifications are blocked",
+  "@notificationPermissionDeniedTitle": {},
+  "notificationPermissionDeniedMessage": "Your device isn't letting Daftary show notifications, so nothing will be delivered even though reminders are on. Allow notifications in your device settings to start receiving them.",
+  "@notificationPermissionDeniedMessage": {},
+  "notificationPermissionDeniedAction": "Open device settings",
+  "@notificationPermissionDeniedAction": {},
+  "notificationSettingsSaveFailed": "Couldn't save your notification settings. Please try again.",
+  "@notificationSettingsSaveFailed": {},
+  "notificationSettingsLoadFailed": "Couldn't load your notification settings.",
+  "@notificationSettingsLoadFailed": {},
+  "notificationBudgetNoLongerExists": "That budget no longer exists.",
+  "@notificationBudgetNoLongerExists": {
+    "description": "Shown when the user taps a budget notification whose budget or category has since been deleted."
+  },
+  "notificationSavingsGoalNoLongerExists": "That savings goal no longer exists.",
+  "@notificationSavingsGoalNoLongerExists": {
+    "description": "Shown when the user taps a savings-goal notification whose goal has since been deleted."
   }
 }

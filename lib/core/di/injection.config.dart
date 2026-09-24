@@ -11,6 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:flutter/services.dart' as _i281;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -90,6 +92,60 @@ import '../../features/financial_education/presentation/cubit/doubling_time_calc
     as _i811;
 import '../../features/financial_education/presentation/cubit/savings_rate_calculator_cubit.dart'
     as _i66;
+import '../../features/insights_notifications/data/datasources/in_memory_notification_last_run_store.dart'
+    as _i770;
+import '../../features/insights_notifications/data/datasources/notifications_dao.dart'
+    as _i338;
+import '../../features/insights_notifications/data/datasources/unavailable_budget_insights_source.dart'
+    as _i763;
+import '../../features/insights_notifications/data/datasources/unavailable_savings_insights_source.dart'
+    as _i386;
+import '../../features/insights_notifications/data/repositories/notification_history_repository_impl.dart'
+    as _i551;
+import '../../features/insights_notifications/data/repositories/notification_preference_repository_impl.dart'
+    as _i701;
+import '../../features/insights_notifications/data/services/flutter_local_notifications_scheduler.dart'
+    as _i0;
+import '../../features/insights_notifications/data/services/localized_notification_composer.dart'
+    as _i900;
+import '../../features/insights_notifications/data/services/settings_notification_language_provider.dart'
+    as _i831;
+import '../../features/insights_notifications/data/services/template_notification_phrasing_service.dart'
+    as _i266;
+import '../../features/insights_notifications/domain/ports/budget_insights_source.dart'
+    as _i423;
+import '../../features/insights_notifications/domain/ports/notification_language_provider.dart'
+    as _i1003;
+import '../../features/insights_notifications/domain/ports/savings_insights_source.dart'
+    as _i842;
+import '../../features/insights_notifications/domain/repositories/notification_history_repository.dart'
+    as _i12;
+import '../../features/insights_notifications/domain/repositories/notification_last_run_store.dart'
+    as _i220;
+import '../../features/insights_notifications/domain/repositories/notification_preference_repository.dart'
+    as _i162;
+import '../../features/insights_notifications/domain/services/evaluate_budget_notifications.dart'
+    as _i983;
+import '../../features/insights_notifications/domain/services/evaluate_savings_goal_notifications.dart'
+    as _i371;
+import '../../features/insights_notifications/domain/services/notification_composer.dart'
+    as _i104;
+import '../../features/insights_notifications/domain/services/notification_phrasing_service.dart'
+    as _i721;
+import '../../features/insights_notifications/domain/services/notification_scheduler.dart'
+    as _i209;
+import '../../features/insights_notifications/domain/usecases/handle_notification_tap.dart'
+    as _i480;
+import '../../features/insights_notifications/domain/usecases/notification_engine.dart'
+    as _i552;
+import '../../features/insights_notifications/domain/usecases/request_notification_permission.dart'
+    as _i639;
+import '../../features/insights_notifications/domain/usecases/set_notification_preferences.dart'
+    as _i203;
+import '../../features/insights_notifications/presentation/cubit/notification_settings_cubit.dart'
+    as _i39;
+import '../../features/insights_notifications/presentation/notification_recompute_trigger.dart'
+    as _i548;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -136,7 +192,7 @@ import '../../features/transactions/data/datasources/transactions_dao.dart'
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
     as _i373;
 import '../../features/transactions/domain/repositories/transactions_repository.dart'
-    as _i956;
+    as _i957;
 import '../../features/transactions/domain/usecases/add_transaction.dart'
     as _i5;
 import '../../features/transactions/domain/usecases/delete_transaction.dart'
@@ -159,8 +215,10 @@ import '../../features/transactions/presentation/cubit/repayment_form_cubit.dart
 import '../../features/transactions/presentation/cubit/transaction_form_cubit.dart'
     as _i593;
 import '../database/app_database.dart' as _i982;
+import '../date/app_clock.dart' as _i956;
 import '../device/device_locale_provider.dart' as _i933;
 import '../money/egp_formatter.dart' as _i999;
+import '../routing/notification_tap_router.dart' as _i172;
 import 'register_module.dart' as _i291;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -180,6 +238,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
     gh.lazySingleton<_i281.AssetBundle>(() => registerModule.assetBundle);
+    gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
+      () => registerModule.localNotificationsPlugin,
+    );
+    gh.lazySingleton<_i423.BudgetInsightsSource>(
+      () => const _i763.UnavailableBudgetInsightsSource(),
+    );
+    gh.lazySingleton<_i721.NotificationPhrasingService>(
+      () => const _i266.TemplateNotificationPhrasingService(),
+    );
+    gh.lazySingleton<_i983.EvaluateBudgetNotifications>(
+      () => const _i983.EvaluateBudgetNotificationsImpl(),
+    );
+    gh.lazySingleton<_i371.EvaluateSavingsGoalNotifications>(
+      () => const _i371.EvaluateSavingsGoalNotificationsImpl(),
+    );
     gh.lazySingleton<_i35.SavingsRateCalculator>(
       () => const _i35.SavingsRateCalculatorImpl(),
     );
@@ -191,6 +264,16 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i585.CompoundGrowthCalculator>(
       () => const _i585.CompoundGrowthCalculatorImpl(),
+    );
+    gh.lazySingleton<_i104.NotificationComposer>(
+      () => const _i900.LocalizedNotificationComposer(),
+    );
+    gh.lazySingleton<_i956.AppClock>(() => const _i956.SystemAppClock());
+    gh.lazySingleton<_i220.NotificationLastRunStore>(
+      () => _i770.InMemoryNotificationLastRunStore(),
+    );
+    gh.lazySingleton<_i842.SavingsInsightsSource>(
+      () => const _i386.UnavailableSavingsInsightsSource(),
     );
     gh.factory<_i897.CalculateSavingsRate>(
       () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
@@ -212,6 +295,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i443.FinanceDao>(
       () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
     );
+    gh.factory<_i338.NotificationsDao>(
+      () => _i338.NotificationsDao(gh<_i982.AppDatabase>()),
+    );
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
     );
@@ -229,10 +315,28 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.lazySingleton<_i209.NotificationScheduler>(
+      () => _i0.FlutterLocalNotificationsScheduler(
+        gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
+    );
+    gh.factory<_i480.HandleNotificationTap>(
+      () => _i480.HandleNotificationTap(
+        gh<_i423.BudgetInsightsSource>(),
+        gh<_i842.SavingsInsightsSource>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.lazySingleton<_i172.NotificationTapRouter>(
+      () => _i172.NotificationTapRouter(
+        gh<_i209.NotificationScheduler>(),
+        gh<_i480.HandleNotificationTap>(),
+      ),
+    );
     gh.lazySingleton<_i430.OnboardingRepository>(
       () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
     );
-    gh.lazySingleton<_i956.TransactionsRepository>(
+    gh.lazySingleton<_i957.TransactionsRepository>(
       () => _i373.TransactionsRepositoryImpl(
         gh<_i684.TransactionsDao>(),
         gh<_i982.AppDatabase>(),
@@ -280,7 +384,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i791.ResolveOnboardingStatus(
         gh<_i430.OnboardingRepository>(),
         gh<_i646.PeopleRepository>(),
-        gh<_i956.TransactionsRepository>(),
+        gh<_i957.TransactionsRepository>(),
       ),
     );
     gh.factory<_i221.ArchivePerson>(
@@ -298,29 +402,38 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i49.RestorePerson>(
       () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
     );
+    gh.lazySingleton<_i12.NotificationHistoryRepository>(
+      () =>
+          _i551.NotificationHistoryRepositoryImpl(gh<_i338.NotificationsDao>()),
+    );
+    gh.lazySingleton<_i162.NotificationPreferenceRepository>(
+      () => _i701.NotificationPreferenceRepositoryImpl(
+        gh<_i338.NotificationsDao>(),
+      ),
+    );
     gh.factory<_i265.ContentLibraryCubit>(
       () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
     );
     gh.factory<_i5.AddTransaction>(
-      () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
+      () => _i5.AddTransaction(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i645.DeleteTransaction>(
-      () => _i645.DeleteTransaction(gh<_i956.TransactionsRepository>()),
+      () => _i645.DeleteTransaction(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i554.EditTransaction>(
-      () => _i554.EditTransaction(gh<_i956.TransactionsRepository>()),
+      () => _i554.EditTransaction(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i941.GetOverview>(
-      () => _i941.GetOverview(gh<_i956.TransactionsRepository>()),
+      () => _i941.GetOverview(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i750.GetPersonBalance>(
-      () => _i750.GetPersonBalance(gh<_i956.TransactionsRepository>()),
+      () => _i750.GetPersonBalance(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i610.GetPersonHistory>(
-      () => _i610.GetPersonHistory(gh<_i956.TransactionsRepository>()),
+      () => _i610.GetPersonHistory(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i426.RecordRepayment>(
-      () => _i426.RecordRepayment(gh<_i956.TransactionsRepository>()),
+      () => _i426.RecordRepayment(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i90.ChangeLanguage>(
       () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
@@ -407,8 +520,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i430.OnboardingRepository>(),
       ),
     );
+    gh.factory<_i203.SetNotificationPreferences>(
+      () => _i203.SetNotificationPreferences(
+        gh<_i162.NotificationPreferenceRepository>(),
+      ),
+    );
     gh.factory<_i231.FinanceMonthSummaryCubit>(
       () => _i231.FinanceMonthSummaryCubit(gh<_i844.GetFinanceSummary>()),
+    );
+    gh.lazySingleton<_i1003.NotificationLanguageProvider>(
+      () => _i831.SettingsNotificationLanguageProvider(
+        gh<_i1032.GetLanguagePreference>(),
+        gh<_i933.DeviceLocaleProvider>(),
+      ),
     );
     gh.lazySingleton<_i792.SettingsCubit>(
       () => _i792.SettingsCubit(
@@ -417,6 +541,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
         gh<_i333.GetThemeModePreference>(),
         gh<_i46.ChangeThemeMode>(),
+      ),
+    );
+    gh.lazySingleton<_i552.NotificationEngine>(
+      () => _i552.NotificationEngineImpl(
+        gh<_i162.NotificationPreferenceRepository>(),
+        gh<_i12.NotificationHistoryRepository>(),
+        gh<_i423.BudgetInsightsSource>(),
+        gh<_i842.SavingsInsightsSource>(),
+        gh<_i983.EvaluateBudgetNotifications>(),
+        gh<_i371.EvaluateSavingsGoalNotifications>(),
+        gh<_i104.NotificationComposer>(),
+        gh<_i721.NotificationPhrasingService>(),
+        gh<_i209.NotificationScheduler>(),
+        gh<_i956.AppClock>(),
+        gh<_i1003.NotificationLanguageProvider>(),
+        gh<_i220.NotificationLastRunStore>(),
       ),
     );
     gh.factory<_i505.FinanceEntryFormCubit>(
@@ -445,10 +585,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.lazySingleton<_i548.NotificationRecomputeTrigger>(
+      () => _i548.NotificationRecomputeTrigger(
+        gh<_i552.NotificationEngine>(),
+        gh<_i220.NotificationLastRunStore>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i62.ArchivedPeopleCubit>(
       () => _i62.ArchivedPeopleCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i49.RestorePerson>(),
+      ),
+    );
+    gh.factory<_i639.RequestNotificationPermission>(
+      () => _i639.RequestNotificationPermission(
+        gh<_i209.NotificationScheduler>(),
+        gh<_i162.NotificationPreferenceRepository>(),
       ),
     );
     gh.factory<_i992.PersonDetailCubit>(
@@ -472,6 +625,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i109.CategoryManagementCubit(
         gh<_i1.GetCategories>(),
         gh<_i490.RemoveCategory>(),
+      ),
+    );
+    gh.factory<_i39.NotificationSettingsCubit>(
+      () => _i39.NotificationSettingsCubit(
+        gh<_i203.SetNotificationPreferences>(),
+        gh<_i639.RequestNotificationPermission>(),
       ),
     );
     return this;

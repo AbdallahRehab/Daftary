@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
 import '../database/app_database.dart';
@@ -21,4 +22,11 @@ abstract class RegisterModule {
   /// fixture bundle (016 `BundledEducationContentDataSource`).
   @lazySingleton
   AssetBundle get assetBundle => rootBundle;
+
+  /// The OS notification plugin (017) — injected into
+  /// `FlutterLocalNotificationsScheduler` rather than constructed there so
+  /// tests can substitute a mock and never post a real notification.
+  @lazySingleton
+  FlutterLocalNotificationsPlugin get localNotificationsPlugin =>
+      FlutterLocalNotificationsPlugin();
 }

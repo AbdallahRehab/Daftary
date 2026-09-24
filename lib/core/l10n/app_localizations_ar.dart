@@ -770,4 +770,163 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get financeCategoryOtherIncome => 'دخل آخر';
+
+  @override
+  String notificationBudgetNearLimitTitle(String category) {
+    return 'ميزانية $category تقترب من حدّها';
+  }
+
+  @override
+  String notificationBudgetNearLimitBody(String category, String percent) {
+    return 'استخدمت $percent٪ من ميزانية $category هذا الشهر.';
+  }
+
+  @override
+  String notificationBudgetExceededTitle(String category) {
+    return 'تجاوزت ميزانية $category';
+  }
+
+  @override
+  String notificationBudgetExceededBody(String category, String percent) {
+    return 'أنفقت $percent٪ من ميزانية $category هذا الشهر.';
+  }
+
+  @override
+  String notificationBudgetExceededNoPlanBody(String category) {
+    return 'لديك مصروفات على $category هذا الشهر رغم أنه لم يُخصَّص لها أي مبلغ.';
+  }
+
+  @override
+  String notificationSavingsBehindPaceTitle(String goal) {
+    return 'هدف $goal متأخر عن خطته';
+  }
+
+  @override
+  String notificationSavingsBehindPaceBody(String goal, int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months شهر',
+      many: '$months شهرًا',
+      few: '$months أشهر',
+      two: 'شهرين',
+      one: 'شهرًا واحدًا',
+    );
+    return 'بوتيرتك الحالية ستبلغ هدف $goal متأخرًا $_temp0 عن الموعد المخطط.';
+  }
+
+  @override
+  String notificationSavingsAheadOfPaceTitle(String goal) {
+    return 'هدف $goal يسبق موعده';
+  }
+
+  @override
+  String notificationSavingsAheadOfPaceBody(String goal, int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months شهر',
+      many: '$months شهرًا',
+      few: '$months أشهر',
+      two: 'شهرين',
+      one: 'شهر واحد',
+    );
+    return 'أحسنت — أنت في طريقك لبلوغ هدف $goal قبل موعده بـ$_temp0.';
+  }
+
+  @override
+  String notificationSavingsAchievedTitle(String goal) {
+    return 'تحقق الهدف: $goal';
+  }
+
+  @override
+  String notificationSavingsAchievedBody(String goal) {
+    return 'لقد ادّخرت المبلغ كاملًا لهدف $goal. أحسنت!';
+  }
+
+  @override
+  String get notificationSettingsTitle => 'الإشعارات';
+
+  @override
+  String get notificationSettingsEntrySubtitle =>
+      'تنبيهات الميزانية ومتابعة أهداف الادخار وساعات الهدوء';
+
+  @override
+  String get notificationSettingsMasterTitle => 'تذكيرات الميزانية والادخار';
+
+  @override
+  String get notificationSettingsMasterOffDescription =>
+      'متوقفة افتراضيًا. فعّلها لتصلك تنبيهات عندما توشك ميزانية على النفاد أو يبتعد هدف ادخار عن خطته. تُحسب كلها على هذا الجهاز من بياناتك أنت.';
+
+  @override
+  String get notificationSettingsMasterOnDescription =>
+      'لن نرسل إليك إلا عندما يتغيّر شيء فعلًا في ميزانياتك أو أهدافك.';
+
+  @override
+  String get notificationSettingsCategoriesHeader =>
+      'ما الذي تريد التنبيه بشأنه';
+
+  @override
+  String get notificationBudgetWarningsTitle => 'تنبيهات الميزانية';
+
+  @override
+  String get notificationBudgetWarningsSubtitle =>
+      'عندما تقترب فئة من حدها الشهري أو تتجاوزه';
+
+  @override
+  String get notificationSavingsCheckInsTitle => 'متابعة أهداف الادخار';
+
+  @override
+  String get notificationSavingsCheckInsSubtitle =>
+      'عندما يتأخر هدف عن خطته أو يسبقها، أو عند تحقيقه';
+
+  @override
+  String get notificationQuietHoursTitle => 'ساعات الهدوء';
+
+  @override
+  String get notificationQuietHoursSubtitle =>
+      'أجِّل الإشعارات خلال هذه الساعات وأرسلها بعدها';
+
+  @override
+  String get notificationQuietHoursFrom => 'من';
+
+  @override
+  String get notificationQuietHoursTo => 'إلى';
+
+  @override
+  String get notificationQuietHoursNextDay => 'اليوم التالي';
+
+  @override
+  String get notificationPermissionRationaleTitle => 'السماح بالإشعارات؟';
+
+  @override
+  String get notificationPermissionRationaleMessage =>
+      'يحتاج دفتري إلى إذنك لعرض هذه التذكيرات. وهي تخص ميزانياتك وأهداف ادخارك فقط، ولا يغادر أي شيء جهازك.';
+
+  @override
+  String get notificationPermissionRationaleConfirm => 'متابعة';
+
+  @override
+  String get notificationPermissionDeniedTitle => 'الإشعارات محظورة';
+
+  @override
+  String get notificationPermissionDeniedMessage =>
+      'جهازك لا يسمح لدفتري بعرض الإشعارات، لذلك لن يصلك شيء رغم تفعيل التذكيرات. اسمح بالإشعارات من إعدادات جهازك لتبدأ في تلقيها.';
+
+  @override
+  String get notificationPermissionDeniedAction => 'فتح إعدادات الجهاز';
+
+  @override
+  String get notificationSettingsSaveFailed =>
+      'تعذّر حفظ إعدادات الإشعارات. حاول مرة أخرى.';
+
+  @override
+  String get notificationSettingsLoadFailed => 'تعذّر تحميل إعدادات الإشعارات.';
+
+  @override
+  String get notificationBudgetNoLongerExists => 'هذه الميزانية لم تعد موجودة.';
+
+  @override
+  String get notificationSavingsGoalNoLongerExists =>
+      'هدف الادخار هذا لم يعد موجودًا.';
 }

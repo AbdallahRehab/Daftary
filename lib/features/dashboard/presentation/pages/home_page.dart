@@ -226,6 +226,18 @@ class HomeView extends StatelessWidget {
           onTap: () => _openThenRefresh(context, '/ocr/scan'),
         ),
       ),
+      // The AI assistant's persistent entry point (014 T028/T044). Opens
+      // the chat, which shows a disabled state linking to settings until
+      // the user has entered a key and accepted the disclosure (FR-001).
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.auto_awesome_outlined),
+          title: Text(l10n.aiAssistantTitle),
+          subtitle: Text(l10n.aiAssistantHomeEntrySubtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _openThenRefresh(context, '/ai-assistant/chat'),
+        ),
+      ),
     ];
   }
 }

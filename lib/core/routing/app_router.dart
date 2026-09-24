@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../features/ai_assistant/presentation/pages/ai_settings_page.dart';
+import '../../features/ai_assistant/presentation/pages/chat_page.dart';
 import '../../features/budgets/domain/entities/budget_month.dart';
 import '../../features/budgets/presentation/pages/budget_form_page.dart';
 import '../../features/budgets/presentation/pages/budget_month_page.dart';
@@ -297,6 +299,20 @@ final GoRouter appRouter = GoRouter(
               path: '/ocr/history/:scanId',
               builder: (context, state) =>
                   ScanDetailPage(scanId: state.pathParameters['scanId']!),
+            ),
+            // The AI assistant (014) lives in the People branch for the same
+            // reason finance, occasions and budgets do (research.md
+            // Decision 9): it is reached from Home's section entry points,
+            // not from a bottom-nav tab of its own. Home opens the chat,
+            // which shows its disabled state (linking to settings) until
+            // the assistant is set up (FR-001).
+            GoRoute(
+              path: ChatPage.location,
+              builder: (context, state) => const ChatPage(),
+            ),
+            GoRoute(
+              path: AISettingsPage.location,
+              builder: (context, state) => const AISettingsPage(),
             ),
           ],
         ),

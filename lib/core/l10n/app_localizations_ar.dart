@@ -1770,4 +1770,301 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get deleteDataError =>
       'تعذر حذف بياناتك. لم يُحذف أي شيء — جميع بياناتك ما زالت سليمة. حاول مرة أخرى.';
+
+  @override
+  String get aiAssistantTitle => 'المساعد الذكي';
+
+  @override
+  String get aiAssistantHomeEntrySubtitle =>
+      'اسأل عن أموالك أنت. متوقف حتى تقوم بإعداده.';
+
+  @override
+  String get aiSettingsTitle => 'إعدادات المساعد الذكي';
+
+  @override
+  String get aiSettingsIntroTitle => 'المساعد متوقف';
+
+  @override
+  String get aiSettingsIntroMessage =>
+      'لتشغيله، اختر مزوّد الذكاء الاصطناعي، وأدخل مفتاح API الخاص بك، وراجع بالضبط ما الذي ستتم مشاركته. لا يأتي دفتري بأي مفتاح خاص به.';
+
+  @override
+  String get aiSettingsProviderSectionTitle => 'المزوّد';
+
+  @override
+  String get aiSettingsProviderCustom => 'مزوّد مخصص';
+
+  @override
+  String get aiSettingsCustomProviderHint =>
+      'أي مزوّد يوفّر واجهة محادثة متوافقة مع OpenAI وتدعم استدعاء الأدوات.';
+
+  @override
+  String get aiSettingsCustomBaseUrlLabel => 'عنوان API الأساسي (https://…)';
+
+  @override
+  String get aiSettingsCustomModelLabel => 'اسم النموذج';
+
+  @override
+  String get aiSettingsApiKeySectionTitle => 'مفتاح API';
+
+  @override
+  String get aiSettingsApiKeyLabel => 'مفتاح API الخاص بك';
+
+  @override
+  String get aiSettingsApiKeyNote =>
+      'يُحفظ فقط في التخزين الآمن لهذا الجهاز ولا يُرسل إلا إلى المزوّد الذي اخترته. لن يُعرض مرة أخرى بعد حفظه.';
+
+  @override
+  String get aiSettingsProviderRequired => 'اختر مزوّدًا';
+
+  @override
+  String get aiSettingsCustomBaseUrlInvalid =>
+      'أدخل عنوانًا كاملًا يبدأ بـ https://';
+
+  @override
+  String get aiSettingsCustomModelRequired => 'أدخل اسم النموذج';
+
+  @override
+  String get aiSettingsApiKeyRequired => 'أدخل مفتاح API';
+
+  @override
+  String get aiSettingsApiKeyMalformed => 'لا يبدو هذا مفتاح API كاملًا';
+
+  @override
+  String get aiSettingsContinueAction => 'متابعة';
+
+  @override
+  String get aiSettingsEnabledTitle => 'المساعد يعمل';
+
+  @override
+  String aiSettingsEnabledProvider(String provider) {
+    return 'المزوّد: $provider';
+  }
+
+  @override
+  String get aiSettingsApiKeySaved => 'مفتاح API: محفوظ بأمان (مخفي)';
+
+  @override
+  String aiSettingsConsentAcceptedOn(String date) {
+    return 'تمت الموافقة على إفصاح مشاركة البيانات في $date';
+  }
+
+  @override
+  String get aiSettingsChangeCredentialsAction => 'تغيير المزوّد أو المفتاح';
+
+  @override
+  String get aiSettingsChangeCredentialsTitle => 'تغيير المزوّد أو المفتاح';
+
+  @override
+  String get aiSettingsChangeCredentialsMessage =>
+      'أدخل المفتاح الجديد. سيتم التخلص من المفتاح المحفوظ حاليًا بمجرد حفظ المفتاح الجديد.';
+
+  @override
+  String get aiSettingsSaveCredentialsAction => 'حفظ المفتاح الجديد';
+
+  @override
+  String get aiSettingsCancelAction => 'إلغاء';
+
+  @override
+  String get aiSettingsDisableAction => 'إيقاف المساعد';
+
+  @override
+  String get aiSettingsDisableConfirmTitle => 'إيقاف المساعد؟';
+
+  @override
+  String get aiSettingsDisableConfirmMessage =>
+      'لن يُرسل أي شيء آخر إلى مزوّد الذكاء الاصطناعي. سيُحذف مفتاح API المحفوظ من هذا الجهاز، لذا فإن إعادة تشغيل المساعد تتطلب إدخال مفتاح والموافقة على إفصاح مشاركة البيانات من جديد. سيُحتفظ بسجل المحادثة.';
+
+  @override
+  String get aiSettingsDisableConfirmAction => 'إيقاف';
+
+  @override
+  String get aiSettingsEnabledMessage => 'تم تشغيل المساعد الذكي';
+
+  @override
+  String get aiSettingsCredentialsUpdatedMessage =>
+      'تم تحديث المزوّد والمفتاح. تم التخلص من المفتاح السابق.';
+
+  @override
+  String get aiSettingsDisabledMessage =>
+      'تم إيقاف المساعد الذكي. حُذف مفتاح API من هذا الجهاز.';
+
+  @override
+  String get aiSettingsSaveFailed =>
+      'تعذر حفظ إعدادات المساعد الذكي. لم يتغير شيء. حاول مرة أخرى.';
+
+  @override
+  String get aiSettingsLoadFailed => 'تعذر تحميل إعدادات المساعد الذكي.';
+
+  @override
+  String aiSettingsCustomProviderName(String host) {
+    return 'مزوّدك المخصص ($host)';
+  }
+
+  @override
+  String get aiConsentTitle => 'قبل تشغيل المساعد';
+
+  @override
+  String get aiConsentIntro =>
+      'إليك بالضبط ما يحدث عندما تطرح سؤالًا على المساعد:';
+
+  @override
+  String get aiConsentPointMinimal =>
+      'تُرسل فقط المعلومة الصغيرة اللازمة للإجابة عن ذلك السؤال تحديدًا — مثل إجمالي فئة واحدة لشهر واحد. لا تُرسل أبدًا نسخة كاملة من سجلاتك.';
+
+  @override
+  String aiConsentPointProviderOnly(String provider) {
+    return 'تذهب فقط إلى $provider باستخدام مفتاحك أنت. لا تذهب أبدًا إلى دفتري ولا إلى أي جهة أخرى.';
+  }
+
+  @override
+  String get aiConsentPointOnDemand => 'لا يُرسل أي شيء حتى تطرح سؤالًا.';
+
+  @override
+  String get aiConsentPointReadOnly =>
+      'يستطيع المساعد فقط قراءة أرقامك وشرحها. لا يمكنه أبدًا إضافة أي شيء أو تعديله أو حذفه.';
+
+  @override
+  String get aiConsentPointCost => 'قد يحاسبك المزوّد على كل سؤال.';
+
+  @override
+  String get aiConsentPointDisable =>
+      'يمكنك إيقاف المساعد في أي وقت. يوقف ذلك فورًا إرسال أي شيء آخر ويحذف مفتاحك من هذا الجهاز.';
+
+  @override
+  String get aiConsentAcceptAction => 'أوافق، شغّله';
+
+  @override
+  String get aiConsentDeclineAction => 'ليس الآن';
+
+  @override
+  String get aiChatTitle => 'المساعد الذكي';
+
+  @override
+  String get aiChatInputHint => 'اسأل عن مصروفاتك أو ميزانياتك أو أرصدتك…';
+
+  @override
+  String get aiChatSendAction => 'إرسال السؤال';
+
+  @override
+  String get aiChatEmptyTitle => 'اسأل عن أموالك أنت';
+
+  @override
+  String get aiChatEmptyMessage =>
+      'مثلًا: \"كم صرفت على الأكل هذا الشهر؟\" الإجابات مبنية على سجلاتك في دفتري فقط.';
+
+  @override
+  String get aiChatClearAction => 'مسح المحادثة';
+
+  @override
+  String get aiChatClearConfirmTitle => 'هل تريد مسح هذه المحادثة؟';
+
+  @override
+  String get aiChatClearConfirmMessage =>
+      'ستُحذف كل الأسئلة والإجابات من هذا الجهاز. لن تتأثر سجلاتك المالية.';
+
+  @override
+  String get aiChatClearConfirmAction => 'مسح';
+
+  @override
+  String get aiChatClearedMessage => 'تم مسح المحادثة';
+
+  @override
+  String get aiChatClearFailed => 'تعذّر مسح المحادثة. حاول مرة أخرى.';
+
+  @override
+  String get aiChatLoadEarlierAction => 'عرض الرسائل الأقدم';
+
+  @override
+  String get aiChatLoadFailed => 'تعذّر تحميل المحادثة.';
+
+  @override
+  String get aiChatTypingLabel => 'المساعد يجهّز الإجابة';
+
+  @override
+  String get aiChatYouLabel => 'أنت';
+
+  @override
+  String get aiChatAssistantLabel => 'المساعد';
+
+  @override
+  String get aiChatMessageFailedLabel => 'لم تتم الإجابة';
+
+  @override
+  String get aiChatInterruptedLabel =>
+      'لم تتم الإجابة: أُوقف المساعد قبل وصول الرد';
+
+  @override
+  String get aiChatDisabledTitle => 'المساعد متوقف';
+
+  @override
+  String get aiChatDisabledMessage =>
+      'شغّله من إعدادات المساعد لتبدأ في طرح أسئلة عن أموالك.';
+
+  @override
+  String get aiChatOpenSettingsAction => 'فتح الإعدادات';
+
+  @override
+  String get aiChatSettingsAction => 'إعدادات المساعد';
+
+  @override
+  String get aiChatReadOnlyNotice =>
+      'المساعد يستطيع فقط قراءة أرقامك وشرحها، ولا يمكنه إضافة أو تعديل أو حذف أي شيء، لذلك لم يتغيّر شيء. يمكنك فعل ذلك بنفسك من داخل التطبيق.';
+
+  @override
+  String get aiChatNothingChangedLabel => 'لم يتغيّر أي شيء في سجلاتك';
+
+  @override
+  String get aiFailureInvalidApiKeyTitle => 'المفتاح غير مقبول';
+
+  @override
+  String get aiFailureInvalidApiKeyMessage =>
+      'رفض المزوّد مفتاح API الخاص بك. قد يكون خاطئًا أو منتهي الصلاحية أو ملغى. حدّثه لتواصل طرح الأسئلة.';
+
+  @override
+  String get aiFailureRateLimitedTitle => 'طلبات كثيرة جدًا';
+
+  @override
+  String get aiFailureRateLimitedMessage =>
+      'المزوّد يحدّ من عدد الطلبات حاليًا. انتظر دقيقة أو اثنتين ثم حاول مرة أخرى.';
+
+  @override
+  String get aiFailureNetworkTitle => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get aiFailureNetworkMessage =>
+      'يحتاج المساعد إلى اتصال بالإنترنت. أما باقي دفتري فيعمل كالمعتاد بدون إنترنت.';
+
+  @override
+  String get aiFailureProviderErrorTitle => 'المزوّد غير متاح';
+
+  @override
+  String get aiFailureProviderErrorMessage =>
+      'يواجه مزوّد الذكاء الاصطناعي مشكلة من جهته. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get aiFailureUnrecognizedTitle => 'رد غير متوقع';
+
+  @override
+  String get aiFailureUnrecognizedMessage =>
+      'تعذّر فهم رد المساعد. حاول طرح السؤال مرة أخرى.';
+
+  @override
+  String get aiFailureLocalTitle => 'تعذّر الحفظ';
+
+  @override
+  String get aiFailureLocalMessage =>
+      'تعذّر حفظ سؤالك على هذا الجهاز. حاول مرة أخرى.';
+
+  @override
+  String get aiFailureRetryAction => 'حاول مرة أخرى';
+
+  @override
+  String get aiFailureUpdateKeyAction => 'تحديث مفتاح API';
+
+  @override
+  String get aiObservationLabel => 'ملاحظة';
+
+  @override
+  String get aiObservationSemanticLabel => 'ملاحظة من المساعد مبنية على سجلاتك';
 }

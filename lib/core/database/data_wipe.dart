@@ -40,6 +40,12 @@ extension DataWipe on AppDatabase {
       await delete(budgets).go();
       await delete(financeEntries).go();
       await delete(financeCategories).go();
+      // AI assistant (014). The API key is not in the database and is
+      // not touched here — it lives in secure storage only, and
+      // `DeleteAllUserData` purges it via `PurgeAIAssistantCredentials`.
+      await delete(aiMessages).go();
+      await delete(aiConversations).go();
+      await delete(aiSettings).go();
       // single-row preference tables
       await delete(appSettings).go();
       await delete(onboardingStatus).go();

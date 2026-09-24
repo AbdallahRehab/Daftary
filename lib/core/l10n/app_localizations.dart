@@ -3313,6 +3313,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.'**
   String get deleteDataError;
+
+  /// No description provided for @aiAssistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiAssistantTitle;
+
+  /// No description provided for @aiAssistantHomeEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions about your own money. Off until you set it up.'**
+  String get aiAssistantHomeEntrySubtitle;
+
+  /// No description provided for @aiSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant settings'**
+  String get aiSettingsTitle;
+
+  /// No description provided for @aiSettingsIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant is off'**
+  String get aiSettingsIntroTitle;
+
+  /// No description provided for @aiSettingsIntroMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'To turn it on, choose your AI provider, enter your own API key, and review exactly what will be shared. Daftary never ships with a key of its own.'**
+  String get aiSettingsIntroMessage;
+
+  /// No description provided for @aiSettingsProviderSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get aiSettingsProviderSectionTitle;
+
+  /// No description provided for @aiSettingsProviderCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom provider'**
+  String get aiSettingsProviderCustom;
+
+  /// No description provided for @aiSettingsCustomProviderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Any provider with an OpenAI-compatible chat API that supports tool calling.'**
+  String get aiSettingsCustomProviderHint;
+
+  /// No description provided for @aiSettingsCustomBaseUrlLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'API base URL (https://…)'**
+  String get aiSettingsCustomBaseUrlLabel;
+
+  /// No description provided for @aiSettingsCustomModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model name'**
+  String get aiSettingsCustomModelLabel;
+
+  /// No description provided for @aiSettingsApiKeySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'API key'**
+  String get aiSettingsApiKeySectionTitle;
+
+  /// No description provided for @aiSettingsApiKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your API key'**
+  String get aiSettingsApiKeyLabel;
+
+  /// No description provided for @aiSettingsApiKeyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored only in this device\'s secure storage and sent only to the provider you chose. It is never shown again after you save it.'**
+  String get aiSettingsApiKeyNote;
+
+  /// No description provided for @aiSettingsProviderRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a provider'**
+  String get aiSettingsProviderRequired;
+
+  /// No description provided for @aiSettingsCustomBaseUrlInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a full address starting with https://'**
+  String get aiSettingsCustomBaseUrlInvalid;
+
+  /// No description provided for @aiSettingsCustomModelRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the model name'**
+  String get aiSettingsCustomModelRequired;
+
+  /// No description provided for @aiSettingsApiKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your API key'**
+  String get aiSettingsApiKeyRequired;
+
+  /// No description provided for @aiSettingsApiKeyMalformed.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like a complete API key'**
+  String get aiSettingsApiKeyMalformed;
+
+  /// No description provided for @aiSettingsContinueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get aiSettingsContinueAction;
+
+  /// No description provided for @aiSettingsEnabledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant is on'**
+  String get aiSettingsEnabledTitle;
+
+  /// No description provided for @aiSettingsEnabledProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider: {provider}'**
+  String aiSettingsEnabledProvider(String provider);
+
+  /// No description provided for @aiSettingsApiKeySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'API key: saved securely (hidden)'**
+  String get aiSettingsApiKeySaved;
+
+  /// No description provided for @aiSettingsConsentAcceptedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Data-sharing disclosure accepted on {date}'**
+  String aiSettingsConsentAcceptedOn(String date);
+
+  /// No description provided for @aiSettingsChangeCredentialsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change provider or key'**
+  String get aiSettingsChangeCredentialsAction;
+
+  /// No description provided for @aiSettingsChangeCredentialsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change provider or key'**
+  String get aiSettingsChangeCredentialsTitle;
+
+  /// No description provided for @aiSettingsChangeCredentialsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the new key. The key saved now will be discarded once the new one is saved.'**
+  String get aiSettingsChangeCredentialsMessage;
+
+  /// No description provided for @aiSettingsSaveCredentialsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save new key'**
+  String get aiSettingsSaveCredentialsAction;
+
+  /// No description provided for @aiSettingsCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get aiSettingsCancelAction;
+
+  /// No description provided for @aiSettingsDisableAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off assistant'**
+  String get aiSettingsDisableAction;
+
+  /// No description provided for @aiSettingsDisableConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off the assistant?'**
+  String get aiSettingsDisableConfirmTitle;
+
+  /// No description provided for @aiSettingsDisableConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing more will be sent to your AI provider. Your saved API key will be deleted from this device, so turning the assistant back on means entering a key and accepting the data-sharing disclosure again. Your conversation history is kept.'**
+  String get aiSettingsDisableConfirmMessage;
+
+  /// No description provided for @aiSettingsDisableConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get aiSettingsDisableConfirmAction;
+
+  /// No description provided for @aiSettingsEnabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'AI assistant turned on'**
+  String get aiSettingsEnabledMessage;
+
+  /// No description provided for @aiSettingsCredentialsUpdatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider and key updated. The previous key was discarded.'**
+  String get aiSettingsCredentialsUpdatedMessage;
+
+  /// No description provided for @aiSettingsDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'AI assistant turned off. Your API key was deleted from this device.'**
+  String get aiSettingsDisabledMessage;
+
+  /// No description provided for @aiSettingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI assistant settings couldn\'t be saved. Nothing was changed. Please try again.'**
+  String get aiSettingsSaveFailed;
+
+  /// No description provided for @aiSettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'AI assistant settings couldn\'t be loaded.'**
+  String get aiSettingsLoadFailed;
+
+  /// No description provided for @aiSettingsCustomProviderName.
+  ///
+  /// In en, this message translates to:
+  /// **'your custom provider ({host})'**
+  String aiSettingsCustomProviderName(String host);
+
+  /// No description provided for @aiConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before you turn on the assistant'**
+  String get aiConsentTitle;
+
+  /// No description provided for @aiConsentIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Here is exactly what happens when you ask the assistant a question:'**
+  String get aiConsentIntro;
+
+  /// No description provided for @aiConsentPointMinimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the small piece of data needed to answer that one question is sent — for example, one category\'s total for one month. Never a full copy of your records.'**
+  String get aiConsentPointMinimal;
+
+  /// No description provided for @aiConsentPointProviderOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'It goes only to {provider}, using your own key. Never to Daftary, and never to anyone else.'**
+  String aiConsentPointProviderOnly(String provider);
+
+  /// No description provided for @aiConsentPointOnDemand.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is sent until you ask a question.'**
+  String get aiConsentPointOnDemand;
+
+  /// No description provided for @aiConsentPointReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant can only read and explain your figures. It can never add, change, or delete anything.'**
+  String get aiConsentPointReadOnly;
+
+  /// No description provided for @aiConsentPointCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Your provider may charge your account for each question.'**
+  String get aiConsentPointCost;
+
+  /// No description provided for @aiConsentPointDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'You can turn the assistant off at any time. That immediately stops anything more from being sent and deletes your key from this device.'**
+  String get aiConsentPointDisable;
+
+  /// No description provided for @aiConsentAcceptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree, turn it on'**
+  String get aiConsentAcceptAction;
+
+  /// No description provided for @aiConsentDeclineAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get aiConsentDeclineAction;
+
+  /// No description provided for @aiChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiChatTitle;
+
+  /// No description provided for @aiChatInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your spending, budgets, or balances…'**
+  String get aiChatInputHint;
+
+  /// No description provided for @aiChatSendAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send question'**
+  String get aiChatSendAction;
+
+  /// No description provided for @aiChatEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about your own money'**
+  String get aiChatEmptyTitle;
+
+  /// No description provided for @aiChatEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: \"How much did I spend on food this month?\" Answers come only from your own records in Daftary.'**
+  String get aiChatEmptyMessage;
+
+  /// No description provided for @aiChatClearAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear conversation'**
+  String get aiChatClearAction;
+
+  /// No description provided for @aiChatClearConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear this conversation?'**
+  String get aiChatClearConfirmTitle;
+
+  /// No description provided for @aiChatClearConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All questions and answers will be deleted from this device. Your financial records won\'t be affected.'**
+  String get aiChatClearConfirmMessage;
+
+  /// No description provided for @aiChatClearConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get aiChatClearConfirmAction;
+
+  /// No description provided for @aiChatClearedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation cleared'**
+  String get aiChatClearedMessage;
+
+  /// No description provided for @aiChatClearFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The conversation couldn\'t be cleared. Please try again.'**
+  String get aiChatClearFailed;
+
+  /// No description provided for @aiChatLoadEarlierAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show earlier messages'**
+  String get aiChatLoadEarlierAction;
+
+  /// No description provided for @aiChatLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your conversation couldn\'t be loaded.'**
+  String get aiChatLoadFailed;
+
+  /// No description provided for @aiChatTypingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant is preparing an answer'**
+  String get aiChatTypingLabel;
+
+  /// No description provided for @aiChatYouLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get aiChatYouLabel;
+
+  /// No description provided for @aiChatAssistantLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant'**
+  String get aiChatAssistantLabel;
+
+  /// No description provided for @aiChatMessageFailedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not answered'**
+  String get aiChatMessageFailedLabel;
+
+  /// No description provided for @aiChatInterruptedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not answered: the assistant was turned off before a reply arrived'**
+  String get aiChatInterruptedLabel;
+
+  /// No description provided for @aiChatDisabledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant is off'**
+  String get aiChatDisabledTitle;
+
+  /// No description provided for @aiChatDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn it on in the assistant settings to start asking questions about your money.'**
+  String get aiChatDisabledMessage;
+
+  /// No description provided for @aiChatOpenSettingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get aiChatOpenSettingsAction;
+
+  /// No description provided for @aiChatSettingsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant settings'**
+  String get aiChatSettingsAction;
+
+  /// No description provided for @aiChatReadOnlyNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant can only read and explain your figures. It can\'t add, change, or delete anything, so nothing was changed. You can do that yourself from the app.'**
+  String get aiChatReadOnlyNotice;
+
+  /// No description provided for @aiChatNothingChangedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in your records was changed'**
+  String get aiChatNothingChangedLabel;
+
+  /// No description provided for @aiFailureInvalidApiKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'API key not accepted'**
+  String get aiFailureInvalidApiKeyTitle;
+
+  /// No description provided for @aiFailureInvalidApiKeyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your provider rejected your API key. It may be wrong, expired, or revoked. Update it to keep asking questions.'**
+  String get aiFailureInvalidApiKeyMessage;
+
+  /// No description provided for @aiFailureRateLimitedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests'**
+  String get aiFailureRateLimitedTitle;
+
+  /// No description provided for @aiFailureRateLimitedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your provider is limiting requests right now. Wait a minute or two, then try again.'**
+  String get aiFailureRateLimitedMessage;
+
+  /// No description provided for @aiFailureNetworkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection'**
+  String get aiFailureNetworkTitle;
+
+  /// No description provided for @aiFailureNetworkMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant needs an internet connection. Everything else in Daftary keeps working offline.'**
+  String get aiFailureNetworkMessage;
+
+  /// No description provided for @aiFailureProviderErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider unavailable'**
+  String get aiFailureProviderErrorTitle;
+
+  /// No description provided for @aiFailureProviderErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI provider is having a problem on its side. Please try again in a little while.'**
+  String get aiFailureProviderErrorMessage;
+
+  /// No description provided for @aiFailureUnrecognizedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unexpected reply'**
+  String get aiFailureUnrecognizedTitle;
+
+  /// No description provided for @aiFailureUnrecognizedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The assistant\'s reply couldn\'t be understood. Please try asking again.'**
+  String get aiFailureUnrecognizedMessage;
+
+  /// No description provided for @aiFailureLocalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save'**
+  String get aiFailureLocalTitle;
+
+  /// No description provided for @aiFailureLocalMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your question couldn\'t be saved on this device. Please try again.'**
+  String get aiFailureLocalMessage;
+
+  /// No description provided for @aiFailureRetryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get aiFailureRetryAction;
+
+  /// No description provided for @aiFailureUpdateKeyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update API key'**
+  String get aiFailureUpdateKeyAction;
+
+  /// No description provided for @aiObservationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation'**
+  String get aiObservationLabel;
+
+  /// No description provided for @aiObservationSemanticLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation from the assistant, based on your own records'**
+  String get aiObservationSemanticLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -78,6 +78,16 @@ dependencies:
   # Wrapped behind `data_privacy/ShareService`; only SharePlusService imports it.
   share_plus: ^12.0.0
 
+  # 014 AI assistant: stores the user's own provider API key in the OS
+  # keychain/keystore — never in drift (research.md Decision 3). Wrapped
+  # behind `ai_assistant/SecureCredentialStore`. Held at 9.x: 10+/11.x pull
+  # win32 ^6, which conflicts with share_plus 12's win32 ^5.
+  flutter_secure_storage: ^9.2.4
+  # 014 AI assistant: the app's only outbound network client — one POST per
+  # conversation turn to the user's chosen provider (research.md Decision 2).
+  # Wrapped behind `ai_assistant/AIService`.
+  http: ^1.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

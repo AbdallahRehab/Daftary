@@ -383,6 +383,77 @@ class OnboardingStatus extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// The single, continuous assistant conversation (014). At most one row per
+/// installation, created lazily on first use.
+///
+/// Named `Ai…` rather than `AI…` so drift derives the SQL name
+/// `ai_conversations` (not `a_i_conversations`); `@DataClassName` keeps the
+/// generated row class from shadowing the domain `AIConversation` entity.
+@DataClassName('AiConversationRow')
+class AiConversations extends Table {
+  TextColumn get id => text()();
+  IntColumn get createdAt => integer()();
+  IntColumn get lastActivityAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One question or answer within [AiConversations] (014). Owns no money and
+/// references no other feature's table (FR-023).
+@DataClassName('AiMessageRow')
+@TableIndex(
+  name: 'idx_ai_messages_conversation_created',
+  columns: {#conversationId, #createdAt},
+)
+class AiMessages extends Table {
+  TextColumn get id => text()();
+  TextColumn get conversationId => text().references(AiConversations, #id)();
+
+  /// `'user'|'assistant'`.
+  TextColumn get sender => text()();
+  TextColumn get content => text()();
+
+  /// `'sent'|'answered'|'failed'`.
+  TextColumn get status => text()();
+
+  /// Set only when [status] is `'failed'`: `'invalidApiKey'|'rateLimited'|
+  /// 'network'|'providerError'|'unrecognizedResponse'`.
+  TextColumn get failureReason => text().nullable()();
+
+  /// Which tool/use-case pairs grounded an assistant answer's figures.
+  TextColumn get groundingRefsJson => text().nullable()();
+  IntColumn get createdAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// The assistant's configuration (014). Single-row table under the fixed
+/// `id` `'singleton'`, same pattern as [AppSettings]. Holds only non-secret
+/// metadata — the API key itself lives exclusively in secure storage
+/// (014 research.md Decision 3), never here, not even as a hash.
+@DataClassName('AiSettingsRow')
+class AiSettings extends Table {
+  TextColumn get id => text()();
+  BoolColumn get isEnabled => boolean().withDefault(const Constant(false))();
+  TextColumn get providerId => text().nullable()();
+  BoolColumn get hasStoredCredential =>
+      boolean().withDefault(const Constant(false))();
+  IntColumn get consentAcceptedAt => integer().nullable()();
+  IntColumn get updatedAt => integer()();
+
+  /// The `observationKey` of the last proactive observation surfaced in the
+  /// conversation (User Story 7 AC3 / FR-020 no-repeat rule), or `null`
+  /// when none was ever surfaced. Not user data in its own right — only a
+  /// de-duplication marker; written only after the observation was
+  /// successfully narrated and persisted.
+  TextColumn get lastObservationKey => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
@@ -402,6 +473,9 @@ class OnboardingStatus extends Table {
     CandidateEntries,
     Budgets,
     BudgetCategoryAllocations,
+    AiConversations,
+    AiMessages,
+    AiSettings,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -410,7 +484,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -481,6 +555,15 @@ class AppDatabase extends _$AppDatabase {
         await m.createIndex(idxBudgetAllocationsBudgetCategory);
         await m.createIndex(idxBudgetAllocationsIdempotencyKey);
         await m.createIndex(idxBudgetAllocationsBudgetId);
+      }
+      if (from < 9) {
+        // Purely additive (014 research.md Decision 8): three new tables,
+        // no existing table touched. The index is created explicitly for
+        // the same reason as the blocks above.
+        await m.createTable(aiConversations);
+        await m.createTable(aiMessages);
+        await m.createTable(aiSettings);
+        await m.createIndex(idxAiMessagesConversationCreated);
       }
     },
     beforeOpen: (details) async {

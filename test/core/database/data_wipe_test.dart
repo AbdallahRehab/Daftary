@@ -217,6 +217,36 @@ void main() {
             isComplete: const Value(true),
           ),
         );
+    await db
+        .into(db.aiConversations)
+        .insert(
+          AiConversationsCompanion.insert(
+            id: 'conv1',
+            createdAt: t,
+            lastActivityAt: t,
+          ),
+        );
+    await db
+        .into(db.aiMessages)
+        .insert(
+          AiMessagesCompanion.insert(
+            id: 'msg1',
+            conversationId: 'conv1',
+            sender: 'user',
+            content: 'How much did I spend on food?',
+            status: 'sent',
+            createdAt: t,
+          ),
+        );
+    await db
+        .into(db.aiSettings)
+        .insert(
+          AiSettingsCompanion.insert(
+            id: 'singleton',
+            providerId: const Value('custom'),
+            updatedAt: t,
+          ),
+        );
   }
 
   test('fixture populates every table in AppDatabase', () async {

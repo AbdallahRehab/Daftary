@@ -16,6 +16,8 @@ class AppTextField extends StatelessWidget {
     this.autofocus = false,
     this.suffixIcon,
     this.textDirection,
+    this.obscureText = false,
+    this.enabled,
   });
 
   final String label;
@@ -29,6 +31,12 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextDirection? textDirection;
 
+  /// Masks the input (e.g. a secret such as an API key). Also turns off
+  /// autocorrect and suggestions, so the value is never learned by the
+  /// keyboard.
+  final bool obscureText;
+  final bool? enabled;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -39,6 +47,10 @@ class AppTextField extends StatelessWidget {
       textInputAction: textInputAction,
       autofocus: autofocus,
       textDirection: textDirection,
+      obscureText: obscureText,
+      autocorrect: !obscureText,
+      enableSuggestions: !obscureText,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,

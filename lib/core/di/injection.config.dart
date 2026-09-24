@@ -10,10 +10,74 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:http/http.dart' as _i519;
 import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/ai_assistant/data/datasources/ai_assistant_dao.dart'
+    as _i931;
+import '../../features/ai_assistant/data/datasources/ai_assistant_module.dart'
+    as _i1036;
+import '../../features/ai_assistant/data/datasources/ai_provider_catalog_impl.dart'
+    as _i833;
+import '../../features/ai_assistant/data/datasources/secure_credential_store_impl.dart'
+    as _i370;
+import '../../features/ai_assistant/data/repositories/ai_assistant_repository_impl.dart'
+    as _i988;
+import '../../features/ai_assistant/data/services/ai_http_module.dart' as _i88;
+import '../../features/ai_assistant/data/services/ai_service_impl.dart' as _i57;
+import '../../features/ai_assistant/domain/repositories/ai_assistant_repository.dart'
+    as _i753;
+import '../../features/ai_assistant/domain/services/ai_provider_catalog.dart'
+    as _i1023;
+import '../../features/ai_assistant/domain/services/ai_service.dart' as _i238;
+import '../../features/ai_assistant/domain/services/secure_credential_store.dart'
+    as _i693;
+import '../../features/ai_assistant/domain/services/system_prompt_builder.dart'
+    as _i775;
+import '../../features/ai_assistant/domain/tools/ai_tool_registry.dart'
+    as _i332;
+import '../../features/ai_assistant/domain/tools/compare_spending_across_periods.dart'
+    as _i924;
+import '../../features/ai_assistant/domain/tools/get_budget_status_tool.dart'
+    as _i59;
+import '../../features/ai_assistant/domain/tools/get_category_spend.dart'
+    as _i917;
+import '../../features/ai_assistant/domain/tools/get_occasion_totals_tool.dart'
+    as _i665;
+import '../../features/ai_assistant/domain/tools/get_owed_overview_tool.dart'
+    as _i12;
+import '../../features/ai_assistant/domain/tools/get_person_balance_tool.dart'
+    as _i1049;
+import '../../features/ai_assistant/domain/tools/get_proactive_observation_tool.dart'
+    as _i65;
+import '../../features/ai_assistant/domain/tools/get_top_spending_category.dart'
+    as _i1050;
+import '../../features/ai_assistant/domain/tools/tool_arguments.dart' as _i1038;
+import '../../features/ai_assistant/domain/usecases/ask_financial_question.dart'
+    as _i636;
+import '../../features/ai_assistant/domain/usecases/clear_conversation.dart'
+    as _i546;
+import '../../features/ai_assistant/domain/usecases/disable_ai_assistant.dart'
+    as _i803;
+import '../../features/ai_assistant/domain/usecases/enable_ai_assistant.dart'
+    as _i685;
+import '../../features/ai_assistant/domain/usecases/get_ai_assistant_settings.dart'
+    as _i359;
+import '../../features/ai_assistant/domain/usecases/get_conversation.dart'
+    as _i970;
+import '../../features/ai_assistant/domain/usecases/get_proactive_observation.dart'
+    as _i103;
+import '../../features/ai_assistant/domain/usecases/purge_ai_assistant_credentials.dart'
+    as _i763;
+import '../../features/ai_assistant/domain/usecases/update_provider_credentials.dart'
+    as _i739;
+import '../../features/ai_assistant/presentation/cubit/ai_settings_cubit.dart'
+    as _i742;
+import '../../features/ai_assistant/presentation/cubit/chat_cubit.dart'
+    as _i258;
 import '../../features/budgets/data/datasources/budgets_dao.dart' as _i757;
 import '../../features/budgets/data/repositories/budgets_repository_impl.dart'
     as _i249;
@@ -64,7 +128,7 @@ import '../../features/data_privacy/domain/usecases/delete_all_user_data.dart'
 import '../../features/data_privacy/domain/usecases/export_user_data.dart'
     as _i496;
 import '../../features/data_privacy/presentation/cubit/delete_account_cubit.dart'
-    as _i753;
+    as _i754;
 import '../../features/data_privacy/presentation/cubit/export_cubit.dart'
     as _i781;
 import '../../features/finance/data/datasources/finance_dao.dart' as _i443;
@@ -156,7 +220,7 @@ import '../../features/ocr/domain/repositories/ocr_repository.dart' as _i577;
 import '../../features/ocr/domain/repositories/text_recognition_service.dart'
     as _i176;
 import '../../features/ocr/domain/usecases/cancel_scan.dart' as _i377;
-import '../../features/ocr/domain/usecases/confirm_scan_batch.dart' as _i665;
+import '../../features/ocr/domain/usecases/confirm_scan_batch.dart' as _i666;
 import '../../features/ocr/domain/usecases/delete_scan.dart' as _i413;
 import '../../features/ocr/domain/usecases/discard_candidate_entry.dart'
     as _i256;
@@ -257,6 +321,12 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
+    final aIAssistantModule = _$AIAssistantModule();
+    final aIHttpModule = _$AIHttpModule();
+    gh.factory<_i775.SystemPromptBuilder>(
+      () => const _i775.SystemPromptBuilder(),
+    );
+    gh.factory<_i1038.AIPeriodResolver>(() => _i1038.AIPeriodResolver());
     gh.factory<_i769.FindPossibleDuplicatePerson>(
       () => const _i769.FindPossibleDuplicatePerson(),
     );
@@ -266,11 +336,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i780.DocumentsDirectory>(
       () => const _i780.DocumentsDirectory(),
     );
+    gh.lazySingleton<_i558.FlutterSecureStorage>(
+      () => aIAssistantModule.flutterSecureStorage,
+    );
+    gh.lazySingleton<_i519.Client>(() => aIHttpModule.httpClient);
     gh.lazySingleton<_i918.CandidateEntryParser>(
       () => const _i918.CandidateEntryParser(),
     );
     gh.lazySingleton<_i450.ImageCropperClient>(
       () => const _i450.ImageCropperClient(),
+    );
+    gh.lazySingleton<_i693.SecureCredentialStore>(
+      () => _i370.SecureCredentialStoreImpl(gh<_i558.FlutterSecureStorage>()),
     );
     gh.lazySingleton<_i939.ShareService>(() => _i664.SharePlusService());
     gh.lazySingleton<_i52.ExportDirectoryProvider>(
@@ -281,6 +358,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i176.TextRecognitionService>(
       () => _i428.TextRecognitionServiceImpl(),
+    );
+    gh.lazySingleton<_i1023.AIProviderCatalog>(
+      () => const _i833.AIProviderCatalogImpl(),
     );
     gh.lazySingleton<_i780.AttachmentPickerService>(
       () => _i157.AttachmentPickerServiceImpl(
@@ -301,8 +381,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i176.TextRecognitionService>(),
       ),
     );
+    gh.lazySingleton<_i238.AIService>(
+      () => _i57.AIServiceImpl(gh<_i519.Client>()),
+    );
     gh.lazySingleton<_i1004.DataWipeRepository>(
       () => _i913.DataWipeRepositoryImpl(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i931.AIAssistantDao>(
+      () => _i931.AIAssistantDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i757.BudgetsDao>(
       () => _i757.BudgetsDao(gh<_i982.AppDatabase>()),
@@ -324,6 +410,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i684.TransactionsDao>(
       () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
     );
+    gh.lazySingleton<_i753.AIAssistantRepository>(
+      () => _i988.AIAssistantRepositoryImpl(
+        gh<_i931.AIAssistantDao>(),
+        gh<_i693.SecureCredentialStore>(),
+      ),
+    );
     gh.lazySingleton<_i430.OnboardingRepository>(
       () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
     );
@@ -332,9 +424,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i684.TransactionsDao>(),
         gh<_i982.AppDatabase>(),
       ),
-    );
-    gh.factory<_i431.DeleteAllUserData>(
-      () => _i431.DeleteAllUserData(gh<_i1004.DataWipeRepository>()),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
       () => _i250.FinanceRepositoryImpl(gh<_i443.FinanceDao>()),
@@ -380,6 +469,28 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i49.RestorePerson>(
       () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
     );
+    gh.factory<_i546.ClearConversation>(
+      () => _i546.ClearConversation(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i803.DisableAIAssistant>(
+      () => _i803.DisableAIAssistant(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i685.EnableAIAssistant>(
+      () => _i685.EnableAIAssistant(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i359.GetAIAssistantSettings>(
+      () => _i359.GetAIAssistantSettings(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i970.GetConversation>(
+      () => _i970.GetConversation(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i763.PurgeAIAssistantCredentials>(
+      () =>
+          _i763.PurgeAIAssistantCredentials(gh<_i753.AIAssistantRepository>()),
+    );
+    gh.factory<_i739.UpdateProviderCredentials>(
+      () => _i739.UpdateProviderCredentials(gh<_i753.AIAssistantRepository>()),
+    );
     gh.factory<_i496.ExportUserData>(
       () => _i496.ExportUserData(
         gh<_i646.PeopleRepository>(),
@@ -392,6 +503,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i323.GetSpendingTrend>(
       () => _i323.GetSpendingTrend(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i431.DeleteAllUserData>(
+      () => _i431.DeleteAllUserData(
+        gh<_i1004.DataWipeRepository>(),
+        gh<_i763.PurgeAIAssistantCredentials>(),
+      ),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
@@ -575,6 +692,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i228.CategoryRepository>(),
       ),
     );
+    gh.factory<_i742.AISettingsCubit>(
+      () => _i742.AISettingsCubit(
+        gh<_i359.GetAIAssistantSettings>(),
+        gh<_i685.EnableAIAssistant>(),
+        gh<_i803.DisableAIAssistant>(),
+        gh<_i739.UpdateProviderCredentials>(),
+        gh<_i1023.AIProviderCatalog>(),
+      ),
+    );
     gh.factory<_i25.DashboardCubit>(
       () => _i25.DashboardCubit(
         gh<_i719.GetDashboardSnapshot>(),
@@ -617,6 +743,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.factory<_i1049.GetPersonBalanceTool>(
+      () => _i1049.GetPersonBalanceTool(
+        gh<_i750.GetPersonBalance>(),
+        gh<_i646.PeopleRepository>(),
+      ),
+    );
     gh.factory<_i53.OccasionDetailCubit>(
       () => _i53.OccasionDetailCubit(
         gh<_i432.GetOccasionDetail>(),
@@ -627,6 +759,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i154.RestoreOccasion>(),
         gh<_i1046.DeleteOccasion>(),
         gh<_i780.AttachmentPickerService>(),
+      ),
+    );
+    gh.factory<_i665.GetOccasionTotalsTool>(
+      () => _i665.GetOccasionTotalsTool(
+        gh<_i432.GetOccasionDetail>(),
+        gh<_i957.GetOccasionsList>(),
       ),
     );
     gh.factory<_i62.ArchivedPeopleCubit>(
@@ -643,6 +781,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i956.TransactionsRepository>(),
         gh<_i72.OccasionsRepository>(),
         gh<_i646.PeopleRepository>(),
+      ),
+    );
+    gh.factory<_i924.CompareSpendingAcrossPeriodsTool>(
+      () => _i924.CompareSpendingAcrossPeriodsTool(
+        gh<_i844.GetFinanceSummary>(),
+        gh<_i1038.AIPeriodResolver>(),
       ),
     );
     gh.factory<_i552.AddBudgetCategoryAllocation>(
@@ -682,10 +826,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i137.FinanceRepository>(),
       ),
     );
+    gh.factory<_i12.GetOwedOverviewTool>(
+      () => _i12.GetOwedOverviewTool(gh<_i941.GetOverview>()),
+    );
+    gh.factory<_i65.GetProactiveObservationTool>(
+      () => _i65.GetProactiveObservationTool(
+        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
     gh.factory<_i185.ArchivedOccasionsCubit>(
       () => _i185.ArchivedOccasionsCubit(
         gh<_i957.GetOccasionsList>(),
         gh<_i154.RestoreOccasion>(),
+      ),
+    );
+    gh.factory<_i1050.GetTopSpendingCategoryTool>(
+      () => _i1050.GetTopSpendingCategoryTool(
+        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i1038.AIPeriodResolver>(),
       ),
     );
     gh.factory<_i178.BudgetTrendCubit>(
@@ -694,8 +853,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1.GetCategories>(),
       ),
     );
-    gh.factory<_i753.DeleteAccountCubit>(
-      () => _i753.DeleteAccountCubit(
+    gh.factory<_i754.DeleteAccountCubit>(
+      () => _i754.DeleteAccountCubit(
         gh<_i431.DeleteAllUserData>(),
         gh<_i807.OnboardingCubit>(),
       ),
@@ -721,8 +880,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i377.CancelScan>(
       () => _i377.CancelScan(gh<_i577.OcrRepository>()),
     );
-    gh.factory<_i665.ConfirmScanBatch>(
-      () => _i665.ConfirmScanBatch(gh<_i577.OcrRepository>()),
+    gh.factory<_i666.ConfirmScanBatch>(
+      () => _i666.ConfirmScanBatch(gh<_i577.OcrRepository>()),
     );
     gh.factory<_i413.DeleteScan>(
       () => _i413.DeleteScan(gh<_i577.OcrRepository>()),
@@ -763,13 +922,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i809.CopyBudgetToMonth>(),
       ),
     );
+    gh.factory<_i917.GetCategorySpendTool>(
+      () => _i917.GetCategorySpendTool(
+        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i1.GetCategories>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
     gh.factory<_i621.ScanReviewCubit>(
       () => _i621.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
         gh<_i302.GetCandidateEntries>(),
         gh<_i506.EditCandidateEntry>(),
         gh<_i256.DiscardCandidateEntry>(),
-        gh<_i665.ConfirmScanBatch>(),
+        gh<_i666.ConfirmScanBatch>(),
         gh<_i377.CancelScan>(),
         gh<_i1011.SetBatchDefaultDirection>(),
         gh<_i237.TagBatchToOccasion>(),
@@ -793,6 +959,21 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.factory<_i103.GetProactiveObservation>(
+      () => _i103.GetProactiveObservation(
+        gh<_i753.AIAssistantRepository>(),
+        gh<_i238.AIService>(),
+        gh<_i65.GetProactiveObservationTool>(),
+        gh<_i775.SystemPromptBuilder>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
+    gh.factory<_i59.GetBudgetStatusTool>(
+      () => _i59.GetBudgetStatusTool(
+        gh<_i587.GetBudgetForMonth>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
     gh.factory<_i622.ScanHistoryCubit>(
       () => _i622.ScanHistoryCubit(
         gh<_i331.GetScanHistory>(),
@@ -814,8 +995,41 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i377.CancelScan>(),
       ),
     );
+    gh.factory<_i332.AIToolRegistry>(
+      () => _i332.AIToolRegistry(
+        gh<_i917.GetCategorySpendTool>(),
+        gh<_i1050.GetTopSpendingCategoryTool>(),
+        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i1049.GetPersonBalanceTool>(),
+        gh<_i12.GetOwedOverviewTool>(),
+        gh<_i59.GetBudgetStatusTool>(),
+        gh<_i665.GetOccasionTotalsTool>(),
+      ),
+    );
+    gh.factory<_i636.AskFinancialQuestion>(
+      () => _i636.AskFinancialQuestion(
+        gh<_i753.AIAssistantRepository>(),
+        gh<_i238.AIService>(),
+        gh<_i332.AIToolRegistry>(),
+        gh<_i775.SystemPromptBuilder>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
+    gh.factory<_i258.ChatCubit>(
+      () => _i258.ChatCubit(
+        gh<_i359.GetAIAssistantSettings>(),
+        gh<_i970.GetConversation>(),
+        gh<_i636.AskFinancialQuestion>(),
+        gh<_i546.ClearConversation>(),
+        gh<_i103.GetProactiveObservation>(),
+      ),
+    );
     return this;
   }
 }
 
 class _$RegisterModule extends _i291.RegisterModule {}
+
+class _$AIAssistantModule extends _i1036.AIAssistantModule {}
+
+class _$AIHttpModule extends _i88.AIHttpModule {}

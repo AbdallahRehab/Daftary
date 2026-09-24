@@ -866,5 +866,121 @@
   "deleteDataConfirmAction": "Delete everything",
   "deleteDataCancelAction": "Cancel",
   "deleteDataInProgress": "Deleting your data…",
-  "deleteDataError": "Your data couldn't be deleted. Nothing was removed — all your data is still intact. Please try again."
+  "deleteDataError": "Your data couldn't be deleted. Nothing was removed — all your data is still intact. Please try again.",
+  "aiAssistantTitle": "AI Assistant",
+  "aiAssistantHomeEntrySubtitle": "Ask questions about your own money. Off until you set it up.",
+  "aiSettingsTitle": "AI Assistant settings",
+  "aiSettingsIntroTitle": "The assistant is off",
+  "aiSettingsIntroMessage": "To turn it on, choose your AI provider, enter your own API key, and review exactly what will be shared. Daftary never ships with a key of its own.",
+  "aiSettingsProviderSectionTitle": "Provider",
+  "aiSettingsProviderCustom": "Custom provider",
+  "aiSettingsCustomProviderHint": "Any provider with an OpenAI-compatible chat API that supports tool calling.",
+  "aiSettingsCustomBaseUrlLabel": "API base URL (https://…)",
+  "aiSettingsCustomModelLabel": "Model name",
+  "aiSettingsApiKeySectionTitle": "API key",
+  "aiSettingsApiKeyLabel": "Your API key",
+  "aiSettingsApiKeyNote": "Stored only in this device's secure storage and sent only to the provider you chose. It is never shown again after you save it.",
+  "aiSettingsProviderRequired": "Choose a provider",
+  "aiSettingsCustomBaseUrlInvalid": "Enter a full address starting with https://",
+  "aiSettingsCustomModelRequired": "Enter the model name",
+  "aiSettingsApiKeyRequired": "Enter your API key",
+  "aiSettingsApiKeyMalformed": "This doesn't look like a complete API key",
+  "aiSettingsContinueAction": "Continue",
+  "aiSettingsEnabledTitle": "The assistant is on",
+  "aiSettingsEnabledProvider": "Provider: {provider}",
+  "@aiSettingsEnabledProvider": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "aiSettingsApiKeySaved": "API key: saved securely (hidden)",
+  "aiSettingsConsentAcceptedOn": "Data-sharing disclosure accepted on {date}",
+  "@aiSettingsConsentAcceptedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "aiSettingsChangeCredentialsAction": "Change provider or key",
+  "aiSettingsChangeCredentialsTitle": "Change provider or key",
+  "aiSettingsChangeCredentialsMessage": "Enter the new key. The key saved now will be discarded once the new one is saved.",
+  "aiSettingsSaveCredentialsAction": "Save new key",
+  "aiSettingsCancelAction": "Cancel",
+  "aiSettingsDisableAction": "Turn off assistant",
+  "aiSettingsDisableConfirmTitle": "Turn off the assistant?",
+  "aiSettingsDisableConfirmMessage": "Nothing more will be sent to your AI provider. Your saved API key will be deleted from this device, so turning the assistant back on means entering a key and accepting the data-sharing disclosure again. Your conversation history is kept.",
+  "aiSettingsDisableConfirmAction": "Turn off",
+  "aiSettingsEnabledMessage": "AI assistant turned on",
+  "aiSettingsCredentialsUpdatedMessage": "Provider and key updated. The previous key was discarded.",
+  "aiSettingsDisabledMessage": "AI assistant turned off. Your API key was deleted from this device.",
+  "aiSettingsSaveFailed": "Your AI assistant settings couldn't be saved. Nothing was changed. Please try again.",
+  "aiSettingsLoadFailed": "AI assistant settings couldn't be loaded.",
+  "aiSettingsCustomProviderName": "your custom provider ({host})",
+  "@aiSettingsCustomProviderName": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "aiConsentTitle": "Before you turn on the assistant",
+  "aiConsentIntro": "Here is exactly what happens when you ask the assistant a question:",
+  "aiConsentPointMinimal": "Only the small piece of data needed to answer that one question is sent — for example, one category's total for one month. Never a full copy of your records.",
+  "aiConsentPointProviderOnly": "It goes only to {provider}, using your own key. Never to Daftary, and never to anyone else.",
+  "@aiConsentPointProviderOnly": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "aiConsentPointOnDemand": "Nothing is sent until you ask a question.",
+  "aiConsentPointReadOnly": "The assistant can only read and explain your figures. It can never add, change, or delete anything.",
+  "aiConsentPointCost": "Your provider may charge your account for each question.",
+  "aiConsentPointDisable": "You can turn the assistant off at any time. That immediately stops anything more from being sent and deletes your key from this device.",
+  "aiConsentAcceptAction": "I agree, turn it on",
+  "aiConsentDeclineAction": "Not now",
+  "aiChatTitle": "AI Assistant",
+  "aiChatInputHint": "Ask about your spending, budgets, or balances…",
+  "aiChatSendAction": "Send question",
+  "aiChatEmptyTitle": "Ask about your own money",
+  "aiChatEmptyMessage": "For example: \"How much did I spend on food this month?\" Answers come only from your own records in Daftary.",
+  "aiChatClearAction": "Clear conversation",
+  "aiChatClearConfirmTitle": "Clear this conversation?",
+  "aiChatClearConfirmMessage": "All questions and answers will be deleted from this device. Your financial records won't be affected.",
+  "aiChatClearConfirmAction": "Clear",
+  "aiChatClearedMessage": "Conversation cleared",
+  "aiChatClearFailed": "The conversation couldn't be cleared. Please try again.",
+  "aiChatLoadEarlierAction": "Show earlier messages",
+  "aiChatLoadFailed": "Your conversation couldn't be loaded.",
+  "aiChatTypingLabel": "The assistant is preparing an answer",
+  "aiChatYouLabel": "You",
+  "aiChatAssistantLabel": "Assistant",
+  "aiChatMessageFailedLabel": "Not answered",
+  "aiChatInterruptedLabel": "Not answered: the assistant was turned off before a reply arrived",
+  "aiChatDisabledTitle": "The assistant is off",
+  "aiChatDisabledMessage": "Turn it on in the assistant settings to start asking questions about your money.",
+  "aiChatOpenSettingsAction": "Open settings",
+  "aiChatSettingsAction": "Assistant settings",
+  "aiChatReadOnlyNotice": "The assistant can only read and explain your figures. It can't add, change, or delete anything, so nothing was changed. You can do that yourself from the app.",
+  "aiChatNothingChangedLabel": "Nothing in your records was changed",
+  "aiFailureInvalidApiKeyTitle": "API key not accepted",
+  "aiFailureInvalidApiKeyMessage": "Your provider rejected your API key. It may be wrong, expired, or revoked. Update it to keep asking questions.",
+  "aiFailureRateLimitedTitle": "Too many requests",
+  "aiFailureRateLimitedMessage": "Your provider is limiting requests right now. Wait a minute or two, then try again.",
+  "aiFailureNetworkTitle": "No internet connection",
+  "aiFailureNetworkMessage": "The assistant needs an internet connection. Everything else in Daftary keeps working offline.",
+  "aiFailureProviderErrorTitle": "Provider unavailable",
+  "aiFailureProviderErrorMessage": "Your AI provider is having a problem on its side. Please try again in a little while.",
+  "aiFailureUnrecognizedTitle": "Unexpected reply",
+  "aiFailureUnrecognizedMessage": "The assistant's reply couldn't be understood. Please try asking again.",
+  "aiFailureLocalTitle": "Couldn't save",
+  "aiFailureLocalMessage": "Your question couldn't be saved on this device. Please try again.",
+  "aiFailureRetryAction": "Try again",
+  "aiFailureUpdateKeyAction": "Update API key",
+  "aiObservationLabel": "Observation",
+  "aiObservationSemanticLabel": "Observation from the assistant, based on your own records"
 }

@@ -1774,4 +1774,308 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteDataError =>
       'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.';
+
+  @override
+  String get aiAssistantTitle => 'AI Assistant';
+
+  @override
+  String get aiAssistantHomeEntrySubtitle =>
+      'Ask questions about your own money. Off until you set it up.';
+
+  @override
+  String get aiSettingsTitle => 'AI Assistant settings';
+
+  @override
+  String get aiSettingsIntroTitle => 'The assistant is off';
+
+  @override
+  String get aiSettingsIntroMessage =>
+      'To turn it on, choose your AI provider, enter your own API key, and review exactly what will be shared. Daftary never ships with a key of its own.';
+
+  @override
+  String get aiSettingsProviderSectionTitle => 'Provider';
+
+  @override
+  String get aiSettingsProviderCustom => 'Custom provider';
+
+  @override
+  String get aiSettingsCustomProviderHint =>
+      'Any provider with an OpenAI-compatible chat API that supports tool calling.';
+
+  @override
+  String get aiSettingsCustomBaseUrlLabel => 'API base URL (https://…)';
+
+  @override
+  String get aiSettingsCustomModelLabel => 'Model name';
+
+  @override
+  String get aiSettingsApiKeySectionTitle => 'API key';
+
+  @override
+  String get aiSettingsApiKeyLabel => 'Your API key';
+
+  @override
+  String get aiSettingsApiKeyNote =>
+      'Stored only in this device\'s secure storage and sent only to the provider you chose. It is never shown again after you save it.';
+
+  @override
+  String get aiSettingsProviderRequired => 'Choose a provider';
+
+  @override
+  String get aiSettingsCustomBaseUrlInvalid =>
+      'Enter a full address starting with https://';
+
+  @override
+  String get aiSettingsCustomModelRequired => 'Enter the model name';
+
+  @override
+  String get aiSettingsApiKeyRequired => 'Enter your API key';
+
+  @override
+  String get aiSettingsApiKeyMalformed =>
+      'This doesn\'t look like a complete API key';
+
+  @override
+  String get aiSettingsContinueAction => 'Continue';
+
+  @override
+  String get aiSettingsEnabledTitle => 'The assistant is on';
+
+  @override
+  String aiSettingsEnabledProvider(String provider) {
+    return 'Provider: $provider';
+  }
+
+  @override
+  String get aiSettingsApiKeySaved => 'API key: saved securely (hidden)';
+
+  @override
+  String aiSettingsConsentAcceptedOn(String date) {
+    return 'Data-sharing disclosure accepted on $date';
+  }
+
+  @override
+  String get aiSettingsChangeCredentialsAction => 'Change provider or key';
+
+  @override
+  String get aiSettingsChangeCredentialsTitle => 'Change provider or key';
+
+  @override
+  String get aiSettingsChangeCredentialsMessage =>
+      'Enter the new key. The key saved now will be discarded once the new one is saved.';
+
+  @override
+  String get aiSettingsSaveCredentialsAction => 'Save new key';
+
+  @override
+  String get aiSettingsCancelAction => 'Cancel';
+
+  @override
+  String get aiSettingsDisableAction => 'Turn off assistant';
+
+  @override
+  String get aiSettingsDisableConfirmTitle => 'Turn off the assistant?';
+
+  @override
+  String get aiSettingsDisableConfirmMessage =>
+      'Nothing more will be sent to your AI provider. Your saved API key will be deleted from this device, so turning the assistant back on means entering a key and accepting the data-sharing disclosure again. Your conversation history is kept.';
+
+  @override
+  String get aiSettingsDisableConfirmAction => 'Turn off';
+
+  @override
+  String get aiSettingsEnabledMessage => 'AI assistant turned on';
+
+  @override
+  String get aiSettingsCredentialsUpdatedMessage =>
+      'Provider and key updated. The previous key was discarded.';
+
+  @override
+  String get aiSettingsDisabledMessage =>
+      'AI assistant turned off. Your API key was deleted from this device.';
+
+  @override
+  String get aiSettingsSaveFailed =>
+      'Your AI assistant settings couldn\'t be saved. Nothing was changed. Please try again.';
+
+  @override
+  String get aiSettingsLoadFailed =>
+      'AI assistant settings couldn\'t be loaded.';
+
+  @override
+  String aiSettingsCustomProviderName(String host) {
+    return 'your custom provider ($host)';
+  }
+
+  @override
+  String get aiConsentTitle => 'Before you turn on the assistant';
+
+  @override
+  String get aiConsentIntro =>
+      'Here is exactly what happens when you ask the assistant a question:';
+
+  @override
+  String get aiConsentPointMinimal =>
+      'Only the small piece of data needed to answer that one question is sent — for example, one category\'s total for one month. Never a full copy of your records.';
+
+  @override
+  String aiConsentPointProviderOnly(String provider) {
+    return 'It goes only to $provider, using your own key. Never to Daftary, and never to anyone else.';
+  }
+
+  @override
+  String get aiConsentPointOnDemand =>
+      'Nothing is sent until you ask a question.';
+
+  @override
+  String get aiConsentPointReadOnly =>
+      'The assistant can only read and explain your figures. It can never add, change, or delete anything.';
+
+  @override
+  String get aiConsentPointCost =>
+      'Your provider may charge your account for each question.';
+
+  @override
+  String get aiConsentPointDisable =>
+      'You can turn the assistant off at any time. That immediately stops anything more from being sent and deletes your key from this device.';
+
+  @override
+  String get aiConsentAcceptAction => 'I agree, turn it on';
+
+  @override
+  String get aiConsentDeclineAction => 'Not now';
+
+  @override
+  String get aiChatTitle => 'AI Assistant';
+
+  @override
+  String get aiChatInputHint =>
+      'Ask about your spending, budgets, or balances…';
+
+  @override
+  String get aiChatSendAction => 'Send question';
+
+  @override
+  String get aiChatEmptyTitle => 'Ask about your own money';
+
+  @override
+  String get aiChatEmptyMessage =>
+      'For example: \"How much did I spend on food this month?\" Answers come only from your own records in Daftary.';
+
+  @override
+  String get aiChatClearAction => 'Clear conversation';
+
+  @override
+  String get aiChatClearConfirmTitle => 'Clear this conversation?';
+
+  @override
+  String get aiChatClearConfirmMessage =>
+      'All questions and answers will be deleted from this device. Your financial records won\'t be affected.';
+
+  @override
+  String get aiChatClearConfirmAction => 'Clear';
+
+  @override
+  String get aiChatClearedMessage => 'Conversation cleared';
+
+  @override
+  String get aiChatClearFailed =>
+      'The conversation couldn\'t be cleared. Please try again.';
+
+  @override
+  String get aiChatLoadEarlierAction => 'Show earlier messages';
+
+  @override
+  String get aiChatLoadFailed => 'Your conversation couldn\'t be loaded.';
+
+  @override
+  String get aiChatTypingLabel => 'The assistant is preparing an answer';
+
+  @override
+  String get aiChatYouLabel => 'You';
+
+  @override
+  String get aiChatAssistantLabel => 'Assistant';
+
+  @override
+  String get aiChatMessageFailedLabel => 'Not answered';
+
+  @override
+  String get aiChatInterruptedLabel =>
+      'Not answered: the assistant was turned off before a reply arrived';
+
+  @override
+  String get aiChatDisabledTitle => 'The assistant is off';
+
+  @override
+  String get aiChatDisabledMessage =>
+      'Turn it on in the assistant settings to start asking questions about your money.';
+
+  @override
+  String get aiChatOpenSettingsAction => 'Open settings';
+
+  @override
+  String get aiChatSettingsAction => 'Assistant settings';
+
+  @override
+  String get aiChatReadOnlyNotice =>
+      'The assistant can only read and explain your figures. It can\'t add, change, or delete anything, so nothing was changed. You can do that yourself from the app.';
+
+  @override
+  String get aiChatNothingChangedLabel => 'Nothing in your records was changed';
+
+  @override
+  String get aiFailureInvalidApiKeyTitle => 'API key not accepted';
+
+  @override
+  String get aiFailureInvalidApiKeyMessage =>
+      'Your provider rejected your API key. It may be wrong, expired, or revoked. Update it to keep asking questions.';
+
+  @override
+  String get aiFailureRateLimitedTitle => 'Too many requests';
+
+  @override
+  String get aiFailureRateLimitedMessage =>
+      'Your provider is limiting requests right now. Wait a minute or two, then try again.';
+
+  @override
+  String get aiFailureNetworkTitle => 'No internet connection';
+
+  @override
+  String get aiFailureNetworkMessage =>
+      'The assistant needs an internet connection. Everything else in Daftary keeps working offline.';
+
+  @override
+  String get aiFailureProviderErrorTitle => 'Provider unavailable';
+
+  @override
+  String get aiFailureProviderErrorMessage =>
+      'Your AI provider is having a problem on its side. Please try again in a little while.';
+
+  @override
+  String get aiFailureUnrecognizedTitle => 'Unexpected reply';
+
+  @override
+  String get aiFailureUnrecognizedMessage =>
+      'The assistant\'s reply couldn\'t be understood. Please try asking again.';
+
+  @override
+  String get aiFailureLocalTitle => 'Couldn\'t save';
+
+  @override
+  String get aiFailureLocalMessage =>
+      'Your question couldn\'t be saved on this device. Please try again.';
+
+  @override
+  String get aiFailureRetryAction => 'Try again';
+
+  @override
+  String get aiFailureUpdateKeyAction => 'Update API key';
+
+  @override
+  String get aiObservationLabel => 'Observation';
+
+  @override
+  String get aiObservationSemanticLabel =>
+      'Observation from the assistant, based on your own records';
 }

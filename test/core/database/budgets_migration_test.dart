@@ -153,6 +153,6 @@ void main() {
     addTearDown(db.close);
 
     expect(await db.select(db.budgets).get(), isEmpty);
-    expect(db.schemaVersion, 8);
+    expect(db.schemaVersion, greaterThanOrEqualTo(8));
   });
 }

@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/media/attachment_picker_service.dart';
 import 'package:daftary/core/media/attachment_picker_service_impl.dart';
+import 'package:daftary/core/security/app_lifecycle_observer.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as p;
+
+import '../../core/security/helpers/test_app_lifecycle_observer.dart';
 
 class _MockImagePicker extends Mock implements ImagePicker {}
 
@@ -32,6 +36,7 @@ void main() {
   late Directory documentsDir;
   late Directory sourceDir;
   late AttachmentPickerServiceImpl service;
+  late AppLifecycleObserver lifecycle;
 
   setUpAll(() {
     registerFallbackValue(ImageSource.gallery);
@@ -41,9 +46,11 @@ void main() {
     picker = _MockImagePicker();
     documentsDir = Directory.systemTemp.createTempSync('daftary_docs');
     sourceDir = Directory.systemTemp.createTempSync('daftary_picker_cache');
+    lifecycle = testAppLifecycleObserver(lockTimeout: Duration.zero);
     service = AttachmentPickerServiceImpl(
       picker,
       _FakeDocumentsDirectory(documentsDir),
+      lifecycle,
     );
   });
 
@@ -178,5 +185,24 @@ void main() {
     final result = await service.pickFromCamera();
 
     expect(result.getLeft().toNullable(), isA<CacheFailure>());
+  });
+
+  // 015 FR-010: the OS picker backgrounds the app; with App Lock set to
+  // lock immediately, returning from it must still not show a lock screen.
+  test('picking never triggers App Lock', () async {
+    final source = writeSourceFile();
+    when(() => picker.pickImage(source: any(named: 'source'))).thenAnswer((
+      _,
+    ) async {
+      lifecycle
+        ..didChangeAppLifecycleState(AppLifecycleState.paused)
+        ..didChangeAppLifecycleState(AppLifecycleState.resumed);
+      return XFile(source.path);
+    });
+
+    await service.pickFromCamera();
+    await pumpEventQueue();
+
+    expect(lifecycle.isLocked.value, isFalse);
   });
 }

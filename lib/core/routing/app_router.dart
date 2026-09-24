@@ -6,6 +6,7 @@ import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
 import '../../features/ai_assistant/presentation/pages/ai_settings_page.dart';
 import '../../features/ai_assistant/presentation/pages/chat_page.dart';
+import '../../features/app_lock/presentation/pages/security_settings_page.dart';
 import '../../features/budgets/domain/entities/budget_month.dart';
 import '../../features/budgets/presentation/pages/budget_form_page.dart';
 import '../../features/budgets/presentation/pages/budget_month_page.dart';
@@ -335,6 +336,13 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/settings/export',
               builder: (context, state) => const DataExportPage(),
+            ),
+            // 015 User Story 6. Only the settings screen is a route: the
+            // lock screen and PIN setup are overlays/pushed pages, never
+            // deep-linkable (research.md Decision 5).
+            GoRoute(
+              path: '/settings/security',
+              builder: (context, state) => const SecuritySettingsPage(),
             ),
             GoRoute(
               path: '/settings/delete-data',

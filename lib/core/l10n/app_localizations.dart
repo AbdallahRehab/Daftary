@@ -98,6 +98,216 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @appLockLockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary is locked'**
+  String get appLockLockTitle;
+
+  /// No description provided for @appLockLockPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN to continue'**
+  String get appLockLockPrompt;
+
+  /// No description provided for @appLockLockBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Daftary to see your finances'**
+  String get appLockLockBiometricReason;
+
+  /// No description provided for @appLockLockUseBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with biometrics'**
+  String get appLockLockUseBiometric;
+
+  /// No description provided for @appLockLockBiometricInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for biometric confirmation. You can also enter your PIN.'**
+  String get appLockLockBiometricInProgress;
+
+  /// No description provided for @appLockLockVerifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking your PIN…'**
+  String get appLockLockVerifying;
+
+  /// No description provided for @appLockLockIncorrectPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Please try again.'**
+  String get appLockLockIncorrectPin;
+
+  /// No description provided for @appLockLockBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock didn\'t work. Try again or enter your PIN.'**
+  String get appLockLockBiometricFailed;
+
+  /// No description provided for @appLockLockBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock isn\'t available on this device right now. Enter your PIN instead.'**
+  String get appLockLockBiometricUnavailable;
+
+  /// No description provided for @appLockLockUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get appLockLockUnexpectedError;
+
+  /// No description provided for @appLockLockCooldownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many incorrect attempts'**
+  String get appLockLockCooldownTitle;
+
+  /// No description provided for @appLockLockCooldownMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN entry is paused. Try again in {time}.'**
+  String appLockLockCooldownMessage(String time);
+
+  /// No description provided for @appLockLockCooldownBiometricHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can still unlock with biometrics.'**
+  String get appLockLockCooldownBiometricHint;
+
+  /// No description provided for @appLockPinPadDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete last digit'**
+  String get appLockPinPadDelete;
+
+  /// No description provided for @appLockPinPadSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm PIN'**
+  String get appLockPinPadSubmit;
+
+  /// No description provided for @appLockPinPadDigitsEntered.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN digits entered: {count}'**
+  String appLockPinPadDigitsEntered(int count);
+
+  /// No description provided for @appLockPinSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a PIN'**
+  String get appLockPinSetupTitle;
+
+  /// No description provided for @appLockPinChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get appLockPinChangeTitle;
+
+  /// No description provided for @appLockPinResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a new PIN'**
+  String get appLockPinResetTitle;
+
+  /// No description provided for @appLockPinVerifyCurrentPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your current PIN'**
+  String get appLockPinVerifyCurrentPrompt;
+
+  /// No description provided for @appLockPinVerifyCurrentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'To change your PIN, first confirm it\'s you.'**
+  String get appLockPinVerifyCurrentHint;
+
+  /// No description provided for @appLockPinEnterNewPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a PIN'**
+  String get appLockPinEnterNewPrompt;
+
+  /// No description provided for @appLockPinEnterNewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 4 to 6 digits. Your PIN never leaves this device.'**
+  String get appLockPinEnterNewHint;
+
+  /// No description provided for @appLockPinConfirmNewPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the same PIN again'**
+  String get appLockPinConfirmNewPrompt;
+
+  /// No description provided for @appLockPinConfirmNewHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This makes sure you typed the PIN you meant.'**
+  String get appLockPinConfirmNewHint;
+
+  /// No description provided for @appLockPinMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The PINs don\'t match. Enter the confirmation again.'**
+  String get appLockPinMismatch;
+
+  /// No description provided for @appLockPinInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Your PIN must be 4 to 6 digits.'**
+  String get appLockPinInvalid;
+
+  /// No description provided for @appLockPinIncorrectCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s not your current PIN. Please try again.'**
+  String get appLockPinIncorrectCurrent;
+
+  /// No description provided for @appLockPinBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric check didn\'t work. Try again or enter your current PIN.'**
+  String get appLockPinBiometricFailed;
+
+  /// No description provided for @appLockPinBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics aren\'t available right now. Enter your current PIN instead.'**
+  String get appLockPinBiometricUnavailable;
+
+  /// No description provided for @appLockPinUnexpectedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your PIN. Please try again.'**
+  String get appLockPinUnexpectedError;
+
+  /// No description provided for @appLockPinStartOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Start over'**
+  String get appLockPinStartOver;
+
+  /// No description provided for @appLockPinUseBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Use biometrics instead'**
+  String get appLockPinUseBiometric;
+
+  /// No description provided for @appLockPinBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to change your PIN'**
+  String get appLockPinBiometricReason;
+
+  /// No description provided for @appLockPinSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving your PIN…'**
+  String get appLockPinSaving;
+
   /// No description provided for @budgetMonthNavPrevious.
   ///
   /// In en, this message translates to:
@@ -3248,6 +3458,204 @@ abstract class AppLocalizations {
   /// **'Permanently erase everything stored in Daftary'**
   String get settingsDeleteDataSubtitle;
 
+  /// No description provided for @securitySettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get securitySettingsTitle;
+
+  /// No description provided for @securitySettingsTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock, PIN and screenshot protection'**
+  String get securitySettingsTileSubtitle;
+
+  /// No description provided for @appLockSettingsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get appLockSettingsSectionTitle;
+
+  /// No description provided for @appLockSettingsToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Daftary'**
+  String get appLockSettingsToggleTitle;
+
+  /// No description provided for @appLockSettingsToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for your PIN whenever you open the app'**
+  String get appLockSettingsToggleSubtitle;
+
+  /// No description provided for @appLockSettingsBiometricTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with fingerprint or face'**
+  String get appLockSettingsBiometricTitle;
+
+  /// No description provided for @appLockSettingsBiometricSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your PIN still works too'**
+  String get appLockSettingsBiometricSubtitle;
+
+  /// No description provided for @appLockSettingsBiometricUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device. Set up fingerprint or face unlock in your device settings first.'**
+  String get appLockSettingsBiometricUnavailable;
+
+  /// No description provided for @appLockSettingsChangePinTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get appLockSettingsChangePinTile;
+
+  /// No description provided for @appLockSettingsTimeoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after leaving the app'**
+  String get appLockSettingsTimeoutTitle;
+
+  /// No description provided for @appLockSettingsTimeoutImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately'**
+  String get appLockSettingsTimeoutImmediately;
+
+  /// No description provided for @appLockSettingsTimeout30Seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'After 30 seconds'**
+  String get appLockSettingsTimeout30Seconds;
+
+  /// No description provided for @appLockSettingsTimeout1Minute.
+  ///
+  /// In en, this message translates to:
+  /// **'After 1 minute'**
+  String get appLockSettingsTimeout1Minute;
+
+  /// No description provided for @appLockSettingsTimeout5Minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'After 5 minutes'**
+  String get appLockSettingsTimeout5Minutes;
+
+  /// No description provided for @appLockSettingsScreenshotProtectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshot protection'**
+  String get appLockSettingsScreenshotProtectionTitle;
+
+  /// No description provided for @appLockSettingsScreenshotProtectionStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Always on'**
+  String get appLockSettingsScreenshotProtectionStatus;
+
+  /// No description provided for @appLockSettingsScreenshotProtectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshots and screen recordings can\'t capture your data, and the recent-apps view shows a placeholder instead. Sharing and exporting still work.'**
+  String get appLockSettingsScreenshotProtectionBody;
+
+  /// No description provided for @appLockSettingsDisableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off app lock?'**
+  String get appLockSettingsDisableTitle;
+
+  /// No description provided for @appLockSettingsDisableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary will open without a PIN. Your PIN will be deleted, so turning app lock on again means choosing a new one. Screenshot protection stays on.'**
+  String get appLockSettingsDisableMessage;
+
+  /// No description provided for @appLockSettingsDisableConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get appLockSettingsDisableConfirm;
+
+  /// No description provided for @appLockSettingsBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to turn off app lock'**
+  String get appLockSettingsBiometricReason;
+
+  /// No description provided for @appLockSettingsReauthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN'**
+  String get appLockSettingsReauthTitle;
+
+  /// No description provided for @appLockSettingsReauthMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to turn off app lock.'**
+  String get appLockSettingsReauthMessage;
+
+  /// No description provided for @appLockSettingsReauthPinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current PIN'**
+  String get appLockSettingsReauthPinLabel;
+
+  /// No description provided for @appLockSettingsReauthConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get appLockSettingsReauthConfirm;
+
+  /// No description provided for @appLockSettingsReauthIncorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'That PIN isn\'t right. Try again.'**
+  String get appLockSettingsReauthIncorrect;
+
+  /// No description provided for @appLockSettingsReauthLockedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many wrong attempts. Try again in {duration}.'**
+  String appLockSettingsReauthLockedOut(String duration);
+
+  /// No description provided for @appLockSettingsReauthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check your PIN. Try again.'**
+  String get appLockSettingsReauthFailed;
+
+  /// No description provided for @appLockSettingsEnabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock is on'**
+  String get appLockSettingsEnabledMessage;
+
+  /// No description provided for @appLockSettingsDisabledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock is off'**
+  String get appLockSettingsDisabledMessage;
+
+  /// No description provided for @appLockSettingsPinChangedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN changed'**
+  String get appLockSettingsPinChangedMessage;
+
+  /// No description provided for @appLockSettingsSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save this change. Try again.'**
+  String get appLockSettingsSaveFailed;
+
+  /// No description provided for @appLockSettingsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your security settings.'**
+  String get appLockSettingsLoadFailed;
+
   /// No description provided for @deleteDataTitle.
   ///
   /// In en, this message translates to:
@@ -3313,6 +3721,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.'**
   String get deleteDataError;
+
+  /// No description provided for @appLockForgotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot PIN'**
+  String get appLockForgotTitle;
+
+  /// No description provided for @appLockForgotBiometricTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify it\'s you'**
+  String get appLockForgotBiometricTitle;
+
+  /// No description provided for @appLockForgotBiometricMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you with biometrics, then choose a new PIN. None of your data will be touched.'**
+  String get appLockForgotBiometricMessage;
+
+  /// No description provided for @appLockForgotBiometricAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify with biometrics'**
+  String get appLockForgotBiometricAction;
+
+  /// No description provided for @appLockForgotBiometricReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your identity to set a new Daftary PIN'**
+  String get appLockForgotBiometricReason;
+
+  /// No description provided for @appLockForgotBiometricFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric verification didn\'t succeed. You can try again.'**
+  String get appLockForgotBiometricFailed;
+
+  /// No description provided for @appLockForgotBiometricRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get appLockForgotBiometricRetry;
+
+  /// No description provided for @appLockForgotChooseWipeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase all data instead'**
+  String get appLockForgotChooseWipeAction;
+
+  /// No description provided for @appLockForgotWipeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The only way back in'**
+  String get appLockForgotWipeTitle;
+
+  /// No description provided for @appLockForgotWipeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary keeps your data only on this device — there is no account, email, or server that could reset your PIN. Without your PIN or biometrics, the only way to use the app again is to erase all of its data from this device and start fresh.'**
+  String get appLockForgotWipeMessage;
+
+  /// No description provided for @appLockForgotWipeContinueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to erase data'**
+  String get appLockForgotWipeContinueAction;
+
+  /// No description provided for @appLockForgotBackAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to lock screen'**
+  String get appLockForgotBackAction;
+
+  /// No description provided for @appLockWipeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase all data'**
+  String get appLockWipeTitle;
+
+  /// No description provided for @appLockWipeWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is permanent'**
+  String get appLockWipeWarningTitle;
+
+  /// No description provided for @appLockWipeWarningMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently erase all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, settings, and your App Lock PIN from this device. It cannot be undone, and Daftary cannot recover it.'**
+  String get appLockWipeWarningMessage;
+
+  /// No description provided for @appLockWipeConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Erase everything'**
+  String get appLockWipeConfirmAction;
+
+  /// No description provided for @appLockWipeCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get appLockWipeCancelAction;
+
+  /// No description provided for @appLockWipeInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Erasing your data…'**
+  String get appLockWipeInProgress;
+
+  /// No description provided for @appLockWipeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data couldn\'t be erased. Nothing was removed — your data and PIN are unchanged. Please try again.'**
+  String get appLockWipeError;
 
   /// No description provided for @aiAssistantTitle.
   ///

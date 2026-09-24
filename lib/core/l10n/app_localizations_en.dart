@@ -9,6 +9,130 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get appLockLockTitle => 'Daftary is locked';
+
+  @override
+  String get appLockLockPrompt => 'Enter your PIN to continue';
+
+  @override
+  String get appLockLockBiometricReason =>
+      'Unlock Daftary to see your finances';
+
+  @override
+  String get appLockLockUseBiometric => 'Unlock with biometrics';
+
+  @override
+  String get appLockLockBiometricInProgress =>
+      'Waiting for biometric confirmation. You can also enter your PIN.';
+
+  @override
+  String get appLockLockVerifying => 'Checking your PIN…';
+
+  @override
+  String get appLockLockIncorrectPin => 'Incorrect PIN. Please try again.';
+
+  @override
+  String get appLockLockBiometricFailed =>
+      'Biometric unlock didn\'t work. Try again or enter your PIN.';
+
+  @override
+  String get appLockLockBiometricUnavailable =>
+      'Biometric unlock isn\'t available on this device right now. Enter your PIN instead.';
+
+  @override
+  String get appLockLockUnexpectedError =>
+      'Something went wrong. Please try again.';
+
+  @override
+  String get appLockLockCooldownTitle => 'Too many incorrect attempts';
+
+  @override
+  String appLockLockCooldownMessage(String time) {
+    return 'PIN entry is paused. Try again in $time.';
+  }
+
+  @override
+  String get appLockLockCooldownBiometricHint =>
+      'You can still unlock with biometrics.';
+
+  @override
+  String get appLockPinPadDelete => 'Delete last digit';
+
+  @override
+  String get appLockPinPadSubmit => 'Confirm PIN';
+
+  @override
+  String appLockPinPadDigitsEntered(int count) {
+    return 'PIN digits entered: $count';
+  }
+
+  @override
+  String get appLockPinSetupTitle => 'Set a PIN';
+
+  @override
+  String get appLockPinChangeTitle => 'Change PIN';
+
+  @override
+  String get appLockPinResetTitle => 'Set a new PIN';
+
+  @override
+  String get appLockPinVerifyCurrentPrompt => 'Enter your current PIN';
+
+  @override
+  String get appLockPinVerifyCurrentHint =>
+      'To change your PIN, first confirm it\'s you.';
+
+  @override
+  String get appLockPinEnterNewPrompt => 'Choose a PIN';
+
+  @override
+  String get appLockPinEnterNewHint =>
+      'Use 4 to 6 digits. Your PIN never leaves this device.';
+
+  @override
+  String get appLockPinConfirmNewPrompt => 'Enter the same PIN again';
+
+  @override
+  String get appLockPinConfirmNewHint =>
+      'This makes sure you typed the PIN you meant.';
+
+  @override
+  String get appLockPinMismatch =>
+      'The PINs don\'t match. Enter the confirmation again.';
+
+  @override
+  String get appLockPinInvalid => 'Your PIN must be 4 to 6 digits.';
+
+  @override
+  String get appLockPinIncorrectCurrent =>
+      'That\'s not your current PIN. Please try again.';
+
+  @override
+  String get appLockPinBiometricFailed =>
+      'Biometric check didn\'t work. Try again or enter your current PIN.';
+
+  @override
+  String get appLockPinBiometricUnavailable =>
+      'Biometrics aren\'t available right now. Enter your current PIN instead.';
+
+  @override
+  String get appLockPinUnexpectedError =>
+      'Couldn\'t save your PIN. Please try again.';
+
+  @override
+  String get appLockPinStartOver => 'Start over';
+
+  @override
+  String get appLockPinUseBiometric => 'Use biometrics instead';
+
+  @override
+  String get appLockPinBiometricReason =>
+      'Confirm it\'s you to change your PIN';
+
+  @override
+  String get appLockPinSaving => 'Saving your PIN…';
+
+  @override
   String get budgetMonthNavPrevious => 'Previous month';
 
   @override
@@ -1737,6 +1861,119 @@ class AppLocalizationsEn extends AppLocalizations {
       'Permanently erase everything stored in Daftary';
 
   @override
+  String get securitySettingsTitle => 'Security';
+
+  @override
+  String get securitySettingsTileSubtitle =>
+      'App lock, PIN and screenshot protection';
+
+  @override
+  String get appLockSettingsSectionTitle => 'App lock';
+
+  @override
+  String get appLockSettingsToggleTitle => 'Lock Daftary';
+
+  @override
+  String get appLockSettingsToggleSubtitle =>
+      'Ask for your PIN whenever you open the app';
+
+  @override
+  String get appLockSettingsBiometricTitle => 'Unlock with fingerprint or face';
+
+  @override
+  String get appLockSettingsBiometricSubtitle => 'Your PIN still works too';
+
+  @override
+  String get appLockSettingsBiometricUnavailable =>
+      'Not available on this device. Set up fingerprint or face unlock in your device settings first.';
+
+  @override
+  String get appLockSettingsChangePinTile => 'Change PIN';
+
+  @override
+  String get appLockSettingsTimeoutTitle => 'Lock after leaving the app';
+
+  @override
+  String get appLockSettingsTimeoutImmediately => 'Immediately';
+
+  @override
+  String get appLockSettingsTimeout30Seconds => 'After 30 seconds';
+
+  @override
+  String get appLockSettingsTimeout1Minute => 'After 1 minute';
+
+  @override
+  String get appLockSettingsTimeout5Minutes => 'After 5 minutes';
+
+  @override
+  String get appLockSettingsScreenshotProtectionTitle =>
+      'Screenshot protection';
+
+  @override
+  String get appLockSettingsScreenshotProtectionStatus => 'Always on';
+
+  @override
+  String get appLockSettingsScreenshotProtectionBody =>
+      'Screenshots and screen recordings can\'t capture your data, and the recent-apps view shows a placeholder instead. Sharing and exporting still work.';
+
+  @override
+  String get appLockSettingsDisableTitle => 'Turn off app lock?';
+
+  @override
+  String get appLockSettingsDisableMessage =>
+      'Daftary will open without a PIN. Your PIN will be deleted, so turning app lock on again means choosing a new one. Screenshot protection stays on.';
+
+  @override
+  String get appLockSettingsDisableConfirm => 'Turn off';
+
+  @override
+  String get appLockSettingsBiometricReason =>
+      'Confirm it\'s you to turn off app lock';
+
+  @override
+  String get appLockSettingsReauthTitle => 'Enter your PIN';
+
+  @override
+  String get appLockSettingsReauthMessage =>
+      'Confirm it\'s you to turn off app lock.';
+
+  @override
+  String get appLockSettingsReauthPinLabel => 'Current PIN';
+
+  @override
+  String get appLockSettingsReauthConfirm => 'Confirm';
+
+  @override
+  String get appLockSettingsReauthIncorrect =>
+      'That PIN isn\'t right. Try again.';
+
+  @override
+  String appLockSettingsReauthLockedOut(String duration) {
+    return 'Too many wrong attempts. Try again in $duration.';
+  }
+
+  @override
+  String get appLockSettingsReauthFailed =>
+      'Couldn\'t check your PIN. Try again.';
+
+  @override
+  String get appLockSettingsEnabledMessage => 'App lock is on';
+
+  @override
+  String get appLockSettingsDisabledMessage => 'App lock is off';
+
+  @override
+  String get appLockSettingsPinChangedMessage => 'PIN changed';
+
+  @override
+  String get appLockSettingsSaveFailed =>
+      'Couldn\'t save this change. Try again.';
+
+  @override
+  String get appLockSettingsLoadFailed =>
+      'Couldn\'t load your security settings.';
+
+  @override
   String get deleteDataTitle => 'Delete my data';
 
   @override
@@ -1774,6 +2011,69 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteDataError =>
       'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.';
+
+  @override
+  String get appLockForgotTitle => 'Forgot PIN';
+
+  @override
+  String get appLockForgotBiometricTitle => 'Verify it\'s you';
+
+  @override
+  String get appLockForgotBiometricMessage =>
+      'Confirm it\'s you with biometrics, then choose a new PIN. None of your data will be touched.';
+
+  @override
+  String get appLockForgotBiometricAction => 'Verify with biometrics';
+
+  @override
+  String get appLockForgotBiometricReason =>
+      'Verify your identity to set a new Daftary PIN';
+
+  @override
+  String get appLockForgotBiometricFailed =>
+      'Biometric verification didn\'t succeed. You can try again.';
+
+  @override
+  String get appLockForgotBiometricRetry => 'Try again';
+
+  @override
+  String get appLockForgotChooseWipeAction => 'Erase all data instead';
+
+  @override
+  String get appLockForgotWipeTitle => 'The only way back in';
+
+  @override
+  String get appLockForgotWipeMessage =>
+      'Daftary keeps your data only on this device — there is no account, email, or server that could reset your PIN. Without your PIN or biometrics, the only way to use the app again is to erase all of its data from this device and start fresh.';
+
+  @override
+  String get appLockForgotWipeContinueAction => 'Continue to erase data';
+
+  @override
+  String get appLockForgotBackAction => 'Back to lock screen';
+
+  @override
+  String get appLockWipeTitle => 'Erase all data';
+
+  @override
+  String get appLockWipeWarningTitle => 'This is permanent';
+
+  @override
+  String get appLockWipeWarningMessage =>
+      'This will permanently erase all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, settings, and your App Lock PIN from this device. It cannot be undone, and Daftary cannot recover it.';
+
+  @override
+  String get appLockWipeConfirmAction => 'Erase everything';
+
+  @override
+  String get appLockWipeCancelAction => 'Cancel';
+
+  @override
+  String get appLockWipeInProgress => 'Erasing your data…';
+
+  @override
+  String get appLockWipeError =>
+      'Your data couldn\'t be erased. Nothing was removed — your data and PIN are unchanged. Please try again.';
 
   @override
   String get aiAssistantTitle => 'AI Assistant';

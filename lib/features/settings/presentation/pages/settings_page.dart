@@ -94,6 +94,18 @@ class SettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               _SettingsSection(
+                icon: Icons.shield_outlined,
+                title: l10n.securitySettingsTitle,
+                child: ListTile(
+                  leading: const Icon(Icons.lock_outline),
+                  title: Text(l10n.appLockSettingsSectionTitle),
+                  subtitle: Text(l10n.securitySettingsTileSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/security'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _SettingsSection(
                 icon: Icons.folder_outlined,
                 title: l10n.settingsDataSectionTitle,
                 child: ListTile(

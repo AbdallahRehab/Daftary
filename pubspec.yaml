@@ -87,6 +87,13 @@ dependencies:
   # conversation turn to the user's chosen provider (research.md Decision 2).
   # Wrapped behind `ai_assistant/AIService`.
   http: ^1.2.2
+  # 015 App Lock: OS biometric prompt (research.md Decision 1/FR-005).
+  # Wrapped behind `app_lock/BiometricService`; only
+  # LocalAuthBiometricService imports it.
+  local_auth: ^3.0.2
+  # 015 App Lock: HMAC-SHA256 for PBKDF2 PIN hashing (research.md
+  # Decision 7). Used only by `app_lock/PinHasher`.
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
@@ -110,6 +117,8 @@ dev_dependencies:
   mocktail: ^1.0.4
   integration_test:
     sdk: flutter
+  # 015: drives AppLifecycleObserver's inactivity timer in unit tests.
+  fake_async: ^1.3.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

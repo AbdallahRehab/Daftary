@@ -137,6 +137,11 @@ void main() {
                     const Scaffold(body: Text('EXPORT_PLACEHOLDER')),
               ),
               GoRoute(
+                path: 'security',
+                builder: (_, _) =>
+                    const Scaffold(body: Text('SECURITY_PLACEHOLDER')),
+              ),
+              GoRoute(
                 path: 'delete-data',
                 builder: (_, _) =>
                     const Scaffold(body: Text('DELETE_PLACEHOLDER')),
@@ -178,6 +183,8 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.scrollUntilVisible(find.text('Export my data'), 100);
+      await tester.ensureVisible(find.text('Export my data'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Export my data'));
       await tester.pumpAndSettle();
 
@@ -189,10 +196,58 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.scrollUntilVisible(find.text('Delete my data'), 100);
+      await tester.ensureVisible(find.text('Delete my data'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Delete my data'));
       await tester.pumpAndSettle();
 
       expect(find.text('DELETE_PLACEHOLDER'), findsOneWidget);
+    });
+  });
+
+  group('Security (015)', () {
+    Widget wrapWithRouter() {
+      final router = GoRouter(
+        initialLocation: '/settings',
+        routes: [
+          GoRoute(
+            path: '/settings',
+            builder: (_, _) => BlocProvider<SettingsCubit>.value(
+              value: cubit,
+              child: const SettingsPage(),
+            ),
+            routes: [
+              GoRoute(
+                path: 'security',
+                builder: (_, _) =>
+                    const Scaffold(body: Text('SECURITY_PLACEHOLDER')),
+              ),
+            ],
+          ),
+        ],
+      );
+      return MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+      );
+    }
+
+    setUp(() => when(() => cubit.state).thenReturn(const SettingsState()));
+
+    testWidgets('the Security entry opens /settings/security', (tester) async {
+      await tester.pumpWidget(wrapWithRouter());
+      await tester.pumpAndSettle();
+
+      final entry = find.text('App lock');
+      await tester.scrollUntilVisible(entry, 100);
+      await tester.ensureVisible(entry);
+      await tester.pumpAndSettle();
+      expect(find.text('Security'), findsOneWidget);
+      await tester.tap(entry);
+      await tester.pumpAndSettle();
+
+      expect(find.text('SECURITY_PLACEHOLDER'), findsOneWidget);
     });
   });
 }

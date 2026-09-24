@@ -1,11 +1,15 @@
 import 'package:daftary/core/error/failure.dart';
+import 'package:daftary/core/security/app_lifecycle_observer.dart';
 import 'package:daftary/features/data_privacy/data/services/share_plus_service.dart';
 import 'package:daftary/features/data_privacy/domain/services/share_service.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../../../../core/security/helpers/test_app_lifecycle_observer.dart';
 
 class MockSharePlus extends Mock implements SharePlus {}
 
@@ -15,12 +19,14 @@ class MockSharePlus extends Mock implements SharePlus {}
 void main() {
   late MockSharePlus sharePlus;
   late SharePlusService service;
+  late AppLifecycleObserver lifecycle;
 
   setUpAll(() => registerFallbackValue(ShareParams(text: 'fallback')));
 
   setUp(() {
     sharePlus = MockSharePlus();
-    service = SharePlusService.withSharePlus(sharePlus);
+    lifecycle = testAppLifecycleObserver(lockTimeout: Duration.zero);
+    service = SharePlusService.withSharePlus(sharePlus, lifecycle);
   });
 
   void stubResult(ShareResultStatus status) {
@@ -73,5 +79,21 @@ void main() {
     final result = await service.shareFile(filePath: '/tmp/export.csv');
 
     expect(result.getLeft().toNullable(), isA<ShareFailure>());
+  });
+
+  // 015 FR-010: the share sheet can background the app on Android; with
+  // App Lock set to lock immediately, returning must not show a lock screen.
+  test('sharing never triggers App Lock', () async {
+    when(() => sharePlus.share(any())).thenAnswer((_) async {
+      lifecycle
+        ..didChangeAppLifecycleState(AppLifecycleState.paused)
+        ..didChangeAppLifecycleState(AppLifecycleState.resumed);
+      return const ShareResult('raw', ShareResultStatus.success);
+    });
+
+    await service.shareFile(filePath: '/tmp/export.csv');
+    await pumpEventQueue();
+
+    expect(lifecycle.isLocked.value, isFalse);
   });
 }

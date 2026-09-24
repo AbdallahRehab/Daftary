@@ -9,6 +9,124 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get appLockLockTitle => 'دفتري مقفل';
+
+  @override
+  String get appLockLockPrompt => 'أدخل رمز PIN للمتابعة';
+
+  @override
+  String get appLockLockBiometricReason => 'افتح دفتري لعرض بياناتك المالية';
+
+  @override
+  String get appLockLockUseBiometric => 'الفتح بالبصمة';
+
+  @override
+  String get appLockLockBiometricInProgress =>
+      'بانتظار التحقق بالبصمة. يمكنك أيضًا إدخال رمز PIN.';
+
+  @override
+  String get appLockLockVerifying => 'جارٍ التحقق من رمز PIN…';
+
+  @override
+  String get appLockLockIncorrectPin => 'رمز PIN غير صحيح. حاول مرة أخرى.';
+
+  @override
+  String get appLockLockBiometricFailed =>
+      'لم ينجح الفتح بالبصمة. حاول مرة أخرى أو أدخل رمز PIN.';
+
+  @override
+  String get appLockLockBiometricUnavailable =>
+      'الفتح بالبصمة غير متاح على هذا الجهاز حاليًا. أدخل رمز PIN بدلًا من ذلك.';
+
+  @override
+  String get appLockLockUnexpectedError => 'حدث خطأ ما. حاول مرة أخرى.';
+
+  @override
+  String get appLockLockCooldownTitle => 'محاولات خاطئة كثيرة';
+
+  @override
+  String appLockLockCooldownMessage(String time) {
+    return 'تم إيقاف إدخال رمز PIN مؤقتًا. حاول مرة أخرى بعد $time.';
+  }
+
+  @override
+  String get appLockLockCooldownBiometricHint =>
+      'لا يزال بإمكانك الفتح بالبصمة.';
+
+  @override
+  String get appLockPinPadDelete => 'حذف آخر رقم';
+
+  @override
+  String get appLockPinPadSubmit => 'تأكيد رمز PIN';
+
+  @override
+  String appLockPinPadDigitsEntered(int count) {
+    return 'عدد الأرقام المُدخلة: $count';
+  }
+
+  @override
+  String get appLockPinSetupTitle => 'تعيين رمز PIN';
+
+  @override
+  String get appLockPinChangeTitle => 'تغيير رمز PIN';
+
+  @override
+  String get appLockPinResetTitle => 'تعيين رمز PIN جديد';
+
+  @override
+  String get appLockPinVerifyCurrentPrompt => 'أدخل رمز PIN الحالي';
+
+  @override
+  String get appLockPinVerifyCurrentHint => 'لتغيير رمز PIN، أكّد هويتك أولًا.';
+
+  @override
+  String get appLockPinEnterNewPrompt => 'اختر رمز PIN';
+
+  @override
+  String get appLockPinEnterNewHint =>
+      'استخدم من 4 إلى 6 أرقام. لا يغادر رمز PIN هذا الجهاز أبدًا.';
+
+  @override
+  String get appLockPinConfirmNewPrompt => 'أدخل رمز PIN نفسه مرة أخرى';
+
+  @override
+  String get appLockPinConfirmNewHint => 'للتأكد من أنك كتبت الرمز الذي تقصده.';
+
+  @override
+  String get appLockPinMismatch =>
+      'الرمزان غير متطابقين. أدخل رمز التأكيد مرة أخرى.';
+
+  @override
+  String get appLockPinInvalid => 'يجب أن يتكون رمز PIN من 4 إلى 6 أرقام.';
+
+  @override
+  String get appLockPinIncorrectCurrent =>
+      'هذا ليس رمز PIN الحالي. حاول مرة أخرى.';
+
+  @override
+  String get appLockPinBiometricFailed =>
+      'لم ينجح التحقق بالبصمة. حاول مرة أخرى أو أدخل رمز PIN الحالي.';
+
+  @override
+  String get appLockPinBiometricUnavailable =>
+      'البصمة غير متاحة حاليًا. أدخل رمز PIN الحالي بدلًا من ذلك.';
+
+  @override
+  String get appLockPinUnexpectedError => 'تعذّر حفظ رمز PIN. حاول مرة أخرى.';
+
+  @override
+  String get appLockPinStartOver => 'البدء من جديد';
+
+  @override
+  String get appLockPinUseBiometric => 'استخدام البصمة بدلًا من ذلك';
+
+  @override
+  String get appLockPinBiometricReason => 'أكّد هويتك لتغيير رمز PIN';
+
+  @override
+  String get appLockPinSaving => 'جارٍ حفظ رمز PIN…';
+
+  @override
   String get budgetMonthNavPrevious => 'الشهر السابق';
 
   @override
@@ -1733,6 +1851,116 @@ class AppLocalizationsAr extends AppLocalizations {
       'امسح كل ما هو محفوظ في دفتري نهائيًا';
 
   @override
+  String get securitySettingsTitle => 'الأمان';
+
+  @override
+  String get securitySettingsTileSubtitle =>
+      'قفل التطبيق والرمز السري والحماية من لقطات الشاشة';
+
+  @override
+  String get appLockSettingsSectionTitle => 'قفل التطبيق';
+
+  @override
+  String get appLockSettingsToggleTitle => 'قفل دفتري';
+
+  @override
+  String get appLockSettingsToggleSubtitle =>
+      'اطلب رمزك السري في كل مرة تفتح فيها التطبيق';
+
+  @override
+  String get appLockSettingsBiometricTitle => 'الفتح بالبصمة أو بالوجه';
+
+  @override
+  String get appLockSettingsBiometricSubtitle => 'يبقى رمزك السري متاحًا أيضًا';
+
+  @override
+  String get appLockSettingsBiometricUnavailable =>
+      'غير متاح على هذا الجهاز. فعّل البصمة أو التعرّف على الوجه من إعدادات جهازك أولًا.';
+
+  @override
+  String get appLockSettingsChangePinTile => 'تغيير الرمز السري';
+
+  @override
+  String get appLockSettingsTimeoutTitle => 'القفل بعد مغادرة التطبيق';
+
+  @override
+  String get appLockSettingsTimeoutImmediately => 'فورًا';
+
+  @override
+  String get appLockSettingsTimeout30Seconds => 'بعد 30 ثانية';
+
+  @override
+  String get appLockSettingsTimeout1Minute => 'بعد دقيقة واحدة';
+
+  @override
+  String get appLockSettingsTimeout5Minutes => 'بعد 5 دقائق';
+
+  @override
+  String get appLockSettingsScreenshotProtectionTitle =>
+      'الحماية من لقطات الشاشة';
+
+  @override
+  String get appLockSettingsScreenshotProtectionStatus => 'مفعّلة دائمًا';
+
+  @override
+  String get appLockSettingsScreenshotProtectionBody =>
+      'لا يمكن للقطات الشاشة أو تسجيلها التقاط بياناتك، وتعرض قائمة التطبيقات الأخيرة غطاءً بدلًا منها. تبقى المشاركة والتصدير متاحتين.';
+
+  @override
+  String get appLockSettingsDisableTitle => 'إيقاف قفل التطبيق؟';
+
+  @override
+  String get appLockSettingsDisableMessage =>
+      'سيفتح دفتري دون رمز سري. سيُحذف رمزك السري، لذا ستحتاج إلى اختيار رمز جديد عند تفعيل القفل مرة أخرى. تبقى الحماية من لقطات الشاشة مفعّلة.';
+
+  @override
+  String get appLockSettingsDisableConfirm => 'إيقاف';
+
+  @override
+  String get appLockSettingsBiometricReason => 'أكّد هويتك لإيقاف قفل التطبيق';
+
+  @override
+  String get appLockSettingsReauthTitle => 'أدخل رمزك السري';
+
+  @override
+  String get appLockSettingsReauthMessage => 'أكّد هويتك لإيقاف قفل التطبيق.';
+
+  @override
+  String get appLockSettingsReauthPinLabel => 'الرمز السري الحالي';
+
+  @override
+  String get appLockSettingsReauthConfirm => 'تأكيد';
+
+  @override
+  String get appLockSettingsReauthIncorrect =>
+      'الرمز السري غير صحيح. حاول مرة أخرى.';
+
+  @override
+  String appLockSettingsReauthLockedOut(String duration) {
+    return 'محاولات خاطئة كثيرة. حاول مرة أخرى بعد $duration.';
+  }
+
+  @override
+  String get appLockSettingsReauthFailed =>
+      'تعذّر التحقق من رمزك السري. حاول مرة أخرى.';
+
+  @override
+  String get appLockSettingsEnabledMessage => 'تم تفعيل قفل التطبيق';
+
+  @override
+  String get appLockSettingsDisabledMessage => 'تم إيقاف قفل التطبيق';
+
+  @override
+  String get appLockSettingsPinChangedMessage => 'تم تغيير الرمز السري';
+
+  @override
+  String get appLockSettingsSaveFailed =>
+      'تعذّر حفظ هذا التغيير. حاول مرة أخرى.';
+
+  @override
+  String get appLockSettingsLoadFailed => 'تعذّر تحميل إعدادات الأمان.';
+
+  @override
   String get deleteDataTitle => 'حذف بياناتي';
 
   @override
@@ -1770,6 +1998,69 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get deleteDataError =>
       'تعذر حذف بياناتك. لم يُحذف أي شيء — جميع بياناتك ما زالت سليمة. حاول مرة أخرى.';
+
+  @override
+  String get appLockForgotTitle => 'نسيت رمز PIN';
+
+  @override
+  String get appLockForgotBiometricTitle => 'تحقّق من هويتك';
+
+  @override
+  String get appLockForgotBiometricMessage =>
+      'أكّد هويتك بالقياسات الحيوية، ثم اختر رمز PIN جديدًا. لن يُمسّ أي شيء من بياناتك.';
+
+  @override
+  String get appLockForgotBiometricAction => 'التحقق بالقياسات الحيوية';
+
+  @override
+  String get appLockForgotBiometricReason =>
+      'تحقّق من هويتك لتعيين رمز PIN جديد لدفتري';
+
+  @override
+  String get appLockForgotBiometricFailed =>
+      'لم ينجح التحقق بالقياسات الحيوية. يمكنك المحاولة مرة أخرى.';
+
+  @override
+  String get appLockForgotBiometricRetry => 'حاول مرة أخرى';
+
+  @override
+  String get appLockForgotChooseWipeAction => 'مسح جميع البيانات بدلًا من ذلك';
+
+  @override
+  String get appLockForgotWipeTitle => 'الطريقة الوحيدة للعودة';
+
+  @override
+  String get appLockForgotWipeMessage =>
+      'يحتفظ دفتري ببياناتك على هذا الجهاز فقط — لا يوجد حساب أو بريد إلكتروني أو خادم يمكنه إعادة تعيين رمز PIN. من دون رمز PIN أو القياسات الحيوية، الطريقة الوحيدة لاستخدام التطبيق مجددًا هي مسح جميع بياناته من هذا الجهاز والبدء من جديد.';
+
+  @override
+  String get appLockForgotWipeContinueAction => 'متابعة لمسح البيانات';
+
+  @override
+  String get appLockForgotBackAction => 'العودة إلى شاشة القفل';
+
+  @override
+  String get appLockWipeTitle => 'مسح جميع البيانات';
+
+  @override
+  String get appLockWipeWarningTitle => 'هذا الإجراء نهائي';
+
+  @override
+  String get appLockWipeWarningMessage =>
+      'سيؤدي هذا إلى مسح جميع الأشخاص والمعاملات والمناسبات والمسوحات وقيود الدخل والمصروفات والفئات والميزانيات والإعدادات ورمز PIN لقفل التطبيق من هذا الجهاز نهائيًا. لا يمكن التراجع عن ذلك، ولا يستطيع دفتري استعادتها.';
+
+  @override
+  String get appLockWipeConfirmAction => 'مسح كل شيء';
+
+  @override
+  String get appLockWipeCancelAction => 'إلغاء';
+
+  @override
+  String get appLockWipeInProgress => 'جارٍ مسح بياناتك…';
+
+  @override
+  String get appLockWipeError =>
+      'تعذّر مسح بياناتك. لم يُحذف أي شيء — بياناتك ورمز PIN كما هي. حاول مرة أخرى.';
 
   @override
   String get aiAssistantTitle => 'المساعد الذكي';

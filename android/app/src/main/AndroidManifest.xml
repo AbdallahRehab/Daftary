@@ -12,6 +12,14 @@
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <!-- 015 App Lock (FR-005): biometric unlock via `local_auth`. Normal
+         (install-time) permissions — the OS biometric prompt itself is only
+         ever shown after the user opts in from Security settings.
+         USE_FINGERPRINT covers API 23-27 devices that predate USE_BIOMETRIC. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission
+        android:name="android.permission.USE_FINGERPRINT"
+        android:maxSdkVersion="27"/>
     <application
         android:label="daftary"
         android:name="${applicationName}"

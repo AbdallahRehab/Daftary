@@ -15,11 +15,10 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:http/http.dart' as _i519;
 import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:local_auth/local_auth.dart' as _i152;
 
 import '../../features/ai_assistant/data/datasources/ai_assistant_dao.dart'
     as _i931;
-import '../../features/ai_assistant/data/datasources/ai_assistant_module.dart'
-    as _i1036;
 import '../../features/ai_assistant/data/datasources/ai_provider_catalog_impl.dart'
     as _i833;
 import '../../features/ai_assistant/data/datasources/secure_credential_store_impl.dart'
@@ -46,9 +45,9 @@ import '../../features/ai_assistant/domain/tools/get_budget_status_tool.dart'
 import '../../features/ai_assistant/domain/tools/get_category_spend.dart'
     as _i917;
 import '../../features/ai_assistant/domain/tools/get_occasion_totals_tool.dart'
-    as _i665;
+    as _i664;
 import '../../features/ai_assistant/domain/tools/get_owed_overview_tool.dart'
-    as _i12;
+    as _i13;
 import '../../features/ai_assistant/domain/tools/get_person_balance_tool.dart'
     as _i1049;
 import '../../features/ai_assistant/domain/tools/get_proactive_observation_tool.dart'
@@ -78,6 +77,52 @@ import '../../features/ai_assistant/presentation/cubit/ai_settings_cubit.dart'
     as _i742;
 import '../../features/ai_assistant/presentation/cubit/chat_cubit.dart'
     as _i258;
+import '../../features/app_lock/data/datasources/secure_app_lock_storage.dart'
+    as _i872;
+import '../../features/app_lock/data/repositories/app_lock_repository_impl.dart'
+    as _i731;
+import '../../features/app_lock/data/services/app_lock_module.dart' as _i849;
+import '../../features/app_lock/data/services/app_lock_secure_storage_wiper.dart'
+    as _i236;
+import '../../features/app_lock/data/services/local_auth_biometric_service.dart'
+    as _i791;
+import '../../features/app_lock/data/services/repository_app_lock_status_provider.dart'
+    as _i251;
+import '../../features/app_lock/domain/repositories/app_lock_repository.dart'
+    as _i98;
+import '../../features/app_lock/domain/services/biometric_service.dart' as _i68;
+import '../../features/app_lock/domain/services/lockout_policy.dart' as _i12;
+import '../../features/app_lock/domain/services/pin_hasher.dart' as _i316;
+import '../../features/app_lock/domain/usecases/change_pin.dart' as _i570;
+import '../../features/app_lock/domain/usecases/disable_app_lock.dart' as _i643;
+import '../../features/app_lock/domain/usecases/enable_app_lock.dart' as _i590;
+import '../../features/app_lock/domain/usecases/get_app_lock_config.dart'
+    as _i485;
+import '../../features/app_lock/domain/usecases/get_lockout_state.dart'
+    as _i625;
+import '../../features/app_lock/domain/usecases/record_failed_pin_attempt.dart'
+    as _i609;
+import '../../features/app_lock/domain/usecases/recover_via_biometric.dart'
+    as _i244;
+import '../../features/app_lock/domain/usecases/set_biometric_enabled.dart'
+    as _i561;
+import '../../features/app_lock/domain/usecases/set_inactivity_timeout.dart'
+    as _i252;
+import '../../features/app_lock/domain/usecases/set_pin.dart' as _i557;
+import '../../features/app_lock/domain/usecases/verify_biometric.dart' as _i245;
+import '../../features/app_lock/domain/usecases/verify_pin.dart' as _i229;
+import '../../features/app_lock/domain/usecases/wipe_all_local_data.dart'
+    as _i613;
+import '../../features/app_lock/presentation/cubit/app_lock_settings_cubit.dart'
+    as _i942;
+import '../../features/app_lock/presentation/cubit/forgot_pin_cubit.dart'
+    as _i943;
+import '../../features/app_lock/presentation/cubit/lock_screen_cubit.dart'
+    as _i853;
+import '../../features/app_lock/presentation/cubit/pin_setup_cubit.dart'
+    as _i302;
+import '../../features/app_lock/presentation/cubit/pin_setup_state.dart'
+    as _i595;
 import '../../features/budgets/data/datasources/budgets_dao.dart' as _i757;
 import '../../features/budgets/data/repositories/budgets_repository_impl.dart'
     as _i249;
@@ -87,7 +132,7 @@ import '../../features/budgets/domain/usecases/add_budget_category_allocation.da
     as _i552;
 import '../../features/budgets/domain/usecases/copy_budget_to_month.dart'
     as _i809;
-import '../../features/budgets/domain/usecases/create_budget.dart' as _i251;
+import '../../features/budgets/domain/usecases/create_budget.dart' as _i253;
 import '../../features/budgets/domain/usecases/delete_budget.dart' as _i150;
 import '../../features/budgets/domain/usecases/edit_budget.dart' as _i755;
 import '../../features/budgets/domain/usecases/edit_budget_category_allocation.dart'
@@ -98,7 +143,7 @@ import '../../features/budgets/domain/usecases/get_budget_trend.dart' as _i438;
 import '../../features/budgets/domain/usecases/get_most_recent_budget_before.dart'
     as _i654;
 import '../../features/budgets/domain/usecases/remove_budget_category_allocation.dart'
-    as _i316;
+    as _i317;
 import '../../features/budgets/presentation/cubit/budget_form_cubit.dart'
     as _i720;
 import '../../features/budgets/presentation/cubit/budget_month_cubit.dart'
@@ -114,13 +159,15 @@ import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart'
 import '../../features/data_privacy/data/repositories/data_wipe_repository_impl.dart'
     as _i913;
 import '../../features/data_privacy/data/services/share_plus_service.dart'
-    as _i664;
+    as _i665;
 import '../../features/data_privacy/data/services/temporary_export_directory_provider.dart'
     as _i612;
 import '../../features/data_privacy/domain/repositories/data_wipe_repository.dart'
     as _i1004;
 import '../../features/data_privacy/domain/services/export_directory_provider.dart'
     as _i52;
+import '../../features/data_privacy/domain/services/secure_storage_wiper.dart'
+    as _i193;
 import '../../features/data_privacy/domain/services/share_service.dart'
     as _i939;
 import '../../features/data_privacy/domain/usecases/delete_all_user_data.dart'
@@ -149,7 +196,7 @@ import '../../features/finance/domain/usecases/edit_finance_entry.dart'
     as _i416;
 import '../../features/finance/domain/usecases/get_categories.dart' as _i1;
 import '../../features/finance/domain/usecases/get_category_breakdown.dart'
-    as _i853;
+    as _i854;
 import '../../features/finance/domain/usecases/get_finance_history.dart'
     as _i27;
 import '../../features/finance/domain/usecases/get_finance_summary.dart'
@@ -170,7 +217,7 @@ import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
 import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
     as _i987;
 import '../../features/finance/presentation/cubit/reports_cubit.dart' as _i329;
-import '../../features/occasions/data/datasources/occasions_dao.dart' as _i791;
+import '../../features/occasions/data/datasources/occasions_dao.dart' as _i792;
 import '../../features/occasions/data/repositories/occasions_repository_impl.dart'
     as _i454;
 import '../../features/occasions/domain/repositories/occasions_repository.dart'
@@ -186,7 +233,7 @@ import '../../features/occasions/domain/usecases/delete_occasion.dart'
     as _i1046;
 import '../../features/occasions/domain/usecases/edit_occasion.dart' as _i712;
 import '../../features/occasions/domain/usecases/edit_participant_contribution.dart'
-    as _i152;
+    as _i153;
 import '../../features/occasions/domain/usecases/get_occasion_detail.dart'
     as _i432;
 import '../../features/occasions/domain/usecases/get_occasions_list.dart'
@@ -202,9 +249,9 @@ import '../../features/occasions/presentation/cubit/archived_occasions_cubit.dar
 import '../../features/occasions/presentation/cubit/occasion_detail_cubit.dart'
     as _i53;
 import '../../features/occasions/presentation/cubit/occasion_form_cubit.dart'
-    as _i13;
+    as _i14;
 import '../../features/occasions/presentation/cubit/occasions_list_cubit.dart'
-    as _i193;
+    as _i194;
 import '../../features/occasions/presentation/cubit/participant_form_cubit.dart'
     as _i218;
 import '../../features/ocr/data/datasources/ocr_dao.dart' as _i976;
@@ -225,7 +272,7 @@ import '../../features/ocr/domain/usecases/delete_scan.dart' as _i413;
 import '../../features/ocr/domain/usecases/discard_candidate_entry.dart'
     as _i256;
 import '../../features/ocr/domain/usecases/edit_candidate_entry.dart' as _i506;
-import '../../features/ocr/domain/usecases/get_candidate_entries.dart' as _i302;
+import '../../features/ocr/domain/usecases/get_candidate_entries.dart' as _i303;
 import '../../features/ocr/domain/usecases/get_possible_duplicate_for_candidate.dart'
     as _i20;
 import '../../features/ocr/domain/usecases/get_scan_detail.dart' as _i267;
@@ -247,7 +294,7 @@ import '../../features/onboarding/data/repositories/onboarding_repository_impl.d
 import '../../features/onboarding/domain/repositories/onboarding_repository.dart'
     as _i430;
 import '../../features/onboarding/domain/usecases/resolve_onboarding_status.dart'
-    as _i792;
+    as _i793;
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart'
     as _i807;
 import '../../features/people/data/datasources/people_dao.dart' as _i735;
@@ -280,7 +327,7 @@ import '../../features/settings/domain/usecases/get_language_preference.dart'
 import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
     as _i333;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
-    as _i793;
+    as _i794;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
@@ -311,6 +358,9 @@ import '../device/device_locale_provider.dart' as _i933;
 import '../media/attachment_picker_service.dart' as _i780;
 import '../media/attachment_picker_service_impl.dart' as _i157;
 import '../money/egp_formatter.dart' as _i999;
+import '../security/app_lifecycle_observer.dart' as _i500;
+import '../security/app_lock_status_provider.dart' as _i439;
+import '../security/screenshot_protection_service.dart' as _i1042;
 import 'register_module.dart' as _i291;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -321,8 +371,8 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
-    final aIAssistantModule = _$AIAssistantModule();
     final aIHttpModule = _$AIHttpModule();
+    final appLockModule = _$AppLockModule();
     gh.factory<_i775.SystemPromptBuilder>(
       () => const _i775.SystemPromptBuilder(),
     );
@@ -333,13 +383,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
     gh.lazySingleton<_i183.ImagePicker>(() => registerModule.imagePicker);
+    gh.lazySingleton<_i558.FlutterSecureStorage>(
+      () => registerModule.flutterSecureStorage,
+    );
     gh.lazySingleton<_i780.DocumentsDirectory>(
       () => const _i780.DocumentsDirectory(),
     );
-    gh.lazySingleton<_i558.FlutterSecureStorage>(
-      () => aIAssistantModule.flutterSecureStorage,
-    );
     gh.lazySingleton<_i519.Client>(() => aIHttpModule.httpClient);
+    gh.lazySingleton<_i152.LocalAuthentication>(
+      () => appLockModule.localAuthentication,
+    );
     gh.lazySingleton<_i918.CandidateEntryParser>(
       () => const _i918.CandidateEntryParser(),
     );
@@ -349,40 +402,33 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i693.SecureCredentialStore>(
       () => _i370.SecureCredentialStoreImpl(gh<_i558.FlutterSecureStorage>()),
     );
-    gh.lazySingleton<_i939.ShareService>(() => _i664.SharePlusService());
+    gh.lazySingleton<_i1042.ScreenshotProtectionService>(
+      () => _i1042.PlatformScreenshotProtectionService(),
+    );
     gh.lazySingleton<_i52.ExportDirectoryProvider>(
       () => const _i612.TemporaryExportDirectoryProvider(),
     );
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
     );
+    gh.lazySingleton<_i872.SecureAppLockStorage>(
+      () => _i872.SecureAppLockStorageImpl(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i176.TextRecognitionService>(
       () => _i428.TextRecognitionServiceImpl(),
     );
+    gh.lazySingleton<_i316.PinHasher>(() => _i316.Pbkdf2PinHasher());
     gh.lazySingleton<_i1023.AIProviderCatalog>(
       () => const _i833.AIProviderCatalogImpl(),
     );
-    gh.lazySingleton<_i780.AttachmentPickerService>(
-      () => _i157.AttachmentPickerServiceImpl(
-        gh<_i183.ImagePicker>(),
-        gh<_i780.DocumentsDirectory>(),
-      ),
-    );
-    gh.lazySingleton<_i235.ImagePreparationService>(
-      () => _i450.ImagePreparationServiceImpl(
-        gh<_i450.ImageCropperClient>(),
-        gh<_i780.DocumentsDirectory>(),
-      ),
-    );
-    gh.factory<_i354.ScanCaptureCubit>(
-      () => _i354.ScanCaptureCubit(
-        gh<_i780.AttachmentPickerService>(),
-        gh<_i235.ImagePreparationService>(),
-        gh<_i176.TextRecognitionService>(),
-      ),
+    gh.lazySingleton<_i12.LockoutPolicy>(
+      () => const _i12.EscalatingLockoutPolicy(),
     );
     gh.lazySingleton<_i238.AIService>(
       () => _i57.AIServiceImpl(gh<_i519.Client>()),
+    );
+    gh.lazySingleton<_i68.BiometricService>(
+      () => _i791.LocalAuthBiometricService(gh<_i152.LocalAuthentication>()),
     );
     gh.lazySingleton<_i1004.DataWipeRepository>(
       () => _i913.DataWipeRepositoryImpl(gh<_i982.AppDatabase>()),
@@ -396,8 +442,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i443.FinanceDao>(
       () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
     );
-    gh.factory<_i791.OccasionsDao>(
-      () => _i791.OccasionsDao(gh<_i982.AppDatabase>()),
+    gh.factory<_i792.OccasionsDao>(
+      () => _i792.OccasionsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i976.OcrDao>(() => _i976.OcrDao(gh<_i982.AppDatabase>()));
     gh.factory<_i360.OnboardingDao>(
@@ -419,10 +465,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i430.OnboardingRepository>(
       () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
     );
+    gh.lazySingleton<_i193.SecureStorageWiper>(
+      () => _i236.AppLockSecureStorageWiper(gh<_i872.SecureAppLockStorage>()),
+    );
     gh.lazySingleton<_i956.TransactionsRepository>(
       () => _i373.TransactionsRepositoryImpl(
         gh<_i684.TransactionsDao>(),
         gh<_i982.AppDatabase>(),
+      ),
+    );
+    gh.lazySingleton<_i98.AppLockRepository>(
+      () => _i731.AppLockRepositoryImpl(
+        gh<_i872.SecureAppLockStorage>(),
+        gh<_i316.PinHasher>(),
+        gh<_i12.LockoutPolicy>(),
       ),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
@@ -447,8 +503,54 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i674.SettingsRepository>(
       () => _i955.SettingsRepositoryImpl(gh<_i586.SettingsDao>()),
     );
-    gh.factory<_i792.ResolveOnboardingStatus>(
-      () => _i792.ResolveOnboardingStatus(
+    gh.lazySingleton<_i439.AppLockStatusProvider>(
+      () => _i251.RepositoryAppLockStatusProvider(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i244.RecoverViaBiometric>(
+      () => _i244.RecoverViaBiometric(
+        gh<_i98.AppLockRepository>(),
+        gh<_i68.BiometricService>(),
+      ),
+    );
+    gh.factory<_i561.SetBiometricEnabled>(
+      () => _i561.SetBiometricEnabled(
+        gh<_i98.AppLockRepository>(),
+        gh<_i68.BiometricService>(),
+      ),
+    );
+    gh.factory<_i245.VerifyBiometric>(
+      () => _i245.VerifyBiometric(
+        gh<_i98.AppLockRepository>(),
+        gh<_i68.BiometricService>(),
+      ),
+    );
+    gh.factory<_i570.ChangePin>(
+      () => _i570.ChangePin(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i643.DisableAppLock>(
+      () => _i643.DisableAppLock(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i590.EnableAppLock>(
+      () => _i590.EnableAppLock(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i485.GetAppLockConfig>(
+      () => _i485.GetAppLockConfig(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i625.GetLockoutState>(
+      () => _i625.GetLockoutState(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i609.RecordFailedPinAttempt>(
+      () => _i609.RecordFailedPinAttempt(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i252.SetInactivityTimeout>(
+      () => _i252.SetInactivityTimeout(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i557.SetPin>(() => _i557.SetPin(gh<_i98.AppLockRepository>()));
+    gh.factory<_i229.VerifyPin>(
+      () => _i229.VerifyPin(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i793.ResolveOnboardingStatus>(
+      () => _i793.ResolveOnboardingStatus(
         gh<_i430.OnboardingRepository>(),
         gh<_i646.PeopleRepository>(),
         gh<_i956.TransactionsRepository>(),
@@ -501,14 +603,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i52.ExportDirectoryProvider>(),
       ),
     );
+    gh.factory<_i853.LockScreenCubit>(
+      () => _i853.LockScreenCubit(
+        gh<_i485.GetAppLockConfig>(),
+        gh<_i625.GetLockoutState>(),
+        gh<_i229.VerifyPin>(),
+        gh<_i609.RecordFailedPinAttempt>(),
+        gh<_i245.VerifyBiometric>(),
+        gh<_i68.BiometricService>(),
+      ),
+    );
     gh.factory<_i323.GetSpendingTrend>(
       () => _i323.GetSpendingTrend(gh<_i137.FinanceRepository>()),
-    );
-    gh.factory<_i431.DeleteAllUserData>(
-      () => _i431.DeleteAllUserData(
-        gh<_i1004.DataWipeRepository>(),
-        gh<_i763.PurgeAIAssistantCredentials>(),
-      ),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
@@ -550,15 +656,22 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
-    gh.factory<_i781.ExportCubit>(
-      () => _i781.ExportCubit(
-        gh<_i496.ExportUserData>(),
-        gh<_i939.ShareService>(),
+    gh.factory<_i942.AppLockSettingsCubit>(
+      () => _i942.AppLockSettingsCubit(
+        gh<_i485.GetAppLockConfig>(),
+        gh<_i68.BiometricService>(),
+        gh<_i590.EnableAppLock>(),
+        gh<_i643.DisableAppLock>(),
+        gh<_i561.SetBiometricEnabled>(),
+        gh<_i252.SetInactivityTimeout>(),
+        gh<_i229.VerifyPin>(),
+        gh<_i245.VerifyBiometric>(),
+        gh<_i609.RecordFailedPinAttempt>(),
       ),
     );
     gh.lazySingleton<_i72.OccasionsRepository>(
       () => _i454.OccasionsRepositoryImpl(
-        gh<_i791.OccasionsDao>(),
+        gh<_i792.OccasionsDao>(),
         gh<_i956.TransactionsRepository>(),
         gh<_i646.PeopleRepository>(),
         gh<_i982.AppDatabase>(),
@@ -595,6 +708,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i717.SeedDefaultCategories>(
       () => _i717.SeedDefaultCategories(gh<_i228.CategoryRepository>()),
     );
+    gh.lazySingleton<_i500.AppLifecycleObserver>(
+      () => _i500.AppLifecycleObserver(gh<_i439.AppLockStatusProvider>()),
+      dispose: (i) => i.dispose(),
+    );
     gh.factory<_i159.AddFinanceEntry>(
       () => _i159.AddFinanceEntry(gh<_i137.FinanceRepository>()),
     );
@@ -604,8 +721,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i416.EditFinanceEntry>(
       () => _i416.EditFinanceEntry(gh<_i137.FinanceRepository>()),
     );
-    gh.factory<_i853.GetCategoryBreakdown>(
-      () => _i853.GetCategoryBreakdown(gh<_i137.FinanceRepository>()),
+    gh.factory<_i854.GetCategoryBreakdown>(
+      () => _i854.GetCategoryBreakdown(gh<_i137.FinanceRepository>()),
     );
     gh.factory<_i27.GetFinanceHistory>(
       () => _i27.GetFinanceHistory(gh<_i137.FinanceRepository>()),
@@ -619,7 +736,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i987.FinanceHistoryCubit>(
       () => _i987.FinanceHistoryCubit(
         gh<_i844.GetFinanceSummary>(),
-        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i854.GetCategoryBreakdown>(),
         gh<_i27.GetFinanceHistory>(),
         gh<_i1.GetCategories>(),
         gh<_i1065.DeleteFinanceEntry>(),
@@ -627,9 +744,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i137.FinanceRepository>(),
       ),
     );
+    gh.lazySingleton<_i780.AttachmentPickerService>(
+      () => _i157.AttachmentPickerServiceImpl(
+        gh<_i183.ImagePicker>(),
+        gh<_i780.DocumentsDirectory>(),
+        gh<_i500.AppLifecycleObserver>(),
+      ),
+    );
     gh.lazySingleton<_i807.OnboardingCubit>(
       () => _i807.OnboardingCubit(
-        gh<_i792.ResolveOnboardingStatus>(),
+        gh<_i793.ResolveOnboardingStatus>(),
         gh<_i430.OnboardingRepository>(),
       ),
     );
@@ -638,6 +762,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i941.GetOverview>(),
         gh<_i844.GetFinanceSummary>(),
         gh<_i27.GetFinanceHistory>(),
+      ),
+    );
+    gh.factory<_i431.DeleteAllUserData>(
+      () => _i431.DeleteAllUserData(
+        gh<_i1004.DataWipeRepository>(),
+        gh<_i763.PurgeAIAssistantCredentials>(),
+        gh<_i193.SecureStorageWiper>(),
       ),
     );
     gh.factory<_i247.AddOccasionAttachment>(
@@ -658,8 +789,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i712.EditOccasion>(
       () => _i712.EditOccasion(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i152.EditParticipantContribution>(
-      () => _i152.EditParticipantContribution(gh<_i72.OccasionsRepository>()),
+    gh.factory<_i153.EditParticipantContribution>(
+      () => _i153.EditParticipantContribution(gh<_i72.OccasionsRepository>()),
     );
     gh.factory<_i432.GetOccasionDetail>(
       () => _i432.GetOccasionDetail(gh<_i72.OccasionsRepository>()),
@@ -676,8 +807,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i154.RestoreOccasion>(
       () => _i154.RestoreOccasion(gh<_i72.OccasionsRepository>()),
     );
-    gh.lazySingleton<_i793.SettingsCubit>(
-      () => _i793.SettingsCubit(
+    gh.lazySingleton<_i794.SettingsCubit>(
+      () => _i794.SettingsCubit(
         gh<_i1032.GetLanguagePreference>(),
         gh<_i90.ChangeLanguage>(),
         gh<_i933.DeviceLocaleProvider>(),
@@ -716,6 +847,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i999.EgpFormatter>(),
       ),
     );
+    gh.lazySingleton<_i235.ImagePreparationService>(
+      () => _i450.ImagePreparationServiceImpl(
+        gh<_i450.ImageCropperClient>(),
+        gh<_i780.DocumentsDirectory>(),
+        gh<_i500.AppLifecycleObserver>(),
+      ),
+    );
     gh.factory<_i668.PersonFormCubit>(
       () => _i668.PersonFormCubit(
         gh<_i646.PeopleRepository>(),
@@ -730,7 +868,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i646.PeopleRepository>(),
         gh<_i789.CreatePerson>(),
         gh<_i415.AddParticipantContribution>(),
-        gh<_i152.EditParticipantContribution>(),
+        gh<_i153.EditParticipantContribution>(),
         gh<_i999.EgpFormatter>(),
       ),
     );
@@ -741,6 +879,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i5.AddTransaction>(),
         gh<_i554.EditTransaction>(),
         gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factoryParam<_i302.PinSetupCubit, _i595.PinSetupMode, dynamic>(
+      (mode, _) => _i302.PinSetupCubit(
+        mode,
+        gh<_i557.SetPin>(),
+        gh<_i570.ChangePin>(),
+        gh<_i229.VerifyPin>(),
+        gh<_i609.RecordFailedPinAttempt>(),
+        gh<_i625.GetLockoutState>(),
+        gh<_i485.GetAppLockConfig>(),
+        gh<_i245.VerifyBiometric>(),
+        gh<_i68.BiometricService>(),
       ),
     );
     gh.factory<_i1049.GetPersonBalanceTool>(
@@ -761,8 +912,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i780.AttachmentPickerService>(),
       ),
     );
-    gh.factory<_i665.GetOccasionTotalsTool>(
-      () => _i665.GetOccasionTotalsTool(
+    gh.factory<_i664.GetOccasionTotalsTool>(
+      () => _i664.GetOccasionTotalsTool(
         gh<_i432.GetOccasionDetail>(),
         gh<_i957.GetOccasionsList>(),
       ),
@@ -773,6 +924,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
+    gh.lazySingleton<_i939.ShareService>(
+      () => _i665.SharePlusService(gh<_i500.AppLifecycleObserver>()),
+    );
     gh.lazySingleton<_i577.OcrRepository>(
       () => _i457.OcrRepositoryImpl(
         gh<_i976.OcrDao>(),
@@ -782,6 +936,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i72.OccasionsRepository>(),
         gh<_i646.PeopleRepository>(),
       ),
+    );
+    gh.factory<_i613.WipeAllLocalData>(
+      () => _i613.WipeAllLocalData(gh<_i431.DeleteAllUserData>()),
     );
     gh.factory<_i924.CompareSpendingAcrossPeriodsTool>(
       () => _i924.CompareSpendingAcrossPeriodsTool(
@@ -795,8 +952,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i809.CopyBudgetToMonth>(
       () => _i809.CopyBudgetToMonth(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i251.CreateBudget>(
-      () => _i251.CreateBudget(gh<_i855.BudgetsRepository>()),
+    gh.factory<_i253.CreateBudget>(
+      () => _i253.CreateBudget(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i150.DeleteBudget>(
       () => _i150.DeleteBudget(gh<_i855.BudgetsRepository>()),
@@ -816,18 +973,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i654.GetMostRecentBudgetBefore>(
       () => _i654.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i316.RemoveBudgetCategoryAllocation>(
-      () => _i316.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    gh.factory<_i317.RemoveBudgetCategoryAllocation>(
+      () => _i317.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i329.ReportsCubit>(
       () => _i329.ReportsCubit(
         gh<_i323.GetSpendingTrend>(),
-        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i854.GetCategoryBreakdown>(),
         gh<_i137.FinanceRepository>(),
       ),
     );
-    gh.factory<_i12.GetOwedOverviewTool>(
-      () => _i12.GetOwedOverviewTool(gh<_i941.GetOverview>()),
+    gh.factory<_i13.GetOwedOverviewTool>(
+      () => _i13.GetOwedOverviewTool(gh<_i941.GetOverview>()),
     );
     gh.factory<_i65.GetProactiveObservationTool>(
       () => _i65.GetProactiveObservationTool(
@@ -843,7 +1000,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1050.GetTopSpendingCategoryTool>(
       () => _i1050.GetTopSpendingCategoryTool(
-        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i854.GetCategoryBreakdown>(),
         gh<_i1038.AIPeriodResolver>(),
       ),
     );
@@ -865,8 +1022,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i611.EditCategory>(),
       ),
     );
-    gh.factory<_i13.OccasionFormCubit>(
-      () => _i13.OccasionFormCubit(
+    gh.factory<_i14.OccasionFormCubit>(
+      () => _i14.OccasionFormCubit(
         gh<_i905.CreateOccasion>(),
         gh<_i712.EditOccasion>(),
       ),
@@ -875,6 +1032,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i109.CategoryManagementCubit(
         gh<_i1.GetCategories>(),
         gh<_i490.RemoveCategory>(),
+      ),
+    );
+    gh.factory<_i781.ExportCubit>(
+      () => _i781.ExportCubit(
+        gh<_i496.ExportUserData>(),
+        gh<_i939.ShareService>(),
       ),
     );
     gh.factory<_i377.CancelScan>(
@@ -892,8 +1055,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i506.EditCandidateEntry>(
       () => _i506.EditCandidateEntry(gh<_i577.OcrRepository>()),
     );
-    gh.factory<_i302.GetCandidateEntries>(
-      () => _i302.GetCandidateEntries(gh<_i577.OcrRepository>()),
+    gh.factory<_i303.GetCandidateEntries>(
+      () => _i303.GetCandidateEntries(gh<_i577.OcrRepository>()),
     );
     gh.factory<_i267.GetScanDetail>(
       () => _i267.GetScanDetail(gh<_i577.OcrRepository>()),
@@ -913,8 +1076,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i237.TagBatchToOccasion>(
       () => _i237.TagBatchToOccasion(gh<_i577.OcrRepository>()),
     );
-    gh.factory<_i193.OccasionsListCubit>(
-      () => _i193.OccasionsListCubit(gh<_i957.GetOccasionsList>()),
+    gh.factory<_i194.OccasionsListCubit>(
+      () => _i194.OccasionsListCubit(gh<_i957.GetOccasionsList>()),
     );
     gh.factory<_i28.CopyBudgetCubit>(
       () => _i28.CopyBudgetCubit(
@@ -924,15 +1087,22 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i917.GetCategorySpendTool>(
       () => _i917.GetCategorySpendTool(
-        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i854.GetCategoryBreakdown>(),
         gh<_i1.GetCategories>(),
         gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
+    gh.factory<_i354.ScanCaptureCubit>(
+      () => _i354.ScanCaptureCubit(
+        gh<_i780.AttachmentPickerService>(),
+        gh<_i235.ImagePreparationService>(),
+        gh<_i176.TextRecognitionService>(),
       ),
     );
     gh.factory<_i621.ScanReviewCubit>(
       () => _i621.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
-        gh<_i302.GetCandidateEntries>(),
+        gh<_i303.GetCandidateEntries>(),
         gh<_i506.EditCandidateEntry>(),
         gh<_i256.DiscardCandidateEntry>(),
         gh<_i666.ConfirmScanBatch>(),
@@ -949,12 +1119,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i720.BudgetFormCubit>(
       () => _i720.BudgetFormCubit(
         gh<_i587.GetBudgetForMonth>(),
-        gh<_i251.CreateBudget>(),
+        gh<_i253.CreateBudget>(),
         gh<_i755.EditBudget>(),
         gh<_i150.DeleteBudget>(),
         gh<_i552.AddBudgetCategoryAllocation>(),
         gh<_i934.EditBudgetCategoryAllocation>(),
-        gh<_i316.RemoveBudgetCategoryAllocation>(),
+        gh<_i317.RemoveBudgetCategoryAllocation>(),
         gh<_i1.GetCategories>(),
         gh<_i999.EgpFormatter>(),
       ),
@@ -966,6 +1136,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i65.GetProactiveObservationTool>(),
         gh<_i775.SystemPromptBuilder>(),
         gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
+    gh.factory<_i943.ForgotPinCubit>(
+      () => _i943.ForgotPinCubit(
+        gh<_i244.RecoverViaBiometric>(),
+        gh<_i613.WipeAllLocalData>(),
+        gh<_i807.OnboardingCubit>(),
       ),
     );
     gh.factory<_i59.GetBudgetStatusTool>(
@@ -1001,9 +1178,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1050.GetTopSpendingCategoryTool>(),
         gh<_i924.CompareSpendingAcrossPeriodsTool>(),
         gh<_i1049.GetPersonBalanceTool>(),
-        gh<_i12.GetOwedOverviewTool>(),
+        gh<_i13.GetOwedOverviewTool>(),
         gh<_i59.GetBudgetStatusTool>(),
-        gh<_i665.GetOccasionTotalsTool>(),
+        gh<_i664.GetOccasionTotalsTool>(),
       ),
     );
     gh.factory<_i636.AskFinancialQuestion>(
@@ -1030,6 +1207,6 @@ extension GetItInjectableX on _i174.GetIt {
 
 class _$RegisterModule extends _i291.RegisterModule {}
 
-class _$AIAssistantModule extends _i1036.AIAssistantModule {}
-
 class _$AIHttpModule extends _i88.AIHttpModule {}
+
+class _$AppLockModule extends _i849.AppLockModule {}

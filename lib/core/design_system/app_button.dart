@@ -46,7 +46,11 @@ class AppButton extends StatelessWidget {
                     Icon(icon, size: 18),
                     const SizedBox(width: AppSpacing.sm),
                   ],
-                  Text(label),
+                  // Long localized labels (or large text) next to an icon
+                  // must shrink rather than overflow the button.
+                  Flexible(
+                    child: Text(label, overflow: TextOverflow.ellipsis),
+                  ),
                 ],
               ),
       ),

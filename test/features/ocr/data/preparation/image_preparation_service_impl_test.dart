@@ -8,6 +8,8 @@ import 'package:image/image.dart' as img;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart' as p;
 
+import '../../../../core/security/helpers/test_app_lifecycle_observer.dart';
+
 /// Stands in for the native crop UI, which no unit test can open.
 class _FakeCropperClient implements ImageCropperClient {
   _FakeCropperClient({this.result, this.throws});
@@ -57,6 +59,7 @@ void main() {
       ImagePreparationServiceImpl(
         cropper,
         _FakeDocumentsDirectory(documentsDir),
+        testAppLifecycleObserver(),
       );
 
   /// A small, uneven, low-contrast fixture generated in code rather than

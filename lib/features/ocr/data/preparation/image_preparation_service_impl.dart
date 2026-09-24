@@ -11,6 +11,7 @@ import 'package:path/path.dart' as p;
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/security/app_lifecycle_observer.dart';
 import '../../../../core/media/attachment_picker_service.dart';
 import '../../domain/entities/ocr_failures.dart';
 import '../../domain/repositories/image_preparation_service.dart';
@@ -64,11 +65,20 @@ class ImageCropperClient {
 /// `AttachmentPickerServiceImpl` does: the plugin writes into an OS cache the
 /// system is free to purge, so the returned path is always a copy inside the
 /// app's own documents directory.
+///
+/// The crop screen runs as an app-initiated external activity (015
+/// FR-010): on Android it is a separate native activity that pauses the
+/// app, which must not start App Lock's inactivity timer mid-crop.
 @LazySingleton(as: ImagePreparationService)
 class ImagePreparationServiceImpl implements ImagePreparationService {
-  ImagePreparationServiceImpl(this._cropper, this._documentsDirectory);
+  ImagePreparationServiceImpl(
+    this._cropper,
+    this._documentsDirectory,
+    this._lifecycle,
+  );
 
   final ImageCropperClient _cropper;
+  final AppLifecycleObserver _lifecycle;
 
   /// Injected rather than resolved inline so every file write below is
   /// exercisable against a temp directory, with no platform channel.
@@ -86,7 +96,9 @@ class ImagePreparationServiceImpl implements ImagePreparationService {
   Future<Either<Failure, PreparedImage>> cropAndRotate(String imagePath) async {
     final CroppedFile? cropped;
     try {
-      cropped = await _cropper.crop(imagePath);
+      cropped = await _lifecycle.runExternalActivity(
+        () => _cropper.crop(imagePath),
+      );
     } catch (e) {
       // A plugin exception must never escape: the caller's contract is
       // Either, and a crashed crop activity is an ordinary recoverable

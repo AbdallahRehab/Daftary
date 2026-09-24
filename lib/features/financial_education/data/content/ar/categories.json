@@ -1,0 +1,33 @@
+[
+  {
+    "id": "budgeting_basics",
+    "title": "أساسيات الميزانية",
+    "shortDescription": "كيف يعمل تتبّع الإنفاق والتخطيط له، والأفكار الشائعة وراء الميزانية البسيطة.",
+    "articleIds": [
+      "why_track_your_spending",
+      "the_50_30_20_idea_explained",
+      "building_your_first_budget"
+    ]
+  },
+  {
+    "id": "saving_strategies",
+    "title": "استراتيجيات الادخار",
+    "shortDescription": "أساليب شائعة يستخدمها الناس لتجنيب المال، من شبكات الأمان إلى الأهداف طويلة المدى.",
+    "articleIds": [
+      "emergency_funds_explained",
+      "automating_your_savings",
+      "short_term_vs_long_term_goals"
+    ]
+  },
+  {
+    "id": "understanding_investment_concepts",
+    "title": "فهم مفاهيم الاستثمار",
+    "shortDescription": "شرح مبسّط للتنويع والمخاطرة والعائد والنمو المركّب ومصطلحات الاستثمار الشائعة.",
+    "articleIds": [
+      "what_is_diversification",
+      "risk_and_return_explained",
+      "what_compounding_really_means",
+      "investment_terms_glossary"
+    ]
+  }
+]

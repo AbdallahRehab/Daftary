@@ -1,0 +1,52 @@
+{
+  "id": "what_compounding_really_means",
+  "categoryId": "understanding_investment_concepts",
+  "title": "What Compounding Really Means",
+  "shortDescription": "How growth on top of growth works, and why time is its most important ingredient.",
+  "bodySections": [
+    {
+      "paragraphs": [
+        "Compounding is often described as growth on top of growth. When money earns a return, and that return is left in place, the next period's return is calculated on a larger amount. Over time, this creates a snowball effect in which the growth itself begins to generate further growth."
+      ]
+    },
+    {
+      "heading": "Simple versus compound growth",
+      "paragraphs": [
+        "With simple growth, a return is earned only on the original amount. If EGP 10,000 earns an illustrative 10% a year in simple terms, it gains EGP 1,000 every year. After ten years, the total would be EGP 20,000.",
+        "With compound growth, each year's gain is added to the balance before the next year's return is calculated. In the first year, the gain is EGP 1,000, bringing the total to EGP 11,000. In the second year, 10% of EGP 11,000 is EGP 1,100. By the tenth year, the total would be roughly EGP 25,900. The extra EGP 5,900 compared with simple growth comes entirely from growth earned on earlier growth.",
+        "The 10% rate here is purely illustrative and is used only to make the arithmetic easy to follow. Real returns vary and are never guaranteed."
+      ]
+    },
+    {
+      "heading": "Time is the key ingredient",
+      "paragraphs": [
+        "The most striking feature of compounding is how much it depends on time. In the early years, the effect is modest and can seem unimpressive. In later years, the curve steepens, because each year's growth is calculated on an ever-larger base.",
+        "This is why two people contributing the same monthly amount can end up with very different totals simply because one started earlier. For example, at an illustrative annual rate, EGP 1,000 a month contributed for 30 years can grow to far more than twice the result of the same contribution over 15 years, even though the amount contributed is only twice as large."
+      ]
+    },
+    {
+      "heading": "The rule of 72",
+      "paragraphs": [
+        "A quick mental shortcut for compounding is the rule of 72. Dividing 72 by an annual growth rate gives a rough estimate of how many years it takes for an amount to double. At an illustrative 6%, doubling takes about 12 years; at 9%, about 8 years. It is an approximation, not an exact calculation, but it is useful for building intuition."
+      ]
+    },
+    {
+      "heading": "Compounding works in both directions",
+      "paragraphs": [
+        "The same arithmetic that helps savings grow also makes debt grow. When interest on a debt is not paid, it is added to the balance, and future interest is charged on the larger amount. This is why unpaid balances on high-interest borrowing can grow surprisingly quickly. Understanding compounding helps explain both sides of the equation."
+      ]
+    },
+    {
+      "heading": "What can interrupt compounding",
+      "paragraphs": [
+        "Several things reduce the compounding effect. Withdrawing gains instead of leaving them in place removes the base on which future growth would be calculated. Fees reduce the effective rate of growth every period, and their impact also compounds over time. Inflation means that even a growing number may buy less in the future than it appears. And returns in the real world are rarely steady; they fluctuate from year to year."
+      ]
+    },
+    {
+      "heading": "Key takeaway",
+      "paragraphs": [
+        "Compounding is a simple mathematical idea with powerful long-term effects. Its main lessons are about time and consistency: small amounts, left to grow over long periods, can become meaningful. The calculators in this section let you explore how different illustrative rates and durations change the outcome."
+      ]
+    }
+  ]
+}

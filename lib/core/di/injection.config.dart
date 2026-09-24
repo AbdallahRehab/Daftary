@@ -10,6 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'package:flutter/services.dart' as _i281;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -51,6 +52,44 @@ import '../../features/finance/presentation/cubit/finance_history_cubit.dart'
     as _i987;
 import '../../features/finance/presentation/cubit/finance_month_summary_cubit.dart'
     as _i231;
+import '../../features/financial_education/data/datasources/bundled_education_content_data_source.dart'
+    as _i445;
+import '../../features/financial_education/data/repositories/education_content_repository_impl.dart'
+    as _i549;
+import '../../features/financial_education/domain/repositories/education_content_repository.dart'
+    as _i1055;
+import '../../features/financial_education/domain/services/compound_growth_calculator.dart'
+    as _i585;
+import '../../features/financial_education/domain/services/doubling_time_calculator.dart'
+    as _i466;
+import '../../features/financial_education/domain/services/savings_rate_calculator.dart'
+    as _i35;
+import '../../features/financial_education/domain/usecases/calculate_compound_growth.dart'
+    as _i217;
+import '../../features/financial_education/domain/usecases/calculate_doubling_time.dart'
+    as _i435;
+import '../../features/financial_education/domain/usecases/calculate_savings_rate.dart'
+    as _i897;
+import '../../features/financial_education/domain/usecases/get_article.dart'
+    as _i481;
+import '../../features/financial_education/domain/usecases/get_category_articles.dart'
+    as _i657;
+import '../../features/financial_education/domain/usecases/get_education_categories.dart'
+    as _i805;
+import '../../features/financial_education/domain/usecases/get_prefillable_savings_goal_amount.dart'
+    as _i60;
+import '../../features/financial_education/presentation/cubit/article_cubit.dart'
+    as _i274;
+import '../../features/financial_education/presentation/cubit/category_cubit.dart'
+    as _i518;
+import '../../features/financial_education/presentation/cubit/compound_growth_calculator_cubit.dart'
+    as _i896;
+import '../../features/financial_education/presentation/cubit/content_library_cubit.dart'
+    as _i265;
+import '../../features/financial_education/presentation/cubit/doubling_time_calculator_cubit.dart'
+    as _i811;
+import '../../features/financial_education/presentation/cubit/savings_rate_calculator_cubit.dart'
+    as _i66;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -132,13 +171,43 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
+    gh.factory<_i60.GetPrefillableSavingsGoalAmount>(
+      () => const _i60.GetPrefillableSavingsGoalAmount(),
+    );
     gh.factory<_i769.FindPossibleDuplicatePerson>(
       () => const _i769.FindPossibleDuplicatePerson(),
     );
     gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
+    gh.lazySingleton<_i281.AssetBundle>(() => registerModule.assetBundle);
+    gh.lazySingleton<_i35.SavingsRateCalculator>(
+      () => const _i35.SavingsRateCalculatorImpl(),
+    );
+    gh.lazySingleton<_i466.DoublingTimeCalculator>(
+      () => const _i466.DoublingTimeCalculatorImpl(),
+    );
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
+    );
+    gh.lazySingleton<_i585.CompoundGrowthCalculator>(
+      () => const _i585.CompoundGrowthCalculatorImpl(),
+    );
+    gh.factory<_i897.CalculateSavingsRate>(
+      () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
+    );
+    gh.factory<_i435.CalculateDoublingTime>(
+      () => _i435.CalculateDoublingTime(gh<_i466.DoublingTimeCalculator>()),
+    );
+    gh.lazySingleton<_i445.BundledEducationContentDataSource>(
+      () => _i445.BundledEducationContentDataSource(gh<_i281.AssetBundle>()),
+    );
+    gh.lazySingleton<_i1055.EducationContentRepository>(
+      () => _i549.EducationContentRepositoryImpl(
+        gh<_i445.BundledEducationContentDataSource>(),
+      ),
+    );
+    gh.factory<_i217.CalculateCompoundGrowth>(
+      () => _i217.CalculateCompoundGrowth(gh<_i585.CompoundGrowthCalculator>()),
     );
     gh.factory<_i443.FinanceDao>(
       () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
@@ -153,6 +222,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i684.TransactionsDao>(
       () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
     );
+    gh.factory<_i896.CompoundGrowthCalculatorCubit>(
+      () => _i896.CompoundGrowthCalculatorCubit(
+        gh<_i217.CalculateCompoundGrowth>(),
+        gh<_i60.GetPrefillableSavingsGoalAmount>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
     gh.lazySingleton<_i430.OnboardingRepository>(
       () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
     );
@@ -161,6 +237,28 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i684.TransactionsDao>(),
         gh<_i982.AppDatabase>(),
       ),
+    );
+    gh.factory<_i66.SavingsRateCalculatorCubit>(
+      () => _i66.SavingsRateCalculatorCubit(
+        gh<_i897.CalculateSavingsRate>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i811.DoublingTimeCalculatorCubit>(
+      () => _i811.DoublingTimeCalculatorCubit(
+        gh<_i435.CalculateDoublingTime>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i481.GetArticle>(
+      () => _i481.GetArticle(gh<_i1055.EducationContentRepository>()),
+    );
+    gh.factory<_i657.GetCategoryArticles>(
+      () => _i657.GetCategoryArticles(gh<_i1055.EducationContentRepository>()),
+    );
+    gh.factory<_i805.GetEducationCategories>(
+      () =>
+          _i805.GetEducationCategories(gh<_i1055.EducationContentRepository>()),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
       () => _i250.FinanceRepositoryImpl(gh<_i443.FinanceDao>()),
@@ -199,6 +297,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i49.RestorePerson>(
       () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i265.ContentLibraryCubit>(
+      () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i956.TransactionsRepository>()),
@@ -240,12 +341,18 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
+    gh.factory<_i274.ArticleCubit>(
+      () => _i274.ArticleCubit(gh<_i481.GetArticle>()),
+    );
     gh.factory<_i1018.PersonListCubit>(
       () => _i1018.PersonListCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i750.GetPersonBalance>(),
         gh<_i221.ArchivePerson>(),
       ),
+    );
+    gh.factory<_i518.CategoryCubit>(
+      () => _i518.CategoryCubit(gh<_i657.GetCategoryArticles>()),
     );
     gh.factory<_i24.CreateCategory>(
       () => _i24.CreateCategory(gh<_i228.CategoryRepository>()),

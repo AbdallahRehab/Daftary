@@ -9,6 +9,12 @@ import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
 import '../../features/finance/presentation/pages/finance_entry_form_page.dart';
 import '../../features/finance/presentation/pages/finance_history_page.dart';
+import '../../features/financial_education/presentation/pages/article_page.dart';
+import '../../features/financial_education/presentation/pages/category_page.dart';
+import '../../features/financial_education/presentation/pages/compound_growth_calculator_page.dart';
+import '../../features/financial_education/presentation/pages/content_library_home_page.dart';
+import '../../features/financial_education/presentation/pages/doubling_time_calculator_page.dart';
+import '../../features/financial_education/presentation/pages/savings_rate_calculator_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
@@ -173,6 +179,41 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/settings',
               builder: (context, state) => const SettingsPage(),
+            ),
+            // Financial Education (016) is reached from a Settings row
+            // (research.md Decision 5), so it lives in the Settings branch.
+            // The fixed calculator paths are declared before the
+            // `:categoryId` routes so they can never be captured as a
+            // category id.
+            GoRoute(
+              path: '/financial-education',
+              builder: (context, state) => const ContentLibraryHomePage(),
+            ),
+            GoRoute(
+              path: '/financial-education/calculators/compound-growth',
+              builder: (context, state) =>
+                  const CompoundGrowthCalculatorPage(),
+            ),
+            GoRoute(
+              path: '/financial-education/calculators/doubling-time',
+              builder: (context, state) => const DoublingTimeCalculatorPage(),
+            ),
+            GoRoute(
+              path: '/financial-education/calculators/savings-rate',
+              builder: (context, state) => const SavingsRateCalculatorPage(),
+            ),
+            GoRoute(
+              path: '/financial-education/:categoryId',
+              builder: (context, state) => CategoryPage(
+                categoryId: state.pathParameters['categoryId']!,
+              ),
+            ),
+            GoRoute(
+              path: '/financial-education/:categoryId/:articleId',
+              builder: (context, state) => ArticlePage(
+                categoryId: state.pathParameters['categoryId']!,
+                articleId: state.pathParameters['articleId']!,
+              ),
             ),
           ],
         ),

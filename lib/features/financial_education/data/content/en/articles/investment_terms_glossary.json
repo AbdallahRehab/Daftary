@@ -1,0 +1,115 @@
+{
+  "id": "investment_terms_glossary",
+  "categoryId": "understanding_investment_concepts",
+  "title": "A Plain-Language Glossary of Investment Terms",
+  "shortDescription": "Short, jargon-free definitions of common words you will meet when reading about investing.",
+  "bodySections": [
+    {
+      "paragraphs": [
+        "Financial conversations are full of specialised vocabulary, which can make the topic feel less accessible than it is. This glossary explains common terms in plain language. It is meant to help with understanding, not to point toward any particular choice."
+      ]
+    },
+    {
+      "heading": "Asset",
+      "paragraphs": [
+        "Anything of value that is owned and could, in principle, be sold or used to generate income. Cash, property, and ownership stakes in businesses are all examples of assets in the general sense."
+      ]
+    },
+    {
+      "heading": "Principal",
+      "paragraphs": [
+        "The original amount of money put in, before any growth or interest. If EGP 5,000 is deposited and grows to EGP 5,400, the principal is still EGP 5,000."
+      ]
+    },
+    {
+      "heading": "Interest",
+      "paragraphs": [
+        "The cost of borrowing money, or the payment received for lending it. It is usually expressed as a percentage of the principal over a year."
+      ]
+    },
+    {
+      "heading": "Return",
+      "paragraphs": [
+        "The gain or loss on money over a period, often expressed as a percentage. A return can be positive or negative. When returns are mentioned in examples, they are usually illustrative rather than predictions."
+      ]
+    },
+    {
+      "heading": "Compounding",
+      "paragraphs": [
+        "The process by which growth is added to the original amount, so that future growth is calculated on a larger base. Sometimes described as growth on top of growth."
+      ]
+    },
+    {
+      "heading": "Inflation",
+      "paragraphs": [
+        "The general rise in prices over time. When inflation is high, the same amount of money buys less than it used to. This is why a return is often compared with the inflation rate, to see whether purchasing power has actually grown."
+      ]
+    },
+    {
+      "heading": "Real return",
+      "paragraphs": [
+        "A return adjusted for inflation. If money grows by an illustrative 10% in a year while prices rise by 7%, the real return is roughly 3%."
+      ]
+    },
+    {
+      "heading": "Volatility",
+      "paragraphs": [
+        "How much and how quickly the value of something moves up and down. Higher volatility means larger, less predictable swings in value."
+      ]
+    },
+    {
+      "heading": "Risk",
+      "paragraphs": [
+        "In finance, the uncertainty about what a future return will be, including the possibility of loss. Different kinds of risk include market risk, inflation risk, and liquidity risk."
+      ]
+    },
+    {
+      "heading": "Liquidity",
+      "paragraphs": [
+        "How easily and quickly something can be turned into cash without losing value. Cash itself is highly liquid; property is generally much less liquid, since selling it can take time."
+      ]
+    },
+    {
+      "heading": "Diversification",
+      "paragraphs": [
+        "Spreading money across many different holdings so that the overall result does not depend heavily on any single one. It reduces the impact of problems specific to one holding, but it does not remove all risk."
+      ]
+    },
+    {
+      "heading": "Portfolio",
+      "paragraphs": [
+        "The full collection of someone's investments considered together, rather than one at a time."
+      ]
+    },
+    {
+      "heading": "Equity",
+      "paragraphs": [
+        "Ownership. In investing, it usually refers to a share of ownership in a company, whose value can rise or fall with the company's fortunes. In property, equity is the portion of the value that is owned outright, beyond any outstanding loan."
+      ]
+    },
+    {
+      "heading": "Fixed income",
+      "paragraphs": [
+        "A general term for arrangements in which a borrower agrees to pay a lender a set schedule of interest and return the principal at a defined date. The payments are more predictable, though not free of risk."
+      ]
+    },
+    {
+      "heading": "Time horizon",
+      "paragraphs": [
+        "The length of time before money is expected to be needed. Time horizon strongly affects how risk and volatility are experienced."
+      ]
+    },
+    {
+      "heading": "Fees",
+      "paragraphs": [
+        "Charges for managing, holding, or transferring money. Even small percentage fees reduce growth every year, and over long periods their effect compounds."
+      ]
+    },
+    {
+      "heading": "A final note",
+      "paragraphs": [
+        "Understanding these terms makes it easier to read financial information critically and to ask clear questions. Vocabulary is a starting point: it explains how things work, while decisions about one's own money remain personal and depend on individual circumstances."
+      ]
+    }
+  ]
+}

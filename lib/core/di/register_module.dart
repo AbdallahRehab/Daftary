@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:injectable/injectable.dart';
 
 import '../database/app_database.dart';
@@ -14,4 +15,10 @@ abstract class RegisterModule {
 
   @lazySingleton
   EgpFormatter get egpFormatter => EgpFormatter();
+
+  /// The app's bundled assets — injected rather than read via `rootBundle`
+  /// directly so content-loading data sources can be tested against a
+  /// fixture bundle (016 `BundledEducationContentDataSource`).
+  @lazySingleton
+  AssetBundle get assetBundle => rootBundle;
 }

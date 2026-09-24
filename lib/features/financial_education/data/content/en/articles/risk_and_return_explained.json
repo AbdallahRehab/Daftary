@@ -1,0 +1,51 @@
+{
+  "id": "risk_and_return_explained",
+  "categoryId": "understanding_investment_concepts",
+  "title": "Risk and Return, Explained",
+  "shortDescription": "Why higher potential returns usually come with more uncertainty, and what 'risk' really means.",
+  "bodySections": [
+    {
+      "paragraphs": [
+        "Risk and return are two sides of the same coin in investing. Return is what an investment gains or loses over time. Risk, in the simplest sense, is the uncertainty about what that return will be. One of the most consistent observations in finance is that the two tend to move together: the possibility of higher returns usually comes with greater uncertainty."
+      ]
+    },
+    {
+      "heading": "What 'risk' means",
+      "paragraphs": [
+        "In everyday speech, risk often means the chance of losing money. In finance, the word is used a little more broadly. It refers to how much actual results might differ from what is expected, in either direction. An investment whose value swings widely from year to year is considered riskier than one whose value changes slowly and predictably, even if both end up in a similar place over time.",
+        "This up-and-down movement is called volatility. A highly volatile holding might rise sharply one year and fall sharply the next. A low-volatility holding moves more gently."
+      ]
+    },
+    {
+      "heading": "Why the trade-off exists",
+      "paragraphs": [
+        "The relationship comes down to compensation. Most people prefer certainty. To accept more uncertainty, they generally expect the possibility of a higher reward. If a riskier option offered no chance of a better outcome than a safer one, few people would choose it. Over long periods, this expectation tends to be reflected in how different types of investments have historically behaved, although past behaviour never guarantees future results."
+      ]
+    },
+    {
+      "heading": "An illustrative comparison",
+      "paragraphs": [
+        "Consider two hypothetical options, each starting with EGP 10,000. Option A grows by a steady, illustrative 5% every year. Option B averages a higher illustrative 8% a year, but in some years it rises 25% and in others it falls 15%.",
+        "Over a long period, Option B might end up higher. Over a short period, it could easily be lower, especially if a bad year arrives just before the money is needed. Neither option is better in general. They simply offer different combinations of potential reward and uncertainty. These figures are invented for illustration only and do not describe any real investment."
+      ]
+    },
+    {
+      "heading": "Time horizon matters",
+      "paragraphs": [
+        "How long money can stay invested affects how risk is experienced. With a long horizon, there may be time to recover from temporary declines. With a short horizon, a decline shortly before the money is needed can be much harder to absorb. This is why discussions of risk are closely tied to when money will be needed."
+      ]
+    },
+    {
+      "heading": "Other kinds of risk",
+      "paragraphs": [
+        "Volatility is only one type of risk. Inflation risk is the chance that money grows more slowly than prices rise, quietly losing purchasing power. Liquidity risk is the difficulty of turning a holding into cash quickly without a loss. Concentration risk comes from depending too heavily on a single holding, which is what diversification aims to reduce. Even holding only cash carries inflation risk over long periods."
+      ]
+    },
+    {
+      "heading": "Key takeaway",
+      "paragraphs": [
+        "There is no such thing as a return without some form of risk; there are only different kinds and degrees of it. Understanding the trade-off does not tell anyone what to do, but it does make it easier to recognise claims that sound too good to be true. Any promise of high returns with no risk is a strong warning sign."
+      ]
+    }
+  ]
+}

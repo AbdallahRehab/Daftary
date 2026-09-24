@@ -1,0 +1,57 @@
+{
+  "id": "building_your_first_budget",
+  "categoryId": "budgeting_basics",
+  "title": "Building Your First Budget",
+  "shortDescription": "A step-by-step look at how a simple monthly budget is usually put together.",
+  "bodySections": [
+    {
+      "paragraphs": [
+        "A budget is a plan for how money will be used over a period of time, usually a month. It is less about restriction and more about deciding in advance, so that spending reflects priorities instead of habit. Building a first budget can seem intimidating, but the process generally follows a few straightforward steps."
+      ]
+    },
+    {
+      "heading": "Step 1: Start with income",
+      "paragraphs": [
+        "The first figure in most budgets is take-home income: the amount that actually arrives after deductions. For people with a fixed salary, this is simple. For those with irregular income, such as freelancers or people paid by commission, a common approach is to base the budget on a cautious estimate, often the income of a lower-earning month, and treat anything above that as a bonus."
+      ]
+    },
+    {
+      "heading": "Step 2: List fixed expenses",
+      "paragraphs": [
+        "Fixed expenses are costs that stay roughly the same every month: rent, school fees paid in instalments, loan payments, internet, and mobile plans. Listing these first shows how much of the income is already committed before any day-to-day choices are made."
+      ]
+    },
+    {
+      "heading": "Step 3: Estimate variable expenses",
+      "paragraphs": [
+        "Variable expenses change from month to month: groceries, fuel, electricity, eating out, and personal spending. This is where a few weeks of spending records become valuable, because they turn guesses into realistic estimates. Without records, people often underestimate these categories."
+      ]
+    },
+    {
+      "heading": "Step 4: Give savings a line",
+      "paragraphs": [
+        "Many budgeting approaches treat savings as a planned expense rather than a leftover. Even a small amount, such as EGP 500 a month, becomes a habit once it has its own line in the plan. Some people also include a line for irregular costs, setting aside a monthly portion of annual expenses like gifts or maintenance so they do not cause a shock later."
+      ]
+    },
+    {
+      "heading": "Step 5: Compare and adjust",
+      "paragraphs": [
+        "Once income and all planned expenses are listed, the two totals can be compared. If planned spending is higher than income, something has to give, and the budget is where those trade-offs become visible. People typically look first at variable and discretionary categories, since fixed costs are harder to change quickly.",
+        "Consider an illustrative example: an income of EGP 15,000, fixed costs of EGP 7,000, and estimated variable costs of EGP 7,500. That leaves only EGP 500. Seeing this on paper allows a deliberate decision, for instance reducing eating out by EGP 1,000 to create more room for savings, rather than discovering the shortfall at the end of the month."
+      ]
+    },
+    {
+      "heading": "Step 6: Review regularly",
+      "paragraphs": [
+        "A first budget is almost never accurate. Real spending will differ from the plan, and that is expected. The value comes from comparing plan and reality each month and adjusting the numbers. After two or three months, most budgets become far more realistic."
+      ]
+    },
+    {
+      "heading": "Common pitfalls",
+      "paragraphs": [
+        "A few patterns tend to make budgets fail. Making the plan too strict, with no room for enjoyment, often leads to abandoning it entirely. Forgetting irregular expenses causes surprises. And treating a single overspent month as proof that budgeting does not work overlooks the fact that the process is meant to be revised.",
+        "A budget is a living document. Its purpose is not perfection but clarity: knowing where money is intended to go, and noticing when it goes somewhere else."
+      ]
+    }
+  ]
+}

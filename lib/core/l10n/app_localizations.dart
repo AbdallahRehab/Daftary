@@ -98,6 +98,330 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// No description provided for @finEduCalcCompoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compound growth calculator'**
+  String get finEduCalcCompoundTitle;
+
+  /// No description provided for @finEduCalcCompoundIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'See how a fixed monthly amount could grow over time at a rate you choose, compounded monthly.'**
+  String get finEduCalcCompoundIntro;
+
+  /// No description provided for @finEduCalcDoublingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doubling time calculator'**
+  String get finEduCalcDoublingTitle;
+
+  /// No description provided for @finEduCalcDoublingIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate roughly how many years it takes for money to double at a constant annual rate you choose.'**
+  String get finEduCalcDoublingIntro;
+
+  /// No description provided for @finEduCalcSavingsRateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings rate calculator'**
+  String get finEduCalcSavingsRateTitle;
+
+  /// No description provided for @finEduCalcSavingsRateIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Work out what share of an income is set aside, using figures you enter yourself.'**
+  String get finEduCalcSavingsRateIntro;
+
+  /// No description provided for @finEduCalcMonthlyContributionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly amount (EGP)'**
+  String get finEduCalcMonthlyContributionLabel;
+
+  /// No description provided for @finEduCalcAnnualRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual growth rate (%)'**
+  String get finEduCalcAnnualRateLabel;
+
+  /// No description provided for @finEduCalcYearsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (years)'**
+  String get finEduCalcYearsLabel;
+
+  /// No description provided for @finEduCalcIncomeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Income (EGP)'**
+  String get finEduCalcIncomeLabel;
+
+  /// No description provided for @finEduCalcSavingsAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount saved (EGP)'**
+  String get finEduCalcSavingsAmountLabel;
+
+  /// No description provided for @finEduCalcCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate'**
+  String get finEduCalcCalculate;
+
+  /// No description provided for @finEduCalcPrefillFromSavingsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Start from my savings goal\'s amount'**
+  String get finEduCalcPrefillFromSavingsGoal;
+
+  /// No description provided for @finEduCalcPrefillHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only fills in the amount as a starting point — you can change it freely.'**
+  String get finEduCalcPrefillHint;
+
+  /// No description provided for @finEduCalcErrorRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a value'**
+  String get finEduCalcErrorRequired;
+
+  /// No description provided for @finEduCalcErrorInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get finEduCalcErrorInvalidNumber;
+
+  /// No description provided for @finEduCalcErrorWholeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number of years'**
+  String get finEduCalcErrorWholeYears;
+
+  /// No description provided for @finEduCalcErrorAmountPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount greater than zero'**
+  String get finEduCalcErrorAmountPositive;
+
+  /// No description provided for @finEduCalcErrorRateNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'The rate can\'t be negative'**
+  String get finEduCalcErrorRateNegative;
+
+  /// No description provided for @finEduCalcErrorRatePositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a rate greater than zero — a doubling time isn\'t defined at 0%'**
+  String get finEduCalcErrorRatePositive;
+
+  /// No description provided for @finEduCalcErrorYearsPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a duration of at least 1 year'**
+  String get finEduCalcErrorYearsPositive;
+
+  /// No description provided for @finEduCalcErrorIncomePositive.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an income greater than zero'**
+  String get finEduCalcErrorIncomePositive;
+
+  /// No description provided for @finEduCalcErrorSavingsNegative.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount saved can\'t be negative'**
+  String get finEduCalcErrorSavingsNegative;
+
+  /// No description provided for @finEduCalcErrorResultTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'These inputs produce a figure too large to show. Try a smaller amount, rate, or duration.'**
+  String get finEduCalcErrorResultTooLarge;
+
+  /// No description provided for @finEduCalcResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get finEduCalcResultTitle;
+
+  /// No description provided for @finEduCalcResultFutureValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Projected total'**
+  String get finEduCalcResultFutureValue;
+
+  /// No description provided for @finEduCalcResultTotalContributed.
+  ///
+  /// In en, this message translates to:
+  /// **'Total contributed'**
+  String get finEduCalcResultTotalContributed;
+
+  /// No description provided for @finEduCalcResultTotalGrowth.
+  ///
+  /// In en, this message translates to:
+  /// **'Total growth'**
+  String get finEduCalcResultTotalGrowth;
+
+  /// No description provided for @finEduCalcResultDoublingYears.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate doubling time'**
+  String get finEduCalcResultDoublingYears;
+
+  /// No description provided for @finEduCalcResultSavingsRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings rate'**
+  String get finEduCalcResultSavingsRate;
+
+  /// No description provided for @finEduCalcYearsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} years'**
+  String finEduCalcYearsValue(String years);
+
+  /// No description provided for @finEduCalcPercentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}%'**
+  String finEduCalcPercentValue(String percent);
+
+  /// No description provided for @finEduCalcIllustrativeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Illustrative only — assumes a constant rate; real returns vary and are not guaranteed'**
+  String get finEduCalcIllustrativeNote;
+
+  /// No description provided for @finEduCalcHighRateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'This rate is unusually high. The result is purely illustrative — sustained returns this high are rare.'**
+  String get finEduCalcHighRateNote;
+
+  /// No description provided for @finEduCalcRuleOf72Note.
+  ///
+  /// In en, this message translates to:
+  /// **'An approximation using the rule of 72 (72 ÷ annual rate), not an exact figure.'**
+  String get finEduCalcRuleOf72Note;
+
+  /// No description provided for @finEduCalcSavingsAboveIncomeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount saved is higher than the income entered, so the rate is above 100%.'**
+  String get finEduCalcSavingsAboveIncomeNote;
+
+  /// No description provided for @finEduCalcSavingsRateNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated only from the two figures you entered.'**
+  String get finEduCalcSavingsRateNote;
+
+  /// No description provided for @finEduTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Financial Education'**
+  String get finEduTitle;
+
+  /// No description provided for @finEduSettingsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get finEduSettingsSectionTitle;
+
+  /// No description provided for @finEduSettingsEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles and illustrative calculators'**
+  String get finEduSettingsEntrySubtitle;
+
+  /// No description provided for @finEduDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'For general educational purposes only. This is not personalized financial or investment advice.'**
+  String get finEduDisclaimer;
+
+  /// No description provided for @finEduTopicsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Topics'**
+  String get finEduTopicsSectionTitle;
+
+  /// No description provided for @finEduToolsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculators'**
+  String get finEduToolsSectionTitle;
+
+  /// No description provided for @finEduCompoundGrowthTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compound growth'**
+  String get finEduCompoundGrowthTileTitle;
+
+  /// No description provided for @finEduCompoundGrowthTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See how a regular monthly amount could grow over time'**
+  String get finEduCompoundGrowthTileSubtitle;
+
+  /// No description provided for @finEduDoublingTimeTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Doubling time'**
+  String get finEduDoublingTimeTileTitle;
+
+  /// No description provided for @finEduDoublingTimeTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate how long money takes to double with the rule of 72'**
+  String get finEduDoublingTimeTileSubtitle;
+
+  /// No description provided for @finEduSavingsRateTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings rate'**
+  String get finEduSavingsRateTileTitle;
+
+  /// No description provided for @finEduSavingsRateTileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Work out what share of income is being saved'**
+  String get finEduSavingsRateTileSubtitle;
+
+  /// No description provided for @finEduLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this content'**
+  String get finEduLoadErrorTitle;
+
+  /// No description provided for @finEduLoadErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong while opening the bundled content. Please try again.'**
+  String get finEduLoadErrorMessage;
+
+  /// No description provided for @finEduRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get finEduRetry;
+
+  /// No description provided for @finEduEmptyCategoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No articles yet'**
+  String get finEduEmptyCategoryTitle;
+
+  /// No description provided for @finEduEmptyCategoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Articles for this topic will appear here.'**
+  String get finEduEmptyCategoryMessage;
+
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:

@@ -1,0 +1,33 @@
+[
+  {
+    "id": "budgeting_basics",
+    "title": "Budgeting Basics",
+    "shortDescription": "How tracking and planning your spending works, and the common ideas behind a simple budget.",
+    "articleIds": [
+      "why_track_your_spending",
+      "the_50_30_20_idea_explained",
+      "building_your_first_budget"
+    ]
+  },
+  {
+    "id": "saving_strategies",
+    "title": "Saving Strategies",
+    "shortDescription": "Common approaches people use to set money aside, from safety cushions to longer-term goals.",
+    "articleIds": [
+      "emergency_funds_explained",
+      "automating_your_savings",
+      "short_term_vs_long_term_goals"
+    ]
+  },
+  {
+    "id": "understanding_investment_concepts",
+    "title": "Understanding Investment Concepts",
+    "shortDescription": "Plain-language explanations of diversification, risk, return, compounding, and everyday investment terms.",
+    "articleIds": [
+      "what_is_diversification",
+      "risk_and_return_explained",
+      "what_compounding_really_means",
+      "investment_terms_glossary"
+    ]
+  }
+]

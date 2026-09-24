@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/tokens.dart';
@@ -89,6 +90,22 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Financial Education entry point (016, research.md Decision
+              // 5): a secondary, non-daily feature, so a Settings row rather
+              // than a bottom-nav tab.
+              _SettingsSection(
+                icon: Icons.school_outlined,
+                title: l10n.finEduSettingsSectionTitle,
+                child: ListTile(
+                  key: const Key('settings_financial_education_entry'),
+                  leading: const Icon(Icons.menu_book_outlined),
+                  title: Text(l10n.finEduTitle),
+                  subtitle: Text(l10n.finEduSettingsEntrySubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/financial-education'),
                 ),
               ),
             ],

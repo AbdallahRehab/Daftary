@@ -1,0 +1,52 @@
+{
+  "id": "what_is_diversification",
+  "categoryId": "understanding_investment_concepts",
+  "title": "What Is Diversification?",
+  "shortDescription": "The idea of spreading risk across many different holdings, explained in plain language.",
+  "bodySections": [
+    {
+      "paragraphs": [
+        "Diversification is one of the most fundamental ideas in investing. At its core, it describes spreading money across many different holdings, so that the outcome does not depend on any single one of them. It is often summarised by the familiar image of not keeping all the eggs in one basket."
+      ]
+    },
+    {
+      "heading": "The basic intuition",
+      "paragraphs": [
+        "Imagine a small shop owner who sells only umbrellas. On rainy days, business is excellent; on sunny days, it is terrible. Now imagine a shop that sells both umbrellas and sunglasses. Whatever the weather, something is likely to sell. The second shop's income is steadier, not because either product is better, but because the two respond differently to the same conditions.",
+        "Diversification applies the same logic to investments. When holdings respond differently to events, a loss in one area may be partly offset by stability or gains in another."
+      ]
+    },
+    {
+      "heading": "Why it reduces risk",
+      "paragraphs": [
+        "Any single company, sector, or region can face problems specific to it: a failed product, a new regulation, a local economic slowdown. These are sometimes called specific or unsystematic risks. When money is spread across many unrelated holdings, the impact of any one problem on the whole becomes smaller.",
+        "For illustration, if EGP 10,000 were placed entirely in one holding that lost half its value, the total would fall to EGP 5,000. If the same amount were spread evenly across twenty unrelated holdings and one of them lost half its value, the total would fall by only about EGP 250, assuming the others held steady."
+      ]
+    },
+    {
+      "heading": "Different dimensions of diversification",
+      "paragraphs": [
+        "Diversification can happen along several dimensions. It can mean holding many companies instead of one, spreading across different industries, across different countries or regions, or across different types of assets that tend to behave differently from each other. Some people also think of diversification across time, adding money gradually rather than all at once."
+      ]
+    },
+    {
+      "heading": "What diversification cannot do",
+      "paragraphs": [
+        "Diversification reduces the risk tied to individual holdings, but it cannot eliminate all risk. Some events, such as a broad economic downturn or a sharp change in interest rates, can affect almost everything at the same time. This is known as market or systematic risk, and spreading holdings does not remove it.",
+        "Diversification also does not guarantee a profit or protect against loss. It changes the shape of risk rather than making it disappear."
+      ]
+    },
+    {
+      "heading": "The trade-off",
+      "paragraphs": [
+        "Spreading money widely generally means giving up the chance of an extraordinary result from a single successful holding, in exchange for a smoother and more predictable overall path. Different people value that trade-off differently, which is one reason investment choices are personal."
+      ]
+    },
+    {
+      "heading": "Key takeaway",
+      "paragraphs": [
+        "Diversification is best understood as a way of managing uncertainty. Since no one can reliably predict which individual holding will do well, spreading exposure reduces dependence on any single prediction being right. It is a concept worth understanding for anyone learning how investment risk works, whatever decisions they eventually make."
+      ]
+    }
+  ]
+}

@@ -9,6 +9,189 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get finEduCalcCompoundTitle => 'حاسبة النمو المركب';
+
+  @override
+  String get finEduCalcCompoundIntro =>
+      'شاهد كيف يمكن أن ينمو مبلغ شهري ثابت مع الوقت بمعدل تختاره أنت، مع تركيب شهري.';
+
+  @override
+  String get finEduCalcDoublingTitle => 'حاسبة مدة التضاعف';
+
+  @override
+  String get finEduCalcDoublingIntro =>
+      'قدّر تقريبًا عدد السنوات اللازمة لتضاعف المال بمعدل سنوي ثابت تختاره أنت.';
+
+  @override
+  String get finEduCalcSavingsRateTitle => 'حاسبة نسبة الادخار';
+
+  @override
+  String get finEduCalcSavingsRateIntro =>
+      'احسب النسبة التي يتم ادخارها من الدخل، باستخدام أرقام تُدخلها بنفسك.';
+
+  @override
+  String get finEduCalcMonthlyContributionLabel => 'المبلغ الشهري (جنيه)';
+
+  @override
+  String get finEduCalcAnnualRateLabel => 'معدل النمو السنوي (%)';
+
+  @override
+  String get finEduCalcYearsLabel => 'المدة (بالسنوات)';
+
+  @override
+  String get finEduCalcIncomeLabel => 'الدخل (جنيه)';
+
+  @override
+  String get finEduCalcSavingsAmountLabel => 'المبلغ المدخر (جنيه)';
+
+  @override
+  String get finEduCalcCalculate => 'احسب';
+
+  @override
+  String get finEduCalcPrefillFromSavingsGoal => 'ابدأ من مبلغ هدف الادخار';
+
+  @override
+  String get finEduCalcPrefillHint =>
+      'يملأ المبلغ كنقطة بداية فقط — يمكنك تغييره بحرية.';
+
+  @override
+  String get finEduCalcErrorRequired => 'أدخل قيمة';
+
+  @override
+  String get finEduCalcErrorInvalidNumber => 'أدخل رقمًا صحيحًا';
+
+  @override
+  String get finEduCalcErrorWholeYears => 'أدخل عددًا صحيحًا من السنوات';
+
+  @override
+  String get finEduCalcErrorAmountPositive => 'أدخل مبلغًا أكبر من صفر';
+
+  @override
+  String get finEduCalcErrorRateNegative => 'لا يمكن أن يكون المعدل سالبًا';
+
+  @override
+  String get finEduCalcErrorRatePositive =>
+      'أدخل معدلًا أكبر من صفر — مدة التضاعف غير معرّفة عند 0%';
+
+  @override
+  String get finEduCalcErrorYearsPositive => 'أدخل مدة لا تقل عن سنة واحدة';
+
+  @override
+  String get finEduCalcErrorIncomePositive => 'أدخل دخلًا أكبر من صفر';
+
+  @override
+  String get finEduCalcErrorSavingsNegative =>
+      'لا يمكن أن يكون المبلغ المدخر سالبًا';
+
+  @override
+  String get finEduCalcErrorResultTooLarge =>
+      'هذه المدخلات تنتج رقمًا أكبر من أن يُعرض. جرّب مبلغًا أو معدلًا أو مدة أصغر.';
+
+  @override
+  String get finEduCalcResultTitle => 'النتيجة';
+
+  @override
+  String get finEduCalcResultFutureValue => 'الإجمالي المتوقع';
+
+  @override
+  String get finEduCalcResultTotalContributed => 'إجمالي المساهمات';
+
+  @override
+  String get finEduCalcResultTotalGrowth => 'إجمالي النمو';
+
+  @override
+  String get finEduCalcResultDoublingYears => 'مدة التضاعف التقريبية';
+
+  @override
+  String get finEduCalcResultSavingsRate => 'نسبة الادخار';
+
+  @override
+  String finEduCalcYearsValue(String years) {
+    return '$years سنة';
+  }
+
+  @override
+  String finEduCalcPercentValue(String percent) {
+    return '$percent٪';
+  }
+
+  @override
+  String get finEduCalcIllustrativeNote =>
+      'للتوضيح فقط — يفترض معدلًا ثابتًا؛ العوائد الفعلية تتغير وغير مضمونة';
+
+  @override
+  String get finEduCalcHighRateNote =>
+      'هذا المعدل مرتفع بشكل غير معتاد. النتيجة للتوضيح فقط — نادرًا ما تستمر عوائد بهذا الارتفاع.';
+
+  @override
+  String get finEduCalcRuleOf72Note =>
+      'تقدير تقريبي باستخدام قاعدة 72 (72 ÷ المعدل السنوي)، وليس رقمًا دقيقًا.';
+
+  @override
+  String get finEduCalcSavingsAboveIncomeNote =>
+      'المبلغ المدخر أكبر من الدخل المُدخل، لذلك النسبة أعلى من 100%.';
+
+  @override
+  String get finEduCalcSavingsRateNote =>
+      'محسوبة فقط من الرقمين اللذين أدخلتهما.';
+
+  @override
+  String get finEduTitle => 'التثقيف المالي';
+
+  @override
+  String get finEduSettingsSectionTitle => 'تعلّم';
+
+  @override
+  String get finEduSettingsEntrySubtitle => 'مقالات وحاسبات توضيحية';
+
+  @override
+  String get finEduDisclaimer =>
+      'لأغراض تعليمية عامة فقط. هذا المحتوى ليس نصيحة مالية أو استثمارية مخصصة لك.';
+
+  @override
+  String get finEduTopicsSectionTitle => 'الموضوعات';
+
+  @override
+  String get finEduToolsSectionTitle => 'الحاسبات';
+
+  @override
+  String get finEduCompoundGrowthTileTitle => 'النمو المركب';
+
+  @override
+  String get finEduCompoundGrowthTileSubtitle =>
+      'شاهد كيف يمكن أن ينمو مبلغ شهري منتظم مع الوقت';
+
+  @override
+  String get finEduDoublingTimeTileTitle => 'مدة التضاعف';
+
+  @override
+  String get finEduDoublingTimeTileSubtitle =>
+      'قدّر المدة اللازمة لتضاعف المال باستخدام قاعدة ٧٢';
+
+  @override
+  String get finEduSavingsRateTileTitle => 'نسبة الادخار';
+
+  @override
+  String get finEduSavingsRateTileSubtitle =>
+      'احسب نسبة الدخل التي يتم ادخارها';
+
+  @override
+  String get finEduLoadErrorTitle => 'تعذّر تحميل هذا المحتوى';
+
+  @override
+  String get finEduLoadErrorMessage =>
+      'حدث خطأ أثناء فتح المحتوى المضمّن. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get finEduRetry => 'حاول مرة أخرى';
+
+  @override
+  String get finEduEmptyCategoryTitle => 'لا توجد مقالات بعد';
+
+  @override
+  String get finEduEmptyCategoryMessage => 'ستظهر مقالات هذا الموضوع هنا.';
+
+  @override
   String get appTitle => 'دفتري';
 
   @override

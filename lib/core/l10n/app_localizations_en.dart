@@ -9,6 +9,195 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get finEduCalcCompoundTitle => 'Compound growth calculator';
+
+  @override
+  String get finEduCalcCompoundIntro =>
+      'See how a fixed monthly amount could grow over time at a rate you choose, compounded monthly.';
+
+  @override
+  String get finEduCalcDoublingTitle => 'Doubling time calculator';
+
+  @override
+  String get finEduCalcDoublingIntro =>
+      'Estimate roughly how many years it takes for money to double at a constant annual rate you choose.';
+
+  @override
+  String get finEduCalcSavingsRateTitle => 'Savings rate calculator';
+
+  @override
+  String get finEduCalcSavingsRateIntro =>
+      'Work out what share of an income is set aside, using figures you enter yourself.';
+
+  @override
+  String get finEduCalcMonthlyContributionLabel => 'Monthly amount (EGP)';
+
+  @override
+  String get finEduCalcAnnualRateLabel => 'Annual growth rate (%)';
+
+  @override
+  String get finEduCalcYearsLabel => 'Duration (years)';
+
+  @override
+  String get finEduCalcIncomeLabel => 'Income (EGP)';
+
+  @override
+  String get finEduCalcSavingsAmountLabel => 'Amount saved (EGP)';
+
+  @override
+  String get finEduCalcCalculate => 'Calculate';
+
+  @override
+  String get finEduCalcPrefillFromSavingsGoal =>
+      'Start from my savings goal\'s amount';
+
+  @override
+  String get finEduCalcPrefillHint =>
+      'Only fills in the amount as a starting point — you can change it freely.';
+
+  @override
+  String get finEduCalcErrorRequired => 'Enter a value';
+
+  @override
+  String get finEduCalcErrorInvalidNumber => 'Enter a valid number';
+
+  @override
+  String get finEduCalcErrorWholeYears => 'Enter a whole number of years';
+
+  @override
+  String get finEduCalcErrorAmountPositive =>
+      'Enter an amount greater than zero';
+
+  @override
+  String get finEduCalcErrorRateNegative => 'The rate can\'t be negative';
+
+  @override
+  String get finEduCalcErrorRatePositive =>
+      'Enter a rate greater than zero — a doubling time isn\'t defined at 0%';
+
+  @override
+  String get finEduCalcErrorYearsPositive =>
+      'Enter a duration of at least 1 year';
+
+  @override
+  String get finEduCalcErrorIncomePositive =>
+      'Enter an income greater than zero';
+
+  @override
+  String get finEduCalcErrorSavingsNegative =>
+      'The amount saved can\'t be negative';
+
+  @override
+  String get finEduCalcErrorResultTooLarge =>
+      'These inputs produce a figure too large to show. Try a smaller amount, rate, or duration.';
+
+  @override
+  String get finEduCalcResultTitle => 'Result';
+
+  @override
+  String get finEduCalcResultFutureValue => 'Projected total';
+
+  @override
+  String get finEduCalcResultTotalContributed => 'Total contributed';
+
+  @override
+  String get finEduCalcResultTotalGrowth => 'Total growth';
+
+  @override
+  String get finEduCalcResultDoublingYears => 'Approximate doubling time';
+
+  @override
+  String get finEduCalcResultSavingsRate => 'Savings rate';
+
+  @override
+  String finEduCalcYearsValue(String years) {
+    return '$years years';
+  }
+
+  @override
+  String finEduCalcPercentValue(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get finEduCalcIllustrativeNote =>
+      'Illustrative only — assumes a constant rate; real returns vary and are not guaranteed';
+
+  @override
+  String get finEduCalcHighRateNote =>
+      'This rate is unusually high. The result is purely illustrative — sustained returns this high are rare.';
+
+  @override
+  String get finEduCalcRuleOf72Note =>
+      'An approximation using the rule of 72 (72 ÷ annual rate), not an exact figure.';
+
+  @override
+  String get finEduCalcSavingsAboveIncomeNote =>
+      'The amount saved is higher than the income entered, so the rate is above 100%.';
+
+  @override
+  String get finEduCalcSavingsRateNote =>
+      'Calculated only from the two figures you entered.';
+
+  @override
+  String get finEduTitle => 'Financial Education';
+
+  @override
+  String get finEduSettingsSectionTitle => 'Learn';
+
+  @override
+  String get finEduSettingsEntrySubtitle =>
+      'Articles and illustrative calculators';
+
+  @override
+  String get finEduDisclaimer =>
+      'For general educational purposes only. This is not personalized financial or investment advice.';
+
+  @override
+  String get finEduTopicsSectionTitle => 'Topics';
+
+  @override
+  String get finEduToolsSectionTitle => 'Calculators';
+
+  @override
+  String get finEduCompoundGrowthTileTitle => 'Compound growth';
+
+  @override
+  String get finEduCompoundGrowthTileSubtitle =>
+      'See how a regular monthly amount could grow over time';
+
+  @override
+  String get finEduDoublingTimeTileTitle => 'Doubling time';
+
+  @override
+  String get finEduDoublingTimeTileSubtitle =>
+      'Estimate how long money takes to double with the rule of 72';
+
+  @override
+  String get finEduSavingsRateTileTitle => 'Savings rate';
+
+  @override
+  String get finEduSavingsRateTileSubtitle =>
+      'Work out what share of income is being saved';
+
+  @override
+  String get finEduLoadErrorTitle => 'Couldn\'t load this content';
+
+  @override
+  String get finEduLoadErrorMessage =>
+      'Something went wrong while opening the bundled content. Please try again.';
+
+  @override
+  String get finEduRetry => 'Try again';
+
+  @override
+  String get finEduEmptyCategoryTitle => 'No articles yet';
+
+  @override
+  String get finEduEmptyCategoryMessage =>
+      'Articles for this topic will appear here.';
+
+  @override
   String get appTitle => 'Daftary';
 
   @override

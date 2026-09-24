@@ -1,0 +1,10 @@
+{
+  "id": "why_track_your_spending",
+  "categoryId": "budgeting_basics",
+  "title": "Why Track Your Spending",
+  "shortDescription": "Fixture article.",
+  "bodySections": [
+    {"paragraphs": ["Intro paragraph."]},
+    {"heading": "A heading", "paragraphs": ["First.", "Second."]}
+  ]
+}

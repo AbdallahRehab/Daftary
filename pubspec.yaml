@@ -85,6 +85,15 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # 016 Financial Education: bundled, offline, per-language content
+  # (research.md Decision 1). Directory entries are not recursive, so each
+  # `articles/` folder is listed explicitly.
+  assets:
+    - lib/features/financial_education/data/content/en/
+    - lib/features/financial_education/data/content/en/articles/
+    - lib/features/financial_education/data/content/ar/
+    - lib/features/financial_education/data/content/ar/articles/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

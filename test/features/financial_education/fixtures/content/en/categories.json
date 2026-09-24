@@ -1,0 +1,14 @@
+[
+  {
+    "id": "budgeting_basics",
+    "title": "Budgeting Basics",
+    "shortDescription": "Fixture category one.",
+    "articleIds": ["why_track_your_spending", "broken_article"]
+  },
+  {
+    "id": "saving_strategies",
+    "title": "Saving Strategies",
+    "shortDescription": "Fixture category two.",
+    "articleIds": []
+  }
+]

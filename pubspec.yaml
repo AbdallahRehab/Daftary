@@ -61,7 +61,7 @@ dependencies:
   # 009 OCR: on-device text recognition (Google ML Kit, Latin script model).
   # Runs entirely on-device with zero network calls (FR-019, research.md
   # Decision 1).
-  google_mlkit_text_recognition: ^0.15.0
+  google_mlkit_text_recognition: ^0.17.1
   # 009 OCR: native crop/rotate UI for the pre-OCR preparation step
   # (FR-002, research.md Decision 2).
   image_cropper: ^9.0.0

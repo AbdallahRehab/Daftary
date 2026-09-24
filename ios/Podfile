@@ -27,6 +27,15 @@ end
 
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
+# Google's ML Kit pods ship no arm64-simulator slice, and iOS 26+ simulators on
+# Apple Silicon no longer run x86_64 apps, so `flutter run` on a simulator fails
+# with "No Xcode build settings have been found". This google_mlkit_commons
+# helper relabels the arm64 slice per build and un-excludes arm64 for simulator.
+require File.expand_path(
+  '.symlinks/plugins/google_mlkit_commons/ios/scripts/apple_silicon_simulator',
+  __dir__,
+)
+
 flutter_ios_podfile_setup
 
 target 'Runner' do
@@ -42,4 +51,5 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
   end
+  mlkit_apple_silicon_simulator_patch(installer)
 end

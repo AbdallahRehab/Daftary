@@ -13,12 +13,14 @@ import 'package:daftary/features/people/presentation/pages/archived_people_page.
 import 'package:daftary/features/people/presentation/pages/people_list_page.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../helpers/stub_person_balances.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -86,11 +88,12 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    stubPersonBalancesFromSingle(transactionsRepository);
 
     getIt.registerFactory<PersonListCubit>(
       () => PersonListCubit(
         peopleRepository,
-        GetPersonBalance(transactionsRepository),
+        GetPersonBalances(transactionsRepository),
         ArchivePerson(peopleRepository),
         RestorePerson(peopleRepository),
       ),

@@ -806,4 +806,63 @@ void main() {
       expect(repayment.amount, const Money.fromMinorUnits(80, Currency.usd));
     });
   });
+
+  group('getPersonBalances (batched People-list read)', () {
+    test('matches getPersonBalance for every person: converted, blocked, '
+        'deleted rows, and no transactions at all', () async {
+      final repo = TransactionsRepositoryImpl(
+        TransactionsDao(db),
+        db,
+        getConversionContext: getConversionContextWith(
+          rates: [rate(Currency.usd, Currency.egp, 50)],
+        ),
+      );
+      final peopleDao = PeopleDao(db);
+      for (final id in ['p2', 'p3']) {
+        await peopleDao.insertPerson(
+          id: id,
+          name: 'Person $id',
+          createdAt: DateTime(2026),
+        );
+      }
+      Future<void> add(String key, String who, Money amount) async {
+        final result = await repo.addTransaction(
+          idempotencyKey: key,
+          personId: who,
+          amount: amount,
+          direction: TransactionDirection.given,
+          date: DateTime(2026, 1, 1),
+        );
+        expect(result.isRight(), isTrue);
+      }
+
+      // p1: EGP + convertible USD, plus a deleted row that must not count.
+      await add('k1', personId, const Money.egp(10000));
+      await add('k2', personId, const Money.fromMinorUnits(1000, Currency.usd));
+      await add('k3', personId, const Money.egp(99999));
+      final deleted = (await db.select(db.moneyTransactions).get()).firstWhere(
+        (row) => row.idempotencyKey == 'k3',
+      );
+      await repo.deleteTransaction(deleted.id);
+      // p2: SAR has no rate, so the balance is blocked.
+      await add('k4', 'p2', const Money.fromMinorUnits(500, Currency.sar));
+      // p3: no transactions.
+
+      final ids = [personId, 'p2', 'p3'];
+      final batched = (await repo.getPersonBalances(
+        ids,
+      )).getOrElse((_) => throw StateError('x'));
+
+      expect(batched.keys, ids);
+      for (final id in ids) {
+        final single = (await repo.getPersonBalance(
+          id,
+        )).getOrElse((_) => throw StateError('x'));
+        expect(batched[id], single, reason: id);
+      }
+      expect(batched[personId]!.net, const Money.egp(60000));
+      expect(batched['p2']!.isBlocked, isTrue);
+      expect(batched['p3']!.status, RelationshipStatus.settled);
+    });
+  });
 }

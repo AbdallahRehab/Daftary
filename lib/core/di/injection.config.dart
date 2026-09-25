@@ -233,6 +233,8 @@ import '../../features/transactions/domain/usecases/edit_transaction.dart'
 import '../../features/transactions/domain/usecases/get_overview.dart' as _i942;
 import '../../features/transactions/domain/usecases/get_person_balance.dart'
     as _i750;
+import '../../features/transactions/domain/usecases/get_person_balances.dart'
+    as _i313;
 import '../../features/transactions/domain/usecases/get_person_history.dart'
     as _i610;
 import '../../features/transactions/domain/usecases/record_repayment.dart'
@@ -501,6 +503,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i750.GetPersonBalance>(
       () => _i750.GetPersonBalance(gh<_i957.TransactionsRepository>()),
     );
+    gh.factory<_i313.GetPersonBalances>(
+      () => _i313.GetPersonBalances(gh<_i957.TransactionsRepository>()),
+    );
     gh.factory<_i610.GetPersonHistory>(
       () => _i610.GetPersonHistory(gh<_i957.TransactionsRepository>()),
     );
@@ -653,14 +658,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i162.NotificationPreferenceRepository>(),
       ),
     );
-    gh.factory<_i1018.PersonListCubit>(
-      () => _i1018.PersonListCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i750.GetPersonBalance>(),
-        gh<_i221.ArchivePerson>(),
-        gh<_i49.RestorePerson>(),
-      ),
-    );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
       (personId, _) => _i34.RepaymentFormCubit(
         gh<_i426.RecordRepayment>(),
@@ -684,6 +681,14 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1030.CategoryFormCubit(
         gh<_i24.CreateCategory>(),
         gh<_i611.EditCategory>(),
+      ),
+    );
+    gh.factory<_i1018.PersonListCubit>(
+      () => _i1018.PersonListCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i313.GetPersonBalances>(),
+        gh<_i221.ArchivePerson>(),
+        gh<_i49.RestorePerson>(),
       ),
     );
     gh.factory<_i505.FinanceEntryFormCubit>(

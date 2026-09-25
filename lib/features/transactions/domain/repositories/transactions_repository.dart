@@ -66,6 +66,15 @@ abstract class TransactionsRepository {
   /// currencies (FR-009) — never a 1:1 conversion.
   Future<Either<Failure, PersonBalance>> getPersonBalance(String personId);
 
+  /// [getPersonBalance] for many people in one read — one conversion
+  /// context and one grouped query instead of per-person queries — for
+  /// lists that show every row's balance at once. Each balance is computed
+  /// exactly as [getPersonBalance] computes it; every id in [personIds] is
+  /// present in the result (a person with no transactions is settled).
+  Future<Either<Failure, Map<String, PersonBalance>>> getPersonBalances(
+    List<String> personIds,
+  );
+
   /// Consolidated totals/groupings across all people, active and archived
   /// (FR-013, FR-014; Clarifications: archived people with a non-zero
   /// balance are included). 018: totals are in the primary currency and are

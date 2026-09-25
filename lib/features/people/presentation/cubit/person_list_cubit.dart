@@ -2,52 +2,68 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../transactions/domain/entities/person_balance.dart';
-import '../../../transactions/domain/usecases/get_person_balance.dart';
+import '../../../transactions/domain/usecases/get_person_balances.dart';
 import '../../domain/repositories/people_repository.dart';
 import '../../domain/usecases/archive_person.dart';
 import '../../domain/usecases/restore_person.dart';
 import 'person_list_state.dart';
 
 /// Loads active people and applies name + [RelationshipStatus] filters
-/// (FR-019), using [GetPersonBalance] per person to determine each one's
-/// status for both display and filtering.
+/// (FR-019), reading every listed person's balance in one batched
+/// [GetPersonBalances] call for display.
 @injectable
 class PersonListCubit extends Cubit<PersonListState> {
   PersonListCubit(
     this._peopleRepository,
-    this._getPersonBalance,
+    this._getPersonBalances,
     this._archivePerson,
     this._restorePerson,
   ) : super(const PersonListState());
 
   final PeopleRepository _peopleRepository;
-  final GetPersonBalance _getPersonBalance;
+  final GetPersonBalances _getPersonBalances;
+
+  /// Bumped by every [load]; a load whose number is no longer current was
+  /// superseded (a newer keystroke or filter) and must not emit its stale
+  /// results over the newer ones.
+  int _loadGeneration = 0;
   final ArchivePerson _archivePerson;
   final RestorePerson _restorePerson;
 
   Future<void> load() async {
+    final generation = ++_loadGeneration;
     emit(state.copyWith(status: PersonListStatus.loading));
 
     final result = await _peopleRepository.searchActivePeople(
       nameQuery: state.nameQuery.trim().isEmpty ? null : state.nameQuery,
       statusFilter: state.statusFilter,
     );
+    if (generation != _loadGeneration || isClosed) return;
 
     await result.match(
       (failure) async => emit(
         state.copyWith(status: PersonListStatus.failure, failure: failure),
       ),
       (people) async {
-        final items = <PersonListItem>[];
-        for (final person in people) {
-          final balanceResult = await _getPersonBalance(person.id);
-          balanceResult.match(
-            (_) {},
-            (balance) =>
-                items.add(PersonListItem(person: person, balance: balance)),
-          );
-        }
-        emit(state.copyWith(status: PersonListStatus.success, items: items));
+        final balancesResult = await _getPersonBalances([
+          for (final person in people) person.id,
+        ]);
+        if (generation != _loadGeneration || isClosed) return;
+        balancesResult.match(
+          (failure) => emit(
+            state.copyWith(status: PersonListStatus.failure, failure: failure),
+          ),
+          (balances) => emit(
+            state.copyWith(
+              status: PersonListStatus.success,
+              items: [
+                for (final person in people)
+                  if (balances[person.id] case final balance?)
+                    PersonListItem(person: person, balance: balance),
+              ],
+            ),
+          ),
+        );
       },
     );
   }

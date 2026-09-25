@@ -20,6 +20,7 @@ import 'package:daftary/features/transactions/domain/usecases/add_transaction.da
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/edit_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
 import 'package:daftary/features/transactions/domain/usecases/get_person_history.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
 import 'package:daftary/features/transactions/presentation/cubit/transaction_form_cubit.dart';
@@ -34,6 +35,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../features/transactions/helpers/currency_test_doubles.dart';
+
+import '../helpers/stub_person_balances.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -105,6 +108,7 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    stubPersonBalancesFromSingle(transactionsRepository);
     createPerson = MockCreatePerson();
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
@@ -130,7 +134,7 @@ void main() {
     getIt.registerFactory<PersonListCubit>(
       () => PersonListCubit(
         peopleRepository,
-        GetPersonBalance(transactionsRepository),
+        GetPersonBalances(transactionsRepository),
         ArchivePerson(peopleRepository),
         RestorePerson(peopleRepository),
       ),

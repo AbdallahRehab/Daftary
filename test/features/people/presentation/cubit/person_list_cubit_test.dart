@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
@@ -9,10 +11,12 @@ import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dar
 import 'package:daftary/features/people/presentation/cubit/person_list_state.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../../../../helpers/stub_person_balances.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -42,11 +46,12 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    stubPersonBalancesFromSingle(transactionsRepository);
   });
 
   PersonListCubit buildCubit() => PersonListCubit(
     peopleRepository,
-    GetPersonBalance(transactionsRepository),
+    GetPersonBalances(transactionsRepository),
     ArchivePerson(peopleRepository),
     RestorePerson(peopleRepository),
   );
@@ -370,6 +375,45 @@ void main() {
       verify(() => peopleRepository.restorePerson('p1')).called(1);
       expect(cubit.state.items.map((i) => i.person), [ahmed]);
       expect(cubit.state.lastArchived, isNull);
+    },
+  );
+
+  test(
+    'a superseded load never overwrites a newer one (fast typing)',
+    () async {
+      final slowSearch = Completer<Either<Failure, List<Person>>>();
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: 'A',
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) => slowSearch.future);
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: 'Ah',
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([ahmed]));
+      when(() => transactionsRepository.getPersonBalance(any())).thenAnswer(
+        (invocation) async => Right(
+          PersonBalance(
+            personId: invocation.positionalArguments.first as String,
+            net: const Money.egp(0),
+          ),
+        ),
+      );
+
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      cubit.nameQueryChanged('A');
+      cubit.nameQueryChanged('Ah');
+      await pumpEventQueue();
+      expect(cubit.state.items.map((i) => i.person), [ahmed]);
+
+      // The older "A" search finishes last, with a different result.
+      slowSearch.complete(Right([ahmed, sara]));
+      await pumpEventQueue();
+      expect(cubit.state.items.map((i) => i.person), [ahmed]);
     },
   );
 }

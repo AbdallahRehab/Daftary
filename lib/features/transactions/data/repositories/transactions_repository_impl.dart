@@ -233,6 +233,28 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   }
 
   @override
+  Future<Either<Failure, Map<String, PersonBalance>>> getPersonBalances(
+    List<String> personIds,
+  ) async {
+    final context = await _conversionContext();
+    return context.fold(left, (context) async {
+      try {
+        final nets = await _dao.netBalanceMinorUnitsByCurrencyForAllPeople();
+        return Right({
+          for (final personId in personIds)
+            personId: _calculator.calculate(
+              personId: personId,
+              nativeNetsByCode: nets[personId] ?? const {},
+              context: context,
+            ),
+        });
+      } catch (e) {
+        return Left(CacheFailure('Failed to compute balances: $e'));
+      }
+    });
+  }
+
+  @override
   Future<Either<Failure, OverviewSummary>> getOverview() async {
     final context = await _conversionContext();
     return context.fold(left, (context) async {

@@ -177,7 +177,7 @@ class _FinanceHistoryView extends StatelessWidget {
         content: Text(l10n.financeEntryDeletedMessage),
         duration: cubit.undoWindow,
         action: SnackBarAction(
-          label: l10n.financeUndoAction,
+          label: l10n.commonUndo,
           onPressed: () => cubit.undoDelete(entry.id),
         ),
       ),

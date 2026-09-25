@@ -187,7 +187,7 @@ class _TransactionFormView extends StatelessWidget {
                   ),
                   errorText: state.amountInvalid
                       ? l10n.amountInvalidError
-                      : state.amountErrorMessage,
+                      : null,
                   onChanged: cubit.amountChanged,
                 ),
                 const SizedBox(height: AppSpacing.md),

@@ -242,12 +242,6 @@ abstract class AppLocalizations {
   /// **'These inputs produce a figure too large to show. Try a smaller amount, rate, or duration.'**
   String get finEduCalcErrorResultTooLarge;
 
-  /// No description provided for @finEduCalcResultTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Result'**
-  String get finEduCalcResultTitle;
-
   /// No description provided for @finEduCalcResultFutureValue.
   ///
   /// In en, this message translates to:
@@ -458,18 +452,6 @@ abstract class AppLocalizations {
   /// **'Archive'**
   String get commonArchive;
 
-  /// No description provided for @commonRestore.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore'**
-  String get commonRestore;
-
-  /// No description provided for @commonConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm'**
-  String get commonConfirm;
-
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:
@@ -481,18 +463,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Undo'**
   String get commonUndo;
-
-  /// No description provided for @commonSearch.
-  ///
-  /// In en, this message translates to:
-  /// **'Search'**
-  String get commonSearch;
-
-  /// No description provided for @commonOk.
-  ///
-  /// In en, this message translates to:
-  /// **'OK'**
-  String get commonOk;
 
   /// No description provided for @errorLoadTitle.
   ///
@@ -1094,12 +1064,6 @@ abstract class AppLocalizations {
   /// **'Skip'**
   String get onboardingSkipAction;
 
-  /// No description provided for @financeTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Income & expenses'**
-  String get financeTitle;
-
   /// No description provided for @financeOverviewCardTitle.
   ///
   /// In en, this message translates to:
@@ -1411,12 +1375,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Entry deleted'**
   String get financeEntryDeletedMessage;
-
-  /// No description provided for @financeUndoAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Undo'**
-  String get financeUndoAction;
 
   /// No description provided for @financeCategoryRent.
   ///
@@ -1771,12 +1729,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Currency'**
   String get currencyFieldLabel;
-
-  /// No description provided for @currencyPickerTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose a currency'**
-  String get currencyPickerTitle;
 
   /// No description provided for @rateNeededTitle.
   ///

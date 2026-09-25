@@ -92,9 +92,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'These inputs produce a figure too large to show. Try a smaller amount, rate, or duration.';
 
   @override
-  String get finEduCalcResultTitle => 'Result';
-
-  @override
   String get finEduCalcResultFutureValue => 'Projected total';
 
   @override
@@ -216,22 +213,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonArchive => 'Archive';
 
   @override
-  String get commonRestore => 'Restore';
-
-  @override
-  String get commonConfirm => 'Confirm';
-
-  @override
   String get commonRetry => 'Try again';
 
   @override
   String get commonUndo => 'Undo';
-
-  @override
-  String get commonSearch => 'Search';
-
-  @override
-  String get commonOk => 'OK';
 
   @override
   String get errorLoadTitle => 'Couldn\'t load this';
@@ -565,9 +550,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingSkipAction => 'Skip';
 
   @override
-  String get financeTitle => 'Income & expenses';
-
-  @override
   String get financeOverviewCardTitle => 'This month';
 
   @override
@@ -732,9 +714,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get financeEntryDeletedMessage => 'Entry deleted';
-
-  @override
-  String get financeUndoAction => 'Undo';
 
   @override
   String get financeCategoryRent => 'Rent';
@@ -958,9 +937,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyFieldLabel => 'Currency';
-
-  @override
-  String get currencyPickerTitle => 'Choose a currency';
 
   @override
   String get rateNeededTitle => 'Total unavailable — exchange rate needed';

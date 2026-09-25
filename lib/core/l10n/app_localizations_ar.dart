@@ -88,9 +88,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'هذه المدخلات تنتج رقمًا أكبر من أن يُعرض. جرّب مبلغًا أو معدلًا أو مدة أصغر.';
 
   @override
-  String get finEduCalcResultTitle => 'النتيجة';
-
-  @override
   String get finEduCalcResultFutureValue => 'الإجمالي المتوقع';
 
   @override
@@ -210,22 +207,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonArchive => 'أرشفة';
 
   @override
-  String get commonRestore => 'استعادة';
-
-  @override
-  String get commonConfirm => 'تأكيد';
-
-  @override
   String get commonRetry => 'حاول مرة أخرى';
 
   @override
   String get commonUndo => 'تراجع';
-
-  @override
-  String get commonSearch => 'بحث';
-
-  @override
-  String get commonOk => 'حسنًا';
 
   @override
   String get errorLoadTitle => 'تعذّر تحميل المحتوى';
@@ -558,9 +543,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboardingSkipAction => 'تخطي';
 
   @override
-  String get financeTitle => 'الدخل والمصروفات';
-
-  @override
   String get financeOverviewCardTitle => 'هذا الشهر';
 
   @override
@@ -723,9 +705,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get financeEntryDeletedMessage => 'تم حذف السجل';
-
-  @override
-  String get financeUndoAction => 'تراجع';
 
   @override
   String get financeCategoryRent => 'الإيجار';
@@ -954,9 +933,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get currencyFieldLabel => 'العملة';
-
-  @override
-  String get currencyPickerTitle => 'اختر العملة';
 
   @override
   String get rateNeededTitle => 'الإجمالي غير متاح — يلزم سعر صرف';

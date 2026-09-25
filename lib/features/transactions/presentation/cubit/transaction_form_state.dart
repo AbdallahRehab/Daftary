@@ -27,7 +27,6 @@ class TransactionFormState extends Equatable {
     this.currency = Currency.egp,
     this.currencyChosenByUser = false,
     this.note,
-    this.amountErrorMessage,
     this.amountInvalid = false,
     this.personFailure,
     this.personSelectionRequired = false,
@@ -69,10 +68,6 @@ class TransactionFormState extends Equatable {
   final bool currencyChosenByUser;
   final String? note;
 
-  /// Set by a repository call (e.g. a search failure); already carries the
-  /// repository's own message text.
-  final String? amountErrorMessage;
-
   /// Set by this cubit's own client-side "amount must be > 0" check
   /// (FR-005) — a flag rather than a message so the page can render it via
   /// `l10n.amountInvalidError` regardless of locale (T105).
@@ -103,7 +98,6 @@ class TransactionFormState extends Equatable {
     Currency? currency,
     bool? currencyChosenByUser,
     String? note,
-    String? amountErrorMessage,
     bool? amountInvalid,
     bool clearAmountError = false,
     Failure? personFailure,
@@ -134,9 +128,6 @@ class TransactionFormState extends Equatable {
       currency: currency ?? this.currency,
       currencyChosenByUser: currencyChosenByUser ?? this.currencyChosenByUser,
       note: note ?? this.note,
-      amountErrorMessage: clearAmountError
-          ? null
-          : (amountErrorMessage ?? this.amountErrorMessage),
       amountInvalid: clearAmountError
           ? false
           : (amountInvalid ?? this.amountInvalid),
@@ -169,7 +160,6 @@ class TransactionFormState extends Equatable {
     currency,
     currencyChosenByUser,
     note,
-    amountErrorMessage,
     amountInvalid,
     personFailure,
     personSelectionRequired,

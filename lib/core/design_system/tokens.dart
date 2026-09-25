@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 
 /// Seed values only (constitution Principle XV): the two themes' seed
@@ -11,12 +12,6 @@ class AppColors {
   const AppColors._();
 
   static const Color primary = Color(0xFF1F6F5C);
-  static const Color primaryVariant = Color(0xFF15493D);
-  static const Color background = Color(0xFFF7F7F5);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color onSurface = Color(0xFF1B1B1B);
-  static const Color onSurfaceMuted = Color(0xFF6B6B6B);
-  static const Color divider = Color(0xFFE3E3E0);
 
   // Light-mode status foregrounds are tuned to clear WCAG AA (≥4.8:1) as
   // text on the scheme's `surface`, on their own `*Surface` tint, and as an
@@ -308,6 +303,14 @@ ThemeData _buildTheme({
     useMaterial3: true,
     colorScheme: colorScheme,
     textTheme: _textThemeFor(base.textTheme),
+    // Android pages follow the system predictive Back gesture (the previous
+    // page peeks in as the user swipes); iOS keeps its native transition.
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
     scaffoldBackgroundColor: colorScheme.surface,
     dividerColor: colorScheme.outlineVariant,
     appBarTheme: AppBarTheme(

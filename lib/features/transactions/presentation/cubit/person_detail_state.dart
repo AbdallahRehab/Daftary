@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
 
 import '../../../people/domain/entities/person.dart';
@@ -16,7 +17,7 @@ class PersonDetailState extends Equatable {
     this.balance,
     this.history = const [],
     this.primaryCurrency = Currency.egp,
-    this.errorMessage,
+    this.failure,
   });
 
   final PersonDetailStatus status;
@@ -29,7 +30,7 @@ class PersonDetailState extends Equatable {
   /// The current primary currency (018): history rows in any other
   /// currency show a `CurrencyIndicatorChip` (FR-010).
   final Currency primaryCurrency;
-  final String? errorMessage;
+  final Failure? failure;
 
   bool get isLoading => status == PersonDetailStatus.loading;
 
@@ -39,7 +40,7 @@ class PersonDetailState extends Equatable {
     PersonBalance? balance,
     List<MoneyTransaction>? history,
     Currency? primaryCurrency,
-    String? errorMessage,
+    Failure? failure,
   }) {
     return PersonDetailState(
       status: status ?? this.status,
@@ -47,7 +48,7 @@ class PersonDetailState extends Equatable {
       balance: balance ?? this.balance,
       history: history ?? this.history,
       primaryCurrency: primaryCurrency ?? this.primaryCurrency,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
@@ -58,6 +59,6 @@ class PersonDetailState extends Equatable {
     balance,
     history,
     primaryCurrency,
-    errorMessage,
+    failure,
   ];
 }

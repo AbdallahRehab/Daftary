@@ -8,6 +8,7 @@ import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../../transactions/presentation/widgets/duplicate_warning_sheet.dart';
 import '../../domain/entities/person.dart';
 import '../cubit/person_form_cubit.dart';
@@ -118,9 +119,7 @@ class _PersonFormView extends StatelessWidget {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  SnackBar(
-                    content: Text(state.errorMessage ?? l10n.errorUnknown),
-                  ),
+                  SnackBar(content: Text(l10n.messageFor(state.failure))),
                 );
             case PersonFormStatus.idle:
             case PersonFormStatus.submitting:

@@ -10,6 +10,7 @@ import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../cubit/transaction_form_cubit.dart';
@@ -106,9 +107,7 @@ class _TransactionFormView extends StatelessWidget {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? l10n.errorUnknown),
-                ),
+                SnackBar(content: Text(l10n.messageFor(state.failure))),
               );
           }
         },
@@ -125,8 +124,10 @@ class _TransactionFormView extends StatelessWidget {
                     results: state.personSearchResults,
                     selectedPerson: state.selectedPerson,
                     errorText: state.personSelectionRequired
-                        ? l10n.errorValidation
-                        : state.personErrorMessage,
+                        ? l10n.personRequiredError
+                        : state.personFailure == null
+                        ? null
+                        : l10n.messageFor(state.personFailure),
                     onQueryChanged: cubit.onPersonQueryChanged,
                     onPersonSelected: cubit.selectExistingPerson,
                     onCreateNew: cubit.createNewPerson,

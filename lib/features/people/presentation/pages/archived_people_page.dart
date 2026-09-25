@@ -7,6 +7,7 @@ import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../cubit/archived_people_cubit.dart';
 import '../cubit/archived_people_state.dart';
 import '../widgets/relationship_tag_chip.dart';
@@ -53,8 +54,8 @@ class _ArchivedPeopleView extends StatelessWidget {
                 if (state.status == ArchivedPeopleStatus.failure) {
                   return AppEmptyView(
                     icon: Icons.error_outline,
-                    title: l10n.commonError,
-                    message: state.errorMessage ?? l10n.errorUnknown,
+                    title: l10n.errorLoadTitle,
+                    message: l10n.messageFor(state.failure),
                     actionLabel: l10n.commonRetry,
                     onAction: () => context.read<ArchivedPeopleCubit>().load(),
                   );

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/person.dart';
 
 enum PersonFormStatus {
@@ -25,7 +26,7 @@ class PersonFormState extends Equatable {
     this.relationshipTag,
     this.notes,
     this.nameInvalid = false,
-    this.errorMessage,
+    this.failure,
     this.duplicateMatches = const [],
     this.savedPerson,
   });
@@ -42,7 +43,7 @@ class PersonFormState extends Equatable {
   /// a flag rather than a message so the page can render it via
   /// `l10n.nameRequiredError` regardless of locale (T105).
   final bool nameInvalid;
-  final String? errorMessage;
+  final Failure? failure;
   final List<Person> duplicateMatches;
   final Person? savedPerson;
 
@@ -58,8 +59,8 @@ class PersonFormState extends Equatable {
     String? notes,
     bool? nameInvalid,
     bool clearNameError = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
     List<Person>? duplicateMatches,
     Person? savedPerson,
   }) {
@@ -72,9 +73,7 @@ class PersonFormState extends Equatable {
       relationshipTag: relationshipTag ?? this.relationshipTag,
       notes: notes ?? this.notes,
       nameInvalid: clearNameError ? false : (nameInvalid ?? this.nameInvalid),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
       duplicateMatches: duplicateMatches ?? this.duplicateMatches,
       savedPerson: savedPerson ?? this.savedPerson,
     );
@@ -90,7 +89,7 @@ class PersonFormState extends Equatable {
     relationshipTag,
     notes,
     nameInvalid,
-    errorMessage,
+    failure,
     duplicateMatches,
     savedPerson,
   ];

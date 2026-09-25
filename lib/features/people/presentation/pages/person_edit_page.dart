@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../domain/repositories/people_repository.dart';
 import 'person_form_page.dart';
 
@@ -28,8 +29,8 @@ class PersonEditPage extends StatelessWidget {
           (failure) => Scaffold(
             body: AppEmptyView(
               icon: Icons.error_outline,
-              title: l10n.commonError,
-              message: failure.message,
+              title: l10n.errorLoadTitle,
+              message: l10n.messageFor(failure),
             ),
           ),
           (person) => PersonFormPage(editingPerson: person),

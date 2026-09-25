@@ -102,7 +102,7 @@ void main() {
     },
   );
 
-  testWidgets('selecting System Default invokes '
+  testWidgets('selecting System default invokes '
       'SettingsCubit.changeThemeMode(AppThemeMode.system)', (tester) async {
     when(
       () => cubit.state,
@@ -110,7 +110,7 @@ void main() {
     await tester.pumpWidget(wrap());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('System Default'));
+    await tester.tap(find.text('System default'));
     await tester.pumpAndSettle();
 
     verify(() => cubit.changeThemeMode(AppThemeMode.system)).called(1);

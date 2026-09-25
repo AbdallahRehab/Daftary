@@ -7,6 +7,7 @@ import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry.dart';
 import '../../domain/entities/finance_entry_type.dart';
@@ -72,8 +73,8 @@ class _FinanceHistoryView extends StatelessWidget {
           if (state.isFailure) {
             return AppEmptyView(
               icon: Icons.error_outline,
-              title: l10n.commonError,
-              message: state.errorMessage ?? l10n.errorUnknown,
+              title: l10n.errorLoadTitle,
+              message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
               onAction: () => context.read<FinanceHistoryCubit>().load(),
             );

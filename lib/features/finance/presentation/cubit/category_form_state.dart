@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry_type.dart';
 
@@ -19,7 +20,7 @@ class CategoryFormState extends Equatable {
     this.nameInvalid = false,
     this.iconInvalid = false,
     this.typeInvalid = false,
-    this.errorMessage,
+    this.failure,
     this.duplicateExisting,
     this.savedCategory,
   });
@@ -43,7 +44,7 @@ class CategoryFormState extends Equatable {
   final bool iconInvalid;
   final bool typeInvalid;
 
-  final String? errorMessage;
+  final Failure? failure;
 
   /// The active category whose name collided (FR-008). Present so the page
   /// can name it — "you already have X" beats "that name is taken".
@@ -64,8 +65,8 @@ class CategoryFormState extends Equatable {
     bool? iconInvalid,
     bool? typeInvalid,
     bool clearValidationErrors = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
     Category? duplicateExisting,
     bool clearDuplicateExisting = false,
     Category? savedCategory,
@@ -86,9 +87,7 @@ class CategoryFormState extends Equatable {
       typeInvalid: clearValidationErrors
           ? false
           : (typeInvalid ?? this.typeInvalid),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
       duplicateExisting: clearDuplicateExisting
           ? null
           : (duplicateExisting ?? this.duplicateExisting),
@@ -107,7 +106,7 @@ class CategoryFormState extends Equatable {
     nameInvalid,
     iconInvalid,
     typeInvalid,
-    errorMessage,
+    failure,
     duplicateExisting,
     savedCategory,
   ];

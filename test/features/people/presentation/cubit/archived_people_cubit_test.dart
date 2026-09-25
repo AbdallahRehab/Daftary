@@ -115,7 +115,11 @@ void main() {
         'p1',
       ),
       isA<ArchivedPeopleState>()
-          .having((s) => s.errorMessage, 'errorMessage', 'DB unavailable')
+          .having(
+            (s) => s.failure,
+            'failure',
+            const CacheFailure('DB unavailable'),
+          )
           .having((s) => s.processingPersonId, 'processingPersonId', isNull)
           .having((s) => s.people, 'people', [ahmed]),
     ],

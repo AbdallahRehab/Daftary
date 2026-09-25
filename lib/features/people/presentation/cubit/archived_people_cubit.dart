@@ -24,10 +24,7 @@ class ArchivedPeopleCubit extends Cubit<ArchivedPeopleState> {
 
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: ArchivedPeopleStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: ArchivedPeopleStatus.failure, failure: failure),
       ),
       (people) => emit(
         state.copyWith(status: ArchivedPeopleStatus.success, people: people),
@@ -51,12 +48,7 @@ class ArchivedPeopleCubit extends Cubit<ArchivedPeopleState> {
     final result = await _restorePerson(personId);
     return result.match(
       (failure) {
-        emit(
-          state.copyWith(
-            errorMessage: failure.message,
-            clearProcessingPersonId: true,
-          ),
-        );
+        emit(state.copyWith(failure: failure, clearProcessingPersonId: true));
         return false;
       },
       (_) {

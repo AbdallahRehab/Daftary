@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
 
 import '../../domain/entities/category.dart';
@@ -27,7 +28,7 @@ class FinanceEntryFormState extends Equatable {
     this.note,
     this.amountInvalid = false,
     this.categorySelectionRequired = false,
-    this.errorMessage,
+    this.failure,
     this.savedEntry,
   }) : date = date ?? DateTime.now();
 
@@ -69,7 +70,7 @@ class FinanceEntryFormState extends Equatable {
   /// Set by this cubit's own client-side "a category must be selected"
   /// check (FR-003) — same localization rationale as [amountInvalid].
   final bool categorySelectionRequired;
-  final String? errorMessage;
+  final Failure? failure;
   final FinanceEntry? savedEntry;
 
   bool get isSubmitting => status == FinanceEntryFormStatus.submitting;
@@ -99,8 +100,8 @@ class FinanceEntryFormState extends Equatable {
     bool clearAmountError = false,
     bool? categorySelectionRequired,
     bool clearCategoryError = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
     FinanceEntry? savedEntry,
   }) {
     return FinanceEntryFormState(
@@ -125,9 +126,7 @@ class FinanceEntryFormState extends Equatable {
       categorySelectionRequired: clearCategoryError
           ? false
           : (categorySelectionRequired ?? this.categorySelectionRequired),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
       savedEntry: savedEntry ?? this.savedEntry,
     );
   }
@@ -149,7 +148,7 @@ class FinanceEntryFormState extends Equatable {
     note,
     amountInvalid,
     categorySelectionRequired,
-    errorMessage,
+    failure,
     savedEntry,
   ];
 }

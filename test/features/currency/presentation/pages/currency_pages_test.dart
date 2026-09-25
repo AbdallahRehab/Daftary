@@ -274,7 +274,7 @@ void main() {
         ),
       );
 
-      expect(find.text('1 USD equals (EGP)'), findsOneWidget);
+      expect(find.text('Value of 1 USD in EGP'), findsOneWidget);
       await tester.enterText(
         find.byKey(ExchangeRateFormView.rateFieldKey),
         '50.25',

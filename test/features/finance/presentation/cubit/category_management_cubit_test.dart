@@ -106,7 +106,11 @@ void main() {
     expect: () => [
       isA<CategoryManagementState>()
           .having((s) => s.status, 'status', CategoryManagementStatus.failure)
-          .having((s) => s.errorMessage, 'errorMessage', 'db unavailable'),
+          .having(
+            (s) => s.failure,
+            'failure',
+            const CacheFailure('db unavailable'),
+          ),
     ],
   );
 
@@ -217,7 +221,7 @@ void main() {
       await cubit.removeCategory('seed_groceries');
     },
     verify: (cubit) {
-      expect(cubit.state.errorMessage, 'remove failed');
+      expect(cubit.state.failure, const CacheFailure('remove failed'));
       expect(cubit.state.active, [groceries, rent]);
       expect(cubit.state.processingCategoryId, equals(null));
     },

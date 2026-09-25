@@ -235,7 +235,11 @@ void main() {
         'p1',
       ),
       isA<PersonListState>()
-          .having((s) => s.errorMessage, 'errorMessage', 'DB unavailable')
+          .having(
+            (s) => s.failure,
+            'failure',
+            const CacheFailure('DB unavailable'),
+          )
           .having((s) => s.processingPersonId, 'processingPersonId', isNull),
     ],
     verify: (_) {

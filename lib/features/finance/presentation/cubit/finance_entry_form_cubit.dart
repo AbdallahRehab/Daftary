@@ -42,11 +42,7 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
   /// active categories. Call once, right after construction.
   Future<void> initialize({required FinanceEntryType type}) async {
     emit(
-      state.copyWith(
-        type: type,
-        isLoadingCategories: true,
-        clearErrorMessage: true,
-      ),
+      state.copyWith(type: type, isLoadingCategories: true, clearFailure: true),
     );
     await _loadPrimaryCurrency();
     await _loadCategories(type);
@@ -151,7 +147,7 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
     emit(
       state.copyWith(
         status: FinanceEntryFormStatus.submitting,
-        clearErrorMessage: true,
+        clearFailure: true,
       ),
     );
 
@@ -182,7 +178,7 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
       (failure) => emit(
         state.copyWith(
           status: FinanceEntryFormStatus.failure,
-          errorMessage: failure.message,
+          failure: failure,
         ),
       ),
       (entry) => emit(
@@ -214,12 +210,8 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
     final result = await _getCategories(type: type);
     if (isClosed) return;
     result.match(
-      (failure) => emit(
-        state.copyWith(
-          isLoadingCategories: false,
-          errorMessage: failure.message,
-        ),
-      ),
+      (failure) =>
+          emit(state.copyWith(isLoadingCategories: false, failure: failure)),
       (categories) {
         final selectable = [...categories];
         if (alwaysSelectable != null &&

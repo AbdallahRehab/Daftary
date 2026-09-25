@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
@@ -28,9 +29,9 @@ class TransactionFormState extends Equatable {
     this.note,
     this.amountErrorMessage,
     this.amountInvalid = false,
-    this.personErrorMessage,
+    this.personFailure,
     this.personSelectionRequired = false,
-    this.errorMessage,
+    this.failure,
     this.savedTransaction,
   }) : date = date ?? DateTime.now();
 
@@ -76,12 +77,12 @@ class TransactionFormState extends Equatable {
   /// (FR-005) — a flag rather than a message so the page can render it via
   /// `l10n.amountInvalidError` regardless of locale (T105).
   final bool amountInvalid;
-  final String? personErrorMessage;
+  final Failure? personFailure;
 
   /// Set by this cubit's own client-side "a person must be selected" check
   /// — same localization rationale as [amountInvalid].
   final bool personSelectionRequired;
-  final String? errorMessage;
+  final Failure? failure;
   final MoneyTransaction? savedTransaction;
 
   bool get isSubmitting => status == TransactionFormStatus.submitting;
@@ -105,11 +106,11 @@ class TransactionFormState extends Equatable {
     String? amountErrorMessage,
     bool? amountInvalid,
     bool clearAmountError = false,
-    String? personErrorMessage,
+    Failure? personFailure,
     bool? personSelectionRequired,
     bool clearPersonError = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
     MoneyTransaction? savedTransaction,
   }) {
     return TransactionFormState(
@@ -139,15 +140,13 @@ class TransactionFormState extends Equatable {
       amountInvalid: clearAmountError
           ? false
           : (amountInvalid ?? this.amountInvalid),
-      personErrorMessage: clearPersonError
+      personFailure: clearPersonError
           ? null
-          : (personErrorMessage ?? this.personErrorMessage),
+          : (personFailure ?? this.personFailure),
       personSelectionRequired: clearPersonError
           ? false
           : (personSelectionRequired ?? this.personSelectionRequired),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
       savedTransaction: savedTransaction ?? this.savedTransaction,
     );
   }
@@ -172,9 +171,9 @@ class TransactionFormState extends Equatable {
     note,
     amountErrorMessage,
     amountInvalid,
-    personErrorMessage,
+    personFailure,
     personSelectionRequired,
-    errorMessage,
+    failure,
     savedTransaction,
   ];
 }

@@ -65,7 +65,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   Future<void> initializeWithPerson(String personId) async {
     final result = await _peopleRepository.getPersonById(personId);
     result.match(
-      (failure) => emit(state.copyWith(personErrorMessage: failure.message)),
+      (failure) => emit(state.copyWith(personFailure: failure)),
       selectExistingPerson,
     );
   }
@@ -106,7 +106,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     }
     final result = await _peopleRepository.searchActivePeople(nameQuery: query);
     result.match(
-      (failure) => emit(state.copyWith(personErrorMessage: failure.message)),
+      (failure) => emit(state.copyWith(personFailure: failure)),
       (people) => emit(state.copyWith(personSearchResults: people)),
     );
   }
@@ -138,7 +138,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
           ),
         );
       } else {
-        emit(state.copyWith(personErrorMessage: failure.message));
+        emit(state.copyWith(personFailure: failure));
       }
     }, selectExistingPerson);
   }
@@ -158,18 +158,17 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     final result = await _peopleRepository.confirmCreateDespiteDuplicate(
       name: name,
     );
-    result.match(
-      (failure) => emit(state.copyWith(personErrorMessage: failure.message)),
-      (person) {
-        selectExistingPerson(person);
-        emit(
-          state.copyWith(
-            duplicateMatches: const [],
-            clearPendingPersonName: true,
-          ),
-        );
-      },
-    );
+    result.match((failure) => emit(state.copyWith(personFailure: failure)), (
+      person,
+    ) {
+      selectExistingPerson(person);
+      emit(
+        state.copyWith(
+          duplicateMatches: const [],
+          clearPendingPersonName: true,
+        ),
+      );
+    });
   }
 
   void dismissDuplicateWarning() {
@@ -224,7 +223,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     emit(
       state.copyWith(
         status: TransactionFormStatus.submitting,
-        clearErrorMessage: true,
+        clearFailure: true,
       ),
     );
 
@@ -254,10 +253,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
 
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: TransactionFormStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: TransactionFormStatus.failure, failure: failure),
       ),
       (transaction) => emit(
         state.copyWith(

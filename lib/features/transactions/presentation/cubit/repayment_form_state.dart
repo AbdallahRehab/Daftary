@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
 
 enum RepaymentFormStatus { editing, submitting, success, failure }
@@ -16,7 +17,7 @@ class RepaymentFormState extends Equatable {
     this.currencyChosenByUser = false,
     this.note,
     this.amountInvalid = false,
-    this.errorMessage,
+    this.failure,
   }) : date = date ?? DateTime.now();
 
   final String personId;
@@ -37,7 +38,7 @@ class RepaymentFormState extends Equatable {
   /// flag rather than a message so the page can render it via
   /// `l10n.amountInvalidError` regardless of locale (T105).
   final bool amountInvalid;
-  final String? errorMessage;
+  final Failure? failure;
 
   bool get isSubmitting => status == RepaymentFormStatus.submitting;
 
@@ -50,8 +51,8 @@ class RepaymentFormState extends Equatable {
     String? note,
     bool? amountInvalid,
     bool clearAmountError = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
   }) {
     return RepaymentFormState(
       personId: personId,
@@ -65,9 +66,7 @@ class RepaymentFormState extends Equatable {
       amountInvalid: clearAmountError
           ? false
           : (amountInvalid ?? this.amountInvalid),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
     );
   }
 
@@ -82,6 +81,6 @@ class RepaymentFormState extends Equatable {
     currencyChosenByUser,
     note,
     amountInvalid,
-    errorMessage,
+    failure,
   ];
 }

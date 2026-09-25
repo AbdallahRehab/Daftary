@@ -7,6 +7,7 @@ import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../finance/presentation/widgets/finance_month_summary_card.dart';
@@ -46,8 +47,8 @@ class _OverviewView extends StatelessWidget {
           if (state.status == OverviewStatus.failure || state.summary == null) {
             return AppEmptyView(
               icon: Icons.error_outline,
-              title: l10n.commonError,
-              message: state.errorMessage ?? l10n.errorUnknown,
+              title: l10n.errorLoadTitle,
+              message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
               onAction: () => context.read<OverviewCubit>().load(),
             );

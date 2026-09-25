@@ -382,7 +382,7 @@ void main() {
     act: (cubit) => cubit.load(),
     verify: (cubit) {
       expect(cubit.state.isFailure, isTrue);
-      expect(cubit.state.errorMessage, 'db is unhappy');
+      expect(cubit.state.failure, const CacheFailure('db is unhappy'));
     },
   );
 

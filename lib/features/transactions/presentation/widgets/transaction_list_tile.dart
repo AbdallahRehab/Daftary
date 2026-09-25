@@ -108,6 +108,7 @@ class TransactionListTile extends StatelessWidget {
           if (onDelete != null)
             IconButton(
               icon: const Icon(Icons.delete_outline),
+              tooltip: l10n.deleteTransactionTooltip,
               onPressed: onDelete,
             ),
         ],

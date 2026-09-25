@@ -18,10 +18,7 @@ class OverviewCubit extends Cubit<OverviewState> {
     final result = await _getOverview();
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: OverviewStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: OverviewStatus.failure, failure: failure),
       ),
       (summary) => emit(
         state.copyWith(status: OverviewStatus.success, summary: summary),

@@ -40,7 +40,7 @@ class TransactionEditPage extends StatelessWidget {
       return Scaffold(
         body: AppEmptyView(
           icon: Icons.error_outline,
-          title: l10n.commonError,
+          title: l10n.errorLoadTitle,
           message: l10n.errorNotFound,
         ),
       );

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/overview_summary.dart';
 
 enum OverviewStatus { loading, success, failure }
@@ -9,12 +10,12 @@ class OverviewState extends Equatable {
   const OverviewState({
     this.status = OverviewStatus.loading,
     this.summary,
-    this.errorMessage,
+    this.failure,
   });
 
   final OverviewStatus status;
   final OverviewSummary? summary;
-  final String? errorMessage;
+  final Failure? failure;
 
   bool get isLoading => status == OverviewStatus.loading;
 
@@ -26,15 +27,15 @@ class OverviewState extends Equatable {
   OverviewState copyWith({
     OverviewStatus? status,
     OverviewSummary? summary,
-    String? errorMessage,
+    Failure? failure,
   }) {
     return OverviewState(
       status: status ?? this.status,
       summary: summary ?? this.summary,
-      errorMessage: errorMessage,
+      failure: failure,
     );
   }
 
   @override
-  List<Object?> get props => [status, summary, errorMessage];
+  List<Object?> get props => [status, summary, failure];
 }

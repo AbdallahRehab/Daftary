@@ -56,7 +56,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
       emit(
         state.copyWith(
           status: PersonDetailStatus.failure,
-          errorMessage: failure.match((l) => l.message, (_) => null),
+          failure: failure.match((l) => l, (_) => null),
         ),
       );
       return;
@@ -93,8 +93,8 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     await result.match(
       // Deliberately keeps `status` as-is (rather than `failure`) so the
       // already-loaded balance/history stay visible; the page surfaces
-      // `errorMessage` via a transient snackbar instead of a full-page error.
-      (failure) async => emit(state.copyWith(errorMessage: failure.message)),
+      // `failure` via a transient snackbar instead of a full-page error.
+      (failure) async => emit(state.copyWith(failure: failure)),
       (_) => refresh(),
     );
   }

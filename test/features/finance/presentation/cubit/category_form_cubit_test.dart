@@ -202,7 +202,7 @@ void main() {
       },
       verify: (cubit) {
         expect(cubit.state.status, CategoryFormStatus.failure);
-        expect(cubit.state.errorMessage, 'write failed');
+        expect(cubit.state.failure, const CacheFailure('write failed'));
       },
     );
   });
@@ -283,10 +283,14 @@ void main() {
       'loadFailed() reports an unresolvable category instead of silently '
       'showing a blank create form',
       build: buildCubit,
-      act: (cubit) => cubit.loadFailed('Category not found'),
+      act: (cubit) =>
+          cubit.loadFailed(const NotFoundFailure('Category not found')),
       verify: (cubit) {
         expect(cubit.state.status, CategoryFormStatus.failure);
-        expect(cubit.state.errorMessage, 'Category not found');
+        expect(
+          cubit.state.failure,
+          const NotFoundFailure('Category not found'),
+        );
       },
     );
   });

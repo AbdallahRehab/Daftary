@@ -48,10 +48,10 @@ OnboardingContent onboardingContentFor(
       description: l10n.onboardingScanningRecordsDescription,
       icon: Icons.history_outlined,
     ),
-    OnboardingTopic.aiAssistant => OnboardingContent(
-      title: l10n.onboardingAiAssistantTitle,
-      description: l10n.onboardingAiAssistantDescription,
-      icon: Icons.auto_awesome_outlined,
+    OnboardingTopic.incomeExpense => OnboardingContent(
+      title: l10n.onboardingIncomeExpenseTitle,
+      description: l10n.onboardingIncomeExpenseDescription,
+      icon: Icons.account_balance_wallet_outlined,
     ),
   };
 }

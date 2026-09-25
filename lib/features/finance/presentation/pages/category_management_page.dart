@@ -8,6 +8,7 @@ import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../cubit/category_management_cubit.dart';
@@ -53,8 +54,8 @@ class _CategoryManagementView extends StatelessWidget {
           ),
       body: BlocConsumer<CategoryManagementCubit, CategoryManagementState>(
         listenWhen: (previous, current) =>
-            previous.errorMessage != current.errorMessage &&
-            current.errorMessage != null &&
+            previous.failure != current.failure &&
+            current.failure != null &&
             current.status != CategoryManagementStatus.failure,
         listener: (context, state) {
           // A removal that failed leaves the list intact, so it is reported
@@ -66,7 +67,7 @@ class _CategoryManagementView extends StatelessWidget {
               SnackBar(
                 content: Text(
                   duplicate == null
-                      ? (state.errorMessage ?? l10n.commonError)
+                      ? l10n.messageFor(state.failure)
                       : l10n.financeCategoryDuplicateError(
                           categoryDisplayName(l10n, duplicate),
                         ),
@@ -133,8 +134,8 @@ class _Body extends StatelessWidget {
     if (state.status == CategoryManagementStatus.failure) {
       return AppEmptyView(
         icon: Icons.error_outline,
-        title: l10n.commonError,
-        message: state.errorMessage ?? l10n.commonError,
+        title: l10n.errorLoadTitle,
+        message: l10n.messageFor(state.failure),
         actionLabel: l10n.commonRetry,
         onAction: () => context.read<CategoryManagementCubit>().load(),
       );

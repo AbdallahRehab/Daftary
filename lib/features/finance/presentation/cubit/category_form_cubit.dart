@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_failures.dart';
@@ -45,8 +46,8 @@ class CategoryFormCubit extends Cubit<CategoryFormState> {
   /// The category an edit-mode page was opened for could not be resolved
   /// (deleted under a stale deep link, say). Surfaced as a form failure
   /// rather than silently leaving an empty create-looking form.
-  void loadFailed(String message) => emit(
-    state.copyWith(status: CategoryFormStatus.failure, errorMessage: message),
+  void loadFailed(Failure failure) => emit(
+    state.copyWith(status: CategoryFormStatus.failure, failure: failure),
   );
 
   void nameChanged(String name) => emit(
@@ -54,7 +55,7 @@ class CategoryFormCubit extends Cubit<CategoryFormState> {
       name: name,
       nameInvalid: false,
       clearDuplicateExisting: true,
-      clearErrorMessage: true,
+      clearFailure: true,
     ),
   );
 
@@ -94,7 +95,7 @@ class CategoryFormCubit extends Cubit<CategoryFormState> {
     emit(
       state.copyWith(
         status: CategoryFormStatus.submitting,
-        clearErrorMessage: true,
+        clearFailure: true,
         clearDuplicateExisting: true,
       ),
     );
@@ -121,7 +122,7 @@ class CategoryFormCubit extends Cubit<CategoryFormState> {
           emit(
             state.copyWith(
               status: CategoryFormStatus.failure,
-              errorMessage: failure.message,
+              failure: failure,
             ),
           );
         }

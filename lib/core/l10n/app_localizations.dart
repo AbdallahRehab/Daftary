@@ -323,7 +323,7 @@ abstract class AppLocalizations {
   /// No description provided for @finEduTitle.
   ///
   /// In en, this message translates to:
-  /// **'Financial Education'**
+  /// **'Financial education'**
   String get finEduTitle;
 
   /// No description provided for @finEduSettingsSectionTitle.
@@ -473,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonRetry.
   ///
   /// In en, this message translates to:
-  /// **'Retry'**
+  /// **'Try again'**
   String get commonRetry;
 
   /// No description provided for @commonSearch.
@@ -488,34 +488,34 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get commonOk;
 
-  /// No description provided for @commonError.
+  /// No description provided for @errorLoadTitle.
   ///
   /// In en, this message translates to:
-  /// **'Something went wrong'**
-  String get commonError;
+  /// **'Couldn\'t load this'**
+  String get errorLoadTitle;
 
   /// No description provided for @errorCache.
   ///
   /// In en, this message translates to:
-  /// **'A local storage error occurred. Please try again.'**
+  /// **'Couldn\'t read or save your data on this device. Please try again.'**
   String get errorCache;
 
   /// No description provided for @errorNotFound.
   ///
   /// In en, this message translates to:
-  /// **'This item could not be found.'**
+  /// **'This item no longer exists. It may have been deleted.'**
   String get errorNotFound;
 
   /// No description provided for @errorValidation.
   ///
   /// In en, this message translates to:
-  /// **'Please check your input and try again.'**
+  /// **'Some details aren\'t valid. Check them and try again.'**
   String get errorValidation;
 
   /// No description provided for @errorUnknown.
   ///
   /// In en, this message translates to:
-  /// **'An unexpected error occurred. Please try again.'**
+  /// **'Something went wrong. Please try again.'**
   String get errorUnknown;
 
   /// No description provided for @peopleListTitle.
@@ -572,6 +572,12 @@ abstract class AppLocalizations {
   /// **'Archived people'**
   String get archivedPeopleAction;
 
+  /// No description provided for @archivePersonTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive {name}'**
+  String archivePersonTooltip(String name);
+
   /// No description provided for @addPersonAction.
   ///
   /// In en, this message translates to:
@@ -599,8 +605,14 @@ abstract class AppLocalizations {
   /// No description provided for @nameRequiredError.
   ///
   /// In en, this message translates to:
-  /// **'Name is required'**
+  /// **'Enter a name'**
   String get nameRequiredError;
+
+  /// No description provided for @personRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a person, or create a new one'**
+  String get personRequiredError;
 
   /// No description provided for @phoneLabel.
   ///
@@ -689,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @duplicateWarningMessage.
   ///
   /// In en, this message translates to:
-  /// **'This name looks similar to someone you already know.'**
+  /// **'Someone with a similar name is already in your list. Is this the same person?'**
   String get duplicateWarningMessage;
 
   /// No description provided for @duplicateUseExisting.
@@ -719,7 +731,7 @@ abstract class AppLocalizations {
   /// No description provided for @amountLabel.
   ///
   /// In en, this message translates to:
-  /// **'Amount (EGP)'**
+  /// **'Amount'**
   String get amountLabel;
 
   /// No description provided for @amountInvalidError.
@@ -839,8 +851,14 @@ abstract class AppLocalizations {
   /// No description provided for @deleteTransactionConfirmMessage.
   ///
   /// In en, this message translates to:
-  /// **'This action cannot be undone.'**
+  /// **'It will be removed from this person\'s history and balance. This can\'t be undone.'**
   String get deleteTransactionConfirmMessage;
+
+  /// No description provided for @deleteTransactionTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction'**
+  String get deleteTransactionTooltip;
 
   /// No description provided for @overviewTitle.
   ///
@@ -941,7 +959,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSaveFailed.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t save your language choice. It\'s still active for this session — we\'ll keep trying.'**
+  /// **'Couldn\'t save your language choice. It\'s on for now but may reset when you reopen the app — try choosing it again.'**
   String get settingsSaveFailed;
 
   /// No description provided for @themeSectionTitle.
@@ -965,13 +983,13 @@ abstract class AppLocalizations {
   /// No description provided for @themeSystemDefault.
   ///
   /// In en, this message translates to:
-  /// **'System Default'**
+  /// **'System default'**
   String get themeSystemDefault;
 
   /// No description provided for @themeSaveFailed.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t save your theme choice. It\'s still active for this session — we\'ll keep trying.'**
+  /// **'Couldn\'t save your theme choice. It\'s on for now but may reset when you reopen the app — try choosing it again.'**
   String get themeSaveFailed;
 
   /// No description provided for @onboardingStepProgress.
@@ -1013,7 +1031,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingSocialOccasionsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Lending a friend cash, splitting a gift, or covering someone at a gathering — jot it down so nothing gets forgotten.'**
+  /// **'Lending a friend cash, splitting a gift, or covering someone at a gathering — record it with that person so nothing gets forgotten.'**
   String get onboardingSocialOccasionsDescription;
 
   /// No description provided for @onboardingScanningRecordsTitle.
@@ -1028,17 +1046,17 @@ abstract class AppLocalizations {
   /// **'Every entry is saved with its date, so you can scan your full history with any person at any time.'**
   String get onboardingScanningRecordsDescription;
 
-  /// No description provided for @onboardingAiAssistantTitle.
+  /// No description provided for @onboardingIncomeExpenseTitle.
   ///
   /// In en, this message translates to:
-  /// **'Get help making sense of it all'**
-  String get onboardingAiAssistantTitle;
+  /// **'See where your own money goes'**
+  String get onboardingIncomeExpenseTitle;
 
-  /// No description provided for @onboardingAiAssistantDescription.
+  /// No description provided for @onboardingIncomeExpenseDescription.
   ///
   /// In en, this message translates to:
-  /// **'An AI assistant can help you review and organize what you\'ve recorded — it does not give financial advice or guarantee outcomes.'**
-  String get onboardingAiAssistantDescription;
+  /// **'Record your income and spending by category, and see each month\'s totals alongside what people owe you.'**
+  String get onboardingIncomeExpenseDescription;
 
   /// No description provided for @onboardingBackAction.
   ///
@@ -1055,7 +1073,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingGetStartedAction.
   ///
   /// In en, this message translates to:
-  /// **'Get Started'**
+  /// **'Get started'**
   String get onboardingGetStartedAction;
 
   /// No description provided for @onboardingSkipAction.
@@ -1187,7 +1205,7 @@ abstract class AppLocalizations {
   /// No description provided for @financeCategoryNameRequiredError.
   ///
   /// In en, this message translates to:
-  /// **'Category name is required'**
+  /// **'Enter a category name'**
   String get financeCategoryNameRequiredError;
 
   /// No description provided for @financeCategoryIconLabel.
@@ -1613,7 +1631,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationSettingsMasterOnDescription.
   ///
   /// In en, this message translates to:
-  /// **'You\'ll only hear from us when something about your budgets or goals actually changes.'**
+  /// **'You\'ll only get a reminder when something about your budgets or goals actually changes.'**
   String get notificationSettingsMasterOnDescription;
 
   /// No description provided for @notificationSettingsCategoriesHeader.
@@ -1847,7 +1865,7 @@ abstract class AppLocalizations {
   /// No description provided for @exchangeRateValueLabel.
   ///
   /// In en, this message translates to:
-  /// **'1 {from} equals ({to})'**
+  /// **'Value of 1 {from} in {to}'**
   String exchangeRateValueLabel(String from, String to);
 
   /// No description provided for @exchangeRateLastUpdated.

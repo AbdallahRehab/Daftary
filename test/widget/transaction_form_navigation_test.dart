@@ -501,7 +501,7 @@ void main() {
           // Failure branch never pops/navigates — the form stays open with
           // a snackbar (spec Acceptance Scenario 1, US3).
           expect(find.byType(TransactionFormPage), findsOneWidget);
-          expect(find.text('rejected'), findsOneWidget);
+          expect(find.text(l10n.errorValidation), findsOneWidget);
 
           // The pre-existing failure path already pops normally on manual
           // back navigation (research.md) — confirm Person Details is

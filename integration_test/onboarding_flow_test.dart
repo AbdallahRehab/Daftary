@@ -206,7 +206,7 @@ void main() {
         l10n.onboardingMoneyBetweenPeopleTitle,
         l10n.onboardingSocialOccasionsTitle,
         l10n.onboardingScanningRecordsTitle,
-        l10n.onboardingAiAssistantTitle,
+        l10n.onboardingIncomeExpenseTitle,
       ];
 
       for (var step = 0; step < 5; step++) {

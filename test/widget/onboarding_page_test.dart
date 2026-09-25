@@ -76,7 +76,7 @@ void main() {
       l10n.onboardingMoneyBetweenPeopleTitle,
       l10n.onboardingSocialOccasionsTitle,
       l10n.onboardingScanningRecordsTitle,
-      l10n.onboardingAiAssistantTitle,
+      l10n.onboardingIncomeExpenseTitle,
     ];
 
     for (var i = 0; i < expectedTitles.length; i++) {

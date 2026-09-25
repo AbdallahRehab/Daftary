@@ -203,7 +203,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         summary: summaryResult.toNullable(),
         breakdown: breakdownResult.toNullable() ?? CategoryBreakdown.empty,
         entries: historyResult.toNullable() ?? const [],
-        clearErrorMessage: true,
+        clearFailure: true,
       ),
     );
   }
@@ -218,10 +218,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
 
   void _emitFailure(Failure failure) {
     emit(
-      state.copyWith(
-        status: FinanceHistoryStatus.failure,
-        errorMessage: failure.message,
-      ),
+      state.copyWith(status: FinanceHistoryStatus.failure, failure: failure),
     );
   }
 

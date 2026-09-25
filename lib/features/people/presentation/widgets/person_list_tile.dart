@@ -101,6 +101,9 @@ class PersonListTile extends StatelessWidget {
           if (onArchive != null)
             IconButton(
               icon: const Icon(Icons.archive_outlined),
+              tooltip: AppLocalizations.of(
+                context,
+              )!.archivePersonTooltip(person.name),
               onPressed: isArchiving ? null : onArchive,
             ),
         ],

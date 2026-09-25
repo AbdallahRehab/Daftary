@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/person.dart';
 
 enum ArchivedPeopleStatus { loading, success, failure }
@@ -10,14 +11,14 @@ class ArchivedPeopleState extends Equatable {
     this.status = ArchivedPeopleStatus.loading,
     this.people = const [],
     this.nameQuery = '',
-    this.errorMessage,
+    this.failure,
     this.processingPersonId,
   });
 
   final ArchivedPeopleStatus status;
   final List<Person> people;
   final String nameQuery;
-  final String? errorMessage;
+  final Failure? failure;
 
   /// Same guard as `PersonListState.processingPersonId`, applied to
   /// `restore()` (FR-006).
@@ -29,7 +30,7 @@ class ArchivedPeopleState extends Equatable {
     ArchivedPeopleStatus? status,
     List<Person>? people,
     String? nameQuery,
-    String? errorMessage,
+    Failure? failure,
     String? processingPersonId,
     bool clearProcessingPersonId = false,
   }) {
@@ -37,7 +38,7 @@ class ArchivedPeopleState extends Equatable {
       status: status ?? this.status,
       people: people ?? this.people,
       nameQuery: nameQuery ?? this.nameQuery,
-      errorMessage: errorMessage,
+      failure: failure,
       processingPersonId: clearProcessingPersonId
           ? null
           : (processingPersonId ?? this.processingPersonId),
@@ -49,7 +50,7 @@ class ArchivedPeopleState extends Equatable {
     status,
     people,
     nameQuery,
-    errorMessage,
+    failure,
     processingPersonId,
   ];
 }

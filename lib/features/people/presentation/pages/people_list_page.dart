@@ -7,6 +7,7 @@ import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../../transactions/domain/entities/money_transaction.dart';
 import '../../../transactions/domain/entities/person_balance.dart';
 import '../../domain/entities/person.dart';
@@ -135,8 +136,8 @@ class _PeopleListView extends StatelessWidget {
                 if (state.status == PersonListStatus.failure) {
                   return AppEmptyView(
                     icon: Icons.error_outline,
-                    title: l10n.commonError,
-                    message: state.errorMessage ?? l10n.errorUnknown,
+                    title: l10n.errorLoadTitle,
+                    message: l10n.messageFor(state.failure),
                     actionLabel: l10n.commonRetry,
                     onAction: () => context.read<PersonListCubit>().load(),
                   );

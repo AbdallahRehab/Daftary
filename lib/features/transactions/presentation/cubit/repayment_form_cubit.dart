@@ -83,7 +83,7 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
     emit(
       state.copyWith(
         status: RepaymentFormStatus.submitting,
-        clearErrorMessage: true,
+        clearFailure: true,
       ),
     );
 
@@ -97,10 +97,7 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
 
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: RepaymentFormStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: RepaymentFormStatus.failure, failure: failure),
       ),
       (_) => emit(state.copyWith(status: RepaymentFormStatus.success)),
     );

@@ -29,7 +29,7 @@ class CategoryManagementCubit extends Cubit<CategoryManagementState> {
     emit(
       state.copyWith(
         status: CategoryManagementStatus.loading,
-        clearErrorMessage: true,
+        clearFailure: true,
         clearDuplicateExisting: true,
       ),
     );
@@ -44,7 +44,7 @@ class CategoryManagementCubit extends Cubit<CategoryManagementState> {
       (failure) => emit(
         state.copyWith(
           status: CategoryManagementStatus.failure,
-          errorMessage: failure.message,
+          failure: failure,
           duplicateExisting: failure is DuplicateCategoryFailure
               ? failure.existing
               : null,
@@ -80,7 +80,7 @@ class CategoryManagementCubit extends Cubit<CategoryManagementState> {
   /// nothing here predicts it.
   Future<void> removeCategory(String id) async {
     if (state.processingCategoryId == id) return;
-    emit(state.copyWith(processingCategoryId: id, clearErrorMessage: true));
+    emit(state.copyWith(processingCategoryId: id, clearFailure: true));
 
     final result = await _removeCategory(id);
     if (isClosed) return;
@@ -88,7 +88,7 @@ class CategoryManagementCubit extends Cubit<CategoryManagementState> {
     await result.match(
       (failure) async => emit(
         state.copyWith(
-          errorMessage: failure.message,
+          failure: failure,
           duplicateExisting: failure is DuplicateCategoryFailure
               ? failure.existing
               : null,

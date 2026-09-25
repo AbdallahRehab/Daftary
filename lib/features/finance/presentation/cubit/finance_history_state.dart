@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
 
 import '../../domain/entities/category.dart';
@@ -31,7 +32,7 @@ class FinanceHistoryState extends Equatable {
     this.categoryFilter,
     this.hasAnyEntry = false,
     this.pendingUndoEntryId,
-    this.errorMessage,
+    this.failure,
   }) : period = period ?? DateRange.thisMonth();
 
   final FinanceHistoryStatus status;
@@ -62,7 +63,7 @@ class FinanceHistoryState extends Equatable {
   /// stay on screen (research.md Decision 8). `null` once the window closes.
   final String? pendingUndoEntryId;
 
-  final String? errorMessage;
+  final Failure? failure;
 
   bool get isLoading => status == FinanceHistoryStatus.loading;
 
@@ -123,8 +124,8 @@ class FinanceHistoryState extends Equatable {
     bool? hasAnyEntry,
     String? pendingUndoEntryId,
     bool clearPendingUndoEntryId = false,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
   }) {
     return FinanceHistoryState(
       status: status ?? this.status,
@@ -142,9 +143,7 @@ class FinanceHistoryState extends Equatable {
       pendingUndoEntryId: clearPendingUndoEntryId
           ? null
           : (pendingUndoEntryId ?? this.pendingUndoEntryId),
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
     );
   }
 
@@ -161,6 +160,6 @@ class FinanceHistoryState extends Equatable {
     categoryFilter,
     hasAnyEntry,
     pendingUndoEntryId,
-    errorMessage,
+    failure,
   ];
 }

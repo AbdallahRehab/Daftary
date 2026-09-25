@@ -32,10 +32,7 @@ class PersonListCubit extends Cubit<PersonListState> {
 
     await result.match(
       (failure) async => emit(
-        state.copyWith(
-          status: PersonListStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: PersonListStatus.failure, failure: failure),
       ),
       (people) async {
         final items = <PersonListItem>[];
@@ -73,12 +70,8 @@ class PersonListCubit extends Cubit<PersonListState> {
 
     final result = await _archivePerson(personId);
     await result.match(
-      (failure) async => emit(
-        state.copyWith(
-          errorMessage: failure.message,
-          clearProcessingPersonId: true,
-        ),
-      ),
+      (failure) async =>
+          emit(state.copyWith(failure: failure, clearProcessingPersonId: true)),
       (_) async {
         await load();
         emit(state.copyWith(clearProcessingPersonId: true));

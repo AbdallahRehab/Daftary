@@ -216,7 +216,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonConfirm => 'تأكيد';
 
   @override
-  String get commonRetry => 'إعادة المحاولة';
+  String get commonRetry => 'حاول مرة أخرى';
 
   @override
   String get commonSearch => 'بحث';
@@ -225,19 +225,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonOk => 'حسنًا';
 
   @override
-  String get commonError => 'حدث خطأ ما';
+  String get errorLoadTitle => 'تعذّر تحميل المحتوى';
 
   @override
-  String get errorCache => 'حدث خطأ في التخزين المحلي. من فضلك حاول مرة أخرى.';
+  String get errorCache =>
+      'تعذّر قراءة بياناتك أو حفظها على هذا الجهاز. حاول مرة أخرى.';
 
   @override
-  String get errorNotFound => 'تعذر العثور على هذا العنصر.';
+  String get errorNotFound => 'هذا العنصر لم يعد موجودًا. ربما تم حذفه.';
 
   @override
-  String get errorValidation => 'من فضلك راجع البيانات المدخلة وحاول مرة أخرى.';
+  String get errorValidation =>
+      'بعض البيانات غير صحيحة. راجعها وحاول مرة أخرى.';
 
   @override
-  String get errorUnknown => 'حدث خطأ غير متوقع. من فضلك حاول مرة أخرى.';
+  String get errorUnknown => 'حدث خطأ ما. حاول مرة أخرى.';
 
   @override
   String get peopleListTitle => 'الأشخاص';
@@ -249,7 +251,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterAll => 'الكل';
 
   @override
-  String get filterTheyOweYou => 'لهم عندك';
+  String get filterTheyOweYou => 'لك عندهم';
 
   @override
   String get filterYouOweThem => 'عليك لهم';
@@ -268,6 +270,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get archivedPeopleAction => 'الأشخاص المؤرشفون';
 
   @override
+  String archivePersonTooltip(String name) {
+    return 'أرشفة $name';
+  }
+
+  @override
   String get addPersonAction => 'إضافة شخص';
 
   @override
@@ -280,7 +287,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nameLabel => 'الاسم';
 
   @override
-  String get nameRequiredError => 'الاسم مطلوب';
+  String get nameRequiredError => 'أدخل الاسم';
+
+  @override
+  String get personRequiredError => 'اختر شخصًا أو أنشئ شخصًا جديدًا';
 
   @override
   String get phoneLabel => 'رقم الهاتف (اختياري)';
@@ -326,7 +336,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get duplicateWarningTitle => 'تكرار محتمل';
 
   @override
-  String get duplicateWarningMessage => 'هذا الاسم يشبه شخصًا تعرفه بالفعل.';
+  String get duplicateWarningMessage =>
+      'يوجد في قائمتك شخص باسم مشابه. هل هو الشخص نفسه؟';
 
   @override
   String get duplicateUseExisting => 'استخدام الشخص الموجود';
@@ -341,7 +352,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get transactionFormEditTitle => 'تعديل المعاملة';
 
   @override
-  String get amountLabel => 'المبلغ (جنيه مصري)';
+  String get amountLabel => 'المبلغ';
 
   @override
   String get amountInvalidError => 'أدخل مبلغًا صحيحًا أكبر من صفر';
@@ -408,7 +419,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get deleteTransactionConfirmMessage =>
-      'لا يمكن التراجع عن هذا الإجراء.';
+      'ستُحذف من سجل هذا الشخص ومن رصيده. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get deleteTransactionTooltip => 'حذف المعاملة';
 
   @override
   String get overviewTitle => 'نظرة عامة';
@@ -420,7 +434,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get overviewTotalYouOwe => 'إجمالي المستحق عليك';
 
   @override
-  String get overviewSectionTheyOweYou => 'لهم عندك';
+  String get overviewSectionTheyOweYou => 'لك عندهم';
 
   @override
   String get overviewSectionYouOweThem => 'عليك لهم';
@@ -462,7 +476,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsSaveFailed =>
-      'تعذر حفظ اختيار اللغة. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.';
+      'تعذّر حفظ اختيار اللغة. هو مفعّل الآن لكنه قد يعود كما كان عند فتح التطبيق مرة أخرى — جرّب اختياره من جديد.';
 
   @override
   String get themeSectionTitle => 'المظهر';
@@ -478,7 +492,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeSaveFailed =>
-      'تعذر حفظ اختيار المظهر. لا يزال ساريًا لهذه الجلسة — سنواصل المحاولة.';
+      'تعذّر حفظ اختيار المظهر. هو مفعّل الآن لكنه قد يعود كما كان عند فتح التطبيق مرة أخرى — جرّب اختياره من جديد.';
 
   @override
   String onboardingStepProgress(int current, int total) {
@@ -507,7 +521,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingSocialOccasionsDescription =>
-      'إقراض صديق نقودًا، أو تقاسم هدية، أو تغطية شخص في مناسبة — دوّنها حتى لا تُنسى.';
+      'إقراض صديق نقودًا، أو تقاسم هدية، أو تغطية شخص في مناسبة — سجّلها مع هذا الشخص حتى لا تُنسى.';
 
   @override
   String get onboardingScanningRecordsTitle => 'راجع سجلك وقتما احتجت';
@@ -517,11 +531,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'يُحفظ كل إدخال بتاريخه، لذا يمكنك مراجعة سجلك الكامل مع أي شخص في أي وقت.';
 
   @override
-  String get onboardingAiAssistantTitle => 'احصل على مساعدة لفهم كل شيء';
+  String get onboardingIncomeExpenseTitle => 'اعرف أين تذهب أموالك';
 
   @override
-  String get onboardingAiAssistantDescription =>
-      'يمكن لمساعد الذكاء الاصطناعي مساعدتك في مراجعة وتنظيم ما سجّلته — وهو لا يقدّم استشارات مالية ولا يضمن أي نتائج.';
+  String get onboardingIncomeExpenseDescription =>
+      'سجّل دخلك ومصروفاتك حسب الفئة، وشاهد إجماليات كل شهر بجانب ما لك عند الناس.';
 
   @override
   String get onboardingBackAction => 'رجوع';
@@ -596,7 +610,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get financeCategoryNameLabel => 'اسم الفئة';
 
   @override
-  String get financeCategoryNameRequiredError => 'اسم الفئة مطلوب';
+  String get financeCategoryNameRequiredError => 'أدخل اسم الفئة';
 
   @override
   String get financeCategoryIconLabel => 'الأيقونة';
@@ -860,7 +874,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationSettingsMasterOnDescription =>
-      'لن نرسل إليك إلا عندما يتغيّر شيء فعلًا في ميزانياتك أو أهدافك.';
+      'لن تصلك تذكيرات إلا عندما يتغيّر شيء فعلًا في ميزانياتك أو أهدافك.';
 
   @override
   String get notificationSettingsCategoriesHeader =>
@@ -992,7 +1006,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String exchangeRateValueLabel(String from, String to) {
-    return '1 $from يساوي ($to)';
+    return 'قيمة 1 $from بعملة $to';
   }
 
   @override

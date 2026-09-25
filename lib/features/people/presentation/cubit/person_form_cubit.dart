@@ -68,10 +68,7 @@ class PersonFormCubit extends Cubit<PersonFormState> {
     }
 
     emit(
-      state.copyWith(
-        status: PersonFormStatus.submitting,
-        clearErrorMessage: true,
-      ),
+      state.copyWith(status: PersonFormStatus.submitting, clearFailure: true),
     );
 
     final result = state.isEditMode
@@ -100,10 +97,7 @@ class PersonFormCubit extends Cubit<PersonFormState> {
           );
         } else {
           emit(
-            state.copyWith(
-              status: PersonFormStatus.failure,
-              errorMessage: failure.message,
-            ),
+            state.copyWith(status: PersonFormStatus.failure, failure: failure),
           );
         }
       },
@@ -136,10 +130,7 @@ class PersonFormCubit extends Cubit<PersonFormState> {
 
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: PersonFormStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: PersonFormStatus.failure, failure: failure),
       ),
       (person) => emit(
         state.copyWith(status: PersonFormStatus.success, savedPerson: person),
@@ -156,10 +147,7 @@ class PersonFormCubit extends Cubit<PersonFormState> {
     final result = await _archivePerson(id);
     result.match(
       (failure) => emit(
-        state.copyWith(
-          status: PersonFormStatus.failure,
-          errorMessage: failure.message,
-        ),
+        state.copyWith(status: PersonFormStatus.failure, failure: failure),
       ),
       (_) => emit(state.copyWith(status: PersonFormStatus.archived)),
     );
@@ -177,10 +165,7 @@ class PersonFormCubit extends Cubit<PersonFormState> {
         emit(state.copyWith(status: PersonFormStatus.deleteBlocked));
       } else {
         emit(
-          state.copyWith(
-            status: PersonFormStatus.failure,
-            errorMessage: failure.message,
-          ),
+          state.copyWith(status: PersonFormStatus.failure, failure: failure),
         );
       }
     }, (_) => emit(state.copyWith(status: PersonFormStatus.deleted)));

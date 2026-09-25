@@ -11,6 +11,7 @@ import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../../domain/repositories/finance_repository.dart';
@@ -136,9 +137,7 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? l10n.errorUnknown),
-                ),
+                SnackBar(content: Text(l10n.messageFor(state.failure))),
               );
           }
         },

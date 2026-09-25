@@ -6,5 +6,5 @@ enum OnboardingTopic {
   moneyBetweenPeople,
   socialOccasions,
   scanningRecords,
-  aiAssistant,
+  incomeExpense,
 }

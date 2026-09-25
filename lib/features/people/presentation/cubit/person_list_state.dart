@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../../transactions/domain/entities/person_balance.dart';
 import '../../domain/entities/person.dart';
 
@@ -25,7 +26,7 @@ class PersonListState extends Equatable {
     this.items = const [],
     this.nameQuery = '',
     this.statusFilter,
-    this.errorMessage,
+    this.failure,
     this.processingPersonId,
   });
 
@@ -33,7 +34,7 @@ class PersonListState extends Equatable {
   final List<PersonListItem> items;
   final String nameQuery;
   final RelationshipStatus? statusFilter;
-  final String? errorMessage;
+  final Failure? failure;
 
   /// Non-null while an `archive()` call is in flight for that person id;
   /// `archive()` is a no-op re-entrancy guard when called again with the
@@ -50,7 +51,7 @@ class PersonListState extends Equatable {
     String? nameQuery,
     RelationshipStatus? statusFilter,
     bool clearStatusFilter = false,
-    String? errorMessage,
+    Failure? failure,
     String? processingPersonId,
     bool clearProcessingPersonId = false,
   }) {
@@ -61,7 +62,7 @@ class PersonListState extends Equatable {
       statusFilter: clearStatusFilter
           ? null
           : (statusFilter ?? this.statusFilter),
-      errorMessage: errorMessage,
+      failure: failure,
       processingPersonId: clearProcessingPersonId
           ? null
           : (processingPersonId ?? this.processingPersonId),
@@ -74,7 +75,7 @@ class PersonListState extends Equatable {
     items,
     nameQuery,
     statusFilter,
-    errorMessage,
+    failure,
     processingPersonId,
   ];
 }

@@ -6,6 +6,7 @@ import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../people/domain/entities/person.dart';
@@ -75,12 +76,14 @@ class _PersonDetailView extends StatelessWidget {
       body: BlocConsumer<PersonDetailCubit, PersonDetailState>(
         listenWhen: (previous, current) =>
             current.status == PersonDetailStatus.success &&
-            current.errorMessage != null &&
-            previous.errorMessage != current.errorMessage,
+            current.failure != null &&
+            previous.failure != current.failure,
         listener: (context, state) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            ..showSnackBar(
+              SnackBar(content: Text(l10n.messageFor(state.failure))),
+            );
         },
         builder: (context, state) {
           if (state.isLoading) {
@@ -91,8 +94,8 @@ class _PersonDetailView extends StatelessWidget {
               state.balance == null) {
             return AppEmptyView(
               icon: Icons.error_outline,
-              title: l10n.commonError,
-              message: state.errorMessage ?? l10n.errorUnknown,
+              title: l10n.errorLoadTitle,
+              message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
               onAction: () => context.read<PersonDetailCubit>().load(personId),
             );

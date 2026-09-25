@@ -9,6 +9,7 @@ import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/repositories/category_repository.dart';
 import '../cubit/category_form_cubit.dart';
@@ -59,10 +60,7 @@ class CategoryFormPage extends StatelessWidget {
   static Future<void> _loadForEdit(CategoryFormCubit cubit, String id) async {
     final result = await getIt<CategoryRepository>().getCategoryById(id);
     if (cubit.isClosed) return;
-    result.match(
-      (failure) => cubit.loadFailed(failure.message),
-      cubit.loadForEdit,
-    );
+    result.match((failure) => cubit.loadFailed(failure), cubit.loadForEdit);
   }
 }
 
@@ -120,9 +118,7 @@ class _CategoryFormViewState extends State<_CategoryFormView> {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
-                  SnackBar(
-                    content: Text(state.errorMessage ?? l10n.commonError),
-                  ),
+                  SnackBar(content: Text(l10n.messageFor(state.failure))),
                 );
             case CategoryFormStatus.idle:
             case CategoryFormStatus.submitting:

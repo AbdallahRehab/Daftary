@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry_type.dart';
 
@@ -18,7 +19,7 @@ class CategoryManagementState extends Equatable {
     this.type = CategoryType.expense,
     this.active = const [],
     this.archived = const [],
-    this.errorMessage,
+    this.failure,
     this.duplicateExisting,
     this.processingCategoryId,
   });
@@ -36,7 +37,7 @@ class CategoryManagementState extends Equatable {
   /// whole job is managing categories.
   final List<Category> archived;
 
-  final String? errorMessage;
+  final Failure? failure;
 
   /// The category a `DuplicateCategoryFailure` pointed at, so the page can
   /// name it instead of only reporting that a name is taken (FR-008).
@@ -55,8 +56,8 @@ class CategoryManagementState extends Equatable {
     CategoryType? type,
     List<Category>? active,
     List<Category>? archived,
-    String? errorMessage,
-    bool clearErrorMessage = false,
+    Failure? failure,
+    bool clearFailure = false,
     Category? duplicateExisting,
     bool clearDuplicateExisting = false,
     String? processingCategoryId,
@@ -67,9 +68,7 @@ class CategoryManagementState extends Equatable {
       type: type ?? this.type,
       active: active ?? this.active,
       archived: archived ?? this.archived,
-      errorMessage: clearErrorMessage
-          ? null
-          : (errorMessage ?? this.errorMessage),
+      failure: clearFailure ? null : (failure ?? this.failure),
       duplicateExisting: clearDuplicateExisting
           ? null
           : (duplicateExisting ?? this.duplicateExisting),
@@ -85,7 +84,7 @@ class CategoryManagementState extends Equatable {
     type,
     active,
     archived,
-    errorMessage,
+    failure,
     duplicateExisting,
     processingCategoryId,
   ];

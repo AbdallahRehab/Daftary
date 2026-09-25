@@ -8,6 +8,7 @@ import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../../core/l10n/failure_message.dart';
 import '../cubit/repayment_form_cubit.dart';
 import '../cubit/repayment_form_state.dart';
 
@@ -48,9 +49,7 @@ class _RepaymentFormView extends StatelessWidget {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage ?? l10n.errorUnknown),
-                ),
+                SnackBar(content: Text(l10n.messageFor(state.failure))),
               );
           }
         },

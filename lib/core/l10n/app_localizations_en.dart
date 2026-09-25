@@ -140,7 +140,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Calculated only from the two figures you entered.';
 
   @override
-  String get finEduTitle => 'Financial Education';
+  String get finEduTitle => 'Financial education';
 
   @override
   String get finEduSettingsSectionTitle => 'Learn';
@@ -222,7 +222,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonConfirm => 'Confirm';
 
   @override
-  String get commonRetry => 'Retry';
+  String get commonRetry => 'Try again';
 
   @override
   String get commonSearch => 'Search';
@@ -231,19 +231,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonOk => 'OK';
 
   @override
-  String get commonError => 'Something went wrong';
+  String get errorLoadTitle => 'Couldn\'t load this';
 
   @override
-  String get errorCache => 'A local storage error occurred. Please try again.';
+  String get errorCache =>
+      'Couldn\'t read or save your data on this device. Please try again.';
 
   @override
-  String get errorNotFound => 'This item could not be found.';
+  String get errorNotFound =>
+      'This item no longer exists. It may have been deleted.';
 
   @override
-  String get errorValidation => 'Please check your input and try again.';
+  String get errorValidation =>
+      'Some details aren\'t valid. Check them and try again.';
 
   @override
-  String get errorUnknown => 'An unexpected error occurred. Please try again.';
+  String get errorUnknown => 'Something went wrong. Please try again.';
 
   @override
   String get peopleListTitle => 'People';
@@ -274,6 +277,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get archivedPeopleAction => 'Archived people';
 
   @override
+  String archivePersonTooltip(String name) {
+    return 'Archive $name';
+  }
+
+  @override
   String get addPersonAction => 'Add person';
 
   @override
@@ -286,7 +294,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameLabel => 'Name';
 
   @override
-  String get nameRequiredError => 'Name is required';
+  String get nameRequiredError => 'Enter a name';
+
+  @override
+  String get personRequiredError => 'Choose a person, or create a new one';
 
   @override
   String get phoneLabel => 'Phone number (optional)';
@@ -333,7 +344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get duplicateWarningMessage =>
-      'This name looks similar to someone you already know.';
+      'Someone with a similar name is already in your list. Is this the same person?';
 
   @override
   String get duplicateUseExisting => 'Use existing person';
@@ -348,7 +359,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionFormEditTitle => 'Edit transaction';
 
   @override
-  String get amountLabel => 'Amount (EGP)';
+  String get amountLabel => 'Amount';
 
   @override
   String get amountInvalidError => 'Enter a valid amount greater than zero';
@@ -414,7 +425,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteTransactionConfirmTitle => 'Delete this transaction?';
 
   @override
-  String get deleteTransactionConfirmMessage => 'This action cannot be undone.';
+  String get deleteTransactionConfirmMessage =>
+      'It will be removed from this person\'s history and balance. This can\'t be undone.';
+
+  @override
+  String get deleteTransactionTooltip => 'Delete transaction';
 
   @override
   String get overviewTitle => 'Overview';
@@ -468,7 +483,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSaveFailed =>
-      'Couldn\'t save your language choice. It\'s still active for this session — we\'ll keep trying.';
+      'Couldn\'t save your language choice. It\'s on for now but may reset when you reopen the app — try choosing it again.';
 
   @override
   String get themeSectionTitle => 'Theme';
@@ -480,11 +495,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
-  String get themeSystemDefault => 'System Default';
+  String get themeSystemDefault => 'System default';
 
   @override
   String get themeSaveFailed =>
-      'Couldn\'t save your theme choice. It\'s still active for this session — we\'ll keep trying.';
+      'Couldn\'t save your theme choice. It\'s on for now but may reset when you reopen the app — try choosing it again.';
 
   @override
   String onboardingStepProgress(int current, int total) {
@@ -512,7 +527,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingSocialOccasionsDescription =>
-      'Lending a friend cash, splitting a gift, or covering someone at a gathering — jot it down so nothing gets forgotten.';
+      'Lending a friend cash, splitting a gift, or covering someone at a gathering — record it with that person so nothing gets forgotten.';
 
   @override
   String get onboardingScanningRecordsTitle => 'Look back whenever you need to';
@@ -522,11 +537,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Every entry is saved with its date, so you can scan your full history with any person at any time.';
 
   @override
-  String get onboardingAiAssistantTitle => 'Get help making sense of it all';
+  String get onboardingIncomeExpenseTitle => 'See where your own money goes';
 
   @override
-  String get onboardingAiAssistantDescription =>
-      'An AI assistant can help you review and organize what you\'ve recorded — it does not give financial advice or guarantee outcomes.';
+  String get onboardingIncomeExpenseDescription =>
+      'Record your income and spending by category, and see each month\'s totals alongside what people owe you.';
 
   @override
   String get onboardingBackAction => 'Back';
@@ -535,7 +550,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboardingNextAction => 'Next';
 
   @override
-  String get onboardingGetStartedAction => 'Get Started';
+  String get onboardingGetStartedAction => 'Get started';
 
   @override
   String get onboardingSkipAction => 'Skip';
@@ -602,7 +617,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get financeCategoryNameLabel => 'Category name';
 
   @override
-  String get financeCategoryNameRequiredError => 'Category name is required';
+  String get financeCategoryNameRequiredError => 'Enter a category name';
 
   @override
   String get financeCategoryIconLabel => 'Icon';
@@ -861,7 +876,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationSettingsMasterOnDescription =>
-      'You\'ll only hear from us when something about your budgets or goals actually changes.';
+      'You\'ll only get a reminder when something about your budgets or goals actually changes.';
 
   @override
   String get notificationSettingsCategoriesHeader => 'What to notify me about';
@@ -995,7 +1010,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String exchangeRateValueLabel(String from, String to) {
-    return '1 $from equals ($to)';
+    return 'Value of 1 $from in $to';
   }
 
   @override

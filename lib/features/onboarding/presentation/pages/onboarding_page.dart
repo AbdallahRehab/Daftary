@@ -58,45 +58,58 @@ class OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView.builder(
-                controller: pageController,
-                itemCount: OnboardingTopic.values.length,
-                onPageChanged: (index) => setState(() => currentStep = index),
-                itemBuilder: (context, index) {
-                  final topic = OnboardingTopic.values[index];
-                  return OnboardingScreenView(
-                    content: onboardingContentFor(context, topic),
-                  );
-                },
-              ),
+        // Capped so tablets and landscape screens get a readable column
+        // (and reachable controls) instead of text spanning the display.
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: AppBreakpoints.maxReadingWidth,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: OnboardingProgressIndicator(
-                currentStep: currentStep,
-                totalSteps: OnboardingTopic.values.length,
-              ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                    controller: pageController,
+                    itemCount: OnboardingTopic.values.length,
+                    onPageChanged: (index) =>
+                        setState(() => currentStep = index),
+                    itemBuilder: (context, index) {
+                      final topic = OnboardingTopic.values[index];
+                      return OnboardingScreenView(
+                        content: onboardingContentFor(context, topic),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                  ),
+                  child: OnboardingProgressIndicator(
+                    currentStep: currentStep,
+                    totalSteps: OnboardingTopic.values.length,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: OnboardingControls(
+                    isFirstStep: currentStep == 0,
+                    isLastStep:
+                        currentStep == OnboardingTopic.values.length - 1,
+                    onNext: () {
+                      if (currentStep == OnboardingTopic.values.length - 1) {
+                        completeOnboarding();
+                      } else {
+                        goToStep(currentStep + 1);
+                      }
+                    },
+                    onBack: () => goToStep(currentStep - 1),
+                    onSkip: skipOnboarding,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.md),
-              child: OnboardingControls(
-                isFirstStep: currentStep == 0,
-                isLastStep: currentStep == OnboardingTopic.values.length - 1,
-                onNext: () {
-                  if (currentStep == OnboardingTopic.values.length - 1) {
-                    completeOnboarding();
-                  } else {
-                    goToStep(currentStep + 1);
-                  }
-                },
-                onBack: () => goToStep(currentStep - 1),
-                onSkip: skipOnboarding,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -19,7 +19,10 @@ GoRouter _buildTestRouter() {
             routes: [
               GoRoute(
                 path: '/',
-                builder: (context, state) => const Text('People'),
+                builder: (context, state) => const Scaffold(
+                  key: Key('page_People'),
+                  body: Text('People'),
+                ),
               ),
             ],
           ),
@@ -27,7 +30,10 @@ GoRouter _buildTestRouter() {
             routes: [
               GoRoute(
                 path: '/overview',
-                builder: (context, state) => const Text('Overview'),
+                builder: (context, state) => const Scaffold(
+                  key: Key('page_Overview'),
+                  body: Text('Overview'),
+                ),
               ),
             ],
           ),
@@ -35,7 +41,10 @@ GoRouter _buildTestRouter() {
             routes: [
               GoRoute(
                 path: '/settings',
-                builder: (context, state) => const Text('Settings'),
+                builder: (context, state) => const Scaffold(
+                  key: Key('page_Settings'),
+                  body: Text('Settings'),
+                ),
               ),
             ],
           ),
@@ -58,9 +67,20 @@ Widget _wrap(Locale locale) {
   );
 }
 
+/// Sizes the test surface in logical pixels.
+Future<void> _setSize(WidgetTester tester, Size size) async {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+}
+
+const _phone = Size(390, 844);
+const _tablet = Size(1280, 800);
+
 void main() {
   testWidgets('renders the 3 destinations in People/Overview/Settings order '
       'under LTR', (tester) async {
+    await _setSize(tester, _phone);
     await tester.pumpWidget(_wrap(const Locale('en')));
     await tester.pumpAndSettle();
 
@@ -82,6 +102,7 @@ void main() {
   });
 
   testWidgets('mirrors destination layout order under RTL', (tester) async {
+    await _setSize(tester, _phone);
     await tester.pumpWidget(_wrap(const Locale('ar')));
     await tester.pumpAndSettle();
 
@@ -102,5 +123,53 @@ void main() {
         .toList();
     expect(offsets[0], greaterThan(offsets[1]));
     expect(offsets[1], greaterThan(offsets[2]));
+  });
+
+  group('medium and wider windows', () {
+    testWidgets('a tablet gets a navigation rail and a capped, centered '
+        'content column instead of a stretched phone layout', (tester) async {
+      await _setSize(tester, _tablet);
+      await tester.pumpWidget(_wrap(const Locale('en')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationBar), findsNothing);
+      expect(find.byType(NavigationRail), findsOneWidget);
+
+      final page = tester.getRect(find.byKey(const Key('page_People')));
+      final rail = tester.getRect(find.byType(NavigationRail));
+      expect(page.width, 720);
+      // Centered in the space to the right of the rail.
+      final free = _tablet.width - rail.right;
+      expect(page.left - rail.right, closeTo((free - 720) / 2, 0.5));
+    });
+
+    testWidgets('a landscape phone switches to the rail too', (tester) async {
+      await _setSize(tester, const Size(844, 390));
+      await tester.pumpWidget(_wrap(const Locale('en')));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
+    });
+
+    testWidgets('the rail sits on the leading edge under RTL', (tester) async {
+      await _setSize(tester, _tablet);
+      await tester.pumpWidget(_wrap(const Locale('ar')));
+      await tester.pumpAndSettle();
+
+      final rail = tester.getRect(find.byType(NavigationRail));
+      expect(rail.right, _tablet.width);
+    });
+
+    testWidgets('selecting a rail destination switches branch', (tester) async {
+      await _setSize(tester, _tablet);
+      await tester.pumpWidget(_wrap(const Locale('en')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Overview').last);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('page_Overview')), findsOneWidget);
+    });
   });
 }

@@ -51,6 +51,23 @@ class AppSpacing {
   static const double xxl = 48;
 }
 
+/// Material 3 window size classes (by available width, never by device
+/// model) plus the content width cap used once a screen stops being
+/// phone-shaped. Compact < [medium] ≤ medium < [expanded] ≤ expanded.
+class AppBreakpoints {
+  const AppBreakpoints._();
+
+  static const double medium = 600;
+  static const double expanded = 840;
+
+  /// Widest a page's content column grows on tablets, foldables, and
+  /// landscape phones, so rows, forms, and text stay scannable.
+  static const double maxContentWidth = 720;
+
+  /// Onboarding's narrower reading column.
+  static const double maxReadingWidth = 560;
+}
+
 class AppRadius {
   const AppRadius._();
 

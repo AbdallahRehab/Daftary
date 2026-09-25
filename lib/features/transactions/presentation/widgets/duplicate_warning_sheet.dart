@@ -24,9 +24,11 @@ class DuplicateWarningSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    // Scrollable so several matches plus both actions stay reachable on a
+    // landscape phone, where the sheet can be only ~300dp tall.
     return SafeArea(
       top: false,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,

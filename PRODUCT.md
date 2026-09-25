@@ -10,58 +10,70 @@ android
 
 ## Stack
 
-Flutter (Dart SDK ^3.10.0), Material 3, `flutter_bloc`/Cubit for state, `go_router` for navigation, `drift` (SQLite) for local persistence, `get_it` + `injectable` for DI, `flutter_localizations`/`intl` for i18n. Existing codebase — not a stack decision for this task.
+Flutter (Dart SDK ^3.10.0, pinned to Flutter 3.47.0 via fvm), Material 3, `flutter_bloc`/Cubit for state, `go_router` for navigation (`StatefulShellRoute`), `drift` (SQLite) for local persistence, `get_it` + `injectable` for DI, `flutter_localizations`/`intl` for i18n, `flutter_local_notifications` for on-device reminders. Existing codebase — not a stack decision for design work.
 
 ## Users
 
-Individual Egyptian users (Arabic-first, English-supported) who exchange money informally with people in their life — friends, family, colleagues — and need to remember who owes them and who they owe. The target user has no accounting or bookkeeping background; the product must feel like "someone who remembers my money for me," not a ledger app for professionals. [Inferred from docs/project.txt master brief and the app's actual terminology (people, money given/received, balances, EGP currency); confirmed by the app being local-first with no auth/backend, i.e., built for a single individual's own device.]
+Individual Egyptian users (Arabic-first, English-supported) who exchange money informally with people in their life — friends, family, colleagues — and need to remember who owes them and who they owe, and who increasingly want a simple picture of their own money too (income, spending, plans). The target user has no accounting or bookkeeping background; the product must feel like "someone who remembers my money for me," not a ledger app for professionals. [Inferred from docs/project.txt master brief and the app's terminology; confirmed by the app being local-first with no auth/backend, i.e., built for a single individual's own device.]
 
 ## Product Purpose
 
-Daftary ("my notebook/ledger" in Arabic) lets a user create a person and record money given to or received from them over time, so the running balance ("they owe you" / "you owe them" / "settled") is always clear without mental math or a paper notebook. Success is a user trusting the app's numbers enough to stop tracking debts in their head or on paper, and being able to answer "does X still owe me money, and how much?" in one glance.
+Daftary ("my notebook/ledger" in Arabic) lets a user create a person and record money given to or received from them over time, so the running balance ("they owe you" / "you owe them" / "settled") is always clear without mental math or a paper notebook. Around that core it offers personal finance tools — income/expense tracking, general financial education, and honest reminders — so the same trusted notebook covers the user's own money. Success is a user trusting the app's numbers enough to stop tracking debts and spending in their head or on paper, and being able to answer "does X still owe me money, and how much?" in one glance.
 
 ## Positioning
 
-Unlike a generic expense tracker or a general ledger app, Daftary is built specifically around *money relationships between people* — not categorized spending. The atomic unit is a person and a two-directional running balance with them (given vs. received, including partial repayments), not a transaction category. [From docs/project.txt: "Your Personal Financial Memory" / "complete money relationship" positioning — recorded as the product's direction, not a finalized slogan.]
+People-first, broader finance. Unlike a generic expense tracker or ledger app, Daftary is built around *money relationships between people*: the atomic unit is a person and a two-directional running balance with them (given vs. received, including partial repayments), not a transaction category. This remains the core and the differentiator. Personal-finance modules (income/expense, education, insights, and planned budgets/savings) orbit that core and must never demote it — people and balances stay the first thing the app is about. [Confirmed by the user 2026-09-25.]
 
 ## Operating Context
 
-- Local-first: all data lives on-device in a Drift/SQLite database; there is currently no backend, sync, or authentication layer.
+- Local-first, offline-only, single-device: all data lives on-device in a Drift/SQLite database. There is no backend, sync, account, or authentication, and the roadmap confirms none is planned; cloud backup/sync and family/shared finances are dropped from the roadmap.
 - Bilingual: Arabic and English are both first-class, with full RTL support required for Arabic (not a translated LTR layout).
-- Currency: Egyptian Pounds (EGP) is the only currency currently modeled.
-- Core workflows already implemented: add/edit/archive/restore a person; record a transaction (money given or received) against a person; record a (partial) repayment; view a person's balance and full history; view an overview/dashboard of all balances; onboarding for first-time users; settings for language and theme (light/dark).
-- Not yet implemented (out of scope for this audit per user decision, but the design system should stay extensible toward them): occasions/social events, receipt/paper OCR capture, an AI financial assistant, budgets, savings goals, income/expense categorization, multi-currency, sync/backup.
-- Duplicate-person detection exists as a safeguard when adding a person (`find_possible_duplicate_person` usecase, `duplicate_warning_sheet` widget).
-- In-progress side work exists in `.kilo/worktrees/` (other tool's worktrees) — not part of this task's scope; do not edit those paths.
+- Navigation: bottom navigation shell with People, Overview, and Settings as top-level destinations; other modules are entered from these.
+- Implemented modules:
+  - **People & transactions** (001): add/edit/archive/restore a person; record money given or received; record partial repayments; view a person's balance and full history; duplicate-person warning on add.
+  - **Overview**: totals of owed-to-me / owed-by-me across all people, plus entry to finance.
+  - **Income & expense** (007): personal finance entries with customizable categories, history, and totals, kept separate from person-to-person transactions.
+  - **Financial education** (016): a curated, bundled content library and deterministic calculators (e.g. compound growth). General education only, never personalized investment advice; a disclaimer is visible at every entry point.
+  - **Insights & reminders** (017): local notifications computed deterministically from the user's real stored data, with per-category controls, quiet hours, cooldowns, and deep links. Never fabricated or generic.
+  - **Multi-currency** (018): every amount carries an ISO 4217 currency (EGP by default and always present). The user sets a primary currency and enters exchange rates by hand; there are no live rates. Aggregates convert to the primary currency, individual records keep their original currency, and a missing rate blocks a total with a clear message instead of guessing.
+  - **Settings**: language, theme (light/dark), currency, notifications. **Onboarding**: a first-launch intro.
+- Spec'd but not yet built (design decisions should extend toward these without rework): Occasions / social money (008), on-device OCR paper entry (009), household budgets (010), savings goals (011), Home Dashboard evolving Overview with quick actions and insights (012), reports & data/privacy controls (013), AI financial assistant (014), app lock/security (015). See `specs/` and `specs/ROADMAP-PLAN.md`.
+- In-progress side work may exist in `.kilo/worktrees/` (another tool's worktrees) — never edit those paths.
 
 ## Capabilities and Constraints
 
-- Business logic, repository behavior, data models, DB schema, and navigation structure must not change as part of this UI/UX work unless a UX improvement genuinely requires it — and any such case must be flagged before making the change.
-- No authentication or multi-user concept exists yet; do not design screens that assume one.
-- Design system decisions made now (tokens, components, patterns) should be written generically enough to extend to future modules (occasions, budgets, savings) without rework, even though those modules are not being built in this pass.
+- Design and UI work does not change business logic, repository behavior, data models, DB schema, or navigation structure. If a UX improvement genuinely requires one of those, flag it before making the change.
+- No accounts or multi-user concept exist; never design screens that assume one.
+- Design system decisions (tokens, components, patterns) are written generically enough to serve every module — current and planned — without a per-module visual language.
+- Honesty over filler: insights, reminders, dashboard sections, and any AI output show only real, deterministically computed observations or an honest empty state — never fake, static, or placeholder "insights."
+- AI assistant (planned): bring-your-own API key stored in on-device secure storage, no Daftary backend. AI output is non-authoritative and never presented as fact about the user's money.
+- OCR (planned): on-device recognition only (ML Kit / Vision), never cloud.
+- Financial education never gives personalized investment recommendations and never reads the user's data to personalize advice.
+- Money is stored as integer minor units with an explicit currency; Arabic-Indic digits are accepted on input.
 - Platform: unified Material 3 across Android and iOS (see `## Platform`); do not fork the visual language per OS.
 
 ## Brand Commitments
 
 - App name: "Daftary" (Arabic: my notebook/ledger). Keep as the product identity.
-- Voice from existing copy (see `lib/core/l10n/app_en.arb`/`app_ar.arb`): plain, calm, non-technical language — e.g. "No people yet", "Add a person to start tracking money you give or receive with them", "This person has recorded transactions. Archive them instead to keep their history." Avoid accounting jargon in any new copy.
+- Voice from existing copy (see `lib/core/l10n/app_en.arb`/`app_ar.arb`): plain, calm, non-technical language — e.g. "No people yet", "Add a person to start tracking money you give or receive with them", "This person has recorded transactions. Archive them instead to keep their history." Avoid accounting and investment jargon in any new copy.
 - Brand personality target (from docs/project.txt): simple, friendly, trustworthy, private, intelligent, fast — explicitly *not* accounting-software-feeling.
 
 ## Evidence on Hand
 
-- Existing design system: `lib/core/design_system/` (`AppButton`, `AppCard`, `AppConfirmDialog`, `AppEmptyView`, `AppTextField`) and `lib/core/design_system/tokens.dart` (semantic `ColorScheme` + `AppFinanceColors` theme extension for positive/negative/neutral/warning finance colors, light and dark, `AppSpacing`, `AppRadius`, `AppTypography`). This is a real, working system — improve it, do not replace it with a second one.
-- Localization: `lib/core/l10n/app_en.arb` and `app_ar.arb` (107 keys) — real, shipped copy for both languages.
-- Specs already written and (per git history) implemented: `specs/001-money-relationships-tracking`, `specs/002-localization-language-switch`, `specs/003-dark-mode-theme`, `specs/004-transaction-state-refresh`, `specs/005-archive-state-refresh`, `specs/006-onboarding-screens`. These document intended behavior for the corresponding features — treat as authoritative context, not something to redesign from scratch.
+- Existing design system: `lib/core/design_system/` (`AppButton`, `AppCard`, `AppConfirmDialog`, `AppDateField`, `AppEmptyView`, `AppIconBadge`, `AppTextField`, `CurrencyIndicatorChip`, `CurrencyPicker`) and `lib/core/design_system/tokens.dart` (semantic `ColorScheme` + `AppFinanceColors` theme extension for positive/negative/neutral/warning, light and dark; `AppSpacing`, `AppRadius`, `AppTypography`). This is a real, working system — improve it, do not replace it with a second one.
+- Localization: `lib/core/l10n/app_en.arb` and `app_ar.arb` (~300 keys) — real, shipped copy for both languages.
+- Specs `specs/001`–`018` plus `specs/ROADMAP-PLAN.md` document intended behavior; 001–007 and 016–018 are implemented. Treat them as authoritative product context, not something to redesign from scratch.
+- Product brief: `docs/project.txt`.
 - No visual mockups, brand assets, logo, or marketing materials exist. No user research, testimonials, or usage data exist — do not fabricate any of these.
 
 ## Product Principles
 
 1. Feel like a notebook a trusted person keeps for you, not an accounting tool — plain language, minimal financial jargon, calm visuals.
-2. A person's balance status (owed / owing / settled) must be understandable at a glance, in both languages and both themes, without reading numbers carefully.
-3. Arabic is a first-class experience, not a mirrored translation — RTL layout, alignment, icon direction, and copy tone are each verified independently, not assumed from the LTR version.
-4. One consistent design language across the whole app: one spacing system, one component set, one interaction pattern per action type (destructive, confirm, form, etc.).
-5. Local-first and private by default — the UI should never suggest cloud sync, accounts, or data leaving the device, since none of that exists yet.
+2. People come first. A person's balance status (owed / owing / settled) must be understandable at a glance, in both languages, both themes, and any currency, without reading numbers carefully. Finance modules support this core and never crowd it out.
+3. Arabic is a first-class experience, not a mirrored translation — RTL layout, alignment, icon direction, numerals, and copy tone are each verified independently, not assumed from the LTR version.
+4. One consistent design language across every module: one spacing system, one component set, one interaction pattern per action type (destructive, confirm, form, etc.).
+5. Private and honest by default — nothing leaves the device, the UI never suggests cloud sync or accounts, and every number, insight, or reminder is real or clearly absent.
 
 ## Accessibility & Inclusion
 
-No formal accessibility standard has been mandated by the user. Given the target user (non-technical, general Egyptian public, mixed age range for a personal-finance-adjacent app), treat WCAG AA-equivalent contrast and minimum 44x48dp touch targets as a working bar during this audit. [Inferred, not confirmed by the user — flag any accessibility fix that would meaningfully change visual style before applying it broadly.]
+No formal accessibility standard has been mandated by the user. Given the target user (non-technical, general Egyptian public, mixed age range for a personal-finance-adjacent app), treat WCAG AA-equivalent contrast and minimum 48×48dp touch targets as a working bar, and verify layouts at larger system font scales. [Inferred, not confirmed by the user — flag any accessibility fix that would meaningfully change visual style before applying it broadly.]

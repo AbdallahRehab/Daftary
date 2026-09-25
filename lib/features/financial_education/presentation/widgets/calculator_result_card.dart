@@ -93,12 +93,7 @@ class CalculatorResultCard extends StatelessWidget {
                         child: Text(line.label, style: AppTypography.body),
                       ),
                       const SizedBox(width: AppSpacing.sm),
-                      Text(
-                        line.value,
-                        style: AppTypography.body.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                      Text(line.value, style: AppTypography.figure),
                     ],
                   ),
                 ),

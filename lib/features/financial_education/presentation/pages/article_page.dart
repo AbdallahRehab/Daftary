@@ -78,36 +78,46 @@ class _ArticleBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     return SelectionArea(
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md,
-          AppSpacing.md,
-          AppSpacing.md,
-          AppSpacing.xl,
-        ),
-        children: [
-          Text(article.title, style: AppTypography.headline),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            article.shortDescription,
-            style: AppTypography.body.copyWith(color: onSurfaceVariant),
-          ),
-          for (final section in article.bodySections) ...[
-            const SizedBox(height: AppSpacing.lg),
-            if (section.heading case final heading?) ...[
-              Text(heading, style: AppTypography.title),
-              const SizedBox(height: AppSpacing.sm),
-            ],
-            for (final paragraph in section.paragraphs)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Text(
-                  paragraph,
-                  style: AppTypography.body.copyWith(height: 1.6),
-                ),
+      // Prose keeps a ~70-character measure: on wider windows the side
+      // padding grows instead of the lines. The whole view still scrolls
+      // edge to edge.
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final side =
+              ((constraints.maxWidth - AppBreakpoints.maxReadingWidth) / 2)
+                  .clamp(AppSpacing.md, double.infinity);
+          return ListView(
+            padding: EdgeInsets.fromLTRB(
+              side,
+              AppSpacing.md,
+              side,
+              AppSpacing.xl,
+            ),
+            children: [
+              Text(article.title, style: AppTypography.headline),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                article.shortDescription,
+                style: AppTypography.body.copyWith(color: onSurfaceVariant),
               ),
-          ],
-        ],
+              for (final section in article.bodySections) ...[
+                const SizedBox(height: AppSpacing.lg),
+                if (section.heading case final heading?) ...[
+                  Text(heading, style: AppTypography.title),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
+                for (final paragraph in section.paragraphs)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: Text(
+                      paragraph,
+                      style: AppTypography.body.copyWith(height: 1.6),
+                    ),
+                  ),
+              ],
+            ],
+          );
+        },
       ),
     );
   }

@@ -108,10 +108,7 @@ class _BreakdownRow extends StatelessWidget {
                 // A blocked category total is shown as a dash — never a
                 // partial sum (018 FR-009).
                 total == null ? '—' : formatter.formatWithSymbol(total),
-                style: AppTypography.body.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: AppTypography.figure.copyWith(color: color),
               ),
             ],
           ),

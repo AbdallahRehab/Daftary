@@ -105,10 +105,7 @@ class PersonListTile extends StatelessWidget {
                   alignment: AlignmentDirectional.centerEnd,
                   child: Text(
                     amountText,
-                    style: AppTypography.body.copyWith(
-                      color: amountColor,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTypography.figure.copyWith(color: amountColor),
                   ),
                 ),
               ),

@@ -120,10 +120,7 @@ class FinanceEntryListTile extends StatelessWidget {
           ],
           Text(
             isIncome ? '+$amountLabel' : '-$amountLabel',
-            style: AppTypography.body.copyWith(
-              color: amountColor,
-              fontWeight: FontWeight.w600,
-            ),
+            style: AppTypography.figure.copyWith(color: amountColor),
           ),
           if (onEdit != null || onDelete != null)
             PopupMenuButton<_EntryAction>(

@@ -25,8 +25,7 @@ class CurrencyIndicatorChip extends StatelessWidget {
         textDirection: TextDirection.ltr,
         child: Text(
           currency.code,
-          style: AppTypography.bodyMuted.copyWith(
-            fontSize: 11,
+          style: AppTypography.label.copyWith(
             fontWeight: FontWeight.w600,
             color: colorScheme.onSecondaryContainer,
           ),

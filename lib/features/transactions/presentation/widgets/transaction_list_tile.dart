@@ -108,10 +108,7 @@ class TransactionListTile extends StatelessWidget {
                 alignment: AlignmentDirectional.centerEnd,
                 child: Text(
                   formatter.formatWithSymbol(transaction.amount),
-                  style: AppTypography.body.copyWith(
-                    color: amountColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppTypography.figure.copyWith(color: amountColor),
                 ),
               ),
             ),

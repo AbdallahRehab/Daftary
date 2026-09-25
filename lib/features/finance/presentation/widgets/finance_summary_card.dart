@@ -116,7 +116,7 @@ class _SummaryFigure extends StatelessWidget {
         const SizedBox(height: AppSpacing.xs),
         Text(
           value,
-          style: (isProminent ? AppTypography.amount : AppTypography.body)
+          style: (isProminent ? AppTypography.amount : AppTypography.figure)
               .copyWith(color: color, fontWeight: FontWeight.w700),
         ),
       ],

@@ -243,7 +243,7 @@ class _RateTile extends StatelessWidget {
           child: Text(
             '1 $code = ${RateInput.format(rate.rateMicros)} '
             '${rate.relativeTo.code}',
-            style: AppTypography.body.copyWith(fontWeight: FontWeight.w600),
+            style: AppTypography.figure,
           ),
         ),
       ),

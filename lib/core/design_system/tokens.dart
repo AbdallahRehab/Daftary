@@ -77,36 +77,92 @@ class AppRadius {
   static const double pill = 999;
 }
 
+/// The app's one type scale, shared with Material through `ThemeData
+/// .textTheme` (see `_textThemeFor`), so custom rows and Material components
+/// (list tiles, fields, snackbars) never drift apart. Sizes and line heights
+/// follow Material 3's roles; weights keep Daftary's firmer headings.
+///
+/// Families stay the platform's (Roboto / SF, with the system Arabic
+/// fallback). Line heights are M3's, which leave room for Arabic's taller
+/// letterforms and diacritics. No role adds letter-spacing: tracking pulls
+/// Arabic's joined letters apart.
+///
+/// Roles, largest first — each step changes size and weight or tone:
+/// headline 24/700 → title 18/600 → body 16/400 → bodyMuted 14/400 (muted
+/// color at the call site) → label 12/500. [amount] and [figure] are for
+/// money: lining, tabular digits so stacked amounts align by place value.
 class AppTypography {
   const AppTypography._();
 
+  static const List<FontFeature> _tabularFigures = [
+    FontFeature.tabularFigures(),
+    FontFeature.liningFigures(),
+  ];
+
+  /// Screen-level statements: a person's balance, an article title.
+  /// M3 headlineSmall.
   static const TextStyle headline = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w700,
-    height: 1.2,
+    height: 32 / 24,
   );
+
+  /// Section headers. Between M3 titleMedium and titleLarge, so it sits
+  /// clearly above 16sp row text and below the 22sp app bar title.
   static const TextStyle title = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.3,
+    height: 24 / 18,
   );
-  static const TextStyle body = TextStyle(fontSize: 15, height: 1.4);
 
+  /// Primary row text and prose. M3 bodyLarge — the size `ListTile` titles
+  /// and text fields already use.
+  static const TextStyle body = TextStyle(fontSize: 16, height: 24 / 16);
+
+  /// Supporting text: descriptions, empty-state messages, metadata. M3
+  /// bodyMedium — the size `ListTile` subtitles already use.
+  ///
   /// No hardcoded color — a `static const TextStyle` can't vary by theme
   /// (research.md Decision 8). Call sites append
   /// `.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)`.
-  static const TextStyle bodyMuted = TextStyle(fontSize: 13, height: 1.4);
+  static const TextStyle bodyMuted = TextStyle(fontSize: 14, height: 20 / 14);
+
+  /// Hero money figures (summary totals).
   static const TextStyle amount = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w700,
-    height: 1.2,
+    height: 28 / 20,
+    fontFeatures: _tabularFigures,
   );
+
+  /// An amount inline in a row: body size, emphasized, tabular digits.
+  static const TextStyle figure = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 24 / 16,
+    fontFeatures: _tabularFigures,
+  );
+
+  /// Badges, chips, and compact metadata. M3 labelMedium, without its
+  /// tracking (see class doc).
   static const TextStyle label = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
-    letterSpacing: 0.2,
+    height: 16 / 12,
   );
 }
+
+/// Material's text theme with the roles above written into the slots Material
+/// components read, so both share one scale. Colors come from [base].
+TextTheme _textThemeFor(TextTheme base) => base.copyWith(
+  headlineSmall: base.headlineSmall!.merge(AppTypography.headline),
+  titleMedium: base.titleMedium!.merge(AppTypography.title),
+  bodyLarge: base.bodyLarge!.merge(AppTypography.body),
+  bodyMedium: base.bodyMedium!.merge(AppTypography.bodyMuted),
+  labelMedium: base.labelMedium!.merge(
+    AppTypography.label.copyWith(letterSpacing: 0),
+  ),
+);
 
 /// Finance-domain color roles Material's `ColorScheme` has no equivalent
 /// for (data-model.md Entity 2 Part B, contracts/theme_tokens.md). Never
@@ -247,9 +303,11 @@ ThemeData _buildTheme({
     // scheme keeps Material's own tonal error (a light red that reads).
     error: brightness == Brightness.light ? AppColors.error : null,
   );
+  final base = ThemeData(useMaterial3: true, colorScheme: colorScheme);
   return ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
+    textTheme: _textThemeFor(base.textTheme),
     scaffoldBackgroundColor: colorScheme.surface,
     dividerColor: colorScheme.outlineVariant,
     appBarTheme: AppBarTheme(

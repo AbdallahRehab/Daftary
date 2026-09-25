@@ -220,9 +220,6 @@ class _PersonSummaryRow extends StatelessWidget {
   Widget _amount(String text) => Text(
     text,
     textAlign: TextAlign.end,
-    style: AppTypography.body.copyWith(
-      color: color,
-      fontWeight: FontWeight.w600,
-    ),
+    style: AppTypography.figure.copyWith(color: color),
   );
 }

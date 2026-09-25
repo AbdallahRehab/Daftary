@@ -136,6 +136,7 @@ class _CategoryFormViewState extends State<_CategoryFormView> {
                 AppTextField(
                   key: const ValueKey('categoryNameField'),
                   label: l10n.financeCategoryNameLabel,
+                  maxLength: 40,
                   controller: _nameController,
                   autofocus: !state.isEditMode,
                   errorText: state.nameInvalid

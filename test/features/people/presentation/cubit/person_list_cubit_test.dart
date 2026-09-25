@@ -4,6 +4,7 @@ import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/domain/usecases/archive_person.dart';
+import 'package:daftary/features/people/domain/usecases/restore_person.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_state.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
@@ -47,6 +48,7 @@ void main() {
     peopleRepository,
     GetPersonBalance(transactionsRepository),
     ArchivePerson(peopleRepository),
+    RestorePerson(peopleRepository),
   );
 
   blocTest<PersonListCubit, PersonListState>(
@@ -312,6 +314,62 @@ void main() {
       expect(blocked.balance.isBlocked, isTrue);
       expect(blocked.balance.status, isNull);
       expect(blocked.balance.missingRatesFor, [Currency.usd]);
+    },
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'a successful archive() reports the archived person once, so the page '
+    'can offer Undo',
+    build: buildCubit,
+    seed: () => PersonListState(
+      status: PersonListStatus.success,
+      items: [
+        PersonListItem(
+          person: ahmed,
+          balance: const PersonBalance(personId: 'p1', net: Money.egp(0)),
+        ),
+      ],
+    ),
+    setUp: () {
+      when(
+        () => peopleRepository.archivePerson('p1'),
+      ).thenAnswer((_) async => const Right(unit));
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => const Right([]));
+    },
+    act: (cubit) => cubit.archive('p1'),
+    verify: (cubit) => expect(cubit.state.lastArchived, ahmed),
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
+    'undoArchive(id) restores the person and reloads the list',
+    build: buildCubit,
+    seed: () =>
+        const PersonListState(status: PersonListStatus.success, items: []),
+    setUp: () {
+      when(
+        () => peopleRepository.restorePerson('p1'),
+      ).thenAnswer((_) async => const Right(unit));
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([ahmed]));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async =>
+            const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
+      );
+    },
+    act: (cubit) => cubit.undoArchive('p1'),
+    verify: (cubit) {
+      verify(() => peopleRepository.restorePerson('p1')).called(1);
+      expect(cubit.state.items.map((i) => i.person), [ahmed]);
+      expect(cubit.state.lastArchived, isNull);
     },
   );
 }

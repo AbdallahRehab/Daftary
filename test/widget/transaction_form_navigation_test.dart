@@ -9,6 +9,7 @@ import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/domain/usecases/archive_person.dart';
+import 'package:daftary/features/people/domain/usecases/restore_person.dart';
 import 'package:daftary/features/people/domain/usecases/create_person.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dart';
 import 'package:daftary/features/people/presentation/pages/people_list_page.dart';
@@ -131,6 +132,7 @@ void main() {
         peopleRepository,
         GetPersonBalance(transactionsRepository),
         ArchivePerson(peopleRepository),
+        RestorePerson(peopleRepository),
       ),
     );
 

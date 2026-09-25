@@ -56,7 +56,14 @@ class BalanceStatusBadge extends StatelessWidget {
         children: [
           Icon(icon, size: dense ? 14 : 16, color: foreground),
           const SizedBox(width: AppSpacing.xs),
-          Text(label, style: AppTypography.label.copyWith(color: foreground)),
+          // Flexible so a narrow parent or a large system font wraps the
+          // label onto a second line instead of overflowing the pill.
+          Flexible(
+            child: Text(
+              label,
+              style: AppTypography.label.copyWith(color: foreground),
+            ),
+          ),
         ],
       ),
     );

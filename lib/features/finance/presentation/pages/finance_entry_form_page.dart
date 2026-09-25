@@ -216,6 +216,7 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.noteLabel,
+                  maxLength: 500,
                   controller: _noteController,
                   maxLines: 3,
                   onChanged: cubit.noteChanged,

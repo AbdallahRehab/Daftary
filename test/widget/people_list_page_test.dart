@@ -92,6 +92,7 @@ void main() {
         peopleRepository,
         GetPersonBalance(transactionsRepository),
         ArchivePerson(peopleRepository),
+        RestorePerson(peopleRepository),
       ),
     );
     getIt.registerFactory<ArchivedPeopleCubit>(

@@ -64,8 +64,12 @@ class _OverviewView extends StatelessWidget {
                   // Settled balances do not mean nothing happened this
                   // month, so the finance link stays visible here.
                   const FinanceMonthSummaryCard(),
-                  SizedBox(
-                    height: 420,
+                  // Padding rather than a fixed height, so the message grows
+                  // with the system font size instead of clipping.
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xl,
+                    ),
                     child: AppEmptyView(
                       icon: Icons.check_circle_outline,
                       title: l10n.overviewAllSettledTitle,

@@ -85,6 +85,7 @@ class _RepaymentFormView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.noteLabel,
+                  maxLength: 500,
                   maxLines: 3,
                   onChanged: cubit.noteChanged,
                 ),

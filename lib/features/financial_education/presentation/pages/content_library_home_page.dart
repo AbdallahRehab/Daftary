@@ -60,8 +60,8 @@ class _ContentLibraryHomeView extends StatelessWidget {
                 padding: EdgeInsets.all(AppSpacing.lg),
                 child: Center(child: CircularProgressIndicator()),
               ),
-              ContentLibraryStatus.failure => SizedBox(
-                height: 320,
+              ContentLibraryStatus.failure => Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
                 child: EducationLoadErrorView(
                   onRetry: () => context.read<ContentLibraryCubit>().load(
                     Localizations.localeOf(context).languageCode,

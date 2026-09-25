@@ -653,6 +653,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i162.NotificationPreferenceRepository>(),
       ),
     );
+    gh.factory<_i1018.PersonListCubit>(
+      () => _i1018.PersonListCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i750.GetPersonBalance>(),
+        gh<_i221.ArchivePerson>(),
+        gh<_i49.RestorePerson>(),
+      ),
+    );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
       (personId, _) => _i34.RepaymentFormCubit(
         gh<_i426.RecordRepayment>(),
@@ -691,13 +699,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i109.CategoryManagementCubit(
         gh<_i1.GetCategories>(),
         gh<_i490.RemoveCategory>(),
-      ),
-    );
-    gh.factory<_i1018.PersonListCubit>(
-      () => _i1018.PersonListCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i750.GetPersonBalance>(),
-        gh<_i221.ArchivePerson>(),
       ),
     );
     gh.factory<_i593.TransactionFormCubit>(

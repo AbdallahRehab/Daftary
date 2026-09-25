@@ -137,80 +137,98 @@ class _PersonDetailView extends StatelessWidget {
             RelationshipStatus.settled || null => null,
           };
 
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      headline,
-                      style: AppTypography.headline.copyWith(
-                        color: headlineColor,
+          // One scroll view for the header and the history, so a long name,
+          // a rate-needed banner, landscape, or a large system font can
+          // never squeeze the history out or overflow the screen.
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        headline,
+                        style: AppTypography.headline.copyWith(
+                          color: headlineColor,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Row(
-                      children: [
-                        if (status != null) BalanceStatusBadge(status: status),
-                        const Spacer(),
-                        if (status != RelationshipStatus.settled)
-                          TextButton.icon(
-                            onPressed: () => _recordRepayment(context),
-                            icon: const Icon(Icons.undo),
-                            label: Text(l10n.recordRepaymentAction),
-                          ),
-                      ],
-                    ),
-                    if (balance.isBlocked) ...[
                       const SizedBox(height: AppSpacing.sm),
-                      RateNeededBanner(
-                        missingRatesFor: balance.missingRatesFor,
-                        onSetRate: () => openExchangeRateSettings(context),
+                      // Wraps rather than overflowing when the badge and the
+                      // repayment action don't fit on one line.
+                      Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        children: [
+                          if (status != null)
+                            BalanceStatusBadge(status: status),
+                          if (status != RelationshipStatus.settled)
+                            TextButton.icon(
+                              onPressed: () => _recordRepayment(context),
+                              icon: const Icon(Icons.undo),
+                              label: Text(l10n.recordRepaymentAction),
+                            ),
+                        ],
                       ),
+                      if (balance.isBlocked) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        RateNeededBanner(
+                          missingRatesFor: balance.missingRatesFor,
+                          onSetRate: () => openExchangeRateSettings(context),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-              const Divider(height: 1),
-              Expanded(
-                child: state.history.isEmpty
-                    ? AppEmptyView(
-                        title: l10n.historyEmptyTitle,
-                        message: l10n.historyEmptyMessage(person.name),
-                        actionLabel: l10n.recordTransactionAction,
-                        onAction: () => _recordTransaction(context),
-                      )
-                    : ListView.separated(
-                        // Oldest first — FR-010 and US2's acceptance
-                        // scenarios both require chronological order.
-                        itemCount: state.history.length,
-                        separatorBuilder: (context, index) => Divider(
-                          height: 1,
-                          indent: AppSpacing.md,
-                          endIndent: AppSpacing.md,
-                          color: Theme.of(context).colorScheme.outlineVariant,
-                        ),
-                        itemBuilder: (context, index) {
-                          final transaction = state.history[index];
-                          return TransactionListTile(
-                            transaction: transaction,
-                            primaryCurrency: state.primaryCurrency,
-                            onTap: () =>
-                                _editTransaction(context, transaction, person),
-                            onDelete: () =>
-                                _deleteTransaction(context, transaction.id),
-                          );
-                        },
-                      ),
-              ),
+              const SliverToBoxAdapter(child: Divider(height: 1)),
+              if (state.history.isEmpty)
+                SliverFillRemaining(
+                  child: AppEmptyView(
+                    title: l10n.historyEmptyTitle,
+                    message: l10n.historyEmptyMessage(person.name),
+                    actionLabel: l10n.recordTransactionAction,
+                    onAction: () => _recordTransaction(context),
+                  ),
+                )
+              else
+                SliverPadding(
+                  // Clears the FAB so the last row's amount and delete
+                  // action are never hidden underneath it.
+                  padding: const EdgeInsets.only(bottom: 88),
+                  sliver: SliverList.separated(
+                    // Oldest first — FR-010 and US2's acceptance scenarios
+                    // both require chronological order.
+                    itemCount: state.history.length,
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      indent: AppSpacing.md,
+                      endIndent: AppSpacing.md,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    itemBuilder: (context, index) {
+                      final transaction = state.history[index];
+                      return TransactionListTile(
+                        transaction: transaction,
+                        primaryCurrency: state.primaryCurrency,
+                        onTap: () =>
+                            _editTransaction(context, transaction, person),
+                        onDelete: () =>
+                            _deleteTransaction(context, transaction.id),
+                      );
+                    },
+                  ),
+                ),
             ],
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _recordTransaction(context),
+        tooltip: l10n.recordTransactionAction,
         child: const Icon(Icons.add),
       ),
     );

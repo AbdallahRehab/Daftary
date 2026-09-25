@@ -20,6 +20,9 @@ class CurrencyFormatter {
   /// The currency [parse] produces amounts in.
   final Currency currency;
 
+  /// The most whole-unit digits [parse] accepts (up to 999,999,999,999).
+  static const int maxWholeDigits = 12;
+
   final NumberFormat _majorFormat;
 
   // `NumberFormat` construction does real locale-data lookup and pattern
@@ -85,6 +88,15 @@ class CurrencyFormatter {
     if (fractionPart.length > fractionDigits) {
       throw FormatException(
         'Amount has more than $fractionDigits decimal places: $input',
+      );
+    }
+    // Past 12 whole digits the `major * perMajor` step below (and totals
+    // summed over many records) risk silently overflowing a 64-bit int into
+    // a wrong or negative amount, so anything longer is rejected up front.
+    final significantWhole = wholePart.replaceFirst(RegExp(r'^0+(?=\d)'), '');
+    if (significantWhole.length > maxWholeDigits) {
+      throw FormatException(
+        'Amount has more than $maxWholeDigits digits: $input',
       );
     }
     fractionPart = fractionPart.padRight(fractionDigits, '0');

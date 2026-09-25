@@ -53,60 +53,76 @@ class PersonListTile extends StatelessWidget {
     final amountText = net != null
         ? EgpFormatter(locale: locale).formatWithSymbol(net.abs())
         : formatNativeNets(balance.nativeNets, locale: locale);
+    final hasTag = tag != null && tag.trim().isNotEmpty;
     return ListTile(
       onTap: onTap,
-      title: Text(person.name),
-      subtitle: tag != null && tag.trim().isNotEmpty
-          ? Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: RelationshipTagChip(tag: tag),
+      title: Text(person.name, maxLines: 2, overflow: TextOverflow.ellipsis),
+      // The status badge sits under the name (not stacked under the amount)
+      // because ListTile caps the trailing slot's height: at a large system
+      // font the two stacked lines would overflow the row.
+      subtitle: hasTag || status != null
+          ? Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (status != null)
+                    BalanceStatusBadge(status: status, dense: true),
+                  if (hasTag) RelationshipTagChip(tag: tag),
+                ],
+              ),
             )
           : null,
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Settled rows already read as "settled" from the badge
-              // alone; a "0.00 EGP" amount above it would only add noise.
-              if (!isSettled) ...[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // A blocked balance is never settled, so the compact
-                    // rate-needed label always lands on this line.
-                    if (balance.isBlocked) ...[
-                      _RateNeededLabel(
-                        missingRatesFor: balance.missingRatesFor,
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                    ],
-                    Text(
-                      amountText,
-                      style: AppTypography.body.copyWith(
-                        color: amountColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+      // Capped so a large amount, a multi-currency blocked balance, or a
+      // large system font never squeezes the person's name out of the row;
+      // the amount scales down to fit rather than truncating digits.
+      trailing: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.45,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Settled rows already read as "settled" from the badge alone; a
+            // "0.00 EGP" amount beside it would only add noise.
+            if (!isSettled) ...[
+              // A blocked balance is never settled, so the compact
+              // rate-needed label always lands on this line.
+              if (balance.isBlocked) ...[
+                Flexible(
+                  child: _RateNeededLabel(
+                    missingRatesFor: balance.missingRatesFor,
+                  ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(width: AppSpacing.xs),
               ],
-              if (status != null)
-                BalanceStatusBadge(status: status, dense: true),
+              Flexible(
+                flex: 2,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Text(
+                    amountText,
+                    style: AppTypography.body.copyWith(
+                      color: amountColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
             ],
-          ),
-          if (onArchive != null)
-            IconButton(
-              icon: const Icon(Icons.archive_outlined),
-              tooltip: AppLocalizations.of(
-                context,
-              )!.archivePersonTooltip(person.name),
-              onPressed: isArchiving ? null : onArchive,
-            ),
-        ],
+            if (onArchive != null)
+              IconButton(
+                icon: const Icon(Icons.archive_outlined),
+                tooltip: AppLocalizations.of(
+                  context,
+                )!.archivePersonTooltip(person.name),
+                onPressed: isArchiving ? null : onArchive,
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -136,7 +152,14 @@ class _RateNeededLabel extends StatelessWidget {
           children: [
             Icon(Icons.currency_exchange, size: 14, color: color),
             const SizedBox(width: 2),
-            Text(codes, style: AppTypography.label.copyWith(color: color)),
+            Flexible(
+              child: Text(
+                codes,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.label.copyWith(color: color),
+              ),
+            ),
           ],
         ),
       ),

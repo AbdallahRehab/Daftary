@@ -24,31 +24,42 @@ class AppEmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 48, color: onSurfaceVariant),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              title,
-              style: AppTypography.title,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              message,
-              style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
-              textAlign: TextAlign.center,
-            ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: AppSpacing.lg),
-              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
-            ],
-          ],
+    // Scrollable so the message and action stay reachable when the space
+    // is short (landscape, a large system font, or a small parent box),
+    // while still centering in the available height when it fits.
+    return LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: constraints.maxWidth,
+            minHeight: constraints.hasBoundedHeight ? constraints.maxHeight : 0,
+          ),
+          child: Center(child: _content(context, onSurfaceVariant)),
         ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context, Color onSurfaceVariant) {
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 48, color: onSurfaceVariant),
+          const SizedBox(height: AppSpacing.md),
+          Text(title, style: AppTypography.title, textAlign: TextAlign.center),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            message,
+            style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
+            textAlign: TextAlign.center,
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            FilledButton(onPressed: onAction, child: Text(actionLabel!)),
+          ],
+        ],
       ),
     );
   }

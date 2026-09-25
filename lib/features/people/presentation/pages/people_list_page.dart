@@ -35,6 +35,37 @@ class _PeopleListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    return BlocListener<PersonListCubit, PersonListState>(
+      // Archive is one tap from the row, so it always reports back: an Undo
+      // snackbar on success, or the failure while the list stays on screen.
+      listenWhen: (previous, current) =>
+          (current.lastArchived != null &&
+              previous.lastArchived != current.lastArchived) ||
+          (current.failure != null &&
+              current.status != PersonListStatus.failure &&
+              previous.failure != current.failure),
+      listener: (context, state) {
+        final archived = state.lastArchived;
+        final cubit = context.read<PersonListCubit>();
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            archived != null
+                ? SnackBar(
+                    content: Text(l10n.personArchivedMessage(archived.name)),
+                    action: SnackBarAction(
+                      label: l10n.commonUndo,
+                      onPressed: () => cubit.undoArchive(archived.id),
+                    ),
+                  )
+                : SnackBar(content: Text(l10n.messageFor(state.failure))),
+          );
+      },
+      child: _buildScaffold(context, l10n),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context, AppLocalizations l10n) {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.peopleListTitle),
@@ -153,6 +184,9 @@ class _PeopleListView extends StatelessWidget {
                 return RefreshIndicator(
                   onRefresh: () => context.read<PersonListCubit>().load(),
                   child: ListView.separated(
+                    // Clears the FAB so the last row's archive action is
+                    // never hidden underneath it.
+                    padding: const EdgeInsets.only(bottom: 88),
                     itemCount: state.items.length,
                     separatorBuilder: (context, index) => Divider(
                       height: 1,

@@ -23,8 +23,10 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveOnPressed = isLoading ? null : onPressed;
-    return SizedBox(
-      height: 48,
+    // A minimum, not a fixed height, so labels grow with the system font
+    // size instead of clipping.
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 48),
       child: FilledButton(
         onPressed: effectiveOnPressed,
         style: FilledButton.styleFrom(
@@ -68,8 +70,8 @@ class AppSecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 48,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 48),
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(

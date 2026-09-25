@@ -16,6 +16,7 @@ class AppTextField extends StatelessWidget {
     this.autofocus = false,
     this.suffixIcon,
     this.textDirection,
+    this.maxLength,
   });
 
   final String label;
@@ -29,6 +30,11 @@ class AppTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final TextDirection? textDirection;
 
+  /// Caps input length so an unbounded paste can't produce a record no
+  /// list row or headline can lay out. The counter only appears once the
+  /// text is within 20% of the limit, so everyday typing stays uncluttered.
+  final int? maxLength;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -39,6 +45,17 @@ class AppTextField extends StatelessWidget {
       textInputAction: textInputAction,
       autofocus: autofocus,
       textDirection: textDirection,
+      maxLength: maxLength,
+      buildCounter: maxLength == null
+          ? null
+          : (
+              context, {
+              required currentLength,
+              required isFocused,
+              maxLength,
+            }) => maxLength != null && currentLength >= maxLength * 0.8
+                ? Text('$currentLength/$maxLength')
+                : null,
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,

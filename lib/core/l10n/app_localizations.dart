@@ -476,6 +476,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get commonRetry;
 
+  /// No description provided for @commonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get commonUndo;
+
   /// No description provided for @commonSearch.
   ///
   /// In en, this message translates to:
@@ -577,6 +583,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Archive {name}'**
   String archivePersonTooltip(String name);
+
+  /// No description provided for @personArchivedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} archived. You can find them in Archived people.'**
+  String personArchivedMessage(String name);
 
   /// No description provided for @addPersonAction.
   ///
@@ -737,7 +749,7 @@ abstract class AppLocalizations {
   /// No description provided for @amountInvalidError.
   ///
   /// In en, this message translates to:
-  /// **'Enter a valid amount greater than zero'**
+  /// **'Enter an amount greater than zero, up to 12 digits'**
   String get amountInvalidError;
 
   /// No description provided for @directionGiven.

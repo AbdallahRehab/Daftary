@@ -219,6 +219,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonRetry => 'حاول مرة أخرى';
 
   @override
+  String get commonUndo => 'تراجع';
+
+  @override
   String get commonSearch => 'بحث';
 
   @override
@@ -272,6 +275,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String archivePersonTooltip(String name) {
     return 'أرشفة $name';
+  }
+
+  @override
+  String personArchivedMessage(String name) {
+    return 'تمت أرشفة $name. يمكنك العثور عليه في الأشخاص المؤرشفين.';
   }
 
   @override
@@ -355,7 +363,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get amountLabel => 'المبلغ';
 
   @override
-  String get amountInvalidError => 'أدخل مبلغًا صحيحًا أكبر من صفر';
+  String get amountInvalidError => 'أدخل مبلغًا أكبر من صفر، بحد أقصى 12 رقمًا';
 
   @override
   String get directionGiven => 'أعطيت';

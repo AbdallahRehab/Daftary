@@ -53,16 +53,16 @@ class TransactionListTile extends StatelessWidget {
           color: amountColor,
         ),
       ),
-      title: Row(
+      // Wraps rather than overflowing when the direction, the repayment tag,
+      // and the edited marker don't fit on one line (narrow screen, long
+      // translation, or a large system font).
+      title: Wrap(
+        spacing: AppSpacing.xs,
+        runSpacing: 2,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          Flexible(
-            child: Text(
-              isGiven ? l10n.directionGiven : l10n.directionReceived,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          if (isRepayment) ...[
-            const SizedBox(width: AppSpacing.xs),
+          Text(isGiven ? l10n.directionGiven : l10n.directionReceived),
+          if (isRepayment)
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.xs,
@@ -74,14 +74,11 @@ class TransactionListTile extends StatelessWidget {
               ),
               child: Text(l10n.repaymentLabel, style: AppTypography.label),
             ),
-          ],
-          if (transaction.isEdited) ...[
-            const SizedBox(width: AppSpacing.xs),
+          if (transaction.isEdited)
             Text(
               '(${l10n.editedLabel})',
               style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
             ),
-          ],
         ],
       ),
       subtitle: Text(
@@ -91,27 +88,41 @@ class TransactionListTile extends StatelessWidget {
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (transaction.amount.currency != primaryCurrency) ...[
-            CurrencyIndicatorChip(currency: transaction.amount.currency),
-            const SizedBox(width: AppSpacing.xs),
+      // Capped so a large amount or a large system font never squeezes the
+      // direction/date out of the row; the amount scales down to fit rather
+      // than truncating digits.
+      trailing: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.45,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (transaction.amount.currency != primaryCurrency) ...[
+              CurrencyIndicatorChip(currency: transaction.amount.currency),
+              const SizedBox(width: AppSpacing.xs),
+            ],
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  formatter.formatWithSymbol(transaction.amount),
+                  style: AppTypography.body.copyWith(
+                    color: amountColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                tooltip: l10n.deleteTransactionTooltip,
+                onPressed: onDelete,
+              ),
           ],
-          Text(
-            formatter.formatWithSymbol(transaction.amount),
-            style: AppTypography.body.copyWith(
-              color: amountColor,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          if (onDelete != null)
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              tooltip: l10n.deleteTransactionTooltip,
-              onPressed: onDelete,
-            ),
-        ],
+        ),
       ),
     );
   }

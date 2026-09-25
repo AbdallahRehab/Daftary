@@ -135,6 +135,7 @@ class _PersonFormView extends StatelessWidget {
               children: [
                 AppTextField(
                   label: l10n.nameLabel,
+                  maxLength: 60,
                   autofocus: !state.isEditMode,
                   errorText: state.nameInvalid ? l10n.nameRequiredError : null,
                   onChanged: cubit.nameChanged,
@@ -142,6 +143,7 @@ class _PersonFormView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.phoneLabel,
+                  maxLength: 20,
                   keyboardType: TextInputType.phone,
                   onChanged: cubit.phoneNumberChanged,
                 ),
@@ -169,6 +171,7 @@ class _PersonFormView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.notesLabel,
+                  maxLength: 500,
                   maxLines: 3,
                   onChanged: cubit.notesChanged,
                 ),

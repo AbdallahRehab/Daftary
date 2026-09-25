@@ -225,6 +225,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Try again';
 
   @override
+  String get commonUndo => 'Undo';
+
+  @override
   String get commonSearch => 'Search';
 
   @override
@@ -279,6 +282,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String archivePersonTooltip(String name) {
     return 'Archive $name';
+  }
+
+  @override
+  String personArchivedMessage(String name) {
+    return '$name archived. You can find them in Archived people.';
   }
 
   @override
@@ -362,7 +370,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get amountLabel => 'Amount';
 
   @override
-  String get amountInvalidError => 'Enter a valid amount greater than zero';
+  String get amountInvalidError =>
+      'Enter an amount greater than zero, up to 12 digits';
 
   @override
   String get directionGiven => 'I gave';

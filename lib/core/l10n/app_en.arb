@@ -78,6 +78,7 @@
   "commonRestore": "Restore",
   "commonConfirm": "Confirm",
   "commonRetry": "Try again",
+  "commonUndo": "Undo",
   "commonSearch": "Search",
   "commonOk": "OK",
   "errorLoadTitle": "Couldn't load this",
@@ -96,6 +97,14 @@
   "archivedPeopleAction": "Archived people",
   "archivePersonTooltip": "Archive {name}",
   "@archivePersonTooltip": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "personArchivedMessage": "{name} archived. You can find them in Archived people.",
+  "@personArchivedMessage": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -128,7 +137,7 @@
   "transactionFormCreateTitle": "Record transaction",
   "transactionFormEditTitle": "Edit transaction",
   "amountLabel": "Amount",
-  "amountInvalidError": "Enter a valid amount greater than zero",
+  "amountInvalidError": "Enter an amount greater than zero, up to 12 digits",
   "directionGiven": "I gave",
   "directionReceived": "I received",
   "dateLabel": "Date",

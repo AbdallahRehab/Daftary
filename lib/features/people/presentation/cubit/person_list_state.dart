@@ -28,6 +28,7 @@ class PersonListState extends Equatable {
     this.statusFilter,
     this.failure,
     this.processingPersonId,
+    this.lastArchived,
   });
 
   final PersonListStatus status;
@@ -43,6 +44,11 @@ class PersonListState extends Equatable {
   /// `load()` has emitted.
   final String? processingPersonId;
 
+  /// The person a just-completed `archive()` removed from the list. Set for
+  /// a single emission (every `copyWith` clears it unless passed again) so
+  /// the page shows exactly one Undo snackbar per archive.
+  final Person? lastArchived;
+
   bool get isLoading => status == PersonListStatus.loading;
 
   PersonListState copyWith({
@@ -54,6 +60,7 @@ class PersonListState extends Equatable {
     Failure? failure,
     String? processingPersonId,
     bool clearProcessingPersonId = false,
+    Person? lastArchived,
   }) {
     return PersonListState(
       status: status ?? this.status,
@@ -66,6 +73,7 @@ class PersonListState extends Equatable {
       processingPersonId: clearProcessingPersonId
           ? null
           : (processingPersonId ?? this.processingPersonId),
+      lastArchived: lastArchived,
     );
   }
 
@@ -77,5 +85,6 @@ class PersonListState extends Equatable {
     statusFilter,
     failure,
     processingPersonId,
+    lastArchived,
   ];
 }

@@ -18,19 +18,23 @@ class AppColors {
   static const Color onSurfaceMuted = Color(0xFF6B6B6B);
   static const Color divider = Color(0xFFE3E3E0);
 
+  // Light-mode status foregrounds are tuned to clear WCAG AA (≥4.8:1) as
+  // text on the scheme's `surface`, on their own `*Surface` tint, and as an
+  // icon on a 12% tint of themselves (the transaction-row avatar).
+
   /// "They owe you" — money coming to the user.
-  static const Color positive = Color(0xFF1F8A56);
+  static const Color positive = Color(0xFF1A7347);
   static const Color positiveSurface = Color(0xFFE4F5EC);
 
   /// "You owe them" — money the user owes.
-  static const Color negative = Color(0xFFC24B3F);
+  static const Color negative = Color(0xFFAB4136);
   static const Color negativeSurface = Color(0xFFFBEAE7);
 
   /// Settled.
-  static const Color neutral = Color(0xFF6B6B6B);
+  static const Color neutral = Color(0xFF646464);
   static const Color neutralSurface = Color(0xFFEDEDEA);
 
-  static const Color warning = Color(0xFFB3730C);
+  static const Color warning = Color(0xFF8D5A09);
   static const Color warningSurface = Color(0xFFFCEFDB);
 
   static const Color error = Color(0xFFB3261E);
@@ -222,7 +226,9 @@ ThemeData _buildTheme({
   final colorScheme = ColorScheme.fromSeed(
     seedColor: AppColors.primary,
     brightness: brightness,
-    error: AppColors.error,
+    // Light only: this dark red on a dark surface is ~2.8:1, so the dark
+    // scheme keeps Material's own tonal error (a light red that reads).
+    error: brightness == Brightness.light ? AppColors.error : null,
   );
   return ThemeData(
     useMaterial3: true,

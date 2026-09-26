@@ -345,7 +345,7 @@ description: "Task list for 019 Branded Splash Screen"
 
   Depends on T055 and T016.
 - [X] T057 [US3] Verify that `whenReady` chaining in `lib/main.dart` (T018) starts `NotificationRecomputeTrigger` and `NotificationTapRouter` exactly once, including after a failed → retried → ready sequence. `whenReady` resolves once, and both `start()` methods are already idempotent. Document the check in a code comment beside the chain. No behaviour change beyond T018.
-- [ ] T058 [US3] Run `flutter test test/widget/app_startup_gate_test.dart` and `flutter test integration_test/splash_startup_flow_test.dart -d <simulator/emulator>`; all pass. Depends on T053–T057.
+- [X] T058 [US3] Run `flutter test test/widget/app_startup_gate_test.dart` and `flutter test integration_test/splash_startup_flow_test.dart -d <simulator/emulator>`; all pass. Depends on T053–T057.
 
 **Checkpoint / Acceptance (US3)**:
 
@@ -366,7 +366,7 @@ description: "Task list for 019 Branded Splash Screen"
   11. After hand-off, rebuild the host `MaterialApp` with `buildDarkTheme()` and locale `ar` → no `SplashView`, and the probe's `initState` count is 1 (the gate's state is preserved).
   12. After hand-off, change `tester.view.physicalSize` to landscape → no `SplashView`.
 - [X] T060 [P] [US4] Add a case to `integration_test/splash_startup_flow_test.dart`: after reaching People, switch the theme via `getIt<SettingsCubit>().changeThemeMode(AppThemeMode.dark)` and the language via `changeLanguage(AppLanguage.arabic)`, and simulate `paused` → `resumed`, with `pumpAndSettle` after each step. `SplashView` is never found and `PeopleListPage` remains.
-- [ ] T061 [US4] Run `flutter test test/widget/app_startup_gate_test.dart` and the integration file from T060; all pass. If a replay occurs, fix it only inside `app_startup_gate.dart` (for example an accidental `Key` or a state reset), not in the router or `main.dart` theme code. Depends on T059 and T060.
+- [X] T061 [US4] Run `flutter test test/widget/app_startup_gate_test.dart` and the integration file from T060; all pass. If a replay occurs, fix it only inside `app_startup_gate.dart` (for example an accidental `Key` or a state reset), not in the router or `main.dart` theme code. Depends on T059 and T060.
 
 **Checkpoint / Acceptance (US4)**: The splash appears only on process start.
 
@@ -379,7 +379,7 @@ description: "Task list for 019 Branded Splash Screen"
 - [X] T062 Run `dart format lib test integration_test` and commit nothing unrelated. Only files from plan.md may show formatting changes.
 - [X] T063 Run `flutter analyze` with zero issues. Fix issues the feature introduced; add no `// ignore` comments. Pre-existing unrelated warnings go to `notes-out-of-scope.md`.
 - [X] T064 Run `flutter test` (all unit and widget tests) and record the pass count.
-- [ ] T065 Run `flutter test integration_test -d <iOS simulator>` and `-d <Android emulator>` (the whole folder, including the 9 updated flows and `splash_startup_flow_test.dart`); all pass.
+- [X] T065 Run `flutter test integration_test -d <iOS simulator>` and `-d <Android emulator>` (the whole folder, including the 9 updated flows and `splash_startup_flow_test.dart`); all pass.
 - [X] T066 [P] Dependency audit: `git diff main -- pubspec.yaml pubspec.lock` shows **no** changes.
 - [X] T067 [P] Unused-code audit: no unused imports (the analyzer is clean), no unused `AppBrandColors` constants (grep each name under `lib/`), and no Flutter asset added to `pubspec.yaml`. `assets/icon/splash.png` is a generated source (like `icon.png`) and is committed alongside the others.
 - [X] T068 [P] Scope audit: `git diff --stat main` lists only the files in plan.md's "Create"/"Modify" tables, plus the regenerated `app_localizations*.dart`, `injection.config.dart` and the generated PNGs. Anything else is reverted or explained in `notes-out-of-scope.md`.

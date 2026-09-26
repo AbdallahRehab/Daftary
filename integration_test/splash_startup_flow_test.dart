@@ -116,12 +116,29 @@ void main() {
     expect(find.byType(SplashView), findsNothing);
     expect(find.byType(PeopleListPage), findsOneWidget);
 
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
-    await tester.pumpAndSettle();
+    // Background and return through the same state sequence the OS reports
+    // (the app's AppLifecycleListener asserts on skipped states). No pump
+    // while paused: a live binding stops producing frames then, so
+    // pumpAndSettle would wait forever; the tree is still inspectable.
+    void lifecycle(List<AppLifecycleState> states) {
+      for (final state in states) {
+        tester.binding.handleAppLifecycleStateChanged(state);
+      }
+    }
+
+    lifecycle(const [
+      AppLifecycleState.inactive,
+      AppLifecycleState.hidden,
+      AppLifecycleState.paused,
+    ]);
     expect(find.byType(SplashView), findsNothing);
     expect(find.byType(PeopleListPage), findsOneWidget);
 
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    lifecycle(const [
+      AppLifecycleState.hidden,
+      AppLifecycleState.inactive,
+      AppLifecycleState.resumed,
+    ]);
     await tester.pumpAndSettle();
     expect(find.byType(SplashView), findsNothing);
     expect(find.byType(PeopleListPage), findsOneWidget);

@@ -3,13 +3,13 @@ import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/core/routing/app_router.dart';
-import 'package:daftary/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:daftary/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/presentation/pages/people_list_page.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/main.dart';
@@ -39,8 +39,9 @@ void main() {
   }
 
   /// (Re)builds GetIt's singletons from scratch — a fresh `SettingsCubit`,
-  /// `OnboardingCubit`, `AppDatabase`, etc. — then resolves both exactly
-  /// like `main()` does. The underlying SQLite file on disk is otherwise
+  /// `OnboardingCubit`, `AppStartupCubit`, `AppDatabase`, etc. — then runs
+  /// startup (settings + onboarding gate) via `AppStartupCubit.start()`,
+  /// exactly like `main()` does. The underlying SQLite file on disk is otherwise
   /// unaffected, so calling this simulates a real app restart: the new
   /// "session" only knows what was actually persisted.
   Future<void> bootApp(WidgetTester tester, {bool freshInstall = false}) async {
@@ -49,12 +50,11 @@ void main() {
     if (freshInstall) {
       await clearOnboardingRelevantTables(getIt<AppDatabase>());
     }
-    await getIt<SettingsCubit>().initialize();
+    await getIt<AppStartupCubit>().start();
     // Force a known-English baseline regardless of the simulator's device
     // locale or any language persisted by an earlier test run on this
     // same on-device database.
     await getIt<SettingsCubit>().changeLanguage(AppLanguage.english);
-    await getIt<OnboardingCubit>().initialize();
     appRouter.go('/');
     await tester.pumpWidget(const DaftaryApp());
     await tester.pumpAndSettle();
@@ -84,8 +84,7 @@ void main() {
       await clearOnboardingRelevantTables(getIt<AppDatabase>());
       await getIt<PeopleRepository>().createPerson(name: 'Seed Person');
 
-      await getIt<SettingsCubit>().initialize();
-      await getIt<OnboardingCubit>().initialize();
+      await getIt<AppStartupCubit>().start();
       appRouter.go('/');
       await tester.pumpWidget(const DaftaryApp());
       await tester.pumpAndSettle();
@@ -119,8 +118,7 @@ void main() {
           date: DateTime.now(),
         );
 
-        await getIt<SettingsCubit>().initialize();
-        await getIt<OnboardingCubit>().initialize();
+        await getIt<AppStartupCubit>().start();
         appRouter.go('/');
         await tester.pumpWidget(const DaftaryApp());
         await tester.pumpAndSettle();
@@ -144,8 +142,7 @@ void main() {
             .id;
         await getIt<PeopleRepository>().archivePerson(personId);
 
-        await getIt<SettingsCubit>().initialize();
-        await getIt<OnboardingCubit>().initialize();
+        await getIt<AppStartupCubit>().start();
         appRouter.go('/');
         await tester.pumpWidget(const DaftaryApp());
         await tester.pumpAndSettle();
@@ -180,8 +177,7 @@ void main() {
             .id;
         await getIt<TransactionsRepository>().deleteTransaction(txId);
 
-        await getIt<SettingsCubit>().initialize();
-        await getIt<OnboardingCubit>().initialize();
+        await getIt<AppStartupCubit>().start();
         appRouter.go('/');
         await tester.pumpWidget(const DaftaryApp());
         await tester.pumpAndSettle();

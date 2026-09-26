@@ -35,6 +35,43 @@ class AppColors {
   static const Color error = Color(0xFFB3261E);
 }
 
+/// The launcher-icon / splash palette (019). Brand constants, identical in
+/// Light and Dark — only the splash field changes with the theme. Every value
+/// mirrors `assets/icon/build_icon.py` and the native `splash_field` launch
+/// colors (Android `values*/colors.xml`, iOS `LaunchBackground`); keep them in
+/// sync.
+class AppBrandColors {
+  const AppBrandColors._();
+
+  /// Splash field in Light mode — the brand primary.
+  static const Color field = AppColors.primary;
+
+  /// Splash field in Dark mode — the icon gradient's deep stop.
+  static const Color fieldDeep = Color(0xFF0E3D32);
+
+  static const Color page = Color(0xFFFFFDF6);
+  static const Color pageShade = Color(0xFFF6EDD8);
+  static const Color pageEdge = Color(0xFFE3D5B4);
+  static const Color spine = Color(0xFF0F4538);
+  static const Color spineLight = Color(0xFF1A6452);
+  static const Color coinLight = Color(0xFFFFD66B);
+  static const Color coin = Color(0xFFF2B233);
+  static const Color coinDeep = Color(0xFFD38E12);
+  static const Color coinRim = Color(0xFFFFF1C2);
+  static const Color coinInk = Color(0xFF8A5500);
+  static const Color ribbon = Color(0xFFF0735C);
+  static const Color ribbonDeep = Color(0xFFD24E3B);
+
+  /// Notebook drop shadow (the icon's `#shadow` flood color).
+  static const Color shadow = Color(0xFF062A22);
+
+  /// Coin drop shadow (the icon's `#coinShadow` flood color).
+  static const Color coinShadow = Color(0xFF3A2600);
+
+  /// Text and outlines drawn on [field] / [fieldDeep].
+  static const Color onField = page;
+}
+
 class AppSpacing {
   const AppSpacing._();
 

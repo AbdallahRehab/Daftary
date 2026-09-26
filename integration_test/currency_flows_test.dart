@@ -9,6 +9,8 @@ import 'package:daftary/features/currency/domain/usecases/get_conversion_context
 import 'package:daftary/features/currency/presentation/pages/currency_settings_page.dart';
 import 'package:daftary/features/currency/presentation/pages/exchange_rate_form_page.dart';
 import 'package:daftary/features/currency/presentation/pages/exchange_rate_list_page.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
@@ -39,6 +41,13 @@ void main() {
       ..registerSingleton<db.AppDatabase>(
         db.AppDatabase.forTesting(NativeDatabase.memory()),
       );
+    // 019: the app shows the splash until startup (settings + onboarding
+    // gate) is ready, so run it exactly like `main()` does. This file's
+    // fresh in-memory database has no onboarding row, so mark onboarding
+    // complete first — these flows never exercised the onboarding gate
+    // before 019 and must keep landing on their own screens.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
   });
 
   setUp(() async {

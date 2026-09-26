@@ -296,5 +296,7 @@
   "exchangeRateRemoveConfirm": "ستصبح الإجماليات التي تحتاج هذا السعر غير متاحة حتى تضيفه مرة أخرى. لن تتغير سجلاتك.",
   "exchangeRateSaveFailed": "تعذر حفظ سعر الصرف. حاول مرة أخرى.",
   "currencySettingsLoadFailed": "تعذر تحميل إعدادات العملة.",
-  "primaryCurrencyChangeFailed": "تعذر تغيير العملة الأساسية. حاول مرة أخرى."
+  "primaryCurrencyChangeFailed": "تعذر تغيير العملة الأساسية. حاول مرة أخرى.",
+  "splashTagline": "كل أخذ وعطاء في دفتر واحد",
+  "splashErrorMessage": "تعذّر إكمال فتح دفتري. حاول مرة أخرى."
 }

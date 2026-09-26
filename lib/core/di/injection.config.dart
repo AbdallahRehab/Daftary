@@ -218,6 +218,8 @@ import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
     as _i333;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
     as _i792;
+import '../../features/startup/presentation/cubit/app_startup_cubit.dart'
+    as _i247;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
@@ -728,6 +730,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i101.EditPerson>(),
         gh<_i221.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
+      ),
+    );
+    gh.lazySingleton<_i247.AppStartupCubit>(
+      () => _i247.AppStartupCubit(
+        gh<_i792.SettingsCubit>(),
+        gh<_i807.OnboardingCubit>(),
       ),
     );
     gh.factory<_i39.NotificationSettingsCubit>(

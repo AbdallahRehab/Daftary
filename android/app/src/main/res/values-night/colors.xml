@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 019: equals AppBrandColors.field / fieldDeep. Native launch-screen
+         field color when the OS's Dark Mode setting is on. -->
+    <color name="splash_field">#0E3D32</color>
+</resources>

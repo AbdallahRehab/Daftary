@@ -51,10 +51,10 @@ final GlobalKey<NavigatorState> _settingsBranchNavigatorKey =
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/',
-  // FR-001/FR-010a: `OnboardingCubit.initialize()` is awaited in main.dart
-  // before `runApp`, so its state is already settled by the time any
-  // redirect runs — no `refreshListenable`/async redirect is needed
-  // (research.md Decision 1).
+  // FR-001/FR-010a: `OnboardingCubit.initialize()` is settled before
+  // `AppStartupGate` (019) mounts the Router, so its state is already final
+  // by the time any redirect runs — no `refreshListenable`/async redirect is
+  // needed (research.md Decision 1).
   redirect: (context, state) {
     final onboarding = getIt<OnboardingCubit>().state;
     final onOnboardingRoute = state.matchedLocation == '/onboarding';

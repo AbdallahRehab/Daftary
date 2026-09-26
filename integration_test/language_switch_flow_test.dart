@@ -1,8 +1,9 @@
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/routing/app_router.dart';
-import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -21,7 +22,11 @@ void main() {
   Future<void> bootApp(WidgetTester tester) async {
     await getIt.reset();
     await configureDependencies();
-    await getIt<SettingsCubit>().initialize();
+    // 019: startup now resolves the onboarding gate these flows never
+    // went through before; mark it complete so they keep landing in the
+    // main app whatever an earlier test left in the shared device DB.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
     appRouter.go('/people');
     await tester.pumpWidget(const DaftaryApp());
     await tester.pumpAndSettle();

@@ -1879,6 +1879,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t change the primary currency. Please try again.'**
   String get primaryCurrencyChangeFailed;
+
+  /// Splash screen line under the app name, describing what Daftary does.
+  ///
+  /// In en, this message translates to:
+  /// **'Every give and take, in one ledger'**
+  String get splashTagline;
+
+  /// Shown on the splash screen when startup fails or takes longer than 10 seconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary couldn\'t finish opening. Please try again.'**
+  String get splashErrorMessage;
 }
 
 class _AppLocalizationsDelegate

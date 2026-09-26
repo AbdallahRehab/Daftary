@@ -1020,4 +1020,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get primaryCurrencyChangeFailed =>
       'تعذر تغيير العملة الأساسية. حاول مرة أخرى.';
+
+  @override
+  String get splashTagline => 'كل أخذ وعطاء في دفتر واحد';
+
+  @override
+  String get splashErrorMessage => 'تعذّر إكمال فتح دفتري. حاول مرة أخرى.';
 }

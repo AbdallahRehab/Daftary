@@ -148,3 +148,9 @@ All Technical Context unknowns are resolved below. Each decision cites the code 
 
 - **Decision**: The nine `integration_test/*` `bootApp()` helpers currently initialize the two cubits and then pump `DaftaryApp`. They will instead call `await getIt<AppStartupCubit>().start()`, keeping their existing `changeLanguage` and other follow-ups, and then pump.
 - **Rationale**: Their existing `pumpAndSettle()` then runs through the ≤ 1.2 s splash and hand-off. The tests exercise the real startup path, and no production test-only switch is added.
+
+## Decision 13 — Implementation-time additions (found on-device during /speckit-implement)
+
+- **Android 12+ splash exit is instant.** By default the system SplashScreen reveals the app with a fade once Flutter draws, and on the emulator the mark visibly dimmed mid-way. Since Flutter's first frame equals the system splash, `MainActivity` sets `splashScreen.setOnExitAnimationListener { it.remove() }` on API 31+. This uses the platform API; no `androidx.core:core-splashscreen` dependency.
+- **The intro clock tolerates jank.** A time-based `forward()` skipped about half the story in the long warm-up frames after launch. The gate drives `_intro` from its own `Ticker`: each frame advances by real time but at most 50 ms, and a 1.6 s wall-clock cap still bounds the splash on very slow devices. At 60 fps this is identical to `forward()`. Covered by gate test 14.
+- **Integration tests mark onboarding complete before `start()`.** Six flows never resolved the onboarding gate before 019, so the router never redirected them. They now call `OnboardingRepository.completeOnboarding()` first, so they keep landing in the main app whatever an earlier test left in the shared device database.

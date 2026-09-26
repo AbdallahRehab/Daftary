@@ -3,7 +3,9 @@ import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/routing/app_router.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,7 +28,16 @@ void main() {
   // Unlike `lib/main.dart`'s own `main()` — never invoked by an
   // integration test, which supplies this file's `main()` instead — DI
   // bootstrap has to happen explicitly here before the first `pumpWidget`.
-  setUpAll(() async => configureDependencies());
+  setUpAll(() async {
+    await configureDependencies();
+    // 019: the app shows the splash until startup (settings + onboarding
+    // gate) is ready, so run it exactly like `main()` does.
+    // 019: startup now resolves the onboarding gate these flows never
+    // went through before; mark it complete so they keep landing in the
+    // main app whatever an earlier test left in the shared device DB.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
+  });
 
   Future<void> pumpApp(WidgetTester tester) async {
     // `appRouter` is a module-level singleton, so it keeps whatever

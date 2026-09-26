@@ -14,6 +14,8 @@ import 'package:daftary/features/insights_notifications/domain/services/notifica
 import 'package:daftary/features/insights_notifications/domain/usecases/handle_notification_tap.dart';
 import 'package:daftary/features/insights_notifications/domain/usecases/notification_engine.dart';
 import 'package:daftary/features/insights_notifications/presentation/widgets/permission_denied_banner.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +75,13 @@ void main() {
     ]) {
       swap();
     }
+    // 019: the app shows the splash until startup (settings + onboarding
+    // gate) is ready, so run it exactly like `main()` does. This file's
+    // fresh in-memory database has no onboarding row, so mark onboarding
+    // complete first — these flows never exercised the onboarding gate
+    // before 019 and must keep landing on their own screens.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
   });
 
   setUp(() async {

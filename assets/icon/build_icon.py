@@ -6,10 +6,19 @@ Outputs, all 1024x1024:
   background.png       adaptive-icon background gradient
   monochrome.png       Android 13+ themed-icon silhouette
 
-Run: python3 assets/icon/build_icon.py
+With --splash (feature 019), renders ONLY the native launch-screen mark and
+leaves the launcher sources untouched:
+  splash.png           1152x1152 (288 dp/pt at 4x), transparent, coin-less
+                       notebook; downscaled with `sips` into
+                       android/app/src/main/res/drawable-*dpi/splash_mark.png
+                       and ios/Runner/Assets.xcassets/LaunchImage.imageset/.
+
+Run: python3 assets/icon/build_icon.py            (launcher icon sources)
+     python3 assets/icon/build_icon.py --splash   (splash mark only)
 """
 import pathlib
 import subprocess
+import sys
 import tempfile
 
 HERE = pathlib.Path(__file__).parent
@@ -114,8 +123,8 @@ def svg_group(body, scale):
     return f'<g transform="translate(512 512) scale({scale}) translate(-512 -512)">{body}</g>'
 
 
-def svg(body, scale=1.0):
-    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" '
+def svg(body, scale=1.0, size=1024):
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
             f'viewBox="0 0 1024 1024">{DEFS}{svg_group(body, scale)}</svg>')
 
 
@@ -124,22 +133,100 @@ BG = '<rect width="1024" height="1024" fill="url(#bg)"/><rect width="1024" heigh
 MARK_CENTRED = f'<g transform="translate(-24 -20)">{MARK}</g>'
 MONO_CENTRED = f'<g transform="translate(-24 -20)">{MONO}</g>'
 
+# 019 splash: MARK without the coin, all three ledger lines faint (the
+# Flutter painter's frame 0). Geometry must match the Dart painter (tasks T031).
+SPLASH_MARK = """
+<g filter="url(#shadow)">
+  <!-- page stack edge -->
+  <rect x="318" y="262" width="416" height="528" rx="44" fill="#E3D5B4"/>
+  <!-- front page -->
+  <rect x="300" y="240" width="416" height="528" rx="44" fill="url(#page)"/>
+  <!-- spine -->
+  <path d="M344 240 H392 V768 H344 A44 44 0 0 1 300 724 V284 A44 44 0 0 1 344 240 Z" fill="url(#spine)"/>
+  <g fill="#FFFDF6" opacity="0.55">
+    <circle cx="346" cy="318" r="9"/><circle cx="346" cy="426" r="9"/>
+    <circle cx="346" cy="534" r="9"/><circle cx="346" cy="642" r="9"/>
+  </g>
+  <!-- ledger lines -->
+  <g stroke-linecap="round" stroke-width="26">
+    <line x1="448" y1="350" x2="640" y2="350" stroke="#1F6F5C" stroke-opacity="0.28"/>
+    <line x1="448" y1="440" x2="656" y2="440" stroke="#1F6F5C" stroke-opacity="0.28"/>
+    <line x1="448" y1="530" x2="600" y2="530" stroke="#1F6F5C" stroke-opacity="0.28"/>
+  </g>
+  <!-- bookmark ribbon -->
+  <path d="M602 240 H654 V312 L628 294 L602 312 Z" fill="url(#ribbon)"/>
+</g>
+"""
 
-def render(name, markup):
+# Pinned transform shared with the Dart painter: centres the notebook bounding
+# box (x 300-734, y 240-790, centre 517,515) and scales it to 0.9. Do NOT use
+# MARK_CENTRED's translate(-24 -20) here.
+SPLASH_TRANSFORM = 'translate(512 512) scale(0.9) translate(-517 -515)'
+SPLASH_SIZE = 1152  # xxxhdpi / @4x of the 288 dp/pt canvas; every output is a downscale
+
+ROOT = HERE.parent.parent
+SPLASH_OUTPUTS = [
+    ("android/app/src/main/res/drawable-mdpi/splash_mark.png", 288),
+    ("android/app/src/main/res/drawable-hdpi/splash_mark.png", 432),
+    ("android/app/src/main/res/drawable-xhdpi/splash_mark.png", 576),
+    ("android/app/src/main/res/drawable-xxhdpi/splash_mark.png", 864),
+    ("android/app/src/main/res/drawable-xxxhdpi/splash_mark.png", 1152),
+    ("ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png", 288),
+    ("ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png", 576),
+    ("ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png", 864),
+]
+
+
+def svg_splash():
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{SPLASH_SIZE}" height="{SPLASH_SIZE}" '
+            f'viewBox="0 0 1024 1024">{DEFS}'
+            f'<g transform="{SPLASH_TRANSFORM}">{SPLASH_MARK}</g></svg>')
+
+
+def render(name, markup, size=1024):
     with tempfile.TemporaryDirectory() as tmp:
         html = pathlib.Path(tmp, "i.html")
         html.write_text(f'<html><body style="margin:0;background:transparent">{markup}</body></html>',
                         encoding="utf-8")
         out = HERE / f"{name}.png"
         subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars",
-                        "--force-device-scale-factor=1", "--window-size=1024,1024",
+                        "--force-device-scale-factor=1", f"--window-size={size},{size}",
                         "--default-background-color=00000000",
                         f"--screenshot={out}", html.as_uri()],
                        check=True, capture_output=True)
         print("wrote", out)
 
 
+def resize_splash():
+    """Downscales splash.png into every Android density and iOS scale."""
+    src = HERE / "splash.png"
+    for rel, px in SPLASH_OUTPUTS:
+        out = ROOT / rel
+        out.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run(["sips", "-z", str(px), str(px), str(src), "--out", str(out)],
+                       check=True, capture_output=True)
+        recompress(out)
+        print("wrote", out, f"({px}px, {out.stat().st_size // 1024} KB)")
+
+
+def recompress(path):
+    """Losslessly re-deflates a PNG: sips writes poorly compressed files
+    (the 864 px output is ~80 KB; this brings every Android PNG under 60 KB)."""
+    try:
+        from PIL import Image
+    except ImportError:
+        print("  (Pillow not installed; skipping lossless recompression of", path.name + ")")
+        return
+    with Image.open(path) as im:
+        im.load()
+        im.save(path, optimize=True)
+
+
 if __name__ == "__main__":
+    if "--splash" in sys.argv[1:]:
+        render("splash", svg_splash(), size=SPLASH_SIZE)
+        resize_splash()
+        sys.exit(0)
     # Adaptive icons: flutter_launcher_icons insets the foreground 16% per side
     # (drawn at 68%), so 1.18 here lands the mark at ~0.8 of its full-icon
     # size, inside the launcher mask's 66dp-of-108dp safe circle. The full

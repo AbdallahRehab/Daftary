@@ -13,6 +13,22 @@ double _contrast(Color a, Color b) {
 /// Status colors carry the app's core meaning (who owes whom), so every
 /// text pairing they appear in must clear WCAG AA (4.5:1) in both themes.
 void main() {
+  // 019 FR-021: splash text sits on the brand field in both themes.
+  group('splash', () {
+    test('onField on field meets 4.5:1', () {
+      expect(
+        _contrast(AppBrandColors.onField, AppBrandColors.field),
+        greaterThanOrEqualTo(4.5),
+      );
+    });
+    test('onField on fieldDeep meets 4.5:1', () {
+      expect(
+        _contrast(AppBrandColors.onField, AppBrandColors.fieldDeep),
+        greaterThanOrEqualTo(4.5),
+      );
+    });
+  });
+
   for (final (name, theme) in [
     ('light', buildLightTheme()),
     ('dark', buildDarkTheme()),

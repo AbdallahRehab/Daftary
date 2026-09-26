@@ -1027,4 +1027,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get primaryCurrencyChangeFailed =>
       'Couldn\'t change the primary currency. Please try again.';
+
+  @override
+  String get splashTagline => 'Every give and take, in one ledger';
+
+  @override
+  String get splashErrorMessage =>
+      'Daftary couldn\'t finish opening. Please try again.';
 }

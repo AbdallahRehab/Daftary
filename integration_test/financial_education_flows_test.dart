@@ -10,7 +10,9 @@ import 'package:daftary/features/financial_education/presentation/pages/savings_
 import 'package:daftary/features/financial_education/presentation/widgets/calculator_result_card.dart';
 import 'package:daftary/features/financial_education/presentation/widgets/persistent_disclaimer_banner.dart';
 import 'package:daftary/features/settings/presentation/pages/settings_page.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -30,7 +32,16 @@ void main() {
 
   // `lib/main.dart`'s own `main()` is never invoked by an integration test,
   // so DI bootstrap has to happen explicitly before the first `pumpWidget`.
-  setUpAll(() async => configureDependencies());
+  setUpAll(() async {
+    await configureDependencies();
+    // 019: the app shows the splash until startup (settings + onboarding
+    // gate) is ready, so run it exactly like `main()` does.
+    // 019: startup now resolves the onboarding gate these flows never
+    // went through before; mark it complete so they keep landing in the
+    // main app whatever an earlier test left in the shared device DB.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
+  });
 
   Future<AppLocalizations> english() =>
       AppLocalizations.delegate.load(const Locale('en'));

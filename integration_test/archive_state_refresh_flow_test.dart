@@ -6,7 +6,9 @@ import 'package:daftary/features/people/presentation/pages/archived_people_page.
 import 'package:daftary/features/people/presentation/widgets/person_list_tile.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
+import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
+import 'package:daftary/features/onboarding/domain/repositories/onboarding_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -32,7 +34,11 @@ void main() {
   Future<void> bootApp(WidgetTester tester) async {
     await getIt.reset();
     await configureDependencies();
-    await getIt<SettingsCubit>().initialize();
+    // 019: startup now resolves the onboarding gate these flows never
+    // went through before; mark it complete so they keep landing in the
+    // main app whatever an earlier test left in the shared device DB.
+    await getIt<OnboardingRepository>().completeOnboarding();
+    await getIt<AppStartupCubit>().start();
     // Force a known-English baseline regardless of the simulator's device
     // locale or any language persisted by an earlier test run on this
     // same on-device database, so the l10n string matching below isn't

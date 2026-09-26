@@ -550,5 +550,13 @@
   "currencySettingsLoadFailed": "Couldn't load your currency settings.",
   "@currencySettingsLoadFailed": {},
   "primaryCurrencyChangeFailed": "Couldn't change the primary currency. Please try again.",
-  "@primaryCurrencyChangeFailed": {}
+  "@primaryCurrencyChangeFailed": {},
+  "splashTagline": "Every give and take, in one ledger",
+  "@splashTagline": {
+    "description": "Splash screen line under the app name, describing what Daftary does."
+  },
+  "splashErrorMessage": "Daftary couldn't finish opening. Please try again.",
+  "@splashErrorMessage": {
+    "description": "Shown on the splash screen when startup fails or takes longer than 10 seconds."
+  }
 }

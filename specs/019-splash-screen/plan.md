@@ -119,6 +119,8 @@ lib/
 
 assets/icon/build_icon.py                        # MODIFY: + SPLASH render (--splash flag, 1152 px source) and per-density resize
 
+android/app/src/main/kotlin/com/daftary/daftary/MainActivity.kt  # MODIFY: API 31+ instant splash exit (research Decision 13)
+
 android/app/src/main/res/
 ├── values/colors.xml                            # NEW  splash_field #1F6F5C
 ├── values-night/colors.xml                      # NEW  splash_field #0E3D32

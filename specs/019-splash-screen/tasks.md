@@ -31,12 +31,12 @@ description: "Task list for 019 Branded Splash Screen"
 
 **Purpose**: Confirm the plan's assumptions against the real code before changing anything. These tasks produce notes only.
 
-- [ ] T001 Create `specs/019-splash-screen/notes-out-of-scope.md` with a heading and an empty list, used by the scope-protection rule above.
-- [ ] T002 [P] Re-verify the startup flow in `lib/main.dart`: `configureDependencies()` → `SettingsCubit.initialize()` → `OnboardingCubit.initialize()` → `NotificationRecomputeTrigger.start()` → `NotificationTapRouter.start(appRouter)` → `runApp`. Also confirm that `lib/core/di/injection.config.dart` has no `@preResolve` or awaited registrations (research Decision 1). Record any difference in `specs/019-splash-screen/notes-out-of-scope.md` and stop if Decision 1 no longer holds.
-- [ ] T003 [P] Re-verify that `lib/core/routing/app_router.dart` `redirect` reads `getIt<OnboardingCubit>().state` synchronously and that no `refreshListenable` exists. Also check that `lib/core/routing/notification_tap_router.dart` only calls `router.go(...)` or shows a snackbar through `appScaffoldMessengerKey` (research Decisions 2 and 4).
-- [ ] T004 [P] Re-verify the design tokens in `lib/core/design_system/tokens.dart`: `AppColors.primary == 0xFF1F6F5C`; `AppSpacing`, `AppBreakpoints.maxReadingWidth` and `AppTypography` exist, and `_textThemeFor` maps `headlineSmall`/`bodyMedium`/`bodyLarge`. Also re-check the icon palette hex values in `assets/icon/build_icon.py` `DEFS` against research Decision 9.
-- [ ] T005 [P] Re-verify localization: `l10n.yaml` (arb-dir `lib/core/l10n`, template `app_en.arb`), and that the existing keys `appTitle` and `commonRetry` are present in both `lib/core/l10n/app_en.arb` and `lib/core/l10n/app_ar.arb`.
-- [ ] T006 [P] Confirm no new dependency is needed: `pubspec.yaml` already has `flutter_bloc`, `equatable`, `get_it`, `injectable`, `go_router`, `bloc_test`, `mocktail`, `integration_test`, and `injectable` exports `ignoreParam` (`~/.pub-cache/hosted/pub.dev/injectable-3.0.0/lib/src/injectable_annotations.dart`). No `pubspec.yaml` edit is permitted.
+- [X] T001 Create `specs/019-splash-screen/notes-out-of-scope.md` with a heading and an empty list, used by the scope-protection rule above.
+- [X] T002 [P] Re-verify the startup flow in `lib/main.dart`: `configureDependencies()` → `SettingsCubit.initialize()` → `OnboardingCubit.initialize()` → `NotificationRecomputeTrigger.start()` → `NotificationTapRouter.start(appRouter)` → `runApp`. Also confirm that `lib/core/di/injection.config.dart` has no `@preResolve` or awaited registrations (research Decision 1). Record any difference in `specs/019-splash-screen/notes-out-of-scope.md` and stop if Decision 1 no longer holds.
+- [X] T003 [P] Re-verify that `lib/core/routing/app_router.dart` `redirect` reads `getIt<OnboardingCubit>().state` synchronously and that no `refreshListenable` exists. Also check that `lib/core/routing/notification_tap_router.dart` only calls `router.go(...)` or shows a snackbar through `appScaffoldMessengerKey` (research Decisions 2 and 4).
+- [X] T004 [P] Re-verify the design tokens in `lib/core/design_system/tokens.dart`: `AppColors.primary == 0xFF1F6F5C`; `AppSpacing`, `AppBreakpoints.maxReadingWidth` and `AppTypography` exist, and `_textThemeFor` maps `headlineSmall`/`bodyMedium`/`bodyLarge`. Also re-check the icon palette hex values in `assets/icon/build_icon.py` `DEFS` against research Decision 9.
+- [X] T005 [P] Re-verify localization: `l10n.yaml` (arb-dir `lib/core/l10n`, template `app_en.arb`), and that the existing keys `appTitle` and `commonRetry` are present in both `lib/core/l10n/app_en.arb` and `lib/core/l10n/app_ar.arb`.
+- [X] T006 [P] Confirm no new dependency is needed: `pubspec.yaml` already has `flutter_bloc`, `equatable`, `get_it`, `injectable`, `go_router`, `bloc_test`, `mocktail`, `integration_test`, and `injectable` exports `ignoreParam` (`~/.pub-cache/hosted/pub.dev/injectable-3.0.0/lib/src/injectable_annotations.dart`). No `pubspec.yaml` edit is permitted.
 
 **Acceptance (Phase 1)**: Every plan assumption is confirmed, or a difference is recorded and resolved before Phase 2.
 
@@ -50,7 +50,7 @@ description: "Task list for 019 Branded Splash Screen"
 
 ### Tokens and strings
 
-- [ ] T007 [P] Add `class AppBrandColors` (private const constructor) to `lib/core/design_system/tokens.dart`, placed after `AppColors`. Constants:
+- [X] T007 [P] Add `class AppBrandColors` (private const constructor) to `lib/core/design_system/tokens.dart`, placed after `AppColors`. Constants:
   - `field = AppColors.primary`, `fieldDeep = Color(0xFF0E3D32)`
   - `page = Color(0xFFFFFDF6)`, `pageShade = Color(0xFFF6EDD8)`, `pageEdge = Color(0xFFE3D5B4)`
   - `spine = Color(0xFF0F4538)`, `spineLight = Color(0xFF1A6452)`
@@ -60,19 +60,19 @@ description: "Task list for 019 Branded Splash Screen"
   - `onField = page`
 
   Add a doc comment saying these are the launcher-icon/splash palette, the same in both themes, and must stay in sync with `assets/icon/build_icon.py` and the native `splash_field` colors. Change nothing else in the file.
-- [ ] T008 [P] Add to `lib/core/l10n/app_en.arb`: `"splashTagline": "Every give and take, in one ledger"` and `"splashErrorMessage": "Daftary couldn't finish opening. Please try again."`, each with an `@key` `description`.
-- [ ] T009 [P] Add to `lib/core/l10n/app_ar.arb`: `"splashTagline": "كل أخذ وعطاء في دفتر واحد"` and `"splashErrorMessage": "تعذّر إكمال فتح دفتري. حاول مرة أخرى."`.
-- [ ] T010 Run `flutter gen-l10n` and confirm `lib/core/l10n/app_localizations.dart`, `app_localizations_en.dart` and `app_localizations_ar.dart` expose `splashTagline` and `splashErrorMessage`. Depends on T008 and T009.
+- [X] T008 [P] Add to `lib/core/l10n/app_en.arb`: `"splashTagline": "Every give and take, in one ledger"` and `"splashErrorMessage": "Daftary couldn't finish opening. Please try again."`, each with an `@key` `description`.
+- [X] T009 [P] Add to `lib/core/l10n/app_ar.arb`: `"splashTagline": "كل أخذ وعطاء في دفتر واحد"` and `"splashErrorMessage": "تعذّر إكمال فتح دفتري. حاول مرة أخرى."`.
+- [X] T010 Run `flutter gen-l10n` and confirm `lib/core/l10n/app_localizations.dart`, `app_localizations_en.dart` and `app_localizations_ar.dart` expose `splashTagline` and `splashErrorMessage`. Depends on T008 and T009.
 
 ### Startup state and cubit (tests first)
 
-- [ ] T011 [P] Create `lib/features/startup/presentation/cubit/app_startup_state.dart`:
+- [X] T011 [P] Create `lib/features/startup/presentation/cubit/app_startup_state.dart`:
   - `enum AppStartupStatus { idle, preparing, ready, failed }` and `enum StartupFailure { error, timeout }`.
   - An immutable `AppStartupState extends Equatable` with fields `status` (default `idle`), `appearanceResolved` (default `false`), `failure` (`StartupFailure?`, default `null`, "set only while status == failed") and `isRetry` (default `false`).
   - `copyWith`, where `failure` is cleared explicitly by a `clearFailure` flag.
   - Getters `isReady` and `isFailed`; `props`.
   - Follow [data-model.md](data-model.md) exactly.
-- [ ] T012 [P] Write `test/features/startup/presentation/cubit/app_startup_cubit_test.dart` (the repo's cubit-test convention, as in `test/features/onboarding/presentation/cubit/onboarding_cubit_test.dart`) (bloc_test + mocktail; mock `SettingsCubit` and `OnboardingCubit` with `class _MockX extends Mock implements X`; budget `Duration(milliseconds: 50)`). It covers guarantees G1–G8 from [contracts/app_startup_cubit.md](contracts/app_startup_cubit.md):
+- [X] T012 [P] Write `test/features/startup/presentation/cubit/app_startup_cubit_test.dart` (the repo's cubit-test convention, as in `test/features/onboarding/presentation/cubit/onboarding_cubit_test.dart`) (bloc_test + mocktail; mock `SettingsCubit` and `OnboardingCubit` with `class _MockX extends Mock implements X`; budget `Duration(milliseconds: 50)`). It covers guarantees G1–G8 from [contracts/app_startup_cubit.md](contracts/app_startup_cubit.md):
   - G1: emission order on success.
   - G2: `start()` twice (concurrently and sequentially) calls each `initialize()` once.
   - G3: settings throws → `failed(error)`, no exception escapes; onboarding throws → `failed(error)` with `appearanceResolved == true`.
@@ -83,7 +83,7 @@ description: "Task list for 019 Branded Splash Screen"
   - G8: `whenReady` completes after `ready`, and completes immediately when already ready. It also completes without error (never throws `StateError`) if the cubit is closed before reaching `ready`.
 
   Tests must fail (the cubit doesn't exist yet).
-- [ ] T013 Create `lib/features/startup/presentation/cubit/app_startup_cubit.dart` as `@lazySingleton class AppStartupCubit extends Cubit<AppStartupState>`, with constructor `(SettingsCubit, OnboardingCubit, {@ignoreParam Duration timeout = const Duration(seconds: 10)})`. Implementation:
+- [X] T013 Create `lib/features/startup/presentation/cubit/app_startup_cubit.dart` as `@lazySingleton class AppStartupCubit extends Cubit<AppStartupState>`, with constructor `(SettingsCubit, OnboardingCubit, {@ignoreParam Duration timeout = const Duration(seconds: 10)})`. Implementation:
   - `start()`: if `status != idle`, return the stored `_run` future; otherwise store it.
   - `_attempt()`: emit `preparing`, then run the steps inside `.timeout(timeout)`.
   - Memoized step futures `_settingsStep ??= _settings.initialize()` and `_onboardingStep ??= _onboarding.initialize()`. A step that errors resets its field to `null` (via `catchError` that rethrows); a pending step is kept.
@@ -94,12 +94,12 @@ description: "Task list for 019 Branded Splash Screen"
   - Add doc comments citing FR-011/012/015/016.
 
   T012 must pass. Depends on T011 and T012.
-- [ ] T014 Run `dart run build_runner build --delete-conflicting-outputs` and confirm `lib/core/di/injection.config.dart` registers `AppStartupCubit` as a lazy singleton, with `timeout` not resolved from DI. Depends on T013.
+- [X] T014 Run `dart run build_runner build --delete-conflicting-outputs` and confirm `lib/core/di/injection.config.dart` registers `AppStartupCubit` as a lazy singleton, with `timeout` not resolved from DI. Depends on T013.
 
 ### Gate skeleton and app wiring
 
-- [ ] T015 Create `lib/features/startup/presentation/widgets/splash_view.dart` with a **minimal** `SplashView` for now: a `StatelessWidget` taking `{required Animation<double> intro}` that renders `ColoredBox` with `Theme.of(context).brightness == Brightness.dark ? AppBrandColors.fieldDeep : AppBrandColors.field` filling the screen. US1 and US3 fill it in. Depends on T007.
-- [ ] T016 Create `lib/features/startup/presentation/widgets/app_startup_gate.dart` per [contracts/splash_ui.md](contracts/splash_ui.md): `AppStartupGate({required Widget child})`, a `StatefulWidget` with `TickerProviderStateMixin`.
+- [X] T015 Create `lib/features/startup/presentation/widgets/splash_view.dart` with a **minimal** `SplashView` for now: a `StatelessWidget` taking `{required Animation<double> intro}` that renders `ColoredBox` with `Theme.of(context).brightness == Brightness.dark ? AppBrandColors.fieldDeep : AppBrandColors.field` filling the screen. US1 and US3 fill it in. Depends on T007.
+- [X] T016 Create `lib/features/startup/presentation/widgets/app_startup_gate.dart` per [contracts/splash_ui.md](contracts/splash_ui.md): `AppStartupGate({required Widget child})`, a `StatefulWidget` with `TickerProviderStateMixin`.
   - Controllers: `_intro` (900 ms) and `_exit` (280 ms).
   - Fields `_introDone`, `_handedOff` and `_splashRemoved`.
   - `initState` forwards `_intro`. On completion, `_introDone = true` and it calls `_maybeHandOff()`.
@@ -112,8 +112,8 @@ description: "Task list for 019 Branded Splash Screen"
   - Dispose both controllers. No `context.go`/`push`, no lifecycle observer, no keys.
 
   Depends on T013 and T015.
-- [ ] T017 Edit only the comments in `lib/core/routing/app_router.dart` that say `OnboardingCubit.initialize()` "is awaited in main.dart before runApp". Reword them to "is settled before `AppStartupGate` (019) mounts the Router". Routes and redirect code stay unchanged.
-- [ ] T018 Modify `lib/main.dart`:
+- [X] T017 Edit only the comments in `lib/core/routing/app_router.dart` that say `OnboardingCubit.initialize()` "is awaited in main.dart before runApp". Reword them to "is settled before `AppStartupGate` (019) mounts the Router". Routes and redirect code stay unchanged.
+- [X] T018 Modify `lib/main.dart`:
   - Keep `WidgetsFlutterBinding.ensureInitialized()` and `await configureDependencies()`.
   - Remove the awaited `getIt<SettingsCubit>().initialize()` and `getIt<OnboardingCubit>().initialize()`. Replace them with `final startup = getIt<AppStartupCubit>(); unawaited(startup.start());`.
   - Replace the direct `NotificationRecomputeTrigger.start()` and `NotificationTapRouter.start(appRouter)` calls with `unawaited(startup.whenReady.then((_) { if (!startup.state.isReady) return; getIt<NotificationRecomputeTrigger>().start(); unawaited(getIt<NotificationTapRouter>().start(appRouter)); }));`. The `isReady` check covers `whenReady` completing because the cubit closed (T013).
@@ -125,16 +125,16 @@ description: "Task list for 019 Branded Splash Screen"
   - Theme, themeMode mapping, delegates, `routerConfig` and `scaffoldMessengerKey` stay unchanged.
 
   Depends on T014 and T016.
-- [ ] T019 [P] In `integration_test/onboarding_flow_test.dart` `bootApp()`, replace `await getIt<SettingsCubit>().initialize();` with `await getIt<AppStartupCubit>().start();`, placed before the existing `changeLanguage`, and delete the separate `await getIt<OnboardingCubit>().initialize();`. Keep `freshInstall` clearing **before** `start()`. Test bodies stay unchanged. Depends on T018.
-- [ ] T020 [P] Same `bootApp()` change in `integration_test/language_switch_flow_test.dart`. Depends on T018.
-- [ ] T021 [P] Same `bootApp()` change in `integration_test/theme_switch_flow_test.dart`. Depends on T018.
-- [ ] T022 [P] Same `bootApp()` change in `integration_test/money_relationships_flows_test.dart`. Depends on T018.
-- [ ] T023 [P] Same `bootApp()` change in `integration_test/archive_state_refresh_flow_test.dart`. Depends on T018.
-- [ ] T024 [P] Same `bootApp()` change in `integration_test/finance_flows_test.dart`. Depends on T018.
-- [ ] T025 [P] Same `bootApp()` change in `integration_test/currency_flows_test.dart`. Depends on T018.
-- [ ] T026 [P] Same `bootApp()` change in `integration_test/financial_education_flows_test.dart`. Depends on T018.
-- [ ] T027 [P] Same `bootApp()` change in `integration_test/insights_notifications_flows_test.dart`. If this file starts the recompute trigger or tap router itself, keep that call. Depends on T018.
-- [ ] T028 Run `flutter analyze` and `flutter test`; both must be green, with T012 passing. Depends on T010–T027.
+- [X] T019 [P] In `integration_test/onboarding_flow_test.dart` `bootApp()`, replace `await getIt<SettingsCubit>().initialize();` with `await getIt<AppStartupCubit>().start();`, placed before the existing `changeLanguage`, and delete the separate `await getIt<OnboardingCubit>().initialize();`. Keep `freshInstall` clearing **before** `start()`. Test bodies stay unchanged. Depends on T018.
+- [X] T020 [P] Same `bootApp()` change in `integration_test/language_switch_flow_test.dart`. Depends on T018.
+- [X] T021 [P] Same `bootApp()` change in `integration_test/theme_switch_flow_test.dart`. Depends on T018.
+- [X] T022 [P] Same `bootApp()` change in `integration_test/money_relationships_flows_test.dart`. Depends on T018.
+- [X] T023 [P] Same `bootApp()` change in `integration_test/archive_state_refresh_flow_test.dart`. Depends on T018.
+- [X] T024 [P] Same `bootApp()` change in `integration_test/finance_flows_test.dart`. Depends on T018.
+- [X] T025 [P] Same `bootApp()` change in `integration_test/currency_flows_test.dart`. Depends on T018.
+- [X] T026 [P] Same `bootApp()` change in `integration_test/financial_education_flows_test.dart`. Depends on T018.
+- [X] T027 [P] Same `bootApp()` change in `integration_test/insights_notifications_flows_test.dart`. If this file starts the recompute trigger or tap router itself, keep that call. Depends on T018.
+- [X] T028 Run `flutter analyze` and `flutter test`; both must be green, with T012 passing. Depends on T010–T027.
 
 **Checkpoint / Acceptance (Phase 2)**:
 
@@ -152,7 +152,7 @@ description: "Task list for 019 Branded Splash Screen"
 
 ### Tests for US1
 
-- [ ] T029 [P] [US1] Write `test/widget/splash_view_test.dart`. It pumps `SplashView` inside `MaterialApp` with `buildLightTheme()`/`buildDarkTheme()`, `AppLocalizations` delegates, locale `en`/`ar`, and `AlwaysStoppedAnimation(1.0)`. Assertions:
+- [X] T029 [P] [US1] Write `test/widget/splash_view_test.dart`. It pumps `SplashView` inside `MaterialApp` with `buildLightTheme()`/`buildDarkTheme()`, `AppLocalizations` delegates, locale `en`/`ar`, and `AlwaysStoppedAnimation(1.0)`. Assertions:
   1. The field color is `AppBrandColors.field` in light and `AppBrandColors.fieldDeep` in dark (find the `AnimatedContainer` and read its decoration color).
   2. The text `Daftary` + `splashTagline` in `en` and `دفتري` + the Arabic tagline in `ar`.
   3. Both `TextDirection.ltr` and `rtl` render with `tester.takeException()` null.
@@ -160,11 +160,11 @@ description: "Task list for 019 Branded Splash Screen"
   5. Semantics: exactly one header node labeled with `appTitle`, and no semantics node from the mark.
 
   Must fail before T034.
-- [ ] T030 [P] [US1] Extend `test/core/design_system/contrast_test.dart` with a group `splash`: `AppBrandColors.onField` on `field` and on `fieldDeep` are each `>= 4.5`. Existing pairs stay untouched.
+- [X] T030 [P] [US1] Extend `test/core/design_system/contrast_test.dart` with a group `splash`: `AppBrandColors.onField` on `field` and on `fieldDeep` are each `>= 4.5`. Existing pairs stay untouched.
 
 ### Implementation for US1: mark and layout
 
-- [ ] T031 [US1] Create `lib/features/startup/presentation/widgets/splash_mark.dart` with `abstract final class SplashGeometry`:
+- [X] T031 [US1] Create `lib/features/startup/presentation/widgets/splash_mark.dart` with `abstract final class SplashGeometry`:
   - `extent = 288.0` (logical px canvas, equal to the native 288 dp/pt) and `markScale = 0.9`.
   - One pinned transform, identical to `SPLASH_TRANSFORM` in `assets/icon/build_icon.py` (T037): raw `MARK` coordinates → `translate(512,512) scale(0.9) translate(-517,-515)` in the 1024-unit space, then `× extent / 1024` into canvas px. (517,515) is the centre of the notebook bounding box, x 300–734 and y 240–790, including the page-edge offset. Do **not** apply `MARK_CENTRED`'s translate(-24,-20). Expose it as `static Offset toCanvas(Offset raw)` and `static const double unit = markScale * extent / 1024` (≈ 0.253125 canvas px per raw unit). Check: the notebook's farthest corner is 315 scaled units from the centre, below the 341 that fits Android 12's 192 dp icon circle.
   - Constants copied from `assets/icon/build_icon.py` `MARK`: the page-edge rect (318,262,416,528, r44), page rect (300,240,416,528, r44), spine path, 4 binding holes (x346, y318/426/534/642, r9), ledger lines (y350: 448→640; y440: 448→656; y530: 448→600; stroke 26, round), ribbon path, coin centre (676,676), radius 124 and rim radius 98.
@@ -174,7 +174,7 @@ description: "Task list for 019 Branded Splash Screen"
   - Named motion constants (logical px unless noted): `personHeadRadius = 7`, `personShoulders = Size(22, 11)`, `personHeadGap = 3`, `connectionStroke = 2`, `connectionAlpha = 0.45`, `coinShadowOffset = Offset(0, 3)`, `coinShadowAlpha = 0.25`, `coinStartScale = 0.7`, `coinSettleOvershoot = 0.06`, `coinGlyphScale = 1.42` (multiplied by the coin radius), `coinRimAlpha = 0.7`, `wordmarkRise = 8`, `holesAlpha = 0.55`, `faintLineAlpha = 0.28`.
   - Shadow constants derived from the SVG `DEFS` (`#shadow`: `dy 22`, `stdDeviation 26`, flood `#062A22` @0.45), in raw units multiplied by `unit`: `notebookShadowOffset = Offset(0, 22 * unit)`, `notebookShadowSigma = 26 * unit`, `notebookShadowAlpha = 0.45`.
   - A comment says every value mirrors `SPLASH` in `build_icon.py` (T037).
-- [ ] T032 [US1] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashNotebookPainter extends CustomPainter`. It paints, in this order, using only `AppBrandColors`:
+- [X] T032 [US1] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashNotebookPainter extends CustomPainter`. It paints, in this order, using only `AppBrandColors`:
   - one drop shadow under the page stack, matching the SVG `#shadow` filter: the page-stack shape offset by `SplashGeometry.notebookShadowOffset`, filled with `AppBrandColors.shadow` at `notebookShadowAlpha`, and `MaskFilter.blur(BlurStyle.normal, SplashGeometry.notebookShadowSigma)`. A Gaussian σ equals SVG `stdDeviation`, so no conversion is needed.
   - the page edge (`pageEdge`)
   - the page (vertical linear gradient `page` → `pageShade`)
@@ -184,8 +184,8 @@ description: "Task list for 019 Branded Splash Screen"
   - the ribbon (vertical gradient `ribbon` → `ribbonDeep`)
 
   `shouldRepaint` returns `false`. Depends on T031.
-- [ ] T033 [US1] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashMark extends StatelessWidget` (`{required Animation<double> intro}`): `ExcludeSemantics(SizedBox.square(dimension: SplashGeometry.extent, child: RepaintBoundary(child: CustomPaint(painter: const SplashNotebookPainter()))))`. Leave a clearly marked slot in a `Stack` for the motion painter added in T049. Depends on T032.
-- [ ] T034 [US1] Replace the minimal `SplashView` in `lib/features/startup/presentation/widgets/splash_view.dart` with the brand layout from [contracts/splash_ui.md](contracts/splash_ui.md):
+- [X] T033 [US1] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashMark extends StatelessWidget` (`{required Animation<double> intro}`): `ExcludeSemantics(SizedBox.square(dimension: SplashGeometry.extent, child: RepaintBoundary(child: CustomPaint(painter: const SplashNotebookPainter()))))`. Leave a clearly marked slot in a `Stack` for the motion painter added in T049. Depends on T032.
+- [X] T034 [US1] Replace the minimal `SplashView` in `lib/features/startup/presentation/widgets/splash_view.dart` with the brand layout from [contracts/splash_ui.md](contracts/splash_ui.md):
   - Outer structure: `AnnotatedRegion<SystemUiOverlayStyle>` (`statusBarColor`/`systemNavigationBarColor` transparent, `statusBarIconBrightness`/`systemNavigationBarIconBrightness: Brightness.light`, `statusBarBrightness: Brightness.dark`) → `Material(type: MaterialType.transparency)` → `AnimatedContainer`.
   - `AnimatedContainer`: color `field`/`fieldDeep` by brightness; duration `Duration(milliseconds: 200)`, or `Duration.zero` when `MediaQuery.disableAnimationsOf(context)`.
   - Inside it, a `LayoutBuilder` → `Stack`:
@@ -194,17 +194,17 @@ description: "Task list for 019 Branded Splash Screen"
   - Add a `bool appearanceResolved` parameter (default `true`).
 
   Depends on T033 and T010.
-- [ ] T035 [US1] In `lib/features/startup/presentation/widgets/splash_view.dart`, add a private `_SplashWordmark` with a `Column(mainAxisSize: min)`:
+- [X] T035 [US1] In `lib/features/startup/presentation/widgets/splash_view.dart`, add a private `_SplashWordmark` with a `Column(mainAxisSize: min)`:
   - `Semantics(header: true, child: Text(l10n.appTitle, style: textTheme.headlineSmall!.copyWith(color: AppBrandColors.onField), textAlign: center))`
   - `SizedBox(height: AppSpacing.xs)`
   - `Text(l10n.splashTagline, style: textTheme.bodyMedium!.copyWith(color: AppBrandColors.onField), textAlign: center)`
 
   Opacity is `0` when `!appearanceResolved` (the animated reveal is added in T050). There are no hardcoded strings, colors or sizes. Depends on T034.
-- [ ] T036 [US1] Pass `appearanceResolved: state.appearanceResolved` from `AppStartupGate`'s `BlocBuilder` into `SplashView` in `lib/features/startup/presentation/widgets/app_startup_gate.dart`. Depends on T035.
+- [X] T036 [US1] Pass `appearanceResolved: state.appearanceResolved` from `AppStartupGate`'s `BlocBuilder` into `SplashView` in `lib/features/startup/presentation/widgets/app_startup_gate.dart`. Depends on T035.
 
 ### Implementation for US1: shared asset generation
 
-- [ ] T037 [US1] Extend `assets/icon/build_icon.py`:
+- [X] T037 [US1] Extend `assets/icon/build_icon.py`:
   - Add `SPLASH_MARK`: `MARK` without the `<!-- coin -->` group, with all three ledger lines at `stroke-opacity="0.28"` to match T032. Wrap it in `SPLASH_TRANSFORM = 'translate(512 512) scale(0.9) translate(-517 -515)'`, exactly the transform pinned in T031. Do not use `MARK_CENTRED`.
   - Give `render()` an optional `size=1024` parameter that sets `--window-size={size},{size}` and the root `<svg width/height>` (the viewBox stays `0 0 1024 1024`). Existing icon calls keep the default.
   - Render the splash **at 1152 px** (`render("splash", svg_splash, size=1152)`, the xxxhdpi size) so every density is a downscale, never an upscale. The canvas represents 288 dp/pt.
@@ -213,13 +213,13 @@ description: "Task list for 019 Branded Splash Screen"
     - Android `android/app/src/main/res/drawable-mdpi/splash_mark.png` (288), `-hdpi` (432), `-xhdpi` (576), `-xxhdpi` (864), `-xxxhdpi` (1152)
     - iOS `ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png` (288), `@2x` (576), `@3x` (864)
   - Update the module docstring (outputs and the `--splash` flag). The existing icon markup and renders must stay unchanged. Depends on T031, whose geometry must match.
-- [ ] T038 [US1] Run `python3 assets/icon/build_icon.py --splash` (never without the flag in this feature), then verify the 8 PNGs exist at the expected pixel sizes (`sips -g pixelWidth`), each Android PNG is under 60 KB (use `pngcrush`/`sips` recompression only if that is exceeded), and `assets/icon/splash.png` renders the coin-less notebook. Launcher icon PNGs must be byte-identical afterwards (`git status --porcelain assets/icon/icon.png assets/icon/background.png assets/icon/foreground.png assets/icon/monochrome.png android/app/src/main/res/mipmap-* android/app/src/main/res/drawable-*/ic_launcher_* ios/Runner/Assets.xcassets/AppIcon.appiconset` prints nothing). Depends on T037.
+- [X] T038 [US1] Run `python3 assets/icon/build_icon.py --splash` (never without the flag in this feature), then verify the 8 PNGs exist at the expected pixel sizes (`sips -g pixelWidth`), each Android PNG is under 60 KB (use `pngcrush`/`sips` recompression only if that is exceeded), and `assets/icon/splash.png` renders the coin-less notebook. Launcher icon PNGs must be byte-identical afterwards (`git status --porcelain assets/icon/icon.png assets/icon/background.png assets/icon/foreground.png assets/icon/monochrome.png android/app/src/main/res/mipmap-* android/app/src/main/res/drawable-*/ic_launcher_* ios/Runner/Assets.xcassets/AppIcon.appiconset` prints nothing). Depends on T037.
 
 ### Implementation for US1: native launch continuity (Android)
 
-- [ ] T039 [P] [US1] Create `android/app/src/main/res/values/colors.xml` with `<color name="splash_field">#1F6F5C</color>` and `android/app/src/main/res/values-night/colors.xml` with `<color name="splash_field">#0E3D32</color>`. Each has a comment: "019: equals AppBrandColors.field / fieldDeep".
-- [ ] T040 [P] [US1] Rewrite `android/app/src/main/res/drawable-v21/launch_background.xml` and `android/app/src/main/res/drawable/launch_background.xml` as a `layer-list`: `<item android:drawable="@color/splash_field"/>` plus `<item><bitmap android:gravity="center" android:src="@drawable/splash_mark"/></item>`. Remove the white layer. Depends on T039 and T038.
-- [ ] T041 [P] [US1] In `android/app/src/main/res/values/styles.xml` and `values-night/styles.xml`, add to **LaunchTheme only**:
+- [X] T039 [P] [US1] Create `android/app/src/main/res/values/colors.xml` with `<color name="splash_field">#1F6F5C</color>` and `android/app/src/main/res/values-night/colors.xml` with `<color name="splash_field">#0E3D32</color>`. Each has a comment: "019: equals AppBrandColors.field / fieldDeep".
+- [X] T040 [P] [US1] Rewrite `android/app/src/main/res/drawable-v21/launch_background.xml` and `android/app/src/main/res/drawable/launch_background.xml` as a `layer-list`: `<item android:drawable="@color/splash_field"/>` plus `<item><bitmap android:gravity="center" android:src="@drawable/splash_mark"/></item>`. Remove the white layer. Depends on T039 and T038.
+- [X] T041 [P] [US1] In `android/app/src/main/res/values/styles.xml` and `values-night/styles.xml`, add to **LaunchTheme only**:
   - `<item name="android:statusBarColor">@android:color/transparent</item>`
   - `<item name="android:navigationBarColor">@android:color/transparent</item>`
   - `<item name="android:windowLightStatusBar">false</item>`
@@ -229,8 +229,8 @@ description: "Task list for 019 Branded Splash Screen"
 
 ### Implementation for US1: native launch continuity (iOS)
 
-- [ ] T042 [P] [US1] Create `ios/Runner/Assets.xcassets/LaunchBackground.colorset/Contents.json` with a universal sRGB color `#1F6F5C`, plus a `"appearances": [{"appearance":"luminosity","value":"dark"}]` entry `#0E3D32`.
-- [ ] T043 [US1] Edit `ios/Runner/Base.lproj/LaunchScreen.storyboard`:
+- [X] T042 [P] [US1] Create `ios/Runner/Assets.xcassets/LaunchBackground.colorset/Contents.json` with a universal sRGB color `#1F6F5C`, plus a `"appearances": [{"appearance":"luminosity","value":"dark"}]` entry `#0E3D32`.
+- [X] T043 [US1] Edit `ios/Runner/Base.lproj/LaunchScreen.storyboard`:
   - Add `<capability name="Named colors" minToolsVersion="9.0"/>` inside the existing `<dependencies>` block (it's absent today, and named colors fail to resolve or build without it).
   - Replace the view's `<color key="backgroundColor" red="1" green="1" blue="1" .../>` with `<color key="backgroundColor" name="LaunchBackground"/>`.
   - Add `<namedColor name="LaunchBackground"><color red="0.1216" green="0.4353" blue="0.3608" alpha="1" colorSpace="custom" customColorSpace="sRGB"/></namedColor>` to `<resources>`.
@@ -238,9 +238,9 @@ description: "Task list for 019 Branded Splash Screen"
   - Keep the centerX/centerY constraints unchanged.
 
   Depends on T042 and T038.
-- [ ] T044 [P] [US1] In `ios/Runner/Info.plist`, add `<key>UIStatusBarStyle</key><string>UIStatusBarStyleLightContent</string>`. Do not add `UIViewControllerBasedStatusBarAppearance`; its default must stay YES so the setting only affects the launch screen.
+- [X] T044 [P] [US1] In `ios/Runner/Info.plist`, add `<key>UIStatusBarStyle</key><string>UIStatusBarStyleLightContent</string>`. Do not add `UIViewControllerBasedStatusBarAppearance`; its default must stay YES so the setting only affects the launch screen.
 
-- [ ] T045 [US1] Run `flutter test test/widget/splash_view_test.dart test/core/design_system/contrast_test.dart`; all pass. Depends on T029, T030 and T034–T036.
+- [X] T045 [US1] Run `flutter test test/widget/splash_view_test.dart test/core/design_system/contrast_test.dart`; all pass. Depends on T029, T030 and T034–T036.
 
 **Checkpoint / Acceptance (US1)**:
 
@@ -258,14 +258,14 @@ description: "Task list for 019 Branded Splash Screen"
 
 ### Tests for US2
 
-- [ ] T046 [P] [US2] Create `test/widget/app_startup_gate_test.dart` with a harness. It pumps `MaterialApp(theme: buildLightTheme(), localizationsDelegates, home: BlocProvider<AppStartupCubit>.value(value: mockCubit, child: AppStartupGate(child: _ProbeChild())))`. `_ProbeChild` counts `build` calls and `initState` calls in static counters. The mock cubit (`MockCubit` from bloc_test via `whenListen`) exposes controllable states. Add the US2 cases:
+- [X] T046 [P] [US2] Create `test/widget/app_startup_gate_test.dart` with a harness. It pumps `MaterialApp(theme: buildLightTheme(), localizationsDelegates, home: BlocProvider<AppStartupCubit>.value(value: mockCubit, child: AppStartupGate(child: _ProbeChild())))`. `_ProbeChild` counts `build` calls and `initState` calls in static counters. The mock cubit (`MockCubit` from bloc_test via `whenListen`) exposes controllable states. Add the US2 cases:
   1. Ready from the start with animations on: at 450 ms the probe is not mounted; after `pump(900ms)` and then `pump(280ms)`, the probe is mounted and the `SplashView` is gone. The intro reaches its end without exceptions.
   2. `MediaQueryData(disableAnimations: true)` with ready from the start: after a single `pump()`, the probe is mounted and no `SplashView` remains (zero-duration exit).
   3. `Directionality` rtl renders the intro to completion without exceptions.
 
 ### Implementation for US2
 
-- [ ] T047 [US2] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `abstract final class SplashTimeline` with the `Interval`s from research Decision 8 as `static const` values:
+- [X] T047 [US2] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `abstract final class SplashTimeline` with the `Interval`s from research Decision 8 as `static const` values:
   - `person = Interval(0.08, 0.30, curve: Curves.easeOutCubic)`
   - `connection = Interval(0.12, 0.45, curve: Curves.easeInOutCubic)`
   - `coinTravel = Interval(0.30, 0.72, curve: Curves.easeInOutCubic)`
@@ -275,7 +275,7 @@ description: "Task list for 019 Branded Splash Screen"
   - `wordmark = Interval(0.55, 1.0, curve: Curves.easeOutCubic)`
 
   Also add `introDuration = Duration(milliseconds: 900)` and `exitDuration = Duration(milliseconds: 280)`. Replace the literal durations in `app_startup_gate.dart` (T016) with these constants.
-- [ ] T048 [US2] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashMotionPainter extends CustomPainter`. Constructor `(Animation<double> t, TextDirection dir) : super(repaint: t)`. At `t == 0` it paints nothing, which preserves the frame-0 invariant. It paints:
+- [X] T048 [US2] In `lib/features/startup/presentation/widgets/splash_mark.dart`, add `class SplashMotionPainter extends CustomPainter`. Constructor `(Animation<double> t, TextDirection dir) : super(repaint: t)`. At `t == 0` it paints nothing, which preserves the frame-0 invariant. It paints:
   - **Person** at `SplashGeometry.personOrigin(dir)`: a head circle of radius `personHeadRadius`, and below it, after `personHeadGap`, a shoulder half-ellipse of size `personShoulders`, in `AppBrandColors.onField`. Opacity `person × (1 − connectionFade)`, scale 0.8→1.
   - **Connection**: a quadratic `Path` from the person to the coin centre via `connectionControl(dir)`. Stroke `connectionStroke` in `onField` at `connectionAlpha × (1 − connectionFade)` opacity, round caps. Trimmed with `PathMetric.extractPath(0, len × connection)`.
   - **Ledger line 1** (the y350 line), written in reading direction: from its start x to end x in ltr, from end to start in rtl. Stroke width as geometry, colour `AppBrandColors.field`, opacity 1, trimmed by `ledgerWrite`. It is drawn over the faint line.
@@ -288,14 +288,14 @@ description: "Task list for 019 Branded Splash Screen"
     It is hidden while `coinTravel == 0`.
 
   `shouldRepaint` returns `dir != old.dir`. Only opacity, transforms and trimming change per frame; no per-frame blur or allocation of `Paint`s beyond fields. Depends on T047.
-- [ ] T049 [US2] In `SplashMark` (`lib/features/startup/presentation/widgets/splash_mark.dart`), add `CustomPaint(painter: SplashMotionPainter(intro, Directionality.of(context)))` above the static `RepaintBoundary` layer, wrapped in its own `RepaintBoundary`, in the slot from T033. Depends on T048.
-- [ ] T050 [US2] Animate `_SplashWordmark` in `lib/features/startup/presentation/widgets/splash_view.dart` with `FadeTransition` (`CurvedAnimation(parent: intro, curve: SplashTimeline.wordmark)`) and a `SlideTransition`-equivalent `AnimatedBuilder` translating y `SplashGeometry.wordmarkRise`→0 logical px. Combine it with the `appearanceResolved` gate: the opacity is `0` until resolved, then it follows the intro, or snaps to 1 if the intro is already complete. Depends on T047 and T035.
-- [ ] T051 [US2] Reduced motion in `lib/features/startup/presentation/widgets/app_startup_gate.dart`:
+- [X] T049 [US2] In `SplashMark` (`lib/features/startup/presentation/widgets/splash_mark.dart`), add `CustomPaint(painter: SplashMotionPainter(intro, Directionality.of(context)))` above the static `RepaintBoundary` layer, wrapped in its own `RepaintBoundary`, in the slot from T033. Depends on T048.
+- [X] T050 [US2] Animate `_SplashWordmark` in `lib/features/startup/presentation/widgets/splash_view.dart` with `FadeTransition` (`CurvedAnimation(parent: intro, curve: SplashTimeline.wordmark)`) and a `SlideTransition`-equivalent `AnimatedBuilder` translating y `SplashGeometry.wordmarkRise`→0 logical px. Combine it with the `appearanceResolved` gate: the opacity is `0` until resolved, then it follows the intro, or snaps to 1 if the intro is already complete. Depends on T047 and T035.
+- [X] T051 [US2] Reduced motion in `lib/features/startup/presentation/widgets/app_startup_gate.dart`:
   - In `didChangeDependencies`, read `MediaQuery.disableAnimationsOf(context)`. If it's true and the intro hasn't been handed off: `_intro.value = 1.0` (no ticking) and `_introDone = true`. If `context.read<AppStartupCubit>().state.isReady`, also set `_handedOff = true` and `_splashRemoved = true` directly. **No `setState` and no `_exit.forward()` here**: `didChangeDependencies` runs inside the build phase, and `build` runs next anyway. If not yet ready, the `BlocListener` → `_maybeHandOff()` path completes it later. In `_maybeHandOff()`, when reduced motion is on, skip `_exit` and set `_splashRemoved = true` in the same `setState`.
   - Start `_intro.forward()` in the first `didChangeDependencies` rather than `initState`, so the flag is known before any tick.
 
   Depends on T047.
-- [ ] T052 [US2] Run `flutter test test/widget/app_startup_gate_test.dart test/widget/splash_view_test.dart`; all pass. Depends on T046 and T048–T051.
+- [X] T052 [US2] Run `flutter test test/widget/app_startup_gate_test.dart test/widget/splash_view_test.dart`; all pass. Depends on T046 and T048–T051.
 
 **Checkpoint / Acceptance (US2)**:
 
@@ -314,7 +314,7 @@ description: "Task list for 019 Branded Splash Screen"
 
 ### Tests for US3
 
-- [ ] T053 [P] [US3] Add these cases to `test/widget/app_startup_gate_test.dart`:
+- [X] T053 [P] [US3] Add these cases to `test/widget/app_startup_gate_test.dart`:
   4. **Intro ends first**: states `preparing` for 1.5 s; the probe isn't mounted and the mark rests at its end state with no exceptions. Then emit `ready` → after `pump(280ms)` the probe is mounted, with `initState` count == 1.
   5. **Ready at exactly the intro end**: the probe's `initState` count is still 1.
   6. **Failed** (`failure: error`): no probe; `find.text(l10n.splashErrorMessage)` and a `FilledButton` with `l10n.commonRetry` are present. Tapping it calls `mockCubit.retry()` once. With `isRetry: true` in `preparing`, the button is disabled (`onPressed == null`) and a second tap does nothing.
@@ -322,14 +322,14 @@ description: "Task list for 019 Branded Splash Screen"
   8. **Error semantics**: the message node has `liveRegion`, and the button is ≥ 48×48.
   9. **Arabic error**: with locale `ar`, the Arabic message and "حاول مرة أخرى" are shown in RTL.
   13. **Back or tap during the splash** (spec Edge Case): while `preparing`, at 300 ms, `await tester.binding.handlePopRoute()` and `tester.tapAt(center)` → no exception and the probe isn't mounted. After `ready` and the intro end, the probe mounts once as normal.
-- [ ] T054 [P] [US3] Create `integration_test/splash_startup_flow_test.dart`, mirroring the existing `bootApp()` helper style from `integration_test/onboarding_flow_test.dart` (reset getIt → `configureDependencies()` → optional fresh-install clear → `pumpWidget(const DaftaryApp())` → `getIt<AppStartupCubit>().start()` → `pumpAndSettle()`). Cases:
+- [X] T054 [P] [US3] Create `integration_test/splash_startup_flow_test.dart`, mirroring the existing `bootApp()` helper style from `integration_test/onboarding_flow_test.dart` (reset getIt → `configureDependencies()` → optional fresh-install clear → `pumpWidget(const DaftaryApp())` → `getIt<AppStartupCubit>().start()` → `pumpAndSettle()`). Cases:
   1. **Fresh install**: `find.byType(SplashView)` is present immediately after `pumpWidget`, then `OnboardingPage` after settle, and `SplashView` is absent.
   2. **Returning user** (onboarding completed): `PeopleListPage` after settle.
   3. The splash never re-appears after `pumpAndSettle()` (no `SplashView` found at any later point in the test).
 
 ### Implementation for US3
 
-- [ ] T055 [US3] Add `enum SplashMode { brand, error }` and parameters `{SplashMode mode = SplashMode.brand, VoidCallback? onRetry, bool retrying = false}` to `SplashView` in `lib/features/startup/presentation/widgets/splash_view.dart`. For `SplashMode.error`, build inside the same `AnnotatedRegion`/`Material`/`AnimatedContainer`:
+- [X] T055 [US3] Add `enum SplashMode { brand, error }` and parameters `{SplashMode mode = SplashMode.brand, VoidCallback? onRetry, bool retrying = false}` to `SplashView` in `lib/features/startup/presentation/widgets/splash_view.dart`. For `SplashMode.error`, build inside the same `AnnotatedRegion`/`Material`/`AnimatedContainer`:
   - `SafeArea` → `Center` → `SingleChildScrollView(padding: EdgeInsets.all(AppSpacing.lg))` → `ConstrainedBox(maxWidth: AppBreakpoints.maxReadingWidth)` → `Column(mainAxisSize: min)`, containing:
     - `SplashMark(intro: const AlwaysStoppedAnimation(1.0))`
     - `SizedBox(height: AppSpacing.lg)`
@@ -338,13 +338,13 @@ description: "Task list for 019 Branded Splash Screen"
     - `FilledButton(onPressed: retrying ? null : onRetry, style: FilledButton.styleFrom(backgroundColor: AppBrandColors.onField, foregroundColor: AppBrandColors.field, minimumSize: const Size(48, 48)), child: Text(l10n.commonRetry))`
 
   Depends on T034.
-- [ ] T056 [US3] Wire failure in `lib/features/startup/presentation/widgets/app_startup_gate.dart`:
+- [X] T056 [US3] Wire failure in `lib/features/startup/presentation/widgets/app_startup_gate.dart`:
   - In the `BlocListener`, when the state becomes `isFailed`, set `_intro.value = 1.0`, which stops motion (FR-016).
   - In `build` before hand-off, pass `mode: state.isFailed || (state.isRetry && !state.isReady) ? SplashMode.error : SplashMode.brand`, `onRetry: context.read<AppStartupCubit>().retry` and `retrying: state.status == AppStartupStatus.preparing`.
   - Hand-off after a successful retry still requires `_introDone`, which is already true.
 
   Depends on T055 and T016.
-- [ ] T057 [US3] Verify that `whenReady` chaining in `lib/main.dart` (T018) starts `NotificationRecomputeTrigger` and `NotificationTapRouter` exactly once, including after a failed → retried → ready sequence. `whenReady` resolves once, and both `start()` methods are already idempotent. Document the check in a code comment beside the chain. No behaviour change beyond T018.
+- [X] T057 [US3] Verify that `whenReady` chaining in `lib/main.dart` (T018) starts `NotificationRecomputeTrigger` and `NotificationTapRouter` exactly once, including after a failed → retried → ready sequence. `whenReady` resolves once, and both `start()` methods are already idempotent. Document the check in a code comment beside the chain. No behaviour change beyond T018.
 - [ ] T058 [US3] Run `flutter test test/widget/app_startup_gate_test.dart` and `flutter test integration_test/splash_startup_flow_test.dart -d <simulator/emulator>`; all pass. Depends on T053–T057.
 
 **Checkpoint / Acceptance (US3)**:
@@ -361,11 +361,11 @@ description: "Task list for 019 Branded Splash Screen"
 
 **Independent test**: Quickstart M6. The automated checks are below.
 
-- [ ] T059 [P] [US4] Add these cases to `test/widget/app_startup_gate_test.dart`:
+- [X] T059 [P] [US4] Add these cases to `test/widget/app_startup_gate_test.dart`:
   10. After hand-off, loop 20 times (SC-007): `tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused)`, `pump()`, `.resumed`, `pump()` → no `SplashView` at any iteration and the probe's `initState` count is still 1.
   11. After hand-off, rebuild the host `MaterialApp` with `buildDarkTheme()` and locale `ar` → no `SplashView`, and the probe's `initState` count is 1 (the gate's state is preserved).
   12. After hand-off, change `tester.view.physicalSize` to landscape → no `SplashView`.
-- [ ] T060 [P] [US4] Add a case to `integration_test/splash_startup_flow_test.dart`: after reaching People, switch the theme via `getIt<SettingsCubit>().changeThemeMode(AppThemeMode.dark)` and the language via `changeLanguage(AppLanguage.arabic)`, and simulate `paused` → `resumed`, with `pumpAndSettle` after each step. `SplashView` is never found and `PeopleListPage` remains.
+- [X] T060 [P] [US4] Add a case to `integration_test/splash_startup_flow_test.dart`: after reaching People, switch the theme via `getIt<SettingsCubit>().changeThemeMode(AppThemeMode.dark)` and the language via `changeLanguage(AppLanguage.arabic)`, and simulate `paused` → `resumed`, with `pumpAndSettle` after each step. `SplashView` is never found and `PeopleListPage` remains.
 - [ ] T061 [US4] Run `flutter test test/widget/app_startup_gate_test.dart` and the integration file from T060; all pass. If a replay occurs, fix it only inside `app_startup_gate.dart` (for example an accidental `Key` or a state reset), not in the router or `main.dart` theme code. Depends on T059 and T060.
 
 **Checkpoint / Acceptance (US4)**: The splash appears only on process start.
@@ -376,13 +376,13 @@ description: "Task list for 019 Branded Splash Screen"
 
 **Purpose**: Quality gates, scope audit, and device verification (quickstart M1–M13).
 
-- [ ] T062 Run `dart format lib test integration_test` and commit nothing unrelated. Only files from plan.md may show formatting changes.
-- [ ] T063 Run `flutter analyze` with zero issues. Fix issues the feature introduced; add no `// ignore` comments. Pre-existing unrelated warnings go to `notes-out-of-scope.md`.
-- [ ] T064 Run `flutter test` (all unit and widget tests) and record the pass count.
+- [X] T062 Run `dart format lib test integration_test` and commit nothing unrelated. Only files from plan.md may show formatting changes.
+- [X] T063 Run `flutter analyze` with zero issues. Fix issues the feature introduced; add no `// ignore` comments. Pre-existing unrelated warnings go to `notes-out-of-scope.md`.
+- [X] T064 Run `flutter test` (all unit and widget tests) and record the pass count.
 - [ ] T065 Run `flutter test integration_test -d <iOS simulator>` and `-d <Android emulator>` (the whole folder, including the 9 updated flows and `splash_startup_flow_test.dart`); all pass.
-- [ ] T066 [P] Dependency audit: `git diff main -- pubspec.yaml pubspec.lock` shows **no** changes.
-- [ ] T067 [P] Unused-code audit: no unused imports (the analyzer is clean), no unused `AppBrandColors` constants (grep each name under `lib/`), and no Flutter asset added to `pubspec.yaml`. `assets/icon/splash.png` is a generated source (like `icon.png`) and is committed alongside the others.
-- [ ] T068 [P] Scope audit: `git diff --stat main` lists only the files in plan.md's "Create"/"Modify" tables, plus the regenerated `app_localizations*.dart`, `injection.config.dart` and the generated PNGs. Anything else is reverted or explained in `notes-out-of-scope.md`.
+- [X] T066 [P] Dependency audit: `git diff main -- pubspec.yaml pubspec.lock` shows **no** changes.
+- [X] T067 [P] Unused-code audit: no unused imports (the analyzer is clean), no unused `AppBrandColors` constants (grep each name under `lib/`), and no Flutter asset added to `pubspec.yaml`. `assets/icon/splash.png` is a generated source (like `icon.png`) and is committed alongside the others.
+- [X] T068 [P] Scope audit: `git diff --stat main` lists only the files in plan.md's "Create"/"Modify" tables, plus the regenerated `app_localizations*.dart`, `injection.config.dart` and the generated PNGs. Anything else is reverted or explained in `notes-out-of-scope.md`.
 - [ ] T069 Performance check (quickstart M13):
   - Run `flutter run --profile` on a physical or mid-range Android device and on iOS. Cold-launch 3 times with the DevTools timeline.
   - Confirm no UI or raster frame over 16 ms during the intro, and that the static notebook layer is not repainted after frame 1 (enable "Highlight repaints").

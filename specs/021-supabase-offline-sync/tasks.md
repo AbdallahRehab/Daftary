@@ -522,8 +522,8 @@ Each task is followed by indented lines:
     - Revisions increase monotonically per owner.
   - Validate: `supabase test db`.
 
-- [ ] T050 [US2] Deploy the backend to the remote project and configure its auth (manual)
-  - **Status (2026-09-27)**: All 4 migrations were pushed to `nnrmghwqihqnmtnuxzoq` over the eu-central-1 session pooler (`aws-0-eu-central-1.pooler.supabase.com`), because the direct host is IPv6-only. Verified: 11 tables all have RLS, anon has 0 grants, and RPCs and tables return 401/42501 without a JWT. `config/supabase.dev.json` was created (git-ignored). **Still open:** anonymous sign-ins are OFF (`/auth/v1/settings` reports `anonymous_users: false`), and the email templates still send magic links. Both need the dashboard or `supabase login`.
+- [X] T050 [US2] Deploy the backend to the remote project and configure its auth (manual)
+  - **Status (2026-09-27)**: All 4 migrations were pushed to `nnrmghwqihqnmtnuxzoq` over the eu-central-1 session pooler (`aws-0-eu-central-1.pooler.supabase.com`), because the direct host is IPv6-only. Verified: 11 tables all have RLS, anon has 0 grants, and RPCs and tables return 401/42501 without a JWT. `config/supabase.dev.json` was created (git-ignored). Later the same day: the project was linked, anonymous sign-ins were enabled (`anonymous_users: true`), and a live check passed: anonymous sign-in → `sync_push` applied → `sync_pull` returned the row. The test user was then deleted. **Still open:** the one-time-code email templates. The push was rejected because free-tier projects that use the default email sender cannot change templates. Needs a custom SMTP provider (Authentication → Emails → SMTP), then `supabase config push`. Until then, "Link email" delivers a magic link instead of a code. The remote `otp_length` is 8, which the app's code field (maxLength 10) accepts.
   - Deps: T048, T049
   - Files: none in the repository.
   - Done when:

@@ -3,17 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart';
 import '../../features/currency/data/sync/exchange_rate_sync_mapper.dart';
 import '../../features/currency/data/sync/primary_currency_sync_mapper.dart';
-import '../../features/finance/data/sync/finance_category_sync_mapper.dart';
+import '../../features/finance/data/sync/finance_category_sync_mapper.dart'
+    show FinanceCategorySyncMapper, isPristineSeed;
 import '../../features/finance/data/sync/finance_entry_sync_mapper.dart';
 import '../../features/people/data/sync/person_sync_mapper.dart';
 import '../../features/transactions/data/sync/money_transaction_sync_mapper.dart';
 import '../../features/transactions/data/sync/transaction_audit_sync_mapper.dart';
 import '../database/app_database.dart';
+import '../date/app_clock.dart';
 import '../money/egp_formatter.dart';
+import '../sync/remote/supabase_initializer.dart';
+import '../sync/sync_bootstrap.dart';
+import '../sync/sync_logger.dart';
 import '../sync/sync_mapper_registry.dart';
 
 /// Registers third-party/leaf dependencies that aren't themselves annotated
@@ -22,8 +28,21 @@ import '../sync/sync_mapper_registry.dart';
 /// own default constructor).
 @module
 abstract class RegisterModule {
+  /// 021: opened with the sync bootstrap, which queues the pre-existing
+  /// data for upload once, in `beforeOpen` (T063).
   @lazySingleton
-  AppDatabase get appDatabase => AppDatabase();
+  AppDatabase appDatabase(
+    SyncMapperRegistry mappers,
+    SyncLogger logger,
+    AppClock clock,
+  ) => AppDatabase(
+    syncBootstrap: SyncBootstrap(
+      mappers,
+      logger,
+      clock,
+      isPristineSeed: isPristineSeed,
+    ),
+  );
 
   @lazySingleton
   EgpFormatter get egpFormatter => EgpFormatter();
@@ -51,6 +70,14 @@ abstract class RegisterModule {
   /// only once Supabase is initialized (T061).
   @lazySingleton
   FlutterSecureStorage get secureStorage => const FlutterSecureStorage();
+
+  /// 021: the cloud client (T061). Resolve it only after
+  /// `SupabaseInitializer.ensureInitialized()` has returned true — before
+  /// that (and always when `CloudConfig.isConfigured` is false) resolving it
+  /// throws. The sync data sources reach it through the initializer.
+  @lazySingleton
+  SupabaseClient supabaseClient(SupabaseInitializer supabase) =>
+      supabase.client;
 
   /// 021: every feature's sync mapper, indexed by entity type. Assembled
   /// here, at the composition root, so `lib/core/sync` never imports a

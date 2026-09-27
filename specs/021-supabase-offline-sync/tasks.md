@@ -532,7 +532,7 @@ Each task is followed by indented lines:
 
 ### Remote layer for User Story 2
 
-- [ ] T051 [P] [US2] Create the Supabase initializer and the secure session storage
+- [X] T051 [P] [US2] Create the Supabase initializer and the secure session storage
   - Deps: T002, T004
   - Files: `lib/core/sync/remote/secure_local_storage.dart` (new), `lib/core/sync/remote/supabase_initializer.dart` (new), `test/core/sync/remote/secure_local_storage_test.dart` (new)
   - Done when:
@@ -540,7 +540,7 @@ Each task is followed by indented lines:
     - `ensureInitialized()` is idempotent, does nothing when `!CloudConfig.isConfigured`, passes `FlutterAuthClientOptions(localStorage: SecureLocalStorage(), autoRefreshToken: true)`, and never subscribes to Realtime.
   - Validate: a unit test with a mocked `FlutterSecureStorage`.
 
-- [ ] T052 [P] [US2] Create the sync error mapper in lib/core/sync/remote/sync_error_mapper.dart (new), with a test in test/core/sync/remote/sync_error_mapper_test.dart (new)
+- [X] T052 [P] [US2] Create the sync error mapper in lib/core/sync/remote/sync_error_mapper.dart (new), with a test in test/core/sync/remote/sync_error_mapper_test.dart (new)
   - Deps: T007
   - Done when it maps every row of research Decision 20 to a failure together with a `transient` or `permanent` classification:
     - Socket, client and handshake errors → `NetworkFailure`
@@ -552,12 +552,12 @@ Each task is followed by indented lines:
     - a `rejected missing_parent` result (from `23503`) → transient
   - Validate: one test per row.
 
-- [ ] T053 [US2] Create the anonymous-session part of the auth data source in lib/core/sync/remote/cloud_auth_data_source.dart (new)
+- [X] T053 [US2] Create the anonymous-session part of the auth data source in lib/core/sync/remote/cloud_auth_data_source.dart (new)
   - Deps: T051
   - Done when: `currentUserId`, `isAnonymous` and `ensureSession()` (which calls `signInAnonymously()` when there is no session) exist. The email methods are declared but left for T078.
   - Validate: a unit test with a mocked `GoTrueClient`.
 
-- [ ] T054 [US2] Create the push call in lib/core/sync/remote/sync_remote_data_source.dart (new)
+- [X] T054 [US2] Create the push call in lib/core/sync/remote/sync_remote_data_source.dart (new)
   - Deps: T052, T053
   - Done when:
     - `push(ops, device)` calls `rpc('sync_push', params: …)` with a 20 s `.timeout`.
@@ -566,7 +566,7 @@ Each task is followed by indented lines:
     - `pull` is declared for T067.
   - Validate: a unit test with a mocked `SupabaseClient.rpc` covering the parsing of all 5 result kinds and the error paths.
 
-- [ ] T055 [P] [US2] Create a fake remote for tests in test/core/sync/fakes/fake_sync_remote.dart (new)
+- [X] T055 [P] [US2] Create a fake remote for tests in test/core/sync/fakes/fake_sync_remote.dart (new)
   - Deps: T054 (the interface)
   - Done when:
     - It is an in-memory `SyncRemoteDataSource` that reproduces contracts/sync-rpc.md §2 and §3: the ledger, revisions, the conflict, superseded and rejected branches, and pull pages.
@@ -575,7 +575,7 @@ Each task is followed by indented lines:
 
 ### Engine and scheduler for User Story 2
 
-- [ ] T056 [US2] Create the local sync store in lib/core/sync/local/sync_local_store.dart (new), with a test in test/core/sync/local/sync_local_store_test.dart (new)
+- [X] T056 [US2] Create the local sync store in lib/core/sync/local/sync_local_store.dart (new), with a test in test/core/sync/local/sync_local_store_test.dart (new)
   - Deps: T015
   - Done when:
     - `nextBatch(limit, now)` returns operations ordered by rank, then `created_at`, with `status = 'pending'` and `next_attempt_at <= now`. It skips operations whose parent entity (a transaction's person, an entry's category, an audit's transaction) has an operation in `failed` or `blocked_conflict`.
@@ -586,12 +586,12 @@ Each task is followed by indented lines:
     - `watchCounts()` returns the pending, failed and conflict counts from `sync_record_meta`.
   - Validate: ordering, parent blocking, a restart after `in_flight`, and the counts.
 
-- [ ] T057 [P] [US2] Create the backoff policy in lib/core/sync/backoff_policy.dart (new), with a test in test/core/sync/backoff_policy_test.dart (new)
+- [X] T057 [P] [US2] Create the backoff policy in lib/core/sync/backoff_policy.dart (new), with a test in test/core/sync/backoff_policy_test.dart (new)
   - Deps: none
   - Done when: `delayFor(n) = min(5 s · 2^n, 15 min) ± 20 %` jitter, with an injectable `Random`.
   - Validate: the bounds hold for n from 0 to 12, and the cap holds.
 
-- [ ] T058 [US2] Create the push phase of the engine in lib/core/sync/sync_engine.dart (new), with a test in test/core/sync/sync_engine_push_test.dart (new)
+- [X] T058 [US2] Create the push phase of the engine in lib/core/sync/sync_engine.dart (new), with a test in test/core/sync/sync_engine_push_test.dart (new)
   - Deps: T054, T055, T056, T057, T009
   - Done when `runCycle()` does the following:
     - It returns `disabled` or `offline` early.
@@ -608,12 +608,12 @@ Each task is followed by indented lines:
     - A dependent transaction stays unsent while its person operation is failed.
     - Network failure triggers backoff.
 
-- [ ] T059 [P] [US2] Create the connectivity monitor in lib/core/sync/connectivity_monitor.dart (new)
+- [X] T059 [P] [US2] Create the connectivity monitor in lib/core/sync/connectivity_monitor.dart (new)
   - Deps: T022
   - Done when: `hasNetwork` maps `connectivity_plus` results (`[none]` → false, anything else → true) and applies `distinct()`. It is documented as a hint only.
   - Validate: a unit test with a mocked `Connectivity`.
 
-- [ ] T060 [US2] Create the scheduler in lib/core/sync/sync_scheduler.dart (new) and lib/core/sync/sync_trigger.dart (new), with a test in test/core/sync/sync_scheduler_test.dart (new)
+- [X] T060 [US2] Create the scheduler in lib/core/sync/sync_scheduler.dart (new) and lib/core/sync/sync_trigger.dart (new), with a test in test/core/sync/sync_scheduler_test.dart (new)
   - Deps: T058, T059
   - Done when:
     - `start()` calls `resetInFlight`, then sets up the triggers: launch; `AppLifecycleListener` resumed; connectivity becoming available; a `changesOf({syncOutbox})` debounce of 3 s; a 5 min `Timer.periodic` while resumed; and `request(manual)`.
@@ -628,7 +628,7 @@ Each task is followed by indented lines:
     - A network that is present while the remote throws is treated as transient backoff.
     - 5 rapid `request()` calls give at most 2 cycles.
 
-- [ ] T061 [US2] Wire the scheduler and SupabaseClient into startup
+- [X] T061 [US2] Wire the scheduler and SupabaseClient into startup
   - Deps: T060, T051
   - Files: `lib/main.dart`, `lib/core/di/register_module.dart`, `lib/core/di/injection.config.dart`
   - Done when:
@@ -658,7 +658,7 @@ Each task is followed by indented lines:
 
 **Independent Test**: A v8 database with data → upgrade → bootstrap → upload. Running it twice, or interrupting it at 40 %, still gives cloud counts equal to local counts, and balances are identical.
 
-- [ ] T063 [US3] Create the bootstrap step in lib/core/sync/sync_bootstrap.dart (new) and call it from beforeOpen in lib/core/database/app_database.dart
+- [X] T063 [US3] Create the bootstrap step in lib/core/sync/sync_bootstrap.dart (new) and call it from beforeOpen in lib/core/database/app_database.dart
   - Deps: T015–T020, T011
   - Done when:
     - `enqueueExistingDataIfNeeded(db)` returns immediately when `sync_state.bootstrap_enqueued` is true. It must never infer this from an empty outbox (data-model.md §3).
@@ -667,7 +667,7 @@ Each task is followed by indented lines:
     - It is called in `beforeOpen` after `seedDefaultFinanceCategories`. It does not call `SyncOutbox`, which would recurse into the DAOs.
   - Validate: T064.
 
-- [ ] T064 [US3] Test the bootstrap in test/core/sync/sync_bootstrap_test.dart (new), and extend test/core/database/sync_v9_migration_test.dart
+- [X] T064 [US3] Test the bootstrap in test/core/sync/sync_bootstrap_test.dart (new), and extend test/core/database/sync_v9_migration_test.dart
   - Deps: T063, T012
   - Done when:
     - A v8 fixture with N synced rows (including 3 pristine seeds and 1 renamed seed) gives N−3 outbox rows.
@@ -678,7 +678,7 @@ Each task is followed by indented lines:
     - A fresh install gives 0 rows.
   - Validate: `flutter test test/core/sync/sync_bootstrap_test.dart test/core/database/`.
 
-- [ ] T065 [US3] Mark the initial upload complete and test an interrupted upload
+- [X] T065 [US3] Mark the initial upload complete and test an interrupted upload
   - Deps: T058, T063
   - Files: `lib/core/sync/sync_engine.dart`, `test/core/sync/sync_engine_initial_upload_test.dart` (new)
   - Done when: after a cycle drains the outbox, the engine sets `sync_state.initial_upload_done = true` and logs the count per entity type.

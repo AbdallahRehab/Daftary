@@ -3,6 +3,13 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'package:daftary/core/date/app_clock.dart';
+import 'package:daftary/core/sync/sync_bootstrap.dart';
+import 'package:daftary/core/sync/sync_logger.dart';
+import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.dart'
+    show isPristineSeed;
+
+import '../sync/fakes/sync_harness.dart';
 import 'support/v9_fixture.dart';
 
 /// 021 T012 — the v8 -> v9 migration (data-model.md §3): every business
@@ -301,6 +308,73 @@ void main() {
     expect(tablesOf(raw), containsAll(syncTables));
   });
 
+  group('T064: v8 -> v9 then the bootstrap in beforeOpen', () {
+    SyncBootstrap bootstrap() => SyncBootstrap(
+      realMapperRegistry(),
+      _SilentLogger(),
+      const SystemAppClock(),
+      isPristineSeed: isPristineSeed,
+    );
+
+    int count(Database raw, String sql) =>
+        raw.select(sql).single.values.single! as int;
+
+    test('queues every synced row once, skipping pristine seeds; reopening '
+        'queues nothing more', () async {
+      final raw = await createV8Database();
+      seed(raw);
+      final db = AppDatabase.forTesting(
+        NativeDatabase.opened(raw, closeUnderlyingOnClose: false),
+        syncBootstrap: bootstrap(),
+      );
+      await db.customSelect('SELECT 1').get();
+      await db.close();
+
+      // 5 people + 12 transactions + 12 audits + 2 categories (the custom
+      // one and the renamed seed; 21 pristine seeds skipped) + 6 entries +
+      // 2 rates + 1 primary currency.
+      const expected = 5 + 12 + 12 + 2 + 6 + 2 + 1;
+      expect(count(raw, 'SELECT COUNT(*) FROM sync_outbox'), expected);
+      expect(
+        count(
+          raw,
+          "SELECT COUNT(*) FROM sync_record_meta WHERE state = 'pending'",
+        ),
+        expected,
+      );
+      expect(
+        count(
+          raw,
+          "SELECT COUNT(*) FROM sync_outbox WHERE entity_id = 'seed_rent'",
+        ),
+        1,
+      );
+      expect(
+        count(
+          raw,
+          "SELECT COUNT(*) FROM sync_outbox WHERE entity_id = 'seed_food'",
+        ),
+        0,
+      );
+      expect(
+        count(
+          raw,
+          'SELECT COUNT(*) FROM sync_outbox WHERE base_revision IS NOT NULL',
+        ),
+        0,
+      );
+
+      final again = AppDatabase.forTesting(
+        NativeDatabase.opened(raw, closeUnderlyingOnClose: false),
+        syncBootstrap: bootstrap(),
+      );
+      await again.customSelect('SELECT 1').get();
+      await again.close();
+      expect(count(raw, 'SELECT COUNT(*) FROM sync_outbox'), expected);
+      raw.close();
+    });
+  });
+
   test('a fresh install creates the sync tables at v9', () async {
     final raw = sqlite3.openInMemory();
     final db = AppDatabase.forTesting(
@@ -315,4 +389,9 @@ void main() {
     expect(raw.select('PRAGMA user_version').single.values.single, 9);
     expect(db.schemaVersion, 9);
   });
+}
+
+class _SilentLogger implements SyncLogger {
+  @override
+  void event(SyncEvent e, {Map<SyncLogField, Object> fields = const {}}) {}
 }

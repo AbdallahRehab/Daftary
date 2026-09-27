@@ -8,6 +8,9 @@ import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/currency_picker.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -109,8 +112,8 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title:
             BlocSelector<FinanceEntryFormCubit, FinanceEntryFormState, String>(
               selector: (state) => state.isEditMode
@@ -144,7 +147,9 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
         builder: (context, state) {
           final cubit = context.read<FinanceEntryFormCubit>();
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

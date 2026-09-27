@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../design_system/glass/app_navigation_bar.dart';
+import '../design_system/glass/app_scaffold.dart';
 import '../design_system/tokens.dart';
 import '../l10n/app_localizations.dart';
 
@@ -40,9 +42,9 @@ class MainShell extends StatelessWidget {
 
     final width = MediaQuery.sizeOf(context).width;
     if (width < AppBreakpoints.medium) {
-      return Scaffold(
+      return AppScaffold(
         body: navigationShell,
-        bottomNavigationBar: NavigationBar(
+        bottomNavigationBar: AppNavigationBar(
           selectedIndex: navigationShell.currentIndex,
           onDestinationSelected: _select,
           destinations: [

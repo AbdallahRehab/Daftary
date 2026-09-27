@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -53,8 +57,8 @@ class _FinanceHistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: Text(l10n.financeHistoryTitle),
         actions: [
           IconButton(
@@ -99,12 +103,14 @@ class _FinanceHistoryView extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: () => context.read<FinanceHistoryCubit>().load(),
             child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.md,
-                AppSpacing.xxl * 2,
-              ),
+              padding:
+                  const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.md,
+                    AppSpacing.md,
+                    AppSpacing.xxl * 2,
+                  ) +
+                  AppGlassInsets.of(context),
               itemCount: rowCount + 1,
               itemBuilder: (context, index) {
                 if (index == 0) return _HistoryHeader(state: state);
@@ -339,7 +345,7 @@ class _AddEntryActions extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        FloatingActionButton.small(
+        AppFab.small(
           heroTag: 'finance-add-income',
           tooltip: l10n.financeAddIncomeAction,
           onPressed: () =>
@@ -347,7 +353,7 @@ class _AddEntryActions extends StatelessWidget {
           child: const Icon(Icons.arrow_downward),
         ),
         const SizedBox(height: AppSpacing.sm),
-        FloatingActionButton.extended(
+        AppFab.extended(
           heroTag: 'finance-add-expense',
           onPressed: () =>
               _pushAndReload(context, '/finance/entries/new?type=expense'),

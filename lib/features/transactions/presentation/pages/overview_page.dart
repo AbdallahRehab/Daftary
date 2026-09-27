@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -37,8 +40,8 @@ class _OverviewView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.overviewTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.overviewTitle)),
       body: BlocBuilder<OverviewCubit, OverviewState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -59,7 +62,9 @@ class _OverviewView extends StatelessWidget {
             return RefreshIndicator(
               onRefresh: () => context.read<OverviewCubit>().load(),
               child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.md),
+                padding:
+                    const EdgeInsets.all(AppSpacing.md) +
+                    AppGlassInsets.of(context),
                 children: [
                   // Settled balances do not mean nothing happened this
                   // month, so the finance link stays visible here.
@@ -84,7 +89,9 @@ class _OverviewView extends StatelessWidget {
           return RefreshIndicator(
             onRefresh: () => context.read<OverviewCubit>().load(),
             child: ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding:
+                  const EdgeInsets.all(AppSpacing.md) +
+                  AppGlassInsets.of(context),
               children: [
                 // 018 FR-009: a total that depends on a currency with no
                 // exchange rate is shown as blocked, naming the currencies.

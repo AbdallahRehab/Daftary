@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -44,8 +48,8 @@ class _PersonDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         // The global-FAB "record transaction" flow (`PeopleListPage`) can
         // land here via `context.push('/people/$id')` after the form pops
         // with no bound personId, which is always poppable — but this page
@@ -144,7 +148,11 @@ class _PersonDetailView extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  // CustomScrollView has no padding of its own: under glass
+                  // the header takes the top inset, the history the bottom.
+                  padding:
+                      const EdgeInsets.all(AppSpacing.md) +
+                      AppGlassInsets.of(context).copyWith(bottom: 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -198,7 +206,9 @@ class _PersonDetailView extends StatelessWidget {
                 SliverPadding(
                   // Clears the FAB so the last row's amount and delete
                   // action are never hidden underneath it.
-                  padding: const EdgeInsets.only(bottom: 88),
+                  padding:
+                      const EdgeInsets.only(bottom: 88) +
+                      AppGlassInsets.of(context).copyWith(top: 0),
                   sliver: SliverList.separated(
                     // Oldest first — FR-010 and US2's acceptance scenarios
                     // both require chronological order.
@@ -226,7 +236,7 @@ class _PersonDetailView extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AppFab(
         onPressed: () => _recordTransaction(context),
         tooltip: l10n.recordTransactionAction,
         child: const Icon(Icons.add),

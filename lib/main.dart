@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 
+import 'core/design_system/glass/app_glass_scope.dart';
 import 'core/design_system/tokens.dart';
 import 'core/di/injection.dart';
 import 'core/l10n/app_localizations.dart';
@@ -12,8 +14,10 @@ import 'core/routing/notification_tap_router.dart';
 import 'features/insights_notifications/presentation/notification_recompute_trigger.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/settings/domain/entities/app_theme_mode.dart';
+import 'features/settings/domain/entities/glass_appearance.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
+import 'features/settings/presentation/glass/glass_style_mapper.dart';
 import 'features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'features/startup/presentation/cubit/app_startup_state.dart';
 import 'features/startup/presentation/widgets/app_startup_gate.dart';
@@ -39,7 +43,17 @@ Future<void> main() async {
       unawaited(getIt<NotificationTapRouter>().start(appRouter));
     }),
   );
-  runApp(const DaftaryApp());
+  // 020: preload the glass shaders (async disk I/O, no GPU work) behind the
+  // splash, so switching glass ON later never stalls (research.md
+  // Decision 2). `wrap` without a theme only registers the accessibility
+  // bridge and the Material brightness resolver — it adds no widgets.
+  unawaited(LiquidGlassWidgets.initialize());
+  runApp(
+    LiquidGlassWidgets.wrap(
+      child: const DaftaryApp(),
+      brightnessResolver: Theme.maybeBrightnessOf,
+    ),
+  );
 }
 
 /// Until the saved language is known, follow the device the same way
@@ -66,6 +80,11 @@ class DaftaryApp extends StatelessWidget {
             previous.appearanceResolved != current.appearanceResolved,
         builder: (context, startup) =>
             BlocBuilder<SettingsCubit, SettingsState>(
+              // Only what MaterialApp itself reads: a glass change must not
+              // rebuild the router, theme or localization (FR-022).
+              buildWhen: (previous, current) =>
+                  previous.language != current.language ||
+                  previous.themeMode != current.themeMode,
               builder: (context, state) {
                 return MaterialApp.router(
                   onGenerateTitle: (context) =>
@@ -90,7 +109,21 @@ class DaftaryApp extends StatelessWidget {
                       ? Locale(state.language.code)
                       : null,
                   localeResolutionCallback: _resolveLocale,
-                  builder: (context, child) => AppStartupGate(child: child!),
+                  // Only the glass components (and the Settings preview)
+                  // depend on AppGlassScope, so a glass change rebuilds
+                  // just them (research.md Decision 9).
+                  builder: (context, child) =>
+                      BlocSelector<
+                        SettingsCubit,
+                        SettingsState,
+                        GlassAppearance
+                      >(
+                        selector: (state) => state.glassAppearance,
+                        builder: (context, appearance) => AppGlassScope(
+                          style: toAppGlassStyle(appearance),
+                          child: AppStartupGate(child: child!),
+                        ),
+                      ),
                 );
               },
             ),

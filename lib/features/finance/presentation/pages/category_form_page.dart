@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -83,8 +86,8 @@ class _CategoryFormViewState extends State<_CategoryFormView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: BlocSelector<CategoryFormCubit, CategoryFormState, bool>(
           selector: (state) => state.isEditMode,
           builder: (context, isEditMode) => Text(
@@ -129,7 +132,9 @@ class _CategoryFormViewState extends State<_CategoryFormView> {
           final cubit = context.read<CategoryFormCubit>();
           final duplicate = state.duplicateExisting;
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

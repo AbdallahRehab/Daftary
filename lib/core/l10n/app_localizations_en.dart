@@ -1034,4 +1034,39 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get splashErrorMessage =>
       'Daftary couldn\'t finish opening. Please try again.';
+
+  @override
+  String get appearanceSectionTitle => 'Appearance';
+
+  @override
+  String get liquidGlassTitle => 'Liquid Glass';
+
+  @override
+  String get liquidGlassSubtitle => 'Frosted glass effect on bars and buttons';
+
+  @override
+  String get glassSaveFailed =>
+      'Couldn\'t save your glass setting. It will apply until you close the app.';
+
+  @override
+  String get glassTransparencyTitle => 'Glass transparency';
+
+  @override
+  String get glassIntensityTitle => 'Glass intensity';
+
+  @override
+  String get glassLevelLow => 'Low';
+
+  @override
+  String get glassLevelMedium => 'Medium';
+
+  @override
+  String get glassLevelHigh => 'High';
+
+  @override
+  String get glassPreviewTitle => 'Preview';
+
+  @override
+  String get glassPreviewSemantics =>
+      'Sample of the Liquid Glass effect with your current settings';
 }

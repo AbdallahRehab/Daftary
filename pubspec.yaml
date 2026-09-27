@@ -52,6 +52,9 @@ dependencies:
   flutter_local_notifications: ^22.3.1
   timezone: ^0.11.1
   app_settings: ^9.0.0
+  # 020: optional Liquid Glass UI. Capped below 1.8 because 1.x minors
+  # have changed rendering defaults (research.md Decision 1).
+  liquid_glass_widgets: '>=1.7.2 <1.8.0'
 
 dev_dependencies:
   flutter_test:

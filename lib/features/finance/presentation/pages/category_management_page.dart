@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -41,12 +45,12 @@ class _CategoryManagementView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.financeCategoryManagementTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.financeCategoryManagementTitle)),
       floatingActionButton:
           BlocBuilder<CategoryManagementCubit, CategoryManagementState>(
             buildWhen: (previous, current) => previous.type != current.type,
-            builder: (context, state) => FloatingActionButton.extended(
+            builder: (context, state) => AppFab.extended(
               onPressed: () => _openForm(context, type: state.type),
               icon: const Icon(Icons.add),
               label: Text(l10n.financeAddCategoryAction),
@@ -97,7 +101,11 @@ class _TypeToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      // Under glass the body starts behind the app bar: the toggle takes
+      // the top inset, the list below takes the bottom one.
+      padding:
+          const EdgeInsets.all(AppSpacing.md) +
+          AppGlassInsets.of(context).copyWith(bottom: 0),
       child: SegmentedButton<CategoryType>(
         segments: [
           ButtonSegment(
@@ -152,12 +160,14 @@ class _Body extends StatelessWidget {
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        0,
-        AppSpacing.md,
-        AppSpacing.xxl * 2,
-      ),
+      padding:
+          const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            0,
+            AppSpacing.md,
+            AppSpacing.xxl * 2,
+          ) +
+          AppGlassInsets.of(context).copyWith(top: 0),
       children: [
         if (state.active.isNotEmpty) ...[
           _SectionHeader(label: l10n.financeCategorySectionActive),

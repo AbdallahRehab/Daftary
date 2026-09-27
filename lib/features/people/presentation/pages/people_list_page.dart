@@ -4,6 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -66,8 +70,8 @@ class _PeopleListView extends StatelessWidget {
   }
 
   Widget _buildScaffold(BuildContext context, AppLocalizations l10n) {
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: Text(l10n.peopleListTitle),
         // Overview already has its own bottom-navigation destination, so
         // surfacing it again here would just be a second path to the same
@@ -87,18 +91,25 @@ class _PeopleListView extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.md,
-              AppSpacing.sm,
-            ),
-            child: AppTextField(
-              label: l10n.searchPeopleHint,
-              suffixIcon: const Icon(Icons.search),
-              onChanged: (query) =>
-                  context.read<PersonListCubit>().nameQueryChanged(query),
+          Builder(
+            builder: (context) => Padding(
+              // Under glass the body starts behind the app bar: the header
+              // takes the top inset (read below the scaffold, via Builder),
+              // the list below takes the bottom one.
+              padding:
+                  const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.md,
+                    AppSpacing.md,
+                    AppSpacing.sm,
+                  ) +
+                  AppGlassInsets.of(context).copyWith(bottom: 0),
+              child: AppTextField(
+                label: l10n.searchPeopleHint,
+                suffixIcon: const Icon(Icons.search),
+                onChanged: (query) =>
+                    context.read<PersonListCubit>().nameQueryChanged(query),
+              ),
             ),
           ),
           Padding(
@@ -186,7 +197,9 @@ class _PeopleListView extends StatelessWidget {
                   child: ListView.separated(
                     // Clears the FAB so the last row's archive action is
                     // never hidden underneath it.
-                    padding: const EdgeInsets.only(bottom: 88),
+                    padding:
+                        const EdgeInsets.only(bottom: 88) +
+                        AppGlassInsets.of(context).copyWith(top: 0),
                     itemCount: state.items.length,
                     separatorBuilder: (context, index) => Divider(
                       height: 1,
@@ -224,9 +237,9 @@ class _PeopleListView extends StatelessWidget {
       // The MVP action (US1: record a transaction against a new or
       // existing person, via the form's own inline "create new person"
       // affordance — FR-002) is the primary FAB; creating a person with no
-      // transaction yet stays reachable via the AppBar action above and
+      // transaction yet stays reachable via the app bar action above and
       // the empty-state action below.
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: AppFab(
         onPressed: () => _recordTransaction(context),
         tooltip: l10n.recordTransactionAction,
         child: const Icon(Icons.add),

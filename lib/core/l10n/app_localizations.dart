@@ -1891,6 +1891,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daftary couldn\'t finish opening. Please try again.'**
   String get splashErrorMessage;
+
+  /// Settings section heading grouping visual appearance options such as Liquid Glass.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceSectionTitle;
+
+  /// Title of the switch that turns the Liquid Glass effect on or off; also the sample title in the glass preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquid Glass'**
+  String get liquidGlassTitle;
+
+  /// Subtitle under the Liquid Glass switch explaining what the effect changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Frosted glass effect on bars and buttons'**
+  String get liquidGlassSubtitle;
+
+  /// Snackbar shown when saving the Liquid Glass preference fails after a retry; the choice stays on for this session.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your glass setting. It will apply until you close the app.'**
+  String get glassSaveFailed;
+
+  /// Title of the three-level selector for how see-through the glass surfaces are.
+  ///
+  /// In en, this message translates to:
+  /// **'Glass transparency'**
+  String get glassTransparencyTitle;
+
+  /// Title of the three-level selector for how strong the glass blur is.
+  ///
+  /// In en, this message translates to:
+  /// **'Glass intensity'**
+  String get glassIntensityTitle;
+
+  /// Glass level option: the lowest of three levels.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get glassLevelLow;
+
+  /// Glass level option: the middle of three levels.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get glassLevelMedium;
+
+  /// Glass level option: the highest of three levels.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get glassLevelHigh;
+
+  /// Sample text shown behind the glass strip in the Liquid Glass preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get glassPreviewTitle;
+
+  /// Screen reader label for the Liquid Glass preview tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample of the Liquid Glass effect with your current settings'**
+  String get glassPreviewSemantics;
 }
 
 class _AppLocalizationsDelegate

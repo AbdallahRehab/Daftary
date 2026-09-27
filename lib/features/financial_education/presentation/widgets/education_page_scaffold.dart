@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import 'persistent_disclaimer_banner.dart';
@@ -21,22 +24,39 @@ class EducationPageScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(title)),
       body: SafeArea(
         top: false,
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppSpacing.md,
-                AppSpacing.sm,
-                AppSpacing.md,
-                0,
+            // Under glass the body starts behind the app bar, so the banner
+            // takes the top inset (read below the scaffold, via Builder).
+            Builder(
+              builder: (context) => Padding(
+                padding:
+                    const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                      AppSpacing.md,
+                      0,
+                    ) +
+                    AppGlassInsets.of(context).copyWith(bottom: 0),
+                child: const PersistentDisclaimerBanner(),
               ),
-              child: PersistentDisclaimerBanner(),
             ),
-            Expanded(child: body),
+            // The banner above already took the top inset, so the body's own
+            // scrollables must not add it again (a no-op with glass OFF,
+            // where the body's top padding is already zero).
+            Expanded(
+              child: Builder(
+                builder: (context) => MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: body,
+                ),
+              ),
+            ),
           ],
         ),
       ),

@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -44,8 +47,8 @@ class _PersonFormView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: BlocSelector<PersonFormCubit, PersonFormState, bool>(
           selector: (state) => state.isEditMode,
           builder: (context, isEditMode) => Text(
@@ -129,7 +132,9 @@ class _PersonFormView extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<PersonFormCubit>();
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

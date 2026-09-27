@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -93,8 +96,8 @@ class CurrencySettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.currencySettingsTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.currencySettingsTitle)),
       body: BlocConsumer<PrimaryCurrencyCubit, PrimaryCurrencyState>(
         listenWhen: (previous, current) =>
             previous.outcome != current.outcome ||
@@ -133,7 +136,7 @@ class CurrencySettingsView extends StatelessWidget {
     final languageCode = Localizations.localeOf(context).languageCode;
     final primary = state.primary;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       children: [
         AppCard(
           padding: EdgeInsets.zero,

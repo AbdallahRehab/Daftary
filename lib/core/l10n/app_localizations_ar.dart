@@ -1026,4 +1026,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get splashErrorMessage => 'تعذّر إكمال فتح دفتري. حاول مرة أخرى.';
+
+  @override
+  String get appearanceSectionTitle => 'التأثيرات المرئية';
+
+  @override
+  String get liquidGlassTitle => 'الزجاج السائل';
+
+  @override
+  String get liquidGlassSubtitle => 'تأثير زجاجي مصنفر على الأشرطة والأزرار';
+
+  @override
+  String get glassSaveFailed =>
+      'تعذّر حفظ إعداد الزجاج. سيظل مطبقًا حتى تغلق التطبيق.';
+
+  @override
+  String get glassTransparencyTitle => 'شفافية الزجاج';
+
+  @override
+  String get glassIntensityTitle => 'قوة الزجاج';
+
+  @override
+  String get glassLevelLow => 'منخفضة';
+
+  @override
+  String get glassLevelMedium => 'متوسطة';
+
+  @override
+  String get glassLevelHigh => 'عالية';
+
+  @override
+  String get glassPreviewTitle => 'معاينة';
+
+  @override
+  String get glassPreviewSemantics =>
+      'نموذج لتأثير الزجاج السائل بإعداداتك الحالية';
 }

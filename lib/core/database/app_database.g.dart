@@ -1777,6 +1777,43 @@ class $AppSettingsTable extends AppSettings
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _glassEnabledMeta = const VerificationMeta(
+    'glassEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> glassEnabled = GeneratedColumn<bool>(
+    'glass_enabled',
+    aliasedName,
+    true,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("glass_enabled" IN (0, 1))',
+    ),
+  );
+  static const VerificationMeta _glassTransparencyMeta = const VerificationMeta(
+    'glassTransparency',
+  );
+  @override
+  late final GeneratedColumn<String> glassTransparency =
+      GeneratedColumn<String>(
+        'glass_transparency',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _glassIntensityMeta = const VerificationMeta(
+    'glassIntensity',
+  );
+  @override
+  late final GeneratedColumn<String> glassIntensity = GeneratedColumn<String>(
+    'glass_intensity',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _updatedAtMeta = const VerificationMeta(
     'updatedAt',
   );
@@ -1793,6 +1830,9 @@ class $AppSettingsTable extends AppSettings
     id,
     languageCode,
     themeMode,
+    glassEnabled,
+    glassTransparency,
+    glassIntensity,
     updatedAt,
   ];
   @override
@@ -1829,6 +1869,33 @@ class $AppSettingsTable extends AppSettings
         themeMode.isAcceptableOrUnknown(data['theme_mode']!, _themeModeMeta),
       );
     }
+    if (data.containsKey('glass_enabled')) {
+      context.handle(
+        _glassEnabledMeta,
+        glassEnabled.isAcceptableOrUnknown(
+          data['glass_enabled']!,
+          _glassEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('glass_transparency')) {
+      context.handle(
+        _glassTransparencyMeta,
+        glassTransparency.isAcceptableOrUnknown(
+          data['glass_transparency']!,
+          _glassTransparencyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('glass_intensity')) {
+      context.handle(
+        _glassIntensityMeta,
+        glassIntensity.isAcceptableOrUnknown(
+          data['glass_intensity']!,
+          _glassIntensityMeta,
+        ),
+      );
+    }
     if (data.containsKey('updated_at')) {
       context.handle(
         _updatedAtMeta,
@@ -1858,6 +1925,18 @@ class $AppSettingsTable extends AppSettings
         DriftSqlType.string,
         data['${effectivePrefix}theme_mode'],
       ),
+      glassEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}glass_enabled'],
+      ),
+      glassTransparency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}glass_transparency'],
+      ),
+      glassIntensity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}glass_intensity'],
+      ),
       updatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}updated_at'],
@@ -1875,11 +1954,23 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
   final String id;
   final String languageCode;
   final String? themeMode;
+
+  /// 020: NULL = never set → default (data-model.md).
+  final bool? glassEnabled;
+
+  /// 020: a `GlassLevel.value`. NULL = never set → default (data-model.md).
+  final String? glassTransparency;
+
+  /// 020: a `GlassLevel.value`. NULL = never set → default (data-model.md).
+  final String? glassIntensity;
   final int updatedAt;
   const AppSetting({
     required this.id,
     required this.languageCode,
     this.themeMode,
+    this.glassEnabled,
+    this.glassTransparency,
+    this.glassIntensity,
     required this.updatedAt,
   });
   @override
@@ -1889,6 +1980,15 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     map['language_code'] = Variable<String>(languageCode);
     if (!nullToAbsent || themeMode != null) {
       map['theme_mode'] = Variable<String>(themeMode);
+    }
+    if (!nullToAbsent || glassEnabled != null) {
+      map['glass_enabled'] = Variable<bool>(glassEnabled);
+    }
+    if (!nullToAbsent || glassTransparency != null) {
+      map['glass_transparency'] = Variable<String>(glassTransparency);
+    }
+    if (!nullToAbsent || glassIntensity != null) {
+      map['glass_intensity'] = Variable<String>(glassIntensity);
     }
     map['updated_at'] = Variable<int>(updatedAt);
     return map;
@@ -1901,6 +2001,15 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       themeMode: themeMode == null && nullToAbsent
           ? const Value.absent()
           : Value(themeMode),
+      glassEnabled: glassEnabled == null && nullToAbsent
+          ? const Value.absent()
+          : Value(glassEnabled),
+      glassTransparency: glassTransparency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(glassTransparency),
+      glassIntensity: glassIntensity == null && nullToAbsent
+          ? const Value.absent()
+          : Value(glassIntensity),
       updatedAt: Value(updatedAt),
     );
   }
@@ -1914,6 +2023,11 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       id: serializer.fromJson<String>(json['id']),
       languageCode: serializer.fromJson<String>(json['languageCode']),
       themeMode: serializer.fromJson<String?>(json['themeMode']),
+      glassEnabled: serializer.fromJson<bool?>(json['glassEnabled']),
+      glassTransparency: serializer.fromJson<String?>(
+        json['glassTransparency'],
+      ),
+      glassIntensity: serializer.fromJson<String?>(json['glassIntensity']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
   }
@@ -1924,6 +2038,9 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       'id': serializer.toJson<String>(id),
       'languageCode': serializer.toJson<String>(languageCode),
       'themeMode': serializer.toJson<String?>(themeMode),
+      'glassEnabled': serializer.toJson<bool?>(glassEnabled),
+      'glassTransparency': serializer.toJson<String?>(glassTransparency),
+      'glassIntensity': serializer.toJson<String?>(glassIntensity),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
   }
@@ -1932,11 +2049,21 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     String? id,
     String? languageCode,
     Value<String?> themeMode = const Value.absent(),
+    Value<bool?> glassEnabled = const Value.absent(),
+    Value<String?> glassTransparency = const Value.absent(),
+    Value<String?> glassIntensity = const Value.absent(),
     int? updatedAt,
   }) => AppSetting(
     id: id ?? this.id,
     languageCode: languageCode ?? this.languageCode,
     themeMode: themeMode.present ? themeMode.value : this.themeMode,
+    glassEnabled: glassEnabled.present ? glassEnabled.value : this.glassEnabled,
+    glassTransparency: glassTransparency.present
+        ? glassTransparency.value
+        : this.glassTransparency,
+    glassIntensity: glassIntensity.present
+        ? glassIntensity.value
+        : this.glassIntensity,
     updatedAt: updatedAt ?? this.updatedAt,
   );
   AppSetting copyWithCompanion(AppSettingsCompanion data) {
@@ -1946,6 +2073,15 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           ? data.languageCode.value
           : this.languageCode,
       themeMode: data.themeMode.present ? data.themeMode.value : this.themeMode,
+      glassEnabled: data.glassEnabled.present
+          ? data.glassEnabled.value
+          : this.glassEnabled,
+      glassTransparency: data.glassTransparency.present
+          ? data.glassTransparency.value
+          : this.glassTransparency,
+      glassIntensity: data.glassIntensity.present
+          ? data.glassIntensity.value
+          : this.glassIntensity,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
@@ -1956,13 +2092,24 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('themeMode: $themeMode, ')
+          ..write('glassEnabled: $glassEnabled, ')
+          ..write('glassTransparency: $glassTransparency, ')
+          ..write('glassIntensity: $glassIntensity, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, languageCode, themeMode, updatedAt);
+  int get hashCode => Object.hash(
+    id,
+    languageCode,
+    themeMode,
+    glassEnabled,
+    glassTransparency,
+    glassIntensity,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1970,6 +2117,9 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           other.id == this.id &&
           other.languageCode == this.languageCode &&
           other.themeMode == this.themeMode &&
+          other.glassEnabled == this.glassEnabled &&
+          other.glassTransparency == this.glassTransparency &&
+          other.glassIntensity == this.glassIntensity &&
           other.updatedAt == this.updatedAt);
 }
 
@@ -1977,12 +2127,18 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   final Value<String> id;
   final Value<String> languageCode;
   final Value<String?> themeMode;
+  final Value<bool?> glassEnabled;
+  final Value<String?> glassTransparency;
+  final Value<String?> glassIntensity;
   final Value<int> updatedAt;
   final Value<int> rowid;
   const AppSettingsCompanion({
     this.id = const Value.absent(),
     this.languageCode = const Value.absent(),
     this.themeMode = const Value.absent(),
+    this.glassEnabled = const Value.absent(),
+    this.glassTransparency = const Value.absent(),
+    this.glassIntensity = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -1990,6 +2146,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     required String id,
     required String languageCode,
     this.themeMode = const Value.absent(),
+    this.glassEnabled = const Value.absent(),
+    this.glassTransparency = const Value.absent(),
+    this.glassIntensity = const Value.absent(),
     required int updatedAt,
     this.rowid = const Value.absent(),
   }) : id = Value(id),
@@ -1999,6 +2158,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Expression<String>? id,
     Expression<String>? languageCode,
     Expression<String>? themeMode,
+    Expression<bool>? glassEnabled,
+    Expression<String>? glassTransparency,
+    Expression<String>? glassIntensity,
     Expression<int>? updatedAt,
     Expression<int>? rowid,
   }) {
@@ -2006,6 +2168,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       if (id != null) 'id': id,
       if (languageCode != null) 'language_code': languageCode,
       if (themeMode != null) 'theme_mode': themeMode,
+      if (glassEnabled != null) 'glass_enabled': glassEnabled,
+      if (glassTransparency != null) 'glass_transparency': glassTransparency,
+      if (glassIntensity != null) 'glass_intensity': glassIntensity,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
     });
@@ -2015,6 +2180,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Value<String>? id,
     Value<String>? languageCode,
     Value<String?>? themeMode,
+    Value<bool?>? glassEnabled,
+    Value<String?>? glassTransparency,
+    Value<String?>? glassIntensity,
     Value<int>? updatedAt,
     Value<int>? rowid,
   }) {
@@ -2022,6 +2190,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       id: id ?? this.id,
       languageCode: languageCode ?? this.languageCode,
       themeMode: themeMode ?? this.themeMode,
+      glassEnabled: glassEnabled ?? this.glassEnabled,
+      glassTransparency: glassTransparency ?? this.glassTransparency,
+      glassIntensity: glassIntensity ?? this.glassIntensity,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
     );
@@ -2039,6 +2210,15 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     if (themeMode.present) {
       map['theme_mode'] = Variable<String>(themeMode.value);
     }
+    if (glassEnabled.present) {
+      map['glass_enabled'] = Variable<bool>(glassEnabled.value);
+    }
+    if (glassTransparency.present) {
+      map['glass_transparency'] = Variable<String>(glassTransparency.value);
+    }
+    if (glassIntensity.present) {
+      map['glass_intensity'] = Variable<String>(glassIntensity.value);
+    }
     if (updatedAt.present) {
       map['updated_at'] = Variable<int>(updatedAt.value);
     }
@@ -2054,6 +2234,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
           ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('themeMode: $themeMode, ')
+          ..write('glassEnabled: $glassEnabled, ')
+          ..write('glassTransparency: $glassTransparency, ')
+          ..write('glassIntensity: $glassIntensity, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
@@ -6646,6 +6829,9 @@ typedef $$AppSettingsTableCreateCompanionBuilder =
       required String id,
       required String languageCode,
       Value<String?> themeMode,
+      Value<bool?> glassEnabled,
+      Value<String?> glassTransparency,
+      Value<String?> glassIntensity,
       required int updatedAt,
       Value<int> rowid,
     });
@@ -6654,6 +6840,9 @@ typedef $$AppSettingsTableUpdateCompanionBuilder =
       Value<String> id,
       Value<String> languageCode,
       Value<String?> themeMode,
+      Value<bool?> glassEnabled,
+      Value<String?> glassTransparency,
+      Value<String?> glassIntensity,
       Value<int> updatedAt,
       Value<int> rowid,
     });
@@ -6679,6 +6868,21 @@ class $$AppSettingsTableFilterComposer
 
   ColumnFilters<String> get themeMode => $composableBuilder(
     column: $table.themeMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get glassEnabled => $composableBuilder(
+    column: $table.glassEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get glassTransparency => $composableBuilder(
+    column: $table.glassTransparency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get glassIntensity => $composableBuilder(
+    column: $table.glassIntensity,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6712,6 +6916,21 @@ class $$AppSettingsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get glassEnabled => $composableBuilder(
+    column: $table.glassEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get glassTransparency => $composableBuilder(
+    column: $table.glassTransparency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get glassIntensity => $composableBuilder(
+    column: $table.glassIntensity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get updatedAt => $composableBuilder(
     column: $table.updatedAt,
     builder: (column) => ColumnOrderings(column),
@@ -6737,6 +6956,21 @@ class $$AppSettingsTableAnnotationComposer
 
   GeneratedColumn<String> get themeMode =>
       $composableBuilder(column: $table.themeMode, builder: (column) => column);
+
+  GeneratedColumn<bool> get glassEnabled => $composableBuilder(
+    column: $table.glassEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get glassTransparency => $composableBuilder(
+    column: $table.glassTransparency,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get glassIntensity => $composableBuilder(
+    column: $table.glassIntensity,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get updatedAt =>
       $composableBuilder(column: $table.updatedAt, builder: (column) => column);
@@ -6776,12 +7010,18 @@ class $$AppSettingsTableTableManager
                 Value<String> id = const Value.absent(),
                 Value<String> languageCode = const Value.absent(),
                 Value<String?> themeMode = const Value.absent(),
+                Value<bool?> glassEnabled = const Value.absent(),
+                Value<String?> glassTransparency = const Value.absent(),
+                Value<String?> glassIntensity = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AppSettingsCompanion(
                 id: id,
                 languageCode: languageCode,
                 themeMode: themeMode,
+                glassEnabled: glassEnabled,
+                glassTransparency: glassTransparency,
+                glassIntensity: glassIntensity,
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),
@@ -6790,12 +7030,18 @@ class $$AppSettingsTableTableManager
                 required String id,
                 required String languageCode,
                 Value<String?> themeMode = const Value.absent(),
+                Value<bool?> glassEnabled = const Value.absent(),
+                Value<String?> glassTransparency = const Value.absent(),
+                Value<String?> glassIntensity = const Value.absent(),
                 required int updatedAt,
                 Value<int> rowid = const Value.absent(),
               }) => AppSettingsCompanion.insert(
                 id: id,
                 languageCode: languageCode,
                 themeMode: themeMode,
+                glassEnabled: glassEnabled,
+                glassTransparency: glassTransparency,
+                glassIntensity: glassIntensity,
                 updatedAt: updatedAt,
                 rowid: rowid,
               ),

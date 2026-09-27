@@ -32,6 +32,10 @@ void main() {
     raw.execute('DROP TABLE primary_currency_settings;');
     raw.execute('ALTER TABLE money_transactions DROP COLUMN currency_code;');
     raw.execute('ALTER TABLE finance_entries DROP COLUMN currency_code;');
+    // 020 (v8) additions, so the upgrade runs v6 -> v7 -> v8 for real.
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
     raw.execute('PRAGMA user_version = 6;');
     return raw;
   }
@@ -265,36 +269,39 @@ void main() {
     });
   });
 
-  test('upgrading straight from v4 (finance tables created in the same '
-      'run) reaches v7 without a duplicate-column failure', () async {
-    // Regression: `from < 5` creates finance_entries with today's schema
-    // (already holding currency_code), so the v7 step must not add it again.
-    final raw = await createV6Database();
-    raw.execute('DROP INDEX idx_notification_history_source;');
-    raw.execute('DROP TABLE notification_history;');
-    raw.execute('DROP TABLE notification_preferences;');
-    raw.execute('DROP TABLE finance_entries;');
-    raw.execute('DROP TABLE finance_categories;');
-    raw.execute(
-      'INSERT INTO people (id, name, normalized_name, is_archived, '
-      "created_at, updated_at) VALUES ('p1', 'A', 'a', 0, 1, 1)",
-    );
-    raw.execute(
-      'INSERT INTO money_transactions (id, idempotency_key, person_id, '
-      'amount_minor_units, direction, kind, date, created_at) '
-      "VALUES ('t1', 'k1', 'p1', 25000, 'given', 'initialExchange', 1, 1)",
-    );
-    raw.execute('PRAGMA user_version = 4;');
+  test(
+    'upgrading straight from v4 (finance tables created in the same '
+    'run) reaches the latest version without a duplicate-column failure',
+    () async {
+      // Regression: `from < 5` creates finance_entries with today's schema
+      // (already holding currency_code), so the v7 step must not add it again.
+      final raw = await createV6Database();
+      raw.execute('DROP INDEX idx_notification_history_source;');
+      raw.execute('DROP TABLE notification_history;');
+      raw.execute('DROP TABLE notification_preferences;');
+      raw.execute('DROP TABLE finance_entries;');
+      raw.execute('DROP TABLE finance_categories;');
+      raw.execute(
+        'INSERT INTO people (id, name, normalized_name, is_archived, '
+        "created_at, updated_at) VALUES ('p1', 'A', 'a', 0, 1, 1)",
+      );
+      raw.execute(
+        'INSERT INTO money_transactions (id, idempotency_key, person_id, '
+        'amount_minor_units, direction, kind, date, created_at) '
+        "VALUES ('t1', 'k1', 'p1', 25000, 'given', 'initialExchange', 1, 1)",
+      );
+      raw.execute('PRAGMA user_version = 4;');
 
-    final db = await openUpgraded(raw);
+      final db = await openUpgraded(raw);
 
-    final tx = await db.select(db.moneyTransactions).getSingle();
-    expect(tx.currencyCode, 'EGP');
-    expect(tx.amountMinorUnits, 25000);
-    expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
-    expect(await db.select(db.exchangeRates).get(), isEmpty);
-    expect(raw.select('PRAGMA user_version').single.values.single, 7);
-  });
+      final tx = await db.select(db.moneyTransactions).getSingle();
+      expect(tx.currencyCode, 'EGP');
+      expect(tx.amountMinorUnits, 25000);
+      expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
+      expect(await db.select(db.exchangeRates).get(), isEmpty);
+      expect(raw.select('PRAGMA user_version').single.values.single, 8);
+    },
+  );
 
   group('fresh install (onCreate)', () {
     test('has the currency columns, NOT NULL with an EGP default', () async {
@@ -334,13 +341,13 @@ void main() {
         "AND name = 'idx_exchange_rates_pair'",
       );
       expect(index.single['sql'] as String, contains('UNIQUE'));
-      expect(raw.select('PRAGMA user_version').single.values.single, 7);
+      expect(raw.select('PRAGMA user_version').single.values.single, 8);
     });
 
-    test('schemaVersion is 7', () {
+    test('schemaVersion is 8 (018 bumped it to 7; 020 to 8)', () {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
-      expect(db.schemaVersion, 7);
+      expect(db.schemaVersion, 8);
     });
   });
 }

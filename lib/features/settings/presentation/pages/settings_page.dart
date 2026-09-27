@@ -3,14 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../currency/presentation/pages/currency_settings_page.dart';
 import '../../../insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../domain/entities/app_language.dart';
 import '../../domain/entities/app_theme_mode.dart';
+import '../../domain/entities/glass_appearance.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
+import '../widgets/glass_level_selector.dart';
+import '../widgets/glass_preview.dart';
 
 /// A language picker, structured as a `ListView` of sections so future
 /// settings entries can be appended below the language switch without
@@ -23,24 +29,37 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.settingsTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.settingsTitle)),
       body: BlocConsumer<SettingsCubit, SettingsState>(
         listenWhen: (previous, current) =>
             (!previous.isPersistFailing && current.isPersistFailing) ||
             (!previous.isThemeModePersistFailing &&
-                current.isThemeModePersistFailing),
+                current.isThemeModePersistFailing) ||
+            (!previous.isGlassPersistFailing && current.isGlassPersistFailing),
         listener: (context, state) {
-          final message = state.isThemeModePersistFailing
+          // Priority when several fail at once: glass, then theme, then
+          // language.
+          final message = state.isGlassPersistFailing
+              ? l10n.glassSaveFailed
+              : state.isThemeModePersistFailing
               ? l10n.themeSaveFailed
               : l10n.settingsSaveFailed;
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(message)));
         },
+        // Only the language and theme groups read the state here; the
+        // Appearance group selects its own slice, so glass changes rebuild
+        // just that group.
+        buildWhen: (previous, current) =>
+            previous.language != current.language ||
+            previous.themeMode != current.themeMode,
         builder: (context, state) {
           return ListView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             children: [
               _SettingsSection(
                 icon: Icons.translate_outlined,
@@ -95,6 +114,8 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
+              const _AppearanceSection(),
+              const SizedBox(height: AppSpacing.lg),
               // Currency entry point (018): primary currency + the manual
               // exchange rates, on their own screens.
               _SettingsSection(
@@ -145,6 +166,70 @@ class SettingsPage extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// The Appearance group (020, research Decision 14): the Liquid Glass switch
+/// and, only while glass is ON, the transparency and intensity pickers and a
+/// live preview. It selects just [GlassAppearance], so it alone rebuilds when
+/// the glass preference changes.
+class _AppearanceSection extends StatelessWidget {
+  const _AppearanceSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final cubit = context.read<SettingsCubit>();
+    return BlocSelector<SettingsCubit, SettingsState, GlassAppearance>(
+      selector: (state) => state.glassAppearance,
+      builder: (context, glass) {
+        return _SettingsSection(
+          icon: Icons.blur_on_outlined,
+          title: l10n.appearanceSectionTitle,
+          child: Column(
+            children: [
+              SwitchListTile(
+                key: const Key('settings_liquid_glass_switch'),
+                title: Text(l10n.liquidGlassTitle),
+                subtitle: Text(l10n.liquidGlassSubtitle),
+                value: glass.enabled,
+                onChanged: cubit.setGlassEnabled,
+              ),
+              AnimatedSize(
+                duration: kThemeAnimationDuration,
+                alignment: AlignmentDirectional.topCenter,
+                child: glass.enabled
+                    ? Column(
+                        children: [
+                          const Divider(height: 1, indent: AppSpacing.md),
+                          GlassLevelSelector(
+                            key: const Key('settings_glass_transparency'),
+                            title: l10n.glassTransparencyTitle,
+                            value: glass.transparency,
+                            onChanged: cubit.setGlassTransparency,
+                          ),
+                          const Divider(height: 1, indent: AppSpacing.md),
+                          GlassLevelSelector(
+                            key: const Key('settings_glass_intensity'),
+                            title: l10n.glassIntensityTitle,
+                            value: glass.intensity,
+                            onChanged: cubit.setGlassIntensity,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(AppSpacing.md),
+                            child: GlassPreview(
+                              key: Key('settings_glass_preview'),
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

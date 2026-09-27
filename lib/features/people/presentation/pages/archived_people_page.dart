@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -32,17 +35,23 @@ class _ArchivedPeopleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.archivedPeopleTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.archivedPeopleTitle)),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            child: AppTextField(
-              label: l10n.searchPeopleHint,
-              suffixIcon: const Icon(Icons.search),
-              onChanged: (query) =>
-                  context.read<ArchivedPeopleCubit>().nameQueryChanged(query),
+          Builder(
+            builder: (context) => Padding(
+              // Under glass the body starts behind the app bar, so the header
+              // takes the top inset (read below the scaffold, via Builder).
+              padding:
+                  const EdgeInsets.all(AppSpacing.md) +
+                  AppGlassInsets.of(context).copyWith(bottom: 0),
+              child: AppTextField(
+                label: l10n.searchPeopleHint,
+                suffixIcon: const Icon(Icons.search),
+                onChanged: (query) =>
+                    context.read<ArchivedPeopleCubit>().nameQueryChanged(query),
+              ),
             ),
           ),
           Expanded(
@@ -67,49 +76,55 @@ class _ArchivedPeopleView extends StatelessWidget {
                     message: l10n.archivedEmptyMessage,
                   );
                 }
-                return ListView.separated(
-                  itemCount: state.people.length,
-                  separatorBuilder: (context, index) => Divider(
-                    height: 1,
-                    indent: AppSpacing.md,
-                    endIndent: AppSpacing.md,
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                // The header above already took the top inset under glass; don't
+                // add it again (a no-op with glass OFF).
+                return MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: ListView.separated(
+                    itemCount: state.people.length,
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      indent: AppSpacing.md,
+                      endIndent: AppSpacing.md,
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
+                    itemBuilder: (context, index) {
+                      final person = state.people[index];
+                      final tag = person.relationshipTag;
+                      return BlocSelector<
+                        ArchivedPeopleCubit,
+                        ArchivedPeopleState,
+                        String?
+                      >(
+                        selector: (state) => state.processingPersonId,
+                        builder: (context, processingPersonId) {
+                          final isRestoring = processingPersonId == person.id;
+                          return ListTile(
+                            title: Text(person.name),
+                            subtitle: tag != null && tag.trim().isNotEmpty
+                                ? Align(
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: RelationshipTagChip(tag: tag),
+                                  )
+                                : null,
+                            // 005-archive-state-refresh Decision 1: this
+                            // call site previously never reloaded the
+                            // archived list on return from Person Detail.
+                            onTap: () => _openPersonDetail(context, person.id),
+                            trailing: TextButton(
+                              onPressed: isRestoring
+                                  ? null
+                                  : () => context
+                                        .read<ArchivedPeopleCubit>()
+                                        .restore(person.id),
+                              child: Text(l10n.restoreAction),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
-                  itemBuilder: (context, index) {
-                    final person = state.people[index];
-                    final tag = person.relationshipTag;
-                    return BlocSelector<
-                      ArchivedPeopleCubit,
-                      ArchivedPeopleState,
-                      String?
-                    >(
-                      selector: (state) => state.processingPersonId,
-                      builder: (context, processingPersonId) {
-                        final isRestoring = processingPersonId == person.id;
-                        return ListTile(
-                          title: Text(person.name),
-                          subtitle: tag != null && tag.trim().isNotEmpty
-                              ? Align(
-                                  alignment: AlignmentDirectional.centerStart,
-                                  child: RelationshipTagChip(tag: tag),
-                                )
-                              : null,
-                          // 005-archive-state-refresh Decision 1: this
-                          // call site previously never reloaded the
-                          // archived list on return from Person Detail.
-                          onTap: () => _openPersonDetail(context, person.id),
-                          trailing: TextButton(
-                            onPressed: isRestoring
-                                ? null
-                                : () => context
-                                      .read<ArchivedPeopleCubit>()
-                                      .restore(person.id),
-                            child: Text(l10n.restoreAction),
-                          ),
-                        );
-                      },
-                    );
-                  },
                 );
               },
             ),

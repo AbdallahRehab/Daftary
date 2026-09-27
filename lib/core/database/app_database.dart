@@ -128,13 +128,22 @@ class FinanceEntries extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-/// The user's language preference. Single-row table (data-model.md): the
-/// app always reads/writes the fixed `id` `'singleton'` — there is never
-/// more than one row.
+/// The user's language, theme and Liquid Glass preferences. Single-row
+/// table (data-model.md): the app always reads/writes the fixed `id`
+/// `'singleton'` — there is never more than one row.
 class AppSettings extends Table {
   TextColumn get id => text()();
   TextColumn get languageCode => text()();
   TextColumn get themeMode => text().nullable()();
+
+  /// 020: NULL = never set → default (data-model.md).
+  BoolColumn get glassEnabled => boolean().nullable()();
+
+  /// 020: a `GlassLevel.value`. NULL = never set → default (data-model.md).
+  TextColumn get glassTransparency => text().nullable()();
+
+  /// 020: a `GlassLevel.value`. NULL = never set → default (data-model.md).
+  TextColumn get glassIntensity => text().nullable()();
   IntColumn get updatedAt => integer()();
 
   @override
@@ -263,7 +272,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -290,6 +299,13 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 7) {
         await migrateToCurrencySupport(this, m);
+      }
+      if (from < 8) {
+        // 020: purely additive and nullable — no backfill, so existing rows
+        // read as "never set" and resolve to the glass defaults.
+        await m.addColumn(appSettings, appSettings.glassEnabled);
+        await m.addColumn(appSettings, appSettings.glassTransparency);
+        await m.addColumn(appSettings, appSettings.glassIntensity);
       }
     },
     beforeOpen: (details) async {

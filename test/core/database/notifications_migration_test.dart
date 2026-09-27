@@ -7,7 +7,7 @@ import 'package:sqlite3/sqlite3.dart';
 /// `notification_history` (plus its unique index) and changes nothing else.
 void main() {
   /// A schemaVersion-5 database: the current schema minus 017's two tables
-  /// (and minus 018's later v7 additions), with pre-existing rows. Built by
+  /// (and minus 018's v7 and 020's v8 additions), with pre-existing rows. Built by
   /// letting drift create today's schema and then removing everything added
   /// after v5, so it cannot drift from the real v5 tables the way a
   /// hand-written copy could.
@@ -28,6 +28,10 @@ void main() {
     raw.execute('DROP TABLE primary_currency_settings;');
     raw.execute('ALTER TABLE money_transactions DROP COLUMN currency_code;');
     raw.execute('ALTER TABLE finance_entries DROP COLUMN currency_code;');
+    // 020 (v8) additions.
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
     raw.execute(
       "INSERT INTO app_settings (id, language_code, theme_mode, updated_at) "
       "VALUES ('singleton', 'ar', 'dark', 300);",
@@ -69,9 +73,9 @@ void main() {
     expect(await db.select(db.financeCategories).get(), hasLength(22));
   });
 
-  test('schemaVersion is 7 (017 bumped it to 6; 018 to 7)', () {
+  test('schemaVersion is 8 (017 bumped it to 6; 018 to 7; 020 to 8)', () {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    expect(db.schemaVersion, 7);
+    expect(db.schemaVersion, 8);
   });
 }

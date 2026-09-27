@@ -17,12 +17,17 @@ class SettingsDao {
     _db.appSettings,
   )..where((t) => t.id.equals(_singletonId))).getSingleOrNull();
 
-  /// Merges [languageCode]/[themeMode] into the existing row rather than
-  /// overwriting it wholesale, so a theme-only write never clobbers the
-  /// persisted language and vice versa (research.md Decision 3).
+  /// Merges [languageCode]/[themeMode] and the three glass columns into the
+  /// existing row rather than overwriting it wholesale, so a theme-only
+  /// write never clobbers the persisted language and vice versa
+  /// (research.md Decision 3), and a glass write never clobbers
+  /// language/theme and vice versa (020 research.md Decision 8).
   Future<void> upsertPreference({
     String? languageCode,
     String? themeMode,
+    bool? glassEnabled,
+    String? glassTransparency,
+    String? glassIntensity,
     required int updatedAt,
   }) async {
     final existing = await getPreference();
@@ -36,6 +41,11 @@ class SettingsDao {
                 existing?.languageCode ??
                 AppLanguage.english.code,
             themeMode: Value(themeMode ?? existing?.themeMode),
+            glassEnabled: Value(glassEnabled ?? existing?.glassEnabled),
+            glassTransparency: Value(
+              glassTransparency ?? existing?.glassTransparency,
+            ),
+            glassIntensity: Value(glassIntensity ?? existing?.glassIntensity),
             updatedAt: updatedAt,
           ),
         );

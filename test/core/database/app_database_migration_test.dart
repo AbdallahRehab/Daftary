@@ -1,6 +1,7 @@
 import 'package:daftary/core/database/app_database.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 void main() {
   test('a fresh install starts directly at schemaVersion 3 with the '
@@ -59,6 +60,54 @@ void main() {
 
     expect(row.languageCode, 'ar');
     expect(row.themeMode, null);
+  });
+
+  test('upgrading from schemaVersion 7 adds the three glass columns as NULL '
+      'and preserves languageCode/themeMode (020 data-model.md)', () async {
+    // A schemaVersion-7 database, built by letting drift create today's
+    // schema and then dropping exactly what 020 added — same approach as
+    // migration_currency_support_test.dart, so the fixture can't drift
+    // from the real v7 tables.
+    final raw = sqlite3.openInMemory();
+    final bootstrap = AppDatabase.forTesting(
+      NativeDatabase.opened(raw, closeUnderlyingOnClose: false),
+    );
+    await bootstrap.select(bootstrap.appSettings).get();
+    await bootstrap.close();
+
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
+    raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
+    raw.execute(
+      'INSERT INTO app_settings (id, language_code, theme_mode, updated_at) '
+      "VALUES ('singleton', 'ar', 'dark', 1);",
+    );
+    raw.execute('PRAGMA user_version = 7;');
+
+    // Opening AppDatabase against this same handle triggers
+    // MigrationStrategy.onUpgrade(m, 7, 8).
+    final db = AppDatabase.forTesting(NativeDatabase.opened(raw));
+    addTearDown(db.close);
+
+    final row = await (db.select(
+      db.appSettings,
+    )..where((t) => t.id.equals('singleton'))).getSingle();
+
+    expect(db.schemaVersion, 8);
+    expect(raw.select('PRAGMA user_version').single.values.single, 8);
+    final columns = [
+      for (final c in raw.select('PRAGMA table_info("app_settings")'))
+        c['name'] as String,
+    ];
+    expect(
+      columns,
+      containsAll(['glass_enabled', 'glass_transparency', 'glass_intensity']),
+    );
+    expect(row.languageCode, 'ar');
+    expect(row.themeMode, 'dark');
+    expect(row.glassEnabled, null);
+    expect(row.glassTransparency, null);
+    expect(row.glassIntensity, null);
   });
 }
 

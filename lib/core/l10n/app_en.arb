@@ -558,5 +558,49 @@
   "splashErrorMessage": "Daftary couldn't finish opening. Please try again.",
   "@splashErrorMessage": {
     "description": "Shown on the splash screen when startup fails or takes longer than 10 seconds."
+  },
+  "appearanceSectionTitle": "Appearance",
+  "@appearanceSectionTitle": {
+    "description": "Settings section heading grouping visual appearance options such as Liquid Glass."
+  },
+  "liquidGlassTitle": "Liquid Glass",
+  "@liquidGlassTitle": {
+    "description": "Title of the switch that turns the Liquid Glass effect on or off; also the sample title in the glass preview."
+  },
+  "liquidGlassSubtitle": "Frosted glass effect on bars and buttons",
+  "@liquidGlassSubtitle": {
+    "description": "Subtitle under the Liquid Glass switch explaining what the effect changes."
+  },
+  "glassSaveFailed": "Couldn't save your glass setting. It will apply until you close the app.",
+  "@glassSaveFailed": {
+    "description": "Snackbar shown when saving the Liquid Glass preference fails after a retry; the choice stays on for this session."
+  },
+  "glassTransparencyTitle": "Glass transparency",
+  "@glassTransparencyTitle": {
+    "description": "Title of the three-level selector for how see-through the glass surfaces are."
+  },
+  "glassIntensityTitle": "Glass intensity",
+  "@glassIntensityTitle": {
+    "description": "Title of the three-level selector for how strong the glass blur is."
+  },
+  "glassLevelLow": "Low",
+  "@glassLevelLow": {
+    "description": "Glass level option: the lowest of three levels."
+  },
+  "glassLevelMedium": "Medium",
+  "@glassLevelMedium": {
+    "description": "Glass level option: the middle of three levels."
+  },
+  "glassLevelHigh": "High",
+  "@glassLevelHigh": {
+    "description": "Glass level option: the highest of three levels."
+  },
+  "glassPreviewTitle": "Preview",
+  "@glassPreviewTitle": {
+    "description": "Sample text shown behind the glass strip in the Liquid Glass preview."
+  },
+  "glassPreviewSemantics": "Sample of the Liquid Glass effect with your current settings",
+  "@glassPreviewSemantics": {
+    "description": "Screen reader label for the Liquid Glass preview tile."
   }
 }

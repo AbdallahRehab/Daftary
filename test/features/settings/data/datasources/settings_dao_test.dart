@@ -57,4 +57,63 @@ void main() {
     expect(row!.languageCode, AppLanguage.english.code);
     expect(row.themeMode, 'dark');
   });
+
+  test('a glass-only upsertPreference preserves an existing languageCode '
+      'and themeMode (020 data-model.md Write semantics)', () async {
+    await dao.upsertPreference(
+      languageCode: AppLanguage.arabic.code,
+      themeMode: 'dark',
+      updatedAt: 1,
+    );
+
+    await dao.upsertPreference(
+      glassEnabled: false,
+      glassTransparency: 'high',
+      glassIntensity: 'low',
+      updatedAt: 2,
+    );
+
+    final row = await dao.getPreference();
+    expect(row!.languageCode, AppLanguage.arabic.code);
+    expect(row.themeMode, 'dark');
+    expect(row.glassEnabled, isFalse);
+    expect(row.glassTransparency, 'high');
+    expect(row.glassIntensity, 'low');
+    expect(row.updatedAt, 2);
+  });
+
+  test('a theme-only upsertPreference preserves all three glass '
+      'columns', () async {
+    await dao.upsertPreference(
+      glassEnabled: false,
+      glassTransparency: 'high',
+      glassIntensity: 'low',
+      updatedAt: 1,
+    );
+
+    await dao.upsertPreference(themeMode: 'light', updatedAt: 2);
+
+    final row = await dao.getPreference();
+    expect(row!.themeMode, 'light');
+    expect(row.glassEnabled, isFalse);
+    expect(row.glassTransparency, 'high');
+    expect(row.glassIntensity, 'low');
+  });
+
+  test('a glass-only upsertPreference on a brand-new row defaults '
+      'languageCode to English', () async {
+    await dao.upsertPreference(
+      glassEnabled: true,
+      glassTransparency: 'medium',
+      glassIntensity: 'high',
+      updatedAt: 1,
+    );
+
+    final row = await dao.getPreference();
+    expect(row!.languageCode, AppLanguage.english.code);
+    expect(row.themeMode, null);
+    expect(row.glassEnabled, isTrue);
+    expect(row.glassTransparency, 'medium');
+    expect(row.glassIntensity, 'high');
+  });
 }

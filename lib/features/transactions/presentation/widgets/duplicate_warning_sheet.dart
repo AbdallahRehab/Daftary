@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_card.dart';
+import '../../../../core/design_system/glass/app_modal_sheet.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../people/domain/entities/person.dart';
@@ -103,7 +104,7 @@ Future<void> showDuplicateWarningSheet(
   required ValueChanged<Person> onPickExisting,
   required VoidCallback onCreateNewAnyway,
 }) {
-  return showModalBottomSheet<void>(
+  return showAppModalSheet<void>(
     context: context,
     isScrollControlled: true,
     builder: (context) => DuplicateWarningSheet(

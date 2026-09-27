@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/currency_picker.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -63,8 +66,8 @@ class _ExchangeRateFormViewState extends State<ExchangeRateFormView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.exchangeRateEditTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.exchangeRateEditTitle)),
       body: BlocConsumer<ExchangeRateFormCubit, ExchangeRateFormState>(
         listenWhen: (previous, current) =>
             previous.status != current.status ||
@@ -113,7 +116,7 @@ class _ExchangeRateFormViewState extends State<ExchangeRateFormView> {
     final cubit = context.read<ExchangeRateFormCubit>();
     final currency = state.currency;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       children: [
         if (currency != null)
           CurrencyPicker(

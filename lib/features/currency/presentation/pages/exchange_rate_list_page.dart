@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -58,14 +62,14 @@ class ExchangeRateListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.exchangeRatesTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.exchangeRatesTitle)),
       floatingActionButton:
           BlocBuilder<ExchangeRateListCubit, ExchangeRateListState>(
             buildWhen: (p, c) => p.status != c.status,
             builder: (context, state) =>
                 state.status == ExchangeRateListStatus.ready
-                ? FloatingActionButton.extended(
+                ? AppFab.extended(
                     key: addButtonKey,
                     onPressed: () => _open(context, CurrencyRoutes.newRate),
                     icon: const Icon(Icons.add),
@@ -121,12 +125,14 @@ class ExchangeRateListView extends StatelessWidget {
       locale: Localizations.localeOf(context).languageCode,
     );
     return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.md,
-        AppSpacing.xxl + AppSpacing.xl,
-      ),
+      padding:
+          const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.md,
+            AppSpacing.xxl + AppSpacing.xl,
+          ) +
+          AppGlassInsets.of(context),
       children: [
         // FR-007: persistent, never dismissible.
         Container(

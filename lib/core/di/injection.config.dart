@@ -210,8 +210,12 @@ import '../../features/settings/data/repositories/settings_repository_impl.dart'
     as _i955;
 import '../../features/settings/domain/repositories/settings_repository.dart'
     as _i674;
+import '../../features/settings/domain/usecases/change_glass_appearance.dart'
+    as _i577;
 import '../../features/settings/domain/usecases/change_language.dart' as _i90;
 import '../../features/settings/domain/usecases/change_theme_mode.dart' as _i46;
+import '../../features/settings/domain/usecases/get_glass_appearance_preference.dart'
+    as _i499;
 import '../../features/settings/domain/usecases/get_language_preference.dart'
     as _i1032;
 import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
@@ -514,11 +518,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i426.RecordRepayment>(
       () => _i426.RecordRepayment(gh<_i957.TransactionsRepository>()),
     );
+    gh.factory<_i577.ChangeGlassAppearance>(
+      () => _i577.ChangeGlassAppearance(gh<_i674.SettingsRepository>()),
+    );
     gh.factory<_i90.ChangeLanguage>(
       () => _i90.ChangeLanguage(gh<_i674.SettingsRepository>()),
     );
     gh.factory<_i46.ChangeThemeMode>(
       () => _i46.ChangeThemeMode(gh<_i674.SettingsRepository>()),
+    );
+    gh.factory<_i499.GetGlassAppearancePreference>(
+      () => _i499.GetGlassAppearancePreference(gh<_i674.SettingsRepository>()),
     );
     gh.factory<_i1032.GetLanguagePreference>(
       () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
@@ -600,15 +610,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
       ),
     );
-    gh.lazySingleton<_i792.SettingsCubit>(
-      () => _i792.SettingsCubit(
-        gh<_i1032.GetLanguagePreference>(),
-        gh<_i90.ChangeLanguage>(),
-        gh<_i933.DeviceLocaleProvider>(),
-        gh<_i333.GetThemeModePreference>(),
-        gh<_i46.ChangeThemeMode>(),
-      ),
-    );
     gh.lazySingleton<_i552.NotificationEngine>(
       () => _i552.NotificationEngineImpl(
         gh<_i162.NotificationPreferenceRepository>(),
@@ -658,6 +659,17 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i639.RequestNotificationPermission(
         gh<_i209.NotificationScheduler>(),
         gh<_i162.NotificationPreferenceRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i792.SettingsCubit>(
+      () => _i792.SettingsCubit(
+        gh<_i1032.GetLanguagePreference>(),
+        gh<_i90.ChangeLanguage>(),
+        gh<_i933.DeviceLocaleProvider>(),
+        gh<_i333.GetThemeModePreference>(),
+        gh<_i46.ChangeThemeMode>(),
+        gh<_i499.GetGlassAppearancePreference>(),
+        gh<_i577.ChangeGlassAppearance>(),
       ),
     );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(

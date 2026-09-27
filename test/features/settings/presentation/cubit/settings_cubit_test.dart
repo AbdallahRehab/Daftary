@@ -3,9 +3,13 @@ import 'package:daftary/core/device/device_locale_provider.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
+import 'package:daftary/features/settings/domain/entities/glass_appearance.dart';
+import 'package:daftary/features/settings/domain/entities/glass_level.dart';
 import 'package:daftary/features/settings/domain/repositories/settings_repository.dart';
+import 'package:daftary/features/settings/domain/usecases/change_glass_appearance.dart';
 import 'package:daftary/features/settings/domain/usecases/change_language.dart';
 import 'package:daftary/features/settings/domain/usecases/change_theme_mode.dart';
+import 'package:daftary/features/settings/domain/usecases/get_glass_appearance_preference.dart';
 import 'package:daftary/features/settings/domain/usecases/get_language_preference.dart';
 import 'package:daftary/features/settings/domain/usecases/get_theme_mode_preference.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
@@ -26,6 +30,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(AppLanguage.english);
     registerFallbackValue(AppThemeMode.system);
+    registerFallbackValue(GlassAppearance.defaults);
   });
 
   setUp(() {
@@ -38,6 +43,9 @@ void main() {
       () => settingsRepository.getLanguagePreference(),
     ).thenAnswer((_) async => const Right(null));
     when(
+      () => settingsRepository.getGlassAppearancePreference(),
+    ).thenAnswer((_) async => const Right(null));
+    when(
       () => deviceLocaleProvider.currentLocale(),
     ).thenReturn(const Locale('en'));
   });
@@ -48,6 +56,8 @@ void main() {
     deviceLocaleProvider,
     GetThemeModePreference(settingsRepository),
     ChangeThemeMode(settingsRepository),
+    GetGlassAppearancePreference(settingsRepository),
+    ChangeGlassAppearance(settingsRepository),
   );
 
   group('changeLanguage', () {
@@ -279,6 +289,180 @@ void main() {
       },
       act: (cubit) => cubit.changeThemeMode(AppThemeMode.dark),
       expect: () => [const SettingsState(themeMode: AppThemeMode.dark)],
+    );
+  });
+
+  group('glass appearance (020 contracts/settings_repository.md)', () {
+    const customAppearance = GlassAppearance(
+      enabled: false,
+      transparency: GlassLevel.high,
+      intensity: GlassLevel.low,
+    );
+
+    void stubGlassWrite(Either<Failure, Unit> result) {
+      when(
+        () => settingsRepository.setGlassAppearancePreference(any()),
+      ).thenAnswer((_) async => result);
+    }
+
+    blocTest<SettingsCubit, SettingsState>(
+      'initialize resolves to the defaults when nothing is persisted',
+      build: buildCubit,
+      act: (cubit) => cubit.initialize(),
+      expect: () => [const SettingsState()],
+      verify: (cubit) {
+        expect(cubit.state.glassAppearance, GlassAppearance.defaults);
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'initialize resolves the persisted glass appearance exactly, in the '
+      'same single emit as language and theme',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.getGlassAppearancePreference(),
+        ).thenAnswer((_) async => const Right(customAppearance));
+        when(
+          () => settingsRepository.getThemeModePreference(),
+        ).thenAnswer((_) async => const Right(AppThemeMode.dark));
+      },
+      act: (cubit) => cubit.initialize(),
+      expect: () => [
+        const SettingsState(
+          themeMode: AppThemeMode.dark,
+          glassAppearance: customAppearance,
+        ),
+      ],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'initialize falls back to the defaults when the read fails',
+      build: buildCubit,
+      setUp: () {
+        when(
+          () => settingsRepository.getGlassAppearancePreference(),
+        ).thenAnswer((_) async => const Left(CacheFailure('corrupt')));
+      },
+      act: (cubit) => cubit.initialize(),
+      expect: () => [const SettingsState()],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'setGlassEnabled emits immediately with isGlassPersistFailing false',
+      build: buildCubit,
+      setUp: () => stubGlassWrite(const Right(unit)),
+      act: (cubit) => cubit.setGlassEnabled(false),
+      expect: () => [
+        const SettingsState(glassAppearance: GlassAppearance(enabled: false)),
+      ],
+      verify: (_) {
+        verify(
+          () => settingsRepository.setGlassAppearancePreference(
+            const GlassAppearance(enabled: false),
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'sets isGlassPersistFailing only after the retried write also fails, '
+      'and never rolls the value back',
+      build: buildCubit,
+      setUp: () => stubGlassWrite(const Left(CacheFailure('disk full'))),
+      act: (cubit) => cubit.setGlassEnabled(false),
+      expect: () => [
+        const SettingsState(glassAppearance: GlassAppearance(enabled: false)),
+        const SettingsState(
+          glassAppearance: GlassAppearance(enabled: false),
+          isGlassPersistFailing: true,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => settingsRepository.setGlassAppearancePreference(
+            const GlassAppearance(enabled: false),
+          ),
+        ).called(2);
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'a later successful change clears isGlassPersistFailing',
+      build: buildCubit,
+      seed: () => const SettingsState(
+        glassAppearance: GlassAppearance(enabled: false),
+        isGlassPersistFailing: true,
+      ),
+      setUp: () => stubGlassWrite(const Right(unit)),
+      act: (cubit) => cubit.setGlassIntensity(GlassLevel.high),
+      expect: () => [
+        const SettingsState(
+          glassAppearance: GlassAppearance(
+            enabled: false,
+            intensity: GlassLevel.high,
+          ),
+        ),
+      ],
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'setting a value equal to the current one emits nothing and writes '
+      'nothing',
+      build: buildCubit,
+      setUp: () => stubGlassWrite(const Right(unit)),
+      act: (cubit) async {
+        await cubit.setGlassTransparency(GlassLevel.medium);
+        await cubit.setGlassIntensity(GlassLevel.medium);
+        await cubit.setGlassEnabled(true);
+      },
+      expect: () => const <SettingsState>[],
+      verify: (_) {
+        verifyNever(
+          () => settingsRepository.setGlassAppearancePreference(any()),
+        );
+      },
+    );
+
+    blocTest<SettingsCubit, SettingsState>(
+      'three rapid calls end in the last call\'s state and persist each '
+      'snapshot in order',
+      build: buildCubit,
+      setUp: () => stubGlassWrite(const Right(unit)),
+      act: (cubit) async {
+        await Future.wait([
+          cubit.setGlassEnabled(false),
+          cubit.setGlassTransparency(GlassLevel.high),
+          cubit.setGlassIntensity(GlassLevel.low),
+        ]);
+      },
+      expect: () => [
+        const SettingsState(glassAppearance: GlassAppearance(enabled: false)),
+        const SettingsState(
+          glassAppearance: GlassAppearance(
+            enabled: false,
+            transparency: GlassLevel.high,
+          ),
+        ),
+        const SettingsState(glassAppearance: customAppearance),
+      ],
+      verify: (cubit) {
+        expect(cubit.state.glassAppearance, customAppearance);
+        expect(cubit.state.isGlassPersistFailing, isFalse);
+        verifyInOrder([
+          () => settingsRepository.setGlassAppearancePreference(
+            const GlassAppearance(enabled: false),
+          ),
+          () => settingsRepository.setGlassAppearancePreference(
+            const GlassAppearance(
+              enabled: false,
+              transparency: GlassLevel.high,
+            ),
+          ),
+          () =>
+              settingsRepository.setGlassAppearancePreference(customAppearance),
+        ]);
+      },
     );
   });
 }

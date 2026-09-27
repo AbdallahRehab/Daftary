@@ -5,6 +5,9 @@ import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/currency_picker.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -35,8 +38,8 @@ class _RepaymentFormView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.repaymentFormTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.repaymentFormTitle)),
       body: BlocConsumer<RepaymentFormCubit, RepaymentFormState>(
         listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {
@@ -56,7 +59,9 @@ class _RepaymentFormView extends StatelessWidget {
         builder: (context, state) {
           final cubit = context.read<RepaymentFormCubit>();
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [

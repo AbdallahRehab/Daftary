@@ -88,7 +88,7 @@ Each task is followed by indented lines:
   - Done when: the permission sits next to the existing `POST_NOTIFICATIONS` and `RECEIVE_BOOT_COMPLETED` entries.
   - Validate: the merged manifest of `flutter build apk --debug` contains `INTERNET`, plus `ACCESS_NETWORK_STATE` from `connectivity_plus`.
 
-- [ ] T006 [P] Initialize the Supabase CLI project in supabase/ (new)
+- [X] T006 [P] Initialize the Supabase CLI project in supabase/ (new)
   - Deps: none. Prerequisites: install the Supabase CLI (`brew install supabase/tap/supabase`) and Docker.
   - Files: `supabase/config.toml` (new)
   - Done when:
@@ -462,7 +462,7 @@ Each task is followed by indented lines:
 
 ### Backend for User Story 2
 
-- [ ] T044 [US2] Write the backend foundation in supabase/migrations/<timestamp>_021_offline_sync.sql (new), part 1
+- [X] T044 [US2] Write the backend foundation in supabase/migrations/<timestamp>_021_offline_sync.sql (new), part 1
   - Deps: T006
   - Done when, as specified in contracts/supabase-schema.md §0, §1 and §6:
     - The `anon` role is revoked from all tables.
@@ -472,7 +472,7 @@ Each task is followed by indented lines:
     - `devices` has its `platform` check (`'android','ios'`).
   - Validate: `supabase db reset` applies cleanly.
 
-- [ ] T045 [US2] Add the 8 business tables to the same migration file
+- [X] T045 [US2] Add the 8 business tables to the same migration file
   - Deps: T044
   - Done when, following contracts/supabase-schema.md §2, §3 and §5 verbatim:
     - Every table has the common column block with `primary key (owner_id, id)`, `char_length(id) between 1 and 64`, the `(owner_id, revision)` index, the `sync_stamp` trigger, row-level security enabled, and select, insert and update policies using `(select auth.uid())`. There is **no delete policy**.
@@ -487,14 +487,14 @@ Each task is followed by indented lines:
     - Every foreign-key column has an index.
   - Validate: `supabase db reset`, then the Supabase security advisor (`supabase db lint`) shows no errors.
 
-- [ ] T046 [US2] Add the rule-guard triggers to the same migration file
+- [X] T046 [US2] Add the rule-guard triggers to the same migration file
   - Deps: T045
   - Done when:
     - `people_guard_delete` raises `P0001 'person_has_transactions'` when `deleted_at` goes from null to set while any transaction exists, including soft-deleted ones.
     - `finance_entry_type_matches_category` raises `23514 'category_type_mismatch'`.
   - Validate: covered by T049.
 
-- [ ] T047 [US2] Add the `sync_push(p_device_id uuid, p_app_version text, p_platform text, p_ops jsonb) returns jsonb` function to the same migration file
+- [X] T047 [US2] Add the `sync_push(p_device_id uuid, p_app_version text, p_platform text, p_ops jsonb) returns jsonb` function to the same migration file
   - Deps: T046
   - Done when:
     - It implements contracts/sync-rpc.md §2 in full: the ledger lookup; `for update`; branches 3a–3e including the conflict, superseded, category-archive and undelete paths; a per-operation exception sub-block mapping `23514`/`23502`/`22P02`/`P0001` to `rejected(reason)` and `23503` to `rejected('missing_parent')`; `server_row` returned for `person_has_transactions` and for a category archived in place of a delete; a re-raise on `42501`; the ledger insert; and the `devices` upsert.
@@ -502,12 +502,12 @@ Each task is followed by indented lines:
     - It is `security invoker`, with `grant execute` to `authenticated` only.
   - Validate: covered by T049.
 
-- [ ] T048 [P] [US2] Write the row-level security isolation tests in supabase/tests/021_rls.test.sql (new)
+- [X] T048 [P] [US2] Write the row-level security isolation tests in supabase/tests/021_rls.test.sql (new)
   - Deps: T045
   - Done when all 7 guarantees in contracts/supabase-schema.md §8 are asserted for 2 users, across every table (the views are added in T082).
   - Validate: `supabase test db`.
 
-- [ ] T049 [P] [US2] Write the `sync_push` outcome tests in supabase/tests/021_sync_push.test.sql (new)
+- [X] T049 [P] [US2] Write the `sync_push` outcome tests in supabase/tests/021_sync_push.test.sql (new)
   - Deps: T047
   - Done when these cases are asserted:
     - Insert returns `applied`. The same `op_id` returns `already_applied` with 1 row. A new `op_id` with the same `idempotency_key` returns `already_applied`.

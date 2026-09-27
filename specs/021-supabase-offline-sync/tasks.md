@@ -449,6 +449,7 @@ Each task is followed by indented lines:
   - Files: none (verification only). The flows are in `integration_test/`: `money_relationships_flows_test.dart`, `finance_flows_test.dart`, `currency_flows_test.dart`, `archive_state_refresh_flow_test.dart` and the other 7.
   - Done when: every flow passes on a device in airplane mode, and the results match the T001 baseline.
   - Validate: `flutter test integration_test/`.
+  - Status (2026-09-27, iPhone 17 Pro simulator, no `--dart-define`): **run, not all passing** — 5/11 flows pass; the other 6 fail with the identical failing tests and exceptions at pre-021 commit `fbce88f`, so they are pre-existing and not caused by 021. Left open until those flows are fixed. Details in checklists/baseline.md.
 
 **Checkpoint**: US1 is shippable on its own. The app behaves exactly as before, screens are reactive, and every change is durably queued, although nothing uploads yet.
 
@@ -638,7 +639,7 @@ Each task is followed by indented lines:
     - Nothing runs before `runApp`, so the 019 splash timing is unchanged.
   - Validate: `integration_test/splash_startup_flow_test.dart` passes, and an app run without defines shows no network activity.
 
-- [ ] T062 [US2] Write the device integration test for offline upload in integration_test/offline_sync_flow_test.dart (new)
+- [X] T062 [US2] Write the device integration test for offline upload in integration_test/offline_sync_flow_test.dart (new)
   - Deps: T061, T050 (or a local `supabase start`)
   - Done when these scenarios pass against the local Supabase stack, with connectivity toggled through an injected fake `ConnectivityMonitor`:
     - Offline create: a person and a transaction → app restart → data present → online → sync → the cloud has exactly 1 person and 1 transaction.

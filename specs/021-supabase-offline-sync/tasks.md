@@ -917,7 +917,7 @@ Each task is followed by indented lines:
     - Watch re-queries during bulk apply are debounced, meaning at most 1 emission per 50 ms.
   - Validate: the test passes.
 
-- [ ] T086 Run the static and unit quality gate
+- [X] T086 Run the static and unit quality gate
   - Deps: all implementation tasks
   - Done when:
     - `dart format --output=none --set-exit-if-changed lib test` passes.
@@ -927,6 +927,7 @@ Each task is followed by indented lines:
   - Validate: the output is attached to `checklists/baseline.md`.
 
 - [ ] T087 Validate on Android
+  - **Status (2026-09-27)**: Debug and release APKs build (Gradle run with JDK 21, because the default JDK 25 is incompatible with Gradle 8.14). The merged manifest has INTERNET and ACCESS_NETWORK_STATE. Not yet done: quickstart scenarios 1–10 on an Android device, including the upgrade from the previous release APK.
   - Deps: T086
   - Done when:
     - `flutter build apk --debug` and `flutter build apk --release --dart-define-from-file=config/supabase.prod.json` both succeed.
@@ -935,6 +936,7 @@ Each task is followed by indented lines:
   - Validate: results are recorded in `checklists/baseline.md`.
 
 - [ ] T088 Validate on iOS
+  - **Status (2026-09-27)**: `flutter build ios --release --no-codesign` succeeds. All plugins resolve through SPM, with no Podfile and no Info.plist or entitlement changes. The T062 flow passes 5/5 on the iPhone 17 Pro simulator. Not yet done: quickstart 1–10 on a physical device.
   - Deps: T086
   - Done when:
     - `flutter build ios --release --no-codesign --dart-define-from-file=config/supabase.prod.json` succeeds.
@@ -944,6 +946,7 @@ Each task is followed by indented lines:
   - Validate: results are recorded.
 
 - [ ] T089 Run the security review
+  - **Status (2026-09-27)**: Done: secret grep is clean (the only hit is a fake token in sync_log_scrub_test); only config/supabase.example.json is tracked; `supabase db lint` and the local advisors are clean; RLS review done: no delete policy or delete grant, append-only tables have no update grant, all functions are SECURITY INVOKER, and anon is revoked. Found and fixed: the revision counter could be lowered (b45189c). Still to do: the remote-project Security Advisor (after T050) and a `/security-review` run.
   - Deps: T086
   - Done when:
     - `git grep -nE "service_role|sb_secret_|eyJhbGci"` finds nothing.
@@ -953,7 +956,7 @@ Each task is followed by indented lines:
     - `/security-review` has been run on the branch.
   - Validate: findings are fixed or documented.
 
-- [ ] T090 Review the dependencies
+- [X] T090 Review the dependencies
   - Deps: T086
   - Done when: `flutter pub deps --style=compact` shows only the 3 intended direct additions, and `flutter pub outdated` has no incompatible constraints.
   - Validate: a note in `checklists/baseline.md`.

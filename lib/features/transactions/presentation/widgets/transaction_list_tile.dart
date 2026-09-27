@@ -23,10 +23,15 @@ class TransactionListTile extends StatelessWidget {
     this.onTap,
     this.onDelete,
     this.primaryCurrency = Currency.egp,
+    this.conflictBadge,
   });
 
   final MoneyTransaction transaction;
   final Currency primaryCurrency;
+
+  /// 021: a sync-conflict marker, set only while the record is in conflict
+  /// — null leaves the row exactly as before.
+  final Widget? conflictBadge;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
@@ -79,6 +84,7 @@ class TransactionListTile extends StatelessWidget {
               '(${l10n.editedLabel})',
               style: AppTypography.bodyMuted.copyWith(color: onSurfaceVariant),
             ),
+          ?conflictBadge,
         ],
       ),
       subtitle: Text(

@@ -26,9 +26,14 @@ class FinanceEntryListTile extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
+    this.conflictBadge,
   });
 
   final FinanceEntry entry;
+
+  /// 021: a sync-conflict marker, set only while the record is in conflict
+  /// — null leaves the row exactly as before.
+  final Widget? conflictBadge;
 
   /// Resolved by the caller (via `categoryDisplayName`), so this row never
   /// has to look a category up itself while scrolling.
@@ -100,6 +105,10 @@ class FinanceEntryListTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
+          ],
+          if (conflictBadge case final badge?) ...[
+            const SizedBox(width: AppSpacing.xs),
+            badge,
           ],
         ],
       ),

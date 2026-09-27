@@ -19,8 +19,18 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
+import '../../features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart'
+    as _i241;
 import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart'
     as _i346;
+import '../../features/cloud_sync/domain/repositories/cloud_sync_repository.dart'
+    as _i948;
+import '../../features/cloud_sync/domain/usecases/resolve_sync_conflict.dart'
+    as _i1030;
+import '../../features/cloud_sync/domain/usecases/watch_sync_conflicts.dart'
+    as _i1038;
+import '../../features/cloud_sync/presentation/cubit/sync_conflicts_cubit.dart'
+    as _i273;
 import '../../features/currency/data/datasources/currency_dao.dart' as _i973;
 import '../../features/currency/data/repositories/currency_repository_impl.dart'
     as _i751;
@@ -100,7 +110,7 @@ import '../../features/finance/domain/usecases/watch_finance_history.dart'
 import '../../features/finance/domain/usecases/watch_finance_summary.dart'
     as _i240;
 import '../../features/finance/presentation/cubit/category_form_cubit.dart'
-    as _i1030;
+    as _i1031;
 import '../../features/finance/presentation/cubit/category_management_cubit.dart'
     as _i109;
 import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
@@ -150,7 +160,7 @@ import '../../features/financial_education/presentation/cubit/savings_rate_calcu
 import '../../features/insights_notifications/data/datasources/in_memory_notification_last_run_store.dart'
     as _i771;
 import '../../features/insights_notifications/data/datasources/notifications_dao.dart'
-    as _i339;
+    as _i338;
 import '../../features/insights_notifications/data/datasources/unavailable_budget_insights_source.dart'
     as _i763;
 import '../../features/insights_notifications/data/datasources/unavailable_savings_insights_source.dart'
@@ -302,11 +312,14 @@ import '../money/egp_formatter.dart' as _i999;
 import '../routing/notification_tap_router.dart' as _i172;
 import '../sync/backoff_policy.dart' as _i902;
 import '../sync/connectivity_monitor.dart' as _i972;
-import '../sync/local/sync_local_store.dart' as _i338;
+import '../sync/local/conflict_resolver.dart' as _i219;
+import '../sync/local/sync_applier.dart' as _i623;
+import '../sync/local/sync_local_store.dart' as _i339;
 import '../sync/local/sync_outbox.dart' as _i840;
 import '../sync/remote/cloud_auth_data_source.dart' as _i597;
 import '../sync/remote/supabase_initializer.dart' as _i822;
 import '../sync/remote/sync_remote_data_source.dart' as _i753;
+import '../sync/sync_bootstrap.dart' as _i164;
 import '../sync/sync_engine.dart' as _i846;
 import '../sync/sync_logger.dart' as _i414;
 import '../sync/sync_mapper_registry.dart' as _i834;
@@ -455,8 +468,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i163.FlutterLocalNotificationsPlugin>(),
       ),
     );
-    gh.lazySingleton<_i982.AppDatabase>(
-      () => registerModule.appDatabase(
+    gh.lazySingleton<_i164.SyncBootstrap>(
+      () => registerModule.syncBootstrap(
         gh<_i834.SyncMapperRegistry>(),
         gh<_i414.SyncLogger>(),
         gh<_i956.AppClock>(),
@@ -474,6 +487,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i209.NotificationScheduler>(),
         gh<_i480.HandleNotificationTap>(),
       ),
+    );
+    gh.lazySingleton<_i982.AppDatabase>(
+      () => registerModule.appDatabase(gh<_i164.SyncBootstrap>()),
     );
     gh.factory<_i66.SavingsRateCalculatorCubit>(
       () => _i66.SavingsRateCalculatorCubit(
@@ -509,6 +525,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i900.PrimaryCurrencySyncMapper>(),
       ),
     );
+    gh.lazySingleton<_i623.SyncApplier>(
+      () => registerModule.syncApplier(
+        gh<_i982.AppDatabase>(),
+        gh<_i834.SyncMapperRegistry>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.lazySingleton<_i289.CurrencyUsageChecker>(
       () => _i941.DriftCurrencyUsageChecker(gh<_i982.AppDatabase>()),
     );
@@ -520,15 +543,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i92.TransactionAuditSyncMapper>(),
       ),
     );
-    gh.lazySingleton<_i338.SyncLocalStore>(
-      () => _i338.DriftSyncLocalStore(
-        gh<_i982.AppDatabase>(),
-        gh<_i956.AppClock>(),
-        gh<_i902.BackoffPolicy>(),
-      ),
-    );
-    gh.factory<_i339.NotificationsDao>(
-      () => _i339.NotificationsDao(gh<_i982.AppDatabase>()),
+    gh.factory<_i338.NotificationsDao>(
+      () => _i338.NotificationsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
@@ -559,6 +575,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i274.ArticleCubit>(
       () => _i274.ArticleCubit(gh<_i481.GetArticle>()),
     );
+    gh.lazySingleton<_i339.SyncLocalStore>(
+      () => _i339.DriftSyncLocalStore(
+        gh<_i982.AppDatabase>(),
+        gh<_i956.AppClock>(),
+        gh<_i902.BackoffPolicy>(),
+        gh<_i623.SyncApplier>(),
+        gh<_i164.SyncBootstrap>(),
+      ),
+    );
     gh.factory<_i735.PeopleDao>(
       () => _i735.PeopleDao(
         gh<_i982.AppDatabase>(),
@@ -571,7 +596,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i846.SyncEngine>(
       () => _i846.SyncEngine(
-        gh<_i338.SyncLocalStore>(),
+        gh<_i339.SyncLocalStore>(),
         gh<_i753.SyncRemoteDataSource>(),
         gh<_i597.CloudAuthDataSource>(),
         gh<_i822.SupabaseInitializer>(),
@@ -579,10 +604,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i902.BackoffPolicy>(),
         gh<_i414.SyncLogger>(),
         gh<_i956.AppClock>(),
+        gh<_i623.SyncApplier>(),
       ),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
       () => _i250.FinanceRepositoryImpl(gh<_i443.FinanceDao>()),
+    );
+    gh.lazySingleton<_i219.ConflictResolver>(
+      () => _i219.DriftConflictResolver(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i623.SyncApplier>(),
+        gh<_i834.SyncMapperRegistry>(),
+        gh<_i956.AppClock>(),
+      ),
     );
     gh.lazySingleton<_i957.TransactionsRepository>(
       () => _i373.TransactionsRepositoryImpl(
@@ -634,7 +669,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i251.SyncScheduler>(
       () => _i251.SyncScheduler(
         gh<_i846.SyncEngine>(),
-        gh<_i338.SyncLocalStore>(),
+        gh<_i339.SyncLocalStore>(),
         gh<_i822.SupabaseInitializer>(),
         gh<_i972.ConnectivityMonitor>(),
         gh<_i982.AppDatabase>(),
@@ -681,11 +716,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i12.NotificationHistoryRepository>(
       () =>
-          _i551.NotificationHistoryRepositoryImpl(gh<_i339.NotificationsDao>()),
+          _i551.NotificationHistoryRepositoryImpl(gh<_i338.NotificationsDao>()),
     );
     gh.lazySingleton<_i162.NotificationPreferenceRepository>(
       () => _i701.NotificationPreferenceRepositoryImpl(
-        gh<_i339.NotificationsDao>(),
+        gh<_i338.NotificationsDao>(),
       ),
     );
     gh.factory<_i5.AddTransaction>(
@@ -777,6 +812,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i542.WatchFinanceHistory>(
       () => _i542.WatchFinanceHistory(gh<_i137.FinanceRepository>()),
+    );
+    gh.lazySingleton<_i948.CloudSyncRepository>(
+      () => _i241.CloudSyncRepositoryImpl(
+        gh<_i982.AppDatabase>(),
+        gh<_i219.ConflictResolver>(),
+      ),
     );
     gh.factory<_i1061.PrimaryCurrencyCubit>(
       () => _i1061.PrimaryCurrencyCubit(
@@ -901,6 +942,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i577.ChangeGlassAppearance>(),
       ),
     );
+    gh.factory<_i1030.ResolveSyncConflict>(
+      () => _i1030.ResolveSyncConflict(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i1038.WatchSyncConflicts>(
+      () => _i1038.WatchSyncConflicts(gh<_i948.CloudSyncRepository>()),
+    );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
       (personId, _) => _i34.RepaymentFormCubit(
         gh<_i426.RecordRepayment>(),
@@ -911,8 +958,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i305.OverviewCubit>(
       () => _i305.OverviewCubit(gh<_i615.WatchOverview>()),
     );
-    gh.factory<_i1030.CategoryFormCubit>(
-      () => _i1030.CategoryFormCubit(
+    gh.factory<_i273.SyncConflictsCubit>(
+      () => _i273.SyncConflictsCubit(
+        gh<_i1038.WatchSyncConflicts>(),
+        gh<_i1030.ResolveSyncConflict>(),
+      ),
+    );
+    gh.factory<_i1031.CategoryFormCubit>(
+      () => _i1031.CategoryFormCubit(
         gh<_i24.CreateCategory>(),
         gh<_i611.EditCategory>(),
       ),

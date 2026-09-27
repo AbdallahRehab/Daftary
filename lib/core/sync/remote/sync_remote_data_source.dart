@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../sync_entity_type.dart';
 import '../sync_models.dart';
 import 'supabase_initializer.dart';
 import 'sync_error_mapper.dart';
@@ -15,7 +16,8 @@ abstract class SyncRemoteDataSource {
   /// per operation, in order (contracts/sync-rpc.md §2).
   Future<List<PushResult>> push(List<OutboxOp> ops, DeviceInfo device);
 
-  /// One `sync_pull` page (contracts/sync-rpc.md §3). Implemented by T067.
+  /// One `sync_pull` page of changes with `revision > since`, in revision
+  /// order (contracts/sync-rpc.md §3).
   Future<PullPage> pull({required int since, int limit = 500});
 }
 
@@ -63,8 +65,53 @@ class SupabaseSyncRemoteDataSource implements SyncRemoteDataSource {
   }
 
   @override
-  Future<PullPage> pull({required int since, int limit = 500}) =>
-      throw UnimplementedError('sync_pull is implemented by T067');
+  Future<PullPage> pull({required int since, int limit = 500}) async {
+    try {
+      final response = await _rpc('sync_pull', {
+        'p_since': since,
+        'p_limit': limit,
+      }).timeout(timeout);
+      return parsePullResponse(response, since: since);
+    } catch (error) {
+      throw SyncErrorMapper.map(error);
+    }
+  }
+}
+
+/// Parses a `sync_pull` response body (contracts/sync-rpc.md §3). Money and
+/// revisions arrive as JSON numbers (`to_jsonb` of a `bigint`). Throws
+/// [FormatException] when it does not have the contracted shape.
+@visibleForTesting
+PullPage parsePullResponse(Object? response, {required int since}) {
+  if (response is! Map) throw const FormatException('pull: not an object');
+  final changes = response['changes'];
+  if (changes is! List) throw const FormatException('pull: no changes');
+  final parsed = [for (final item in changes) _parseChange(item)];
+  final hasMore = response['has_more'];
+  if (hasMore is! bool) throw const FormatException('pull: bad has_more');
+  final maxRevision =
+      _intOrNull(response['max_revision']) ??
+      (parsed.isEmpty ? since : parsed.last.revision);
+  return PullPage(changes: parsed, maxRevision: maxRevision, hasMore: hasMore);
+}
+
+PulledChange _parseChange(Object? item) {
+  if (item is! Map) throw const FormatException('pull: bad change');
+  final type = item['entity_type'];
+  if (type is! String) throw const FormatException('pull: bad entity_type');
+  final SyncEntityType entityType;
+  try {
+    entityType = SyncEntityType.fromWire(type);
+  } on ArgumentError {
+    throw const FormatException('pull: unknown entity_type');
+  }
+  final row = _rowOrNull(item['row']);
+  if (row == null) throw const FormatException('pull: no row');
+  return PulledChange(
+    entityType: entityType,
+    revision: _required(_intOrNull(item['revision']), 'revision'),
+    row: row,
+  );
 }
 
 /// Parses a `sync_push` response body (contracts/sync-rpc.md §2). Throws

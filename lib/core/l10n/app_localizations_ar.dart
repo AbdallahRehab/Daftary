@@ -1088,4 +1088,36 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get glassPreviewSemantics =>
       'نموذج لتأثير الزجاج السائل بإعداداتك الحالية';
+
+  @override
+  String get syncConflictBadgeLabel => 'تعارض';
+
+  @override
+  String get syncConflictBadgeSemantics =>
+      'تم تعديله على جهاز آخر. اختر النسخة التي تريد الاحتفاظ بها.';
+
+  @override
+  String get syncConflictSheetTitle => 'تم التعديل على جهازين';
+
+  @override
+  String get syncConflictSheetMessage =>
+      'تم تعديل هذا السجل على هذا الجهاز وعلى جهاز آخر. اختر النسخة التي تريد الاحتفاظ بها. تُحفظ النسخة الأخرى في السجل.';
+
+  @override
+  String get syncConflictMineLabel => 'هذا الجهاز';
+
+  @override
+  String get syncConflictTheirsLabel => 'جهاز آخر';
+
+  @override
+  String get syncConflictKeepMine => 'الاحتفاظ بنسختي';
+
+  @override
+  String get syncConflictKeepTheirs => 'الاحتفاظ بالنسخة الأخرى';
+
+  @override
+  String get syncConflictDeletedLabel => 'محذوف';
+
+  @override
+  String get syncConflictResolveFailed => 'تعذّر حل التعارض. حاول مرة أخرى.';
 }

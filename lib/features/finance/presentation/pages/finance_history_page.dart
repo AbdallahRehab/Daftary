@@ -12,6 +12,11 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/l10n/failure_message.dart';
+import '../../../cloud_sync/domain/entities/sync_conflict_item.dart';
+import '../../../cloud_sync/presentation/cubit/sync_conflicts_cubit.dart';
+import '../../../cloud_sync/presentation/cubit/sync_conflicts_state.dart';
+import '../../../cloud_sync/presentation/widgets/conflict_badge.dart';
+import '../../../cloud_sync/presentation/widgets/conflict_resolution_sheet.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry.dart';
 import '../../domain/entities/finance_entry_type.dart';
@@ -39,8 +44,12 @@ class FinanceHistoryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<FinanceHistoryCubit>()..subscribe(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<FinanceHistoryCubit>()..subscribe()),
+        // 021: the conflict badge on each entry row (FR-035).
+        BlocProvider(create: (_) => getIt<SyncConflictsCubit>()..subscribe()),
+      ],
       child: const _FinanceHistoryView(),
     );
   }
@@ -132,16 +141,32 @@ class _FinanceHistoryView extends StatelessWidget {
                 }
                 final entry = state.entries[index - 1];
                 final category = categoriesById[entry.categoryId];
-                return FinanceEntryListTile(
-                  entry: entry,
-                  categoryName: category == null
-                      ? l10n.financeCategoryOther
-                      : categoryDisplayName(l10n, category),
-                  categoryIconKey: category?.icon ?? 'other',
-                  primaryCurrency: state.primaryCurrency,
-                  onEdit: () =>
-                      _push(context, '/finance/entries/${entry.id}/edit'),
-                  onDelete: () => _confirmDelete(context, entry),
+                return BlocSelector<
+                  SyncConflictsCubit,
+                  SyncConflictsState,
+                  SyncConflictItem?
+                >(
+                  selector: (conflicts) => conflicts.itemFor(
+                    ConflictEntityType.financeEntry,
+                    entry.id,
+                  ),
+                  builder: (context, conflict) => FinanceEntryListTile(
+                    entry: entry,
+                    categoryName: category == null
+                        ? l10n.financeCategoryOther
+                        : categoryDisplayName(l10n, category),
+                    categoryIconKey: category?.icon ?? 'other',
+                    primaryCurrency: state.primaryCurrency,
+                    onEdit: () =>
+                        _push(context, '/finance/entries/${entry.id}/edit'),
+                    onDelete: () => _confirmDelete(context, entry),
+                    conflictBadge: conflict == null
+                        ? null
+                        : ConflictBadge(
+                            onTap: () =>
+                                showConflictResolutionSheet(context, conflict),
+                          ),
+                  ),
                 );
               },
             ),

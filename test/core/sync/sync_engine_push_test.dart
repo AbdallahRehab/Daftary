@@ -198,6 +198,10 @@ void main() {
     h.remote.seedServerRow(SyncEntityType.person, {
       'id': 'p-later',
       'name': 'L',
+      'normalized_name': 'l',
+      'is_archived': false,
+      'client_created_at': '2026-01-01T00:00:00.000Z',
+      'client_updated_at': '2026-01-01T00:00:00.000Z',
     });
     h.skipBackoff();
     await cycle();
@@ -223,14 +227,20 @@ void main() {
     expect((await h.state()).consecutiveFailures, 1);
     expect((await h.state()).lastErrorCode, 'network');
 
-    // Before the delay: nothing is sent, and the count is kept.
+    // Before the delay: nothing is sent. The pull still reached the
+    // server (T069), which proves it is reachable: the count starts over.
     expect(await cycle(), SyncCycleOutcome.completed);
     expect(h.remote.pushCalls, 1);
-    expect((await h.state()).consecutiveFailures, 1);
+    expect((await h.state()).consecutiveFailures, 0);
 
     h.skipBackoff();
     final second = await cycle();
-    expect(second.retryAfter!.inMilliseconds, inInclusiveRange(8000, 12000));
+    expect(second.retryAfter!.inMilliseconds, inInclusiveRange(4000, 6000));
+    expect((await h.state()).consecutiveFailures, 1);
+    h.skipBackoff();
+    h.remote.failNextCalls(1);
+    final third = await cycle();
+    expect(third.retryAfter!.inMilliseconds, inInclusiveRange(8000, 12000));
     expect((await h.state()).consecutiveFailures, 2);
 
     // "Sync now" ignores the delay.
@@ -281,26 +291,6 @@ void main() {
     expect(h.remote.pushCalls, 0);
   });
 
-  test('conflict and superseded are kept (failed unhandled_conflict) until '
-      'T071', () async {
-    await h.createPerson('p1');
-    await h.createTransaction('t1', personId: 'p1');
-    await cycle();
-    // Another device edits t1 on the server.
-    h.remote.seedServerRow(SyncEntityType.moneyTransaction, {
-      ...h.remote.rowOf(SyncEntityType.moneyTransaction, 't1')!,
-      'amount_minor': 9999,
-    });
-    await h.editTransaction('t1', amount: 1234);
-    expect(await cycle(), SyncCycleOutcome.completed);
-
-    final op = await h.opFor('t1');
-    expect(op!.status, OutboxStatus.failed);
-    expect(op.errorCode, SyncHarness.unhandledConflict);
-    expect(op.payloadJson, contains('1234'));
-    expect(h.logger.names, contains(SyncEvent.conflict));
-  });
-
   test('logs the lifecycle with allowed fields only', () async {
     await h.createPerson('p1');
     await cycle();
@@ -308,6 +298,9 @@ void main() {
       SyncEvent.syncStarted,
       SyncEvent.uploadStarted,
       SyncEvent.uploadSuccess,
+      SyncEvent.downloadStarted,
+      SyncEvent.downloadSuccess,
+      SyncEvent.cursorAdvanced,
       SyncEvent.syncCompleted,
     ]);
     final (_, started) = h.logger.events[1];

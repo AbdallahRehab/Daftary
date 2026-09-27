@@ -24,6 +24,7 @@ class _CountingEngine extends SyncEngine {
         h.backoff,
         h.logger,
         h.clock,
+        h.applier,
       );
 
   int cycles = 0;

@@ -316,5 +316,15 @@
   "glassLevelMedium": "متوسطة",
   "glassLevelHigh": "عالية",
   "glassPreviewTitle": "معاينة",
-  "glassPreviewSemantics": "نموذج لتأثير الزجاج السائل بإعداداتك الحالية"
+  "glassPreviewSemantics": "نموذج لتأثير الزجاج السائل بإعداداتك الحالية",
+  "syncConflictBadgeLabel": "تعارض",
+  "syncConflictBadgeSemantics": "تم تعديله على جهاز آخر. اختر النسخة التي تريد الاحتفاظ بها.",
+  "syncConflictSheetTitle": "تم التعديل على جهازين",
+  "syncConflictSheetMessage": "تم تعديل هذا السجل على هذا الجهاز وعلى جهاز آخر. اختر النسخة التي تريد الاحتفاظ بها. تُحفظ النسخة الأخرى في السجل.",
+  "syncConflictMineLabel": "هذا الجهاز",
+  "syncConflictTheirsLabel": "جهاز آخر",
+  "syncConflictKeepMine": "الاحتفاظ بنسختي",
+  "syncConflictKeepTheirs": "الاحتفاظ بالنسخة الأخرى",
+  "syncConflictDeletedLabel": "محذوف",
+  "syncConflictResolveFailed": "تعذّر حل التعارض. حاول مرة أخرى."
 }

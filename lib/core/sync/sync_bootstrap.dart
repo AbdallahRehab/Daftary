@@ -48,15 +48,35 @@ class SyncBootstrap {
 
   /// Queues the pre-existing data unless that was already done. Returns the
   /// number of operations queued.
-  Future<int> enqueueExistingDataIfNeeded(AppDatabase db) async {
+  ///
+  /// With [force] (T069, re-owning after the account changed) it runs even
+  /// though the bootstrap was already done: every local record is queued
+  /// again as an upsert with `base_revision = null`, because the new
+  /// account's server has never seen it. A record that already has a
+  /// `pending` operation keeps it, rebased to `base_revision = null`; one
+  /// blocked or failed keeps its operation unchanged. Joins the caller's
+  /// transaction when there is one. Local data is never deleted.
+  Future<int> enqueueExistingDataIfNeeded(
+    AppDatabase db, {
+    bool force = false,
+  }) async {
     final counts = <SyncEntityType, int>{};
     await db.transaction(() async {
       final state = await (db.select(
         db.syncState,
       )..where((s) => s.id.equals(syncStateId))).getSingleOrNull();
-      if (state?.bootstrapEnqueued ?? false) return;
+      if (!force && (state?.bootstrapEnqueued ?? false)) return;
 
       final createdAt = _clock.now().millisecondsSinceEpoch;
+      if (force) {
+        // The old account's revisions mean nothing to the new one.
+        await (db.update(db.syncOutboxEntries)
+              ..where((o) => o.status.equals(OutboxStatus.pending)))
+            .write(const SyncOutboxEntriesCompanion(baseRevision: Value(null)));
+        await db
+            .update(db.syncRecordMeta)
+            .write(const SyncRecordMetaCompanion(serverRevision: Value(null)));
+      }
       for (final type in _order) {
         counts[type] = await _enqueueType(db, type, createdAt);
       }

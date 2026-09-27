@@ -41,6 +41,7 @@ import '../features/transactions/helpers/currency_test_doubles.dart';
 
 import '../helpers/stub_person_balances.dart';
 import '../helpers/watch_stubs.dart';
+import '../helpers/sync_conflicts_stub.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -127,6 +128,7 @@ void main() {
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
 
+    registerNoSyncConflicts();
     getIt.registerFactory<PersonDetailCubit>(
       () => PersonDetailCubit(
         WatchPerson(peopleRepository),

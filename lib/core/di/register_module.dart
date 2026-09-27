@@ -17,6 +17,7 @@ import '../../features/transactions/data/sync/transaction_audit_sync_mapper.dart
 import '../database/app_database.dart';
 import '../date/app_clock.dart';
 import '../money/egp_formatter.dart';
+import '../sync/local/sync_applier.dart';
 import '../sync/remote/supabase_initializer.dart';
 import '../sync/sync_bootstrap.dart';
 import '../sync/sync_logger.dart';
@@ -31,18 +32,26 @@ abstract class RegisterModule {
   /// 021: opened with the sync bootstrap, which queues the pre-existing
   /// data for upload once, in `beforeOpen` (T063).
   @lazySingleton
-  AppDatabase appDatabase(
+  AppDatabase appDatabase(SyncBootstrap bootstrap) =>
+      AppDatabase(syncBootstrap: bootstrap);
+
+  /// 021: queues the pre-existing data once (T063), and re-queues it all
+  /// when the account changes (T069). The pristine-seed rule lives in the
+  /// finance feature, so it is supplied here.
+  @lazySingleton
+  SyncBootstrap syncBootstrap(
     SyncMapperRegistry mappers,
     SyncLogger logger,
     AppClock clock,
-  ) => AppDatabase(
-    syncBootstrap: SyncBootstrap(
-      mappers,
-      logger,
-      clock,
-      isPristineSeed: isPristineSeed,
-    ),
-  );
+  ) => SyncBootstrap(mappers, logger, clock, isPristineSeed: isPristineSeed);
+
+  /// 021: writes downloaded rows without recording outbox entries (T068).
+  @lazySingleton
+  SyncApplier syncApplier(
+    AppDatabase db,
+    SyncMapperRegistry mappers,
+    AppClock clock,
+  ) => DriftSyncApplier(db, mappers, clock, isPristineSeed: isPristineSeed);
 
   @lazySingleton
   EgpFormatter get egpFormatter => EgpFormatter();

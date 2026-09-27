@@ -7,6 +7,7 @@ import '../date/app_clock.dart';
 import '../error/failure.dart';
 import 'backoff_policy.dart';
 import 'connectivity_monitor.dart';
+import 'local/sync_applier.dart';
 import 'local/sync_local_store.dart';
 import 'remote/cloud_auth_data_source.dart';
 import 'remote/supabase_initializer.dart';
@@ -63,8 +64,9 @@ const syncAppVersion = String.fromEnvironment(
   defaultValue: 'unknown',
 );
 
-/// 021: one sync cycle (plan §8). Push phase: US2 (T058) and the
-/// initial-upload marker (T065). The pull phase and re-owning are T069.
+/// 021: one sync cycle (plan §8): owner check (adopt or re-own, T069), the
+/// push phase (T058) with the initial-upload marker (T065), then the pull
+/// phase (T069).
 ///
 /// Only the [SyncScheduler] calls [runCycle], and never twice at once.
 /// Time comes from the injected [AppClock], never `DateTime.now()`.
@@ -79,6 +81,7 @@ class SyncEngine {
     this._backoff,
     this._logger,
     this._clock,
+    this._applier,
   );
 
   final SyncLocalStore _store;
@@ -89,9 +92,13 @@ class SyncEngine {
   final BackoffPolicy _backoff;
   final SyncLogger _logger;
   final AppClock _clock;
+  final SyncApplier _applier;
 
   /// research.md Decision 19.
   static const pushBatchSize = 100;
+
+  /// plan §11: pages of 500 rows.
+  static const pullPageSize = 500;
 
   /// A guard against a batch that never leaves `pending` (it cannot happen
   /// with a well-behaved server: every result removes or defers its op).
@@ -119,12 +126,13 @@ class SyncEngine {
       (s) => s.copyWith(lastAttemptAt: Value(started.millisecondsSinceEpoch)),
     );
 
+    final String uid;
     try {
-      await _auth.ensureSession();
+      uid = await _auth.ensureSession();
     } on SyncRemoteException catch (error) {
       return _callFailed(error, const [], started);
     }
-    // T069: compare the uid with sync_state.owner_id here (adopt or re-own).
+    await _checkOwner(state.ownerId, uid);
 
     final device = DeviceInfo(
       deviceId: state.deviceId,
@@ -133,7 +141,6 @@ class SyncEngine {
     );
 
     var sessionRefreshed = false;
-    var reachedServer = false;
     for (var i = 0; i < maxBatchesPerCycle; i++) {
       final batch = await _store.nextBatch(
         limit: pushBatchSize,
@@ -178,7 +185,6 @@ class SyncEngine {
         rethrow;
       }
 
-      reachedServer = true;
       await _store.applyPushResults(results, _clock.now());
       final answered = {for (final r in results) r.opId};
       final unanswered = [
@@ -195,15 +201,16 @@ class SyncEngine {
       _logResults(batch, results);
     }
 
-    // Only a call that reached the server proves it is reachable again:
-    // a cycle that found nothing ready to send keeps the backoff count.
+    final pullFailure = await _pullAll(started);
+    if (pullFailure != null) return pullFailure;
+
+    // The pull reached the server, which proves it is reachable again: the
+    // backoff count starts over.
     await _store.writeState(
       (s) => s.copyWith(
-        consecutiveFailures: reachedServer ? 0 : s.consecutiveFailures,
+        consecutiveFailures: 0,
         lastSuccessAt: Value(_clock.now().millisecondsSinceEpoch),
-        lastErrorCode: reachedServer
-            ? const Value(null)
-            : Value(s.lastErrorCode),
+        lastErrorCode: const Value(null),
       ),
     );
     await _markInitialUploadIfDone();
@@ -212,6 +219,56 @@ class SyncEngine {
       fields: {SyncLogField.durationMs: _elapsedMs(started)},
     );
     return SyncCycleOutcome.completed;
+  }
+
+  /// T069: the cursor and the queued data belong to one account.
+  ///
+  /// - No owner yet (a fresh database, or an iOS reinstall whose Keychain
+  ///   still holds the session): adopt [uid] without re-queueing anything —
+  ///   the bootstrap already queued the local data, and the pull restores
+  ///   the account's data from cursor 0.
+  /// - A different owner (the user signed in to another account): re-own
+  ///   the local data — re-queue everything for the new account and pull it
+  ///   from 0 (research.md Decision 11). Nothing local is deleted.
+  Future<void> _checkOwner(String? owner, String uid) async {
+    if (owner == uid) return;
+    if (owner == null) {
+      await _store.writeState((s) => s.copyWith(ownerId: Value(uid)));
+      return;
+    }
+    await _store.reown(uid);
+  }
+
+  /// The pull phase (T069): pages of changes after the cursor, each applied
+  /// atomically with its cursor advance, until the server has no more.
+  /// Returns the outcome of a failed call, or null when it completed.
+  Future<SyncCycleOutcome?> _pullAll(DateTime started) async {
+    for (var i = 0; i < maxBatchesPerCycle; i++) {
+      final cursor = (await _store.readState()).lastPulledRevision;
+      _logger.event(
+        SyncEvent.downloadStarted,
+        fields: {SyncLogField.revision: cursor},
+      );
+      final PullPage page;
+      try {
+        page = await _remote.pull(since: cursor, limit: pullPageSize);
+      } on SyncRemoteException catch (error) {
+        return _callFailed(error, const [], started, upload: false);
+      }
+      await _applier.applyPage(page);
+      _logger.event(
+        SyncEvent.downloadSuccess,
+        fields: {SyncLogField.count: page.changes.length},
+      );
+      if (page.maxRevision != cursor) {
+        _logger.event(
+          SyncEvent.cursorAdvanced,
+          fields: {SyncLogField.revision: page.maxRevision},
+        );
+      }
+      if (!page.hasMore) break;
+    }
+    return null;
   }
 
   /// T065: once everything queued at upgrade (and since) has reached the
@@ -238,16 +295,19 @@ class SyncEngine {
   Future<SyncCycleOutcome> _callFailed(
     SyncRemoteException error,
     List<String> opIds,
-    DateTime started,
-  ) async {
+    DateTime started, {
+    bool upload = true,
+  }) async {
     final code = error.errorCode;
-    _logger.event(
-      SyncEvent.uploadFailed,
-      fields: {
-        SyncLogField.errorCode: code,
-        if (opIds.isNotEmpty) SyncLogField.count: opIds.length,
-      },
-    );
+    if (upload) {
+      _logger.event(
+        SyncEvent.uploadFailed,
+        fields: {
+          SyncLogField.errorCode: code,
+          if (opIds.isNotEmpty) SyncLogField.count: opIds.length,
+        },
+      );
+    }
 
     if (error.requiresAuth) {
       // Paused until the session is valid again; no backoff is counted.
@@ -299,7 +359,9 @@ class SyncEngine {
       switch (result) {
         case PushApplied():
           acknowledged++;
-        case PushConflict() || PushSuperseded():
+        case PushSuperseded():
+          acknowledged++;
+        case PushConflict():
           _logger.event(
             SyncEvent.conflict,
             fields: {SyncLogField.entityType: ?type},

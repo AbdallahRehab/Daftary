@@ -1097,4 +1097,37 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get glassPreviewSemantics =>
       'Sample of the Liquid Glass effect with your current settings';
+
+  @override
+  String get syncConflictBadgeLabel => 'Conflict';
+
+  @override
+  String get syncConflictBadgeSemantics =>
+      'Changed on another device. Choose which version to keep.';
+
+  @override
+  String get syncConflictSheetTitle => 'Changed on two devices';
+
+  @override
+  String get syncConflictSheetMessage =>
+      'This record was edited on this device and on another one. Choose the version to keep. The other version is saved in the history.';
+
+  @override
+  String get syncConflictMineLabel => 'This device';
+
+  @override
+  String get syncConflictTheirsLabel => 'Other device';
+
+  @override
+  String get syncConflictKeepMine => 'Keep mine';
+
+  @override
+  String get syncConflictKeepTheirs => 'Keep theirs';
+
+  @override
+  String get syncConflictDeletedLabel => 'Deleted';
+
+  @override
+  String get syncConflictResolveFailed =>
+      'Couldn\'t resolve the conflict. Try again.';
 }

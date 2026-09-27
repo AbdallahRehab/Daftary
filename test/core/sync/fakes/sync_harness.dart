@@ -3,10 +3,14 @@ import 'dart:math';
 import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/sync/backoff_policy.dart';
+import 'package:daftary/core/sync/local/conflict_resolver.dart';
+import 'package:daftary/core/sync/local/sync_applier.dart';
 import 'package:daftary/core/sync/local/sync_local_store.dart';
 import 'package:daftary/core/sync/local/sync_outbox.dart';
+import 'package:daftary/core/sync/sync_bootstrap.dart';
 import 'package:daftary/core/sync/sync_engine.dart';
 import 'package:daftary/core/sync/sync_entity_type.dart';
+import 'package:daftary/core/sync/sync_logger.dart';
 import 'package:daftary/core/sync/sync_mapper_registry.dart';
 import 'package:daftary/features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart';
 import 'package:daftary/features/currency/data/sync/exchange_rate_sync_mapper.dart';
@@ -33,6 +37,34 @@ SyncMapperRegistry realMapperRegistry() => SyncMapperRegistry(const [
   ConflictResolutionSyncMapper(),
 ]);
 
+/// The real applier, with the app's mappers and pristine-seed rule.
+DriftSyncApplier realApplier(AppDatabase db, AppClock clock) =>
+    DriftSyncApplier(
+      db,
+      realMapperRegistry(),
+      clock,
+      isPristineSeed: isPristineSeed,
+    );
+
+/// The real local store, wired like the app wires it.
+DriftSyncLocalStore realStore(
+  AppDatabase db,
+  AppClock clock,
+  BackoffPolicy backoff, {
+  SyncLogger? logger,
+}) => DriftSyncLocalStore(
+  db,
+  clock,
+  backoff,
+  realApplier(db, clock),
+  SyncBootstrap(
+    realMapperRegistry(),
+    logger ?? RecordingSyncLogger(),
+    clock,
+    isPristineSeed: isPristineSeed,
+  ),
+);
+
 /// A clock for the outbox: 1 ms later on every read, so FIFO order is
 /// deterministic, while following [base].
 class TickingClock implements AppClock {
@@ -49,39 +81,76 @@ class TickingClock implements AppClock {
 /// everything remote. Local writes go through [SyncOutbox] inside a
 /// transaction, exactly like the feature DAOs.
 class SyncHarness {
-  SyncHarness({AppDatabase? db, FakeClock? clock})
+  /// Pass one [remote] to several harnesses to simulate several devices of
+  /// the same account.
+  SyncHarness({AppDatabase? db, FakeClock? clock, FakeSyncRemote? remote})
     : db = db ?? AppDatabase.forTesting(NativeDatabase.memory()),
-      clock = clock ?? FakeClock() {
+      clock = clock ?? FakeClock(),
+      remote = remote ?? FakeSyncRemote() {
     backoff = BackoffPolicy.withRandom(Random(3));
-    store = DriftSyncLocalStore(this.db, this.clock, backoff);
+    bootstrap = SyncBootstrap(
+      realMapperRegistry(),
+      logger,
+      this.clock,
+      isPristineSeed: isPristineSeed,
+    );
+    applier = DriftSyncApplier(
+      this.db,
+      realMapperRegistry(),
+      this.clock,
+      isPristineSeed: isPristineSeed,
+    );
+    store = DriftSyncLocalStore(
+      this.db,
+      this.clock,
+      backoff,
+      applier,
+      bootstrap,
+    );
     outbox = DriftSyncOutbox(this.db, TickingClock(this.clock));
     engine = SyncEngine(
       store,
-      remote,
+      this.remote,
       auth,
       supabase,
       connectivity,
       backoff,
       logger,
       this.clock,
+      applier,
     );
   }
 
   final AppDatabase db;
   final FakeClock clock;
-  final remote = FakeSyncRemote();
+  final FakeSyncRemote remote;
   final auth = FakeCloudAuth();
   final supabase = FakeSupabaseInitializer();
   final connectivity = FakeConnectivity();
   final logger = RecordingSyncLogger();
   late final BackoffPolicy backoff;
+  late final SyncBootstrap bootstrap;
+  late final DriftSyncApplier applier;
   late final DriftSyncLocalStore store;
   late final DriftSyncOutbox outbox;
+  late final DriftConflictResolver resolver = DriftConflictResolver(
+    db,
+    outbox,
+    applier,
+    realMapperRegistry(),
+    clock,
+  );
   late final SyncEngine engine;
 
   static const _person = PersonSyncMapper();
   static const _txn = MoneyTransactionSyncMapper();
   static const _audit = TransactionAuditSyncMapper();
+
+  /// The session now belongs to [uid], on this device and on the server.
+  void switchAccount(String uid) {
+    auth.uid = uid;
+    remote.owner = uid;
+  }
 
   Future<void> close() async {
     await connectivity.close();
@@ -222,6 +291,19 @@ class SyncHarness {
 
   Future<SyncStateRow> state() => store.readState();
 
+  /// The open conflict of [entityId], if any.
+  Future<SyncConflictRow?> openConflict(String entityId) =>
+      (db.select(db.syncConflicts)
+            ..where((c) => c.entityId.equals(entityId) & c.resolvedAt.isNull()))
+          .getSingleOrNull();
+
+  Future<List<ConflictResolutionRow>> resolutions() =>
+      db.select(db.conflictResolutions).get();
+
+  Future<MoneyTransaction> transaction(String id) => (db.select(
+    db.moneyTransactions,
+  )..where((t) => t.id.equals(id))).getSingle();
+
   /// Moves the clock past every scheduled retry.
   void skipBackoff() => clock.advance(const Duration(minutes: 20));
 
@@ -230,8 +312,6 @@ class SyncHarness {
     for (final batch in remote.committedBatches)
       for (final op in batch) op.entityId,
   ];
-
-  static String get unhandledConflict => unhandledConflictErrorCode;
 
   static String get synced => SyncRecordState.synced;
 }

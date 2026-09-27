@@ -609,5 +609,45 @@
   "glassPreviewSemantics": "Sample of the Liquid Glass effect with your current settings",
   "@glassPreviewSemantics": {
     "description": "Screen reader label for the Liquid Glass preview tile."
+  },
+  "syncConflictBadgeLabel": "Conflict",
+  "@syncConflictBadgeLabel": {
+    "description": "Short label of the badge on a transaction or finance entry row that was changed on two devices."
+  },
+  "syncConflictBadgeSemantics": "Changed on another device. Choose which version to keep.",
+  "@syncConflictBadgeSemantics": {
+    "description": "Screen reader label and tooltip of the conflict badge on a row."
+  },
+  "syncConflictSheetTitle": "Changed on two devices",
+  "@syncConflictSheetTitle": {
+    "description": "Title of the sheet that lets the user choose between two versions of a financial record."
+  },
+  "syncConflictSheetMessage": "This record was edited on this device and on another one. Choose the version to keep. The other version is saved in the history.",
+  "@syncConflictSheetMessage": {
+    "description": "Explanation at the top of the conflict resolution sheet."
+  },
+  "syncConflictMineLabel": "This device",
+  "@syncConflictMineLabel": {
+    "description": "Heading of the local version in the conflict resolution sheet."
+  },
+  "syncConflictTheirsLabel": "Other device",
+  "@syncConflictTheirsLabel": {
+    "description": "Heading of the version from the cloud in the conflict resolution sheet."
+  },
+  "syncConflictKeepMine": "Keep mine",
+  "@syncConflictKeepMine": {
+    "description": "Button that keeps the version edited on this device."
+  },
+  "syncConflictKeepTheirs": "Keep theirs",
+  "@syncConflictKeepTheirs": {
+    "description": "Button that keeps the version from the other device."
+  },
+  "syncConflictDeletedLabel": "Deleted",
+  "@syncConflictDeletedLabel": {
+    "description": "Marker shown when one of the two versions deletes the record."
+  },
+  "syncConflictResolveFailed": "Couldn't resolve the conflict. Try again.",
+  "@syncConflictResolveFailed": {
+    "description": "Error shown when resolving a sync conflict failed."
   }
 }

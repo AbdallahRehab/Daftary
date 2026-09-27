@@ -237,4 +237,129 @@ void main() {
       );
     },
   );
+
+  group('pull (T067)', () {
+    test('calls rpc(sync_pull) with the cursor and the page size', () async {
+      String? function;
+      Map<String, Object?>? params;
+      final source = SupabaseSyncRemoteDataSource.withRpc((f, p) async {
+        function = f;
+        params = p;
+        return {'changes': <Object?>[], 'max_revision': 7, 'has_more': false};
+      });
+      final page = await source.pull(since: 7, limit: 50);
+      expect(function, 'sync_pull');
+      expect(params, {'p_since': 7, 'p_limit': 50});
+      expect(page, const PullPage(changes: [], maxRevision: 7, hasMore: false));
+    });
+
+    test('parses changes in order, with money and revisions as numbers', () {
+      final page = parsePullResponse({
+        'changes': [
+          {
+            'entity_type': 'person',
+            'revision': 43,
+            'row': {'id': 'p1', 'owner_id': 'u', 'deleted_at': null},
+          },
+          {
+            'entity_type': 'money_transaction',
+            'revision': 44.0,
+            'row': {'id': 't1', 'amount_minor': 150000, 'revision': 44},
+          },
+        ],
+        'max_revision': 44,
+        'has_more': true,
+      }, since: 42);
+      expect(page.hasMore, isTrue);
+      expect(page.maxRevision, 44);
+      expect(page.changes, [
+        const PulledChange(
+          entityType: SyncEntityType.person,
+          revision: 43,
+          row: {'id': 'p1', 'owner_id': 'u', 'deleted_at': null},
+        ),
+        const PulledChange(
+          entityType: SyncEntityType.moneyTransaction,
+          revision: 44,
+          row: {'id': 't1', 'amount_minor': 150000, 'revision': 44},
+        ),
+      ]);
+    });
+
+    test('an empty page keeps the cursor', () {
+      final page = parsePullResponse({
+        'changes': <Object?>[],
+        'has_more': false,
+      }, since: 12);
+      expect(page.maxRevision, 12);
+    });
+
+    test('a malformed page is a permanent bad_response failure', () async {
+      for (final body in <Object?>[
+        null,
+        {'changes': 'x', 'has_more': false},
+        {'changes': <Object?>[]},
+        {
+          'changes': [
+            {
+              'entity_type': 'spaceship',
+              'revision': 1,
+              'row': <String, Object?>{},
+            },
+          ],
+          'has_more': false,
+        },
+        {
+          'changes': [
+            {'entity_type': 'person', 'revision': 1},
+          ],
+          'has_more': false,
+        },
+      ]) {
+        final source = SupabaseSyncRemoteDataSource.withRpc(
+          (_, _) async => body,
+        );
+        await expectLater(
+          source.pull(since: 0),
+          throwsA(
+            isA<SyncRemoteException>()
+                .having((e) => e.errorCode, 'code', 'bad_response')
+                .having((e) => e.transient, 'transient', isFalse),
+          ),
+          reason: '$body',
+        );
+      }
+    });
+
+    test('errors and timeouts are mapped', () async {
+      final failing = SupabaseSyncRemoteDataSource.withRpc(
+        (_, _) async => throw const SocketException('x'),
+      );
+      await expectLater(
+        failing.pull(since: 0),
+        throwsA(
+          isA<SyncRemoteException>().having(
+            (e) => e.failure,
+            'failure',
+            isA<NetworkFailure>(),
+          ),
+        ),
+      );
+      final never = Completer<Object?>();
+      final slow = SupabaseSyncRemoteDataSource.withRpc(
+        (_, _) => never.future,
+        timeout: const Duration(milliseconds: 20),
+      );
+      await expectLater(
+        slow.pull(since: 0),
+        throwsA(
+          isA<SyncRemoteException>().having(
+            (e) => e.failure,
+            'failure',
+            isA<TimeoutFailure>(),
+          ),
+        ),
+      );
+    });
+  });
 }

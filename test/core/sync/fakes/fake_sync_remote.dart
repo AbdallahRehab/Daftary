@@ -26,11 +26,17 @@ import 'package:daftary/core/sync/sync_models.dart';
 class FakeSyncRemote implements SyncRemoteDataSource {
   static const ownerId = '00000000-0000-4000-8000-000000000001';
 
-  final Map<SyncEntityType, Map<String, Map<String, Object?>>> _tables = {
-    for (final type in SyncEntityType.values) type: {},
-  };
-  final Map<String, _LedgerEntry> _ledger = {};
-  int _lastRevision = 0;
+  /// The account the calls act as (`auth.uid()`). Each account has its own
+  /// rows, ledger and revision counter, like row-level security gives it.
+  String owner = ownerId;
+  final Map<String, _OwnerData> _owners = {};
+
+  _OwnerData get _data => _owners.putIfAbsent(owner, _OwnerData.new);
+  Map<SyncEntityType, Map<String, Map<String, Object?>>> get _tables =>
+      _data.tables;
+  Map<String, _LedgerEntry> get _ledger => _data.ledger;
+  int get _lastRevision => _data.lastRevision;
+  set _lastRevision(int value) => _data.lastRevision = value;
 
   /// Every `sync_push` call that reached the fake, including failed ones.
   int pushCalls = 0;
@@ -41,6 +47,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   DeviceInfo? lastDevice;
 
   final List<SyncRemoteException> _scriptedFailures = [];
+  final List<SyncRemoteException> _scriptedPullFailures = [];
   final Map<int, SyncRemoteException> _failOnCall = {};
   bool _dropNextResponse = false;
   int? _dropOnCall;
@@ -49,7 +56,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   // Scripting
   // ---------------------------------------------------------------------------
 
-  /// The next [n] calls fail before touching the server state.
+  /// The next [n] push calls fail before touching the server state.
   void failNextCalls(
     int n, [
     Failure failure = const NetworkFailure('scripted'),
@@ -57,6 +64,17 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   ]) {
     for (var i = 0; i < n; i++) {
       _scriptedFailures.add(_exception(failure, transient));
+    }
+  }
+
+  /// The next [n] pull calls fail.
+  void failNextPulls(
+    int n, [
+    Failure failure = const NetworkFailure('scripted'),
+    bool transient = true,
+  ]) {
+    for (var i = 0; i < n; i++) {
+      _scriptedPullFailures.add(_exception(failure, transient));
     }
   }
 
@@ -85,7 +103,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
     final revision = ++_lastRevision;
     _tables[type]![id] = {
       ..._normalize(row),
-      'owner_id': ownerId,
+      'owner_id': owner,
       'revision': revision,
       'deleted_at': deleted ? '2026-01-01T00:00:00.000Z' : row['deleted_at'],
     };
@@ -145,7 +163,9 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   @override
   Future<PullPage> pull({required int since, int limit = 500}) async {
     pullCalls++;
-    if (_scriptedFailures.isNotEmpty) throw _scriptedFailures.removeAt(0);
+    if (_scriptedPullFailures.isNotEmpty) {
+      throw _scriptedPullFailures.removeAt(0);
+    }
     final all = <PulledChange>[
       for (final MapEntry(key: type, value: rows) in _tables.entries)
         for (final row in rows.values)
@@ -369,7 +389,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
       if (spec.policy == _Policy.lww && !payload.containsKey('deleted_at'))
         'deleted_at': null,
       'id': op.entityId,
-      'owner_id': ownerId,
+      'owner_id': owner,
       'revision': revision,
     };
     return revision;
@@ -512,6 +532,14 @@ const _specs = {
     'resolved_at',
   ]),
 };
+
+class _OwnerData {
+  final Map<SyncEntityType, Map<String, Map<String, Object?>>> tables = {
+    for (final type in SyncEntityType.values) type: {},
+  };
+  final Map<String, _LedgerEntry> ledger = {};
+  int lastRevision = 0;
+}
 
 class _LedgerEntry {
   const _LedgerEntry(this.result, this.revision, this.reason);

@@ -1999,6 +1999,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sample of the Liquid Glass effect with your current settings'**
   String get glassPreviewSemantics;
+
+  /// Short label of the badge on a transaction or finance entry row that was changed on two devices.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get syncConflictBadgeLabel;
+
+  /// Screen reader label and tooltip of the conflict badge on a row.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed on another device. Choose which version to keep.'**
+  String get syncConflictBadgeSemantics;
+
+  /// Title of the sheet that lets the user choose between two versions of a financial record.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed on two devices'**
+  String get syncConflictSheetTitle;
+
+  /// Explanation at the top of the conflict resolution sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'This record was edited on this device and on another one. Choose the version to keep. The other version is saved in the history.'**
+  String get syncConflictSheetMessage;
+
+  /// Heading of the local version in the conflict resolution sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get syncConflictMineLabel;
+
+  /// Heading of the version from the cloud in the conflict resolution sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Other device'**
+  String get syncConflictTheirsLabel;
+
+  /// Button that keeps the version edited on this device.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep mine'**
+  String get syncConflictKeepMine;
+
+  /// Button that keeps the version from the other device.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep theirs'**
+  String get syncConflictKeepTheirs;
+
+  /// Marker shown when one of the two versions deletes the record.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get syncConflictDeletedLabel;
+
+  /// Error shown when resolving a sync conflict failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t resolve the conflict. Try again.'**
+  String get syncConflictResolveFailed;
 }
 
 class _AppLocalizationsDelegate

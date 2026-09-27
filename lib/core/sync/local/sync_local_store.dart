@@ -7,9 +7,11 @@ import 'package:uuid/uuid.dart';
 import '../../database/app_database.dart' hide coalesce;
 import '../../date/app_clock.dart';
 import '../backoff_policy.dart';
+import '../sync_bootstrap.dart';
 import '../sync_entity_type.dart';
 import '../sync_models.dart';
 import 'outbox_coalescer.dart';
+import 'sync_applier.dart';
 import 'sync_outbox.dart';
 
 /// 021: the engine's view of the local sync tables
@@ -29,7 +31,8 @@ abstract class SyncLocalStore {
 
   /// Puts every `in_flight` operation back to `pending` — run on startup,
   /// because an app killed mid-upload leaves them there. The server ledger
-  /// makes the replay safe.
+  /// makes the replay safe. Also re-queues the interim
+  /// `unhandled_conflict` operations (see [unhandledConflictErrorCode]).
   Future<void> resetInFlight();
 
   /// Applies one `sync_push` response in a single transaction
@@ -58,11 +61,23 @@ abstract class SyncLocalStore {
 
   /// The number of `synced` records per entity type.
   Future<Map<SyncEntityType, int>> syncedCountsByType();
+
+  /// T069: the session now belongs to another account ([ownerId]). In one
+  /// transaction, every local record is queued again for that account (the
+  /// bootstrap with `force: true`), the download cursor goes back to 0 and
+  /// the new owner is stored. Local data is never deleted. Returns the
+  /// number of operations queued.
+  Future<int> reown(String ownerId);
 }
 
-/// The `error_code` T056 stores for `conflict` and `superseded` results
-/// until T071 handles them: the operation is kept as `failed` — never
-/// dropped — so no version is lost.
+/// The `error_code` of an operation blocked by a manual conflict.
+const conflictErrorCode = 'conflict';
+
+/// The `error_code` builds before T071 stored for `conflict` and
+/// `superseded` results (kept as `failed`, never dropped). [resetInFlight]
+/// re-queues such operations: the server ledger replays the same result for
+/// the same `op_id`, with the current server row, so they become
+/// `sync_conflicts` rows or restored records on the next cycle.
 const unhandledConflictErrorCode = 'unhandled_conflict';
 
 /// The fixed id of the single `sync_state` row.
@@ -70,11 +85,19 @@ const syncStateId = 'singleton';
 
 @LazySingleton(as: SyncLocalStore)
 class DriftSyncLocalStore implements SyncLocalStore {
-  DriftSyncLocalStore(this._db, this._clock, this._backoff);
+  DriftSyncLocalStore(
+    this._db,
+    this._clock,
+    this._backoff,
+    this._applier,
+    this._bootstrap,
+  );
 
   final AppDatabase _db;
   final AppClock _clock;
   final BackoffPolicy _backoff;
+  final SyncApplier _applier;
+  final SyncBootstrap _bootstrap;
 
   static const _uuid = Uuid();
 
@@ -163,12 +186,47 @@ class DriftSyncLocalStore implements SyncLocalStore {
   }
 
   @override
-  Future<void> resetInFlight() async {
-    await (_db.update(
-      _outbox,
-    )..where((o) => o.status.equals(OutboxStatus.inFlight))).write(
-      const SyncOutboxEntriesCompanion(status: Value(OutboxStatus.pending)),
-    );
+  Future<void> resetInFlight() {
+    return _db.transaction(() async {
+      await (_db.update(
+        _outbox,
+      )..where((o) => o.status.equals(OutboxStatus.inFlight))).write(
+        const SyncOutboxEntriesCompanion(status: Value(OutboxStatus.pending)),
+      );
+      await _requeueUnhandledConflicts();
+    });
+  }
+
+  /// Migrates the interim `unhandled_conflict` rows (see
+  /// [unhandledConflictErrorCode]): replaying the same `op_id` returns the
+  /// stored conflict or superseded result with the current server row.
+  Future<void> _requeueUnhandledConflicts() async {
+    final legacy =
+        await (_db.select(_outbox)..where(
+              (o) =>
+                  o.status.equals(OutboxStatus.failed) &
+                  o.errorCode.equals(unhandledConflictErrorCode),
+            ))
+            .get();
+    for (final op in legacy) {
+      await (_db.update(_outbox)..where((o) => o.opId.equals(op.opId))).write(
+        const SyncOutboxEntriesCompanion(
+          status: Value(OutboxStatus.pending),
+          nextAttemptAt: Value(null),
+          errorCode: Value(null),
+        ),
+      );
+      final meta = await _metaFor(op.entityType, op.entityId);
+      if (meta?.state == SyncRecordState.failed) {
+        await _writeMeta(
+          op.entityType,
+          op.entityId,
+          SyncRecordState.pending,
+          meta?.serverRevision,
+          lastSyncedAt: meta?.lastSyncedAt,
+        );
+      }
+    }
   }
 
   @override
@@ -180,13 +238,27 @@ class DriftSyncLocalStore implements SyncLocalStore {
           _outbox,
         )..where((o) => o.opId.equals(result.opId))).getSingleOrNull();
         if (op == null) continue;
+        final type = SyncEntityType.fromWire(op.entityType);
         switch (result) {
-          case PushApplied(:final revision):
+          case PushApplied(:final revision, :final serverRow):
             await _acknowledge(op, revision, nowMs);
-          case PushConflict() || PushSuperseded():
-            // Interim (T056): kept as failed, never dropped. T071 turns these
-            // into sync_conflicts rows and restored records.
-            await _fail(op, unhandledConflictErrorCode, nowMs);
+            // A category archived instead of deleted: re-inserted locally.
+            if (serverRow != null) {
+              await _applier.applyServerRow(type, serverRow);
+            }
+          case PushConflict(:final revision, :final serverRow):
+            await _block(op, revision, serverRow, nowMs);
+          case PushSuperseded(:final revision, :final serverRow):
+            // The delete lost to a concurrent edit: the record is restored.
+            await _acknowledge(op, revision, nowMs);
+            await _applier.applyServerRow(type, serverRow);
+          case PushRejected(:final reason, :final serverRow, :final revision)
+              when reason == PushRejectReason.personHasTransactions &&
+                  serverRow != null:
+            // Restored now, not on the next pull: the cursor may already be
+            // past this revision.
+            await _acknowledge(op, revision, nowMs);
+            await _applier.applyServerRow(type, serverRow);
           case PushRejected(:final reason) when result.isTransient:
             final delay = _backoff.delayFor(op.attemptCount - 1);
             await _reschedule(op.opId, nowMs + delay.inMilliseconds, reason);
@@ -195,6 +267,68 @@ class DriftSyncLocalStore implements SyncLocalStore {
         }
       }
     });
+  }
+
+  /// `conflict` (contracts/sync-rpc.md §5): the operation waits for the
+  /// user, and both versions are kept in `sync_conflicts`.
+  Future<void> _block(
+    SyncOutboxRow op,
+    int serverRevision,
+    Map<String, Object?> serverRow,
+    int nowMs,
+  ) async {
+    await (_db.update(_outbox)..where((o) => o.opId.equals(op.opId))).write(
+      SyncOutboxEntriesCompanion(
+        status: const Value(OutboxStatus.blockedConflict),
+        errorCode: const Value(conflictErrorCode),
+        lastAttemptAt: Value(nowMs),
+        nextAttemptAt: const Value(null),
+      ),
+    );
+
+    final open =
+        await (_db.select(_db.syncConflicts)..where(
+              (c) =>
+                  c.entityType.equals(op.entityType) &
+                  c.entityId.equals(op.entityId) &
+                  c.resolvedAt.isNull(),
+            ))
+            .getSingleOrNull();
+    final serverJson = jsonEncode(serverRow);
+    if (open == null) {
+      await _db
+          .into(_db.syncConflicts)
+          .insert(
+            SyncConflictsCompanion.insert(
+              id: _uuid.v4(),
+              entityType: op.entityType,
+              entityId: op.entityId,
+              localPayloadJson: op.payloadJson,
+              serverPayloadJson: serverJson,
+              serverRevision: serverRevision,
+              detectedAt: nowMs,
+            ),
+          );
+    } else {
+      await (_db.update(
+        _db.syncConflicts,
+      )..where((c) => c.id.equals(open.id))).write(
+        SyncConflictsCompanion(
+          localPayloadJson: Value(op.payloadJson),
+          serverPayloadJson: Value(serverJson),
+          serverRevision: Value(serverRevision),
+        ),
+      );
+    }
+
+    final meta = await _metaFor(op.entityType, op.entityId);
+    await _writeMeta(
+      op.entityType,
+      op.entityId,
+      SyncRecordState.conflict,
+      meta?.serverRevision,
+      lastSyncedAt: meta?.lastSyncedAt,
+    );
   }
 
   Future<void> _acknowledge(SyncOutboxRow op, int? revision, int nowMs) async {
@@ -375,6 +509,24 @@ class DriftSyncLocalStore implements SyncLocalStore {
           'c',
         ),
     };
+  }
+
+  @override
+  Future<int> reown(String ownerId) {
+    return _db.transaction(() async {
+      final queued = await _bootstrap.enqueueExistingDataIfNeeded(
+        _db,
+        force: true,
+      );
+      await writeState(
+        (s) => s.copyWith(
+          ownerId: Value(ownerId),
+          lastPulledRevision: 0,
+          initialUploadDone: false,
+        ),
+      );
+      return queued;
+    });
   }
 
   Future<SyncRecordMetaRow?> _metaFor(String type, String id) =>

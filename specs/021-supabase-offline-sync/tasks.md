@@ -711,12 +711,12 @@ Each task is followed by indented lines:
     - User B sees none of A's rows.
     - Two concurrent pushes, one pull afterwards: nothing is skipped.
 
-- [ ] T067 [US4] Implement pull in lib/core/sync/remote/sync_remote_data_source.dart
+- [X] T067 [US4] Implement pull in lib/core/sync/remote/sync_remote_data_source.dart
   - Deps: T054, T066
   - Done when: `pull({since, limit})` returns a `PullPage`, with a 20 s timeout and the error mapping from T052.
   - Validate: a unit test on the parsing.
 
-- [ ] T068 [US4] Create the applier in lib/core/sync/local/sync_applier.dart (new), with a test in test/core/sync/local/sync_applier_test.dart (new)
+- [X] T068 [US4] Create the applier in lib/core/sync/local/sync_applier.dart (new), with a test in test/core/sync/local/sync_applier_test.dart (new)
   - Deps: T056, T023
   - Done when:
     - It implements every row of contracts/sync-rpc.md §4 in one transaction per page: insert; overwrite when there is no open operation; skip when there is one; tombstones hard-delete people, categories and rates but soft-delete transactions and entries; pristine seeds are overwritten.
@@ -728,7 +728,7 @@ Each task is followed by indented lines:
     - A failure mid-page leaves the cursor unchanged.
     - A watch stream (T029) emits after `applyPage`.
 
-- [ ] T069 [US4] Add the pull phase and re-owning to lib/core/sync/sync_engine.dart, with a test in test/core/sync/sync_engine_pull_test.dart (new)
+- [X] T069 [US4] Add the pull phase and re-owning to lib/core/sync/sync_engine.dart, with a test in test/core/sync/sync_engine_pull_test.dart (new)
   - Deps: T067, T068, T065 (T065 also edits `sync_engine.dart`)
   - Done when:
     - After the push phase, the engine loops `pull(since: cursor)` → `applyPage` until `!has_more`, logging `SYNC_DOWNLOAD_*` and `SYNC_CURSOR_ADVANCED`.
@@ -740,7 +740,7 @@ Each task is followed by indented lines:
     - A uid change re-uploads everything and then pulls from 0, with 0 duplicates.
     - `owner_id` null (fresh DB, e.g. an iOS reinstall with the Keychain session still present) adopts the uid **without** re-enqueueing, then restores the data from cursor 0.
 
-- [ ] T070 [US4] Test that remote changes reach an open screen, in test/features/transactions/presentation/person_detail_remote_update_test.dart (new)
+- [X] T070 [US4] Test that remote changes reach an open screen, in test/features/transactions/presentation/person_detail_remote_update_test.dart (new)
   - Deps: T069, T035
   - Done when: a widget test pumps `PersonDetailPage` with the real repository and an in-memory database, runs `SyncEngine.runCycle()` against a `FakeSyncRemote` seeded with a new transaction for that person, and the new row and updated balance render with no navigation.
   - Validate: `flutter test` on that file. Quickstart #5 is the manual device check.
@@ -755,7 +755,7 @@ Each task is followed by indented lines:
 
 **Independent Test**: Diverge one transaction locally and on the server, then sync. The row shows a badge. "Keep mine" and "Keep theirs" each resolve the conflict and write a `conflict_resolutions` row. Quickstart #6.
 
-- [ ] T071 [US5] Handle conflict and superseded results in lib/core/sync/local/sync_local_store.dart and lib/core/sync/local/sync_applier.dart, with a test in test/core/sync/local/sync_local_store_conflict_test.dart (new)
+- [X] T071 [US5] Handle conflict and superseded results in lib/core/sync/local/sync_local_store.dart and lib/core/sync/local/sync_applier.dart, with a test in test/core/sync/local/sync_local_store_conflict_test.dart (new)
   - Deps: T056, T068
   - Done when:
     - `conflict`: the operation becomes `blocked_conflict`, meta becomes `conflict`, and a `sync_conflicts` row is inserted holding the local payload, the server payload and the server revision. `SYNC_CONFLICT` is logged with the entity type only.
@@ -766,14 +766,14 @@ Each task is followed by indented lines:
     - Extends `SyncApplier` (T068): when a pulled row targets an entity whose operation is `blocked_conflict`, it refreshes `sync_conflicts.server_payload_json` and `server_revision` (contracts/sync-rpc.md §4).
   - Validate: each branch; a blocked transaction stops its audit entries from being sent; after a second remote edit is pulled, keep-theirs applies the **latest** server version.
 
-- [ ] T072 [US5] Create the conflict resolver in lib/core/sync/local/conflict_resolver.dart (new), with a test in test/core/sync/local/conflict_resolver_test.dart (new)
+- [X] T072 [US5] Create the conflict resolver in lib/core/sync/local/conflict_resolver.dart (new), with a test in test/core/sync/local/conflict_resolver_test.dart (new)
   - Deps: T071, T021
   - Done when, in one transaction each:
     - `keepMine(entity)` enqueues an upsert with `base_revision = conflict.server_revision` and the local payload, plus a `conflictResolution` insert with `chosen_side = 'local'` and `discarded_values` set to the server row. The blocked operation is closed and `resolved_at` is set.
     - `keepTheirs(entity)` applies the server row locally, enqueues a `conflictResolution` with `chosen_side = 'server'` and `discarded_values` set to the local payload, and closes the operation.
   - Validate: both paths produce exactly 1 resolution record and never lose a version. After keep-theirs, the audit entries of the discarded edit are still queued unchanged (spec FR-035), and nothing is deleted from `transaction_audit_entries`.
 
-- [ ] T073 [US5] Create the cloud_sync domain contract and its conflict part
+- [X] T073 [US5] Create the cloud_sync domain contract and its conflict part
   - Deps: T072
   - Files:
     - `lib/features/cloud_sync/domain/entities/sync_conflict_item.dart` (new)
@@ -786,7 +786,7 @@ Each task is followed by indented lines:
   - Done when: `SyncConflictItem` summaries show amount, date, direction and note, formatted in the Presentation layer, never in the Domain layer.
   - Validate: the repository test passes.
 
-- [ ] T074 [US5] Add the conflict badge and resolution sheet
+- [X] T074 [US5] Add the conflict badge and resolution sheet
   - Deps: T073, T035, T037
   - Files:
     - `lib/features/cloud_sync/presentation/widgets/conflict_badge.dart` (new)
@@ -801,7 +801,7 @@ Each task is followed by indented lines:
     - The sheet uses only `lib/core/design_system` components, shows the two versions side by side in RTL and LTR, and offers "Keep mine" and "Keep theirs".
   - Validate: widget tests in `ar` and `en`, and the existing tile tests still pass.
 
-- [ ] T075 [US5] Simulate two devices editing the same records, in test/core/sync/sync_engine_conflict_test.dart (new)
+- [X] T075 [US5] Simulate two devices editing the same records, in test/core/sync/sync_engine_conflict_test.dart (new)
   - Deps: T072, T069
   - Done when: two `SyncEngine` instances, backed by 2 in-memory databases and one shared `FakeSyncRemote` with the same owner, cover these cases:
     - Both edit the same transaction: the second gets a conflict, and after resolution both converge.

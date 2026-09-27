@@ -12,6 +12,11 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/l10n/failure_message.dart';
 import '../../../../core/money/egp_formatter.dart';
+import '../../../cloud_sync/domain/entities/sync_conflict_item.dart';
+import '../../../cloud_sync/presentation/cubit/sync_conflicts_cubit.dart';
+import '../../../cloud_sync/presentation/cubit/sync_conflicts_state.dart';
+import '../../../cloud_sync/presentation/widgets/conflict_badge.dart';
+import '../../../cloud_sync/presentation/widgets/conflict_resolution_sheet.dart';
 import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
@@ -33,8 +38,14 @@ class PersonDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<PersonDetailCubit>()..subscribe(personId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => getIt<PersonDetailCubit>()..subscribe(personId),
+        ),
+        // 021: the conflict badge on each history row (FR-035).
+        BlocProvider(create: (_) => getIt<SyncConflictsCubit>()..subscribe()),
+      ],
       child: _PersonDetailView(personId: personId),
     );
   }
@@ -221,13 +232,31 @@ class _PersonDetailView extends StatelessWidget {
                     ),
                     itemBuilder: (context, index) {
                       final transaction = state.history[index];
-                      return TransactionListTile(
-                        transaction: transaction,
-                        primaryCurrency: state.primaryCurrency,
-                        onTap: () =>
-                            _editTransaction(context, transaction, person),
-                        onDelete: () =>
-                            _deleteTransaction(context, transaction.id),
+                      return BlocSelector<
+                        SyncConflictsCubit,
+                        SyncConflictsState,
+                        SyncConflictItem?
+                      >(
+                        selector: (conflicts) => conflicts.itemFor(
+                          ConflictEntityType.moneyTransaction,
+                          transaction.id,
+                        ),
+                        builder: (context, conflict) => TransactionListTile(
+                          transaction: transaction,
+                          primaryCurrency: state.primaryCurrency,
+                          onTap: () =>
+                              _editTransaction(context, transaction, person),
+                          onDelete: () =>
+                              _deleteTransaction(context, transaction.id),
+                          conflictBadge: conflict == null
+                              ? null
+                              : ConflictBadge(
+                                  onTap: () => showConflictResolutionSheet(
+                                    context,
+                                    conflict,
+                                  ),
+                                ),
+                        ),
                       );
                     },
                   ),

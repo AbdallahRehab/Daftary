@@ -10,6 +10,7 @@ import 'package:daftary/core/sync/sync_models.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fakes/sync_harness.dart';
 import '../fakes/sync_test_doubles.dart';
 
 /// 021 T056: the engine's view of the local sync tables.
@@ -22,7 +23,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     clock = FakeClock();
-    store = DriftSyncLocalStore(db, clock, BackoffPolicy.withRandom(Random(7)));
+    store = realStore(db, clock, BackoffPolicy.withRandom(Random(7)));
     outbox = DriftSyncOutbox(db, _Ticking(clock));
   });
 
@@ -126,7 +127,7 @@ void main() {
       expect(await store.nextBatch(limit: 1, now: clock.now()), isEmpty);
 
       // The app is killed mid-upload; a new store on the same file restarts.
-      final restarted = DriftSyncLocalStore(db, clock, BackoffPolicy());
+      final restarted = realStore(db, clock, BackoffPolicy());
       await restarted.resetInFlight();
       row = await rowFor('p1');
       expect(row.status, OutboxStatus.pending);
@@ -213,34 +214,6 @@ void main() {
       final delay = row.nextAttemptAt! - clock.now().millisecondsSinceEpoch;
       expect(delay, inInclusiveRange(4000, 6000));
       expect((await meta('t1'))!.state, SyncRecordState.pending);
-    });
-
-    test('conflict and superseded are kept as failed unhandled_conflict, '
-        'never dropped (until T071)', () async {
-      await upsert(SyncEntityType.moneyTransaction, 't1', {'person_id': 'p'});
-      await upsert(SyncEntityType.person, 'p1');
-      final ids = await sendAll();
-      final byEntity = {for (final o in await rows()) o.entityId: o.opId};
-      expect(ids, hasLength(2));
-      await store.applyPushResults([
-        PushConflict(
-          byEntity['t1']!,
-          revision: 3,
-          serverRow: const {'id': 't1'},
-        ),
-        PushSuperseded(
-          byEntity['p1']!,
-          revision: 4,
-          serverRow: const {'id': 'p1'},
-        ),
-      ], clock.now());
-
-      for (final id in ['t1', 'p1']) {
-        final row = await rowFor(id);
-        expect(row.status, OutboxStatus.failed);
-        expect(row.errorCode, unhandledConflictErrorCode);
-        expect((await meta(id))!.state, SyncRecordState.failed);
-      }
     });
 
     test(

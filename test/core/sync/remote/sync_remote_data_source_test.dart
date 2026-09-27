@@ -1,0 +1,240 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:daftary/core/error/failure.dart';
+import 'package:daftary/core/sync/local/outbox_coalescer.dart';
+import 'package:daftary/core/sync/remote/supabase_initializer.dart';
+import 'package:daftary/core/sync/remote/sync_error_mapper.dart';
+import 'package:daftary/core/sync/remote/sync_remote_data_source.dart';
+import 'package:daftary/core/sync/sync_entity_type.dart';
+import 'package:daftary/core/sync/sync_models.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+class _MockClient extends Mock implements SupabaseClient {}
+
+/// A `PostgrestFilterBuilder` stand-in: only awaiting it is used.
+class _FakeBuilder extends Fake implements PostgrestFilterBuilder<dynamic> {
+  _FakeBuilder(this._future);
+
+  final Future<dynamic> _future;
+
+  @override
+  Future<R> then<R>(
+    FutureOr<R> Function(dynamic value) onValue, {
+    Function? onError,
+  }) => _future.then(onValue, onError: onError);
+}
+
+class _Initializer extends Fake implements SupabaseInitializer {
+  _Initializer(this.client);
+
+  @override
+  final SupabaseClient client;
+}
+
+/// 021 T054: `push` calls `sync_push` with a 20 s timeout and parses every
+/// result kind.
+void main() {
+  const device = DeviceInfo(
+    deviceId: '11111111-1111-4111-8111-111111111111',
+    platform: 'android',
+    appVersion: '1.0.0',
+  );
+  const op = OutboxOp(
+    opId: 'op-1',
+    entityType: SyncEntityType.moneyTransaction,
+    entityId: 't1',
+    opType: OutboxOpType.upsert,
+    payload: {'id': 't1', 'amount_minor': '150000'},
+    baseRevision: 42,
+  );
+
+  test('calls rpc(sync_push) through the SupabaseClient with the contract '
+      'params', () async {
+    final client = _MockClient();
+    Map<String, dynamic>? sent;
+    when(
+      () => client.rpc<dynamic>('sync_push', params: any(named: 'params')),
+    ).thenAnswer((inv) {
+      sent = inv.namedArguments[#params] as Map<String, dynamic>;
+      return _FakeBuilder(
+        Future.value({
+          'results': [
+            {'op_id': 'op-1', 'result': 'applied', 'revision': 57},
+          ],
+          'server_time': '2026-09-27T09:13:00Z',
+        }),
+      );
+    });
+    final source = SupabaseSyncRemoteDataSource(_Initializer(client));
+
+    final results = await source.push([op], device);
+    expect(results, [const PushApplied('op-1', revision: 57)]);
+    expect(sent!['p_device_id'], device.deviceId);
+    expect(sent!['p_platform'], 'android');
+    expect(sent!['p_app_version'], '1.0.0');
+    expect(sent!['p_ops'], [
+      {
+        'op_id': 'op-1',
+        'entity_type': 'money_transaction',
+        'op_type': 'upsert',
+        'entity_id': 't1',
+        'base_revision': 42,
+        'payload': {'id': 't1', 'amount_minor': '150000'},
+      },
+    ]);
+  });
+
+  test('parses all five result kinds', () {
+    final results = parsePushResponse({
+      'results': [
+        {'op_id': 'a', 'result': 'applied', 'revision': 57},
+        {'op_id': 'b', 'result': 'already_applied', 'revision': 57.0},
+        {
+          'op_id': 'c',
+          'result': 'conflict',
+          'revision': 55,
+          'server_row': {'id': 't1', 'amount_minor': 150000},
+        },
+        {
+          'op_id': 'd',
+          'result': 'superseded',
+          'revision': 56,
+          'server_row': {'id': 'p1'},
+        },
+        {
+          'op_id': 'e',
+          'result': 'rejected',
+          'reason': 'person_has_transactions',
+          'revision': 9,
+          'server_row': {'id': 'p1'},
+        },
+        {'op_id': 'f', 'result': 'rejected', 'reason': 'missing_parent'},
+        {'op_id': 'g', 'result': 'already_applied'},
+        {
+          'op_id': 'h',
+          'result': 'applied',
+          'revision': 60,
+          'server_row': {'id': 'c1', 'is_archived': true},
+        },
+      ],
+    });
+    expect(results, [
+      const PushApplied('a', revision: 57),
+      const PushApplied('b', revision: 57, alreadyApplied: true),
+      const PushConflict(
+        'c',
+        revision: 55,
+        serverRow: {'id': 't1', 'amount_minor': 150000},
+      ),
+      const PushSuperseded('d', revision: 56, serverRow: {'id': 'p1'}),
+      const PushRejected(
+        'e',
+        reason: 'person_has_transactions',
+        revision: 9,
+        serverRow: {'id': 'p1'},
+      ),
+      const PushRejected('f', reason: 'missing_parent'),
+      // A delete of a row the server never had: no revision.
+      const PushApplied('g', revision: null, alreadyApplied: true),
+      const PushApplied(
+        'h',
+        revision: 60,
+        serverRow: {'id': 'c1', 'is_archived': true},
+      ),
+    ]);
+    expect((results[5] as PushRejected).isTransient, isTrue);
+    expect((results[4] as PushRejected).isTransient, isFalse);
+  });
+
+  test('a malformed response is a permanent bad_response failure', () async {
+    for (final body in <Object?>[
+      null,
+      'nope',
+      {'results': 'x'},
+      {
+        'results': [
+          {'op_id': 'a', 'result': 'teleported'},
+        ],
+      },
+      {
+        'results': [
+          {'op_id': 'a', 'result': 'conflict', 'revision': 1},
+        ],
+      },
+    ]) {
+      final source = SupabaseSyncRemoteDataSource.withRpc((_, _) async => body);
+      await expectLater(
+        source.push([op], device),
+        throwsA(
+          isA<SyncRemoteException>()
+              .having((e) => e.errorCode, 'code', 'bad_response')
+              .having((e) => e.transient, 'transient', isFalse),
+        ),
+        reason: '$body',
+      );
+    }
+  });
+
+  test('error paths are mapped', () async {
+    Future<SyncRemoteException> failWith(Object error) async {
+      final source = SupabaseSyncRemoteDataSource.withRpc(
+        (_, _) async => throw error,
+      );
+      try {
+        await source.push([op], device);
+      } on SyncRemoteException catch (e) {
+        return e;
+      }
+      fail('expected a SyncRemoteException');
+    }
+
+    expect(
+      (await failWith(const SocketException('x'))).failure,
+      isA<NetworkFailure>(),
+    );
+    expect(
+      (await failWith(
+        const PostgrestException(message: 'm', code: '42501'),
+      )).failure,
+      isA<ForbiddenFailure>(),
+    );
+    expect(
+      (await failWith(
+        const PostgrestException(message: 'm', code: 'PGRST301'),
+      )).failure,
+      isA<UnauthorizedFailure>(),
+    );
+    expect(
+      (await failWith(
+        const PostgrestException(message: 'm', code: '503'),
+      )).failure,
+      isA<ServerFailure>(),
+    );
+  });
+
+  test(
+    'the timeout is 20 s, and a timeout is a transient TimeoutFailure',
+    () async {
+      expect(
+        SupabaseSyncRemoteDataSource.withRpc((_, _) async => null).timeout,
+        const Duration(seconds: 20),
+      );
+      final never = Completer<Object?>();
+      final source = SupabaseSyncRemoteDataSource.withRpc(
+        (_, _) => never.future,
+        timeout: const Duration(milliseconds: 20),
+      );
+      await expectLater(
+        source.push([op], device),
+        throwsA(
+          isA<SyncRemoteException>()
+              .having((e) => e.failure, 'failure', isA<TimeoutFailure>())
+              .having((e) => e.transient, 'transient', isTrue),
+        ),
+      );
+    },
+  );
+}

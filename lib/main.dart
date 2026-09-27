@@ -11,6 +11,7 @@ import 'core/di/injection.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
 import 'core/routing/notification_tap_router.dart';
+import 'core/sync/sync_scheduler.dart';
 import 'features/insights_notifications/presentation/notification_recompute_trigger.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/settings/domain/entities/app_theme_mode.dart';
@@ -41,6 +42,9 @@ Future<void> main() async {
       if (!startup.state.isReady) return;
       getIt<NotificationRecomputeTrigger>().start();
       unawaited(getIt<NotificationTapRouter>().start(appRouter));
+      // 021: cloud sync starts only once startup is ready. It initializes
+      // Supabase lazily, and never when unconfigured or switched off.
+      unawaited(getIt<SyncScheduler>().start());
     }),
   );
   // 020: preload the glass shaders (async disk I/O, no GPU work) behind the

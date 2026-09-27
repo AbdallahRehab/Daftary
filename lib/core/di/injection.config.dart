@@ -17,10 +17,11 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:supabase_flutter/supabase_flutter.dart' as _i454;
 
 import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart'
     as _i346;
-import '../../features/currency/data/datasources/currency_dao.dart' as _i972;
+import '../../features/currency/data/datasources/currency_dao.dart' as _i973;
 import '../../features/currency/data/repositories/currency_repository_impl.dart'
     as _i751;
 import '../../features/currency/data/services/drift_currency_usage_checker.dart'
@@ -138,7 +139,7 @@ import '../../features/financial_education/presentation/cubit/savings_rate_calcu
 import '../../features/insights_notifications/data/datasources/in_memory_notification_last_run_store.dart'
     as _i771;
 import '../../features/insights_notifications/data/datasources/notifications_dao.dart'
-    as _i338;
+    as _i339;
 import '../../features/insights_notifications/data/datasources/unavailable_budget_insights_source.dart'
     as _i763;
 import '../../features/insights_notifications/data/datasources/unavailable_savings_insights_source.dart'
@@ -275,9 +276,17 @@ import '../date/app_clock.dart' as _i956;
 import '../device/device_locale_provider.dart' as _i933;
 import '../money/egp_formatter.dart' as _i999;
 import '../routing/notification_tap_router.dart' as _i172;
+import '../sync/backoff_policy.dart' as _i902;
+import '../sync/connectivity_monitor.dart' as _i972;
+import '../sync/local/sync_local_store.dart' as _i338;
 import '../sync/local/sync_outbox.dart' as _i840;
+import '../sync/remote/cloud_auth_data_source.dart' as _i597;
+import '../sync/remote/supabase_initializer.dart' as _i822;
+import '../sync/remote/sync_remote_data_source.dart' as _i753;
+import '../sync/sync_engine.dart' as _i846;
 import '../sync/sync_logger.dart' as _i414;
 import '../sync/sync_mapper_registry.dart' as _i834;
+import '../sync/sync_scheduler.dart' as _i251;
 import 'register_module.dart' as _i291;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -294,7 +303,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i769.FindPossibleDuplicatePerson>(
       () => const _i769.FindPossibleDuplicatePerson(),
     );
-    gh.lazySingleton<_i982.AppDatabase>(() => registerModule.appDatabase);
     gh.lazySingleton<_i999.EgpFormatter>(() => registerModule.egpFormatter);
     gh.lazySingleton<_i281.AssetBundle>(() => registerModule.assetBundle);
     gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
@@ -304,6 +312,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i558.FlutterSecureStorage>(
       () => registerModule.secureStorage,
     );
+    gh.lazySingleton<_i902.BackoffPolicy>(() => _i902.BackoffPolicy());
     gh.lazySingleton<_i346.ConflictResolutionSyncMapper>(
       () => const _i346.ConflictResolutionSyncMapper(),
     );
@@ -340,6 +349,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i371.EvaluateSavingsGoalNotifications>(
       () => const _i371.EvaluateSavingsGoalNotificationsImpl(),
     );
+    gh.lazySingleton<_i822.SupabaseInitializer>(
+      () => _i822.DefaultSupabaseInitializer(gh<_i558.FlutterSecureStorage>()),
+    );
     gh.lazySingleton<_i35.SavingsRateCalculator>(
       () => const _i35.SavingsRateCalculatorImpl(),
     );
@@ -355,6 +367,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i104.NotificationComposer>(
       () => const _i901.LocalizedNotificationComposer(),
     );
+    gh.lazySingleton<_i597.CloudAuthDataSource>(
+      () => _i597.SupabaseCloudAuthDataSource(gh<_i822.SupabaseInitializer>()),
+    );
     gh.lazySingleton<_i956.AppClock>(() => const _i956.SystemAppClock());
     gh.lazySingleton<_i966.CurrencyConverter>(
       () => const _i966.CurrencyConverterImpl(),
@@ -366,21 +381,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i842.SavingsInsightsSource>(
       () => const _i386.UnavailableSavingsInsightsSource(),
     );
-    gh.lazySingleton<_i840.SyncOutbox>(
-      () =>
-          _i840.DriftSyncOutbox(gh<_i982.AppDatabase>(), gh<_i956.AppClock>()),
-    );
     gh.factory<_i897.CalculateSavingsRate>(
       () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
     );
     gh.factory<_i435.CalculateDoublingTime>(
       () => _i435.CalculateDoublingTime(gh<_i466.DoublingTimeCalculator>()),
     );
+    gh.lazySingleton<_i454.SupabaseClient>(
+      () => registerModule.supabaseClient(gh<_i822.SupabaseInitializer>()),
+    );
     gh.lazySingleton<_i445.BundledEducationContentDataSource>(
       () => _i445.BundledEducationContentDataSource(gh<_i281.AssetBundle>()),
     );
-    gh.lazySingleton<_i289.CurrencyUsageChecker>(
-      () => _i941.DriftCurrencyUsageChecker(gh<_i982.AppDatabase>()),
+    gh.lazySingleton<_i753.SyncRemoteDataSource>(
+      () => _i753.SupabaseSyncRemoteDataSource(gh<_i822.SupabaseInitializer>()),
+    );
+    gh.lazySingleton<_i972.ConnectivityMonitor>(
+      () => _i972.ConnectivityPlusMonitor(gh<_i895.Connectivity>()),
     );
     gh.lazySingleton<_i1055.EducationContentRepository>(
       () => _i549.EducationContentRepositoryImpl(
@@ -402,25 +419,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i346.ConflictResolutionSyncMapper>(),
       ),
     );
-    gh.factory<_i972.CurrencyDao>(
-      () => _i972.CurrencyDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i443.FinanceDao>(
-      () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i338.NotificationsDao>(
-      () => _i338.NotificationsDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i360.OnboardingDao>(
-      () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i735.PeopleDao>(() => _i735.PeopleDao(gh<_i982.AppDatabase>()));
-    gh.factory<_i586.SettingsDao>(
-      () => _i586.SettingsDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i684.TransactionsDao>(
-      () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
-    );
     gh.factory<_i896.CompoundGrowthCalculatorCubit>(
       () => _i896.CompoundGrowthCalculatorCubit(
         gh<_i217.CalculateCompoundGrowth>(),
@@ -431,6 +429,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i209.NotificationScheduler>(
       () => _i0.FlutterLocalNotificationsScheduler(
         gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
+    );
+    gh.lazySingleton<_i982.AppDatabase>(
+      () => registerModule.appDatabase(
+        gh<_i834.SyncMapperRegistry>(),
+        gh<_i414.SyncLogger>(),
+        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i480.HandleNotificationTap>(
@@ -444,15 +449,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i172.NotificationTapRouter(
         gh<_i209.NotificationScheduler>(),
         gh<_i480.HandleNotificationTap>(),
-      ),
-    );
-    gh.lazySingleton<_i430.OnboardingRepository>(
-      () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
-    );
-    gh.lazySingleton<_i87.CurrencyRepository>(
-      () => _i751.CurrencyRepositoryImpl(
-        gh<_i972.CurrencyDao>(),
-        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i66.SavingsRateCalculatorCubit>(
@@ -476,6 +472,69 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i805.GetEducationCategories>(
       () =>
           _i805.GetEducationCategories(gh<_i1055.EducationContentRepository>()),
+    );
+    gh.lazySingleton<_i840.SyncOutbox>(
+      () =>
+          _i840.DriftSyncOutbox(gh<_i982.AppDatabase>(), gh<_i956.AppClock>()),
+    );
+    gh.lazySingleton<_i289.CurrencyUsageChecker>(
+      () => _i941.DriftCurrencyUsageChecker(gh<_i982.AppDatabase>()),
+    );
+    gh.lazySingleton<_i338.SyncLocalStore>(
+      () => _i338.DriftSyncLocalStore(
+        gh<_i982.AppDatabase>(),
+        gh<_i956.AppClock>(),
+        gh<_i902.BackoffPolicy>(),
+      ),
+    );
+    gh.factory<_i973.CurrencyDao>(
+      () => _i973.CurrencyDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i443.FinanceDao>(
+      () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i339.NotificationsDao>(
+      () => _i339.NotificationsDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i360.OnboardingDao>(
+      () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i735.PeopleDao>(() => _i735.PeopleDao(gh<_i982.AppDatabase>()));
+    gh.factory<_i586.SettingsDao>(
+      () => _i586.SettingsDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i684.TransactionsDao>(
+      () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i265.ContentLibraryCubit>(
+      () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
+    );
+    gh.lazySingleton<_i430.OnboardingRepository>(
+      () => _i452.OnboardingRepositoryImpl(gh<_i360.OnboardingDao>()),
+    );
+    gh.lazySingleton<_i87.CurrencyRepository>(
+      () => _i751.CurrencyRepositoryImpl(
+        gh<_i973.CurrencyDao>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i274.ArticleCubit>(
+      () => _i274.ArticleCubit(gh<_i481.GetArticle>()),
+    );
+    gh.factory<_i518.CategoryCubit>(
+      () => _i518.CategoryCubit(gh<_i657.GetCategoryArticles>()),
+    );
+    gh.lazySingleton<_i846.SyncEngine>(
+      () => _i846.SyncEngine(
+        gh<_i338.SyncLocalStore>(),
+        gh<_i753.SyncRemoteDataSource>(),
+        gh<_i597.CloudAuthDataSource>(),
+        gh<_i822.SupabaseInitializer>(),
+        gh<_i972.ConnectivityMonitor>(),
+        gh<_i902.BackoffPolicy>(),
+        gh<_i414.SyncLogger>(),
+        gh<_i956.AppClock>(),
+      ),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
       () => _i250.FinanceRepositoryImpl(gh<_i443.FinanceDao>()),
@@ -518,6 +577,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i485.SetExchangeRate>(),
       ),
     );
+    gh.lazySingleton<_i251.SyncScheduler>(
+      () => _i251.SyncScheduler(
+        gh<_i846.SyncEngine>(),
+        gh<_i338.SyncLocalStore>(),
+        gh<_i822.SupabaseInitializer>(),
+        gh<_i972.ConnectivityMonitor>(),
+        gh<_i982.AppDatabase>(),
+        gh<_i902.BackoffPolicy>(),
+        gh<_i414.SyncLogger>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i853.GetCategoryBreakdown>(
       () => _i853.GetCategoryBreakdown(
         gh<_i137.FinanceRepository>(),
@@ -549,15 +620,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i12.NotificationHistoryRepository>(
       () =>
-          _i551.NotificationHistoryRepositoryImpl(gh<_i338.NotificationsDao>()),
+          _i551.NotificationHistoryRepositoryImpl(gh<_i339.NotificationsDao>()),
     );
     gh.lazySingleton<_i162.NotificationPreferenceRepository>(
       () => _i701.NotificationPreferenceRepositoryImpl(
-        gh<_i338.NotificationsDao>(),
+        gh<_i339.NotificationsDao>(),
       ),
-    );
-    gh.factory<_i265.ContentLibraryCubit>(
-      () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
     );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i957.TransactionsRepository>()),
@@ -607,12 +675,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i764.GetExchangeRates>(),
         gh<_i1025.RemoveExchangeRate>(),
       ),
-    );
-    gh.factory<_i274.ArticleCubit>(
-      () => _i274.ArticleCubit(gh<_i481.GetArticle>()),
-    );
-    gh.factory<_i518.CategoryCubit>(
-      () => _i518.CategoryCubit(gh<_i657.GetCategoryArticles>()),
     );
     gh.factory<_i24.CreateCategory>(
       () => _i24.CreateCategory(gh<_i228.CategoryRepository>()),

@@ -7,6 +7,7 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../sync/sync_bootstrap.dart';
 import 'finance_category_seed.dart';
 import 'migrations/v7_currency_support.dart';
 import 'migrations/v9_sync_support.dart';
@@ -282,9 +283,17 @@ class ExchangeRates extends Table {
   ],
 )
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  /// [syncBootstrap] queues the pre-existing data for upload once, in
+  /// `beforeOpen` (021 T063). The app always passes it; tests that are not
+  /// about sync leave it out.
+  AppDatabase({SyncBootstrap? syncBootstrap})
+    : _syncBootstrap = syncBootstrap,
+      super(_openConnection());
 
-  AppDatabase.forTesting(super.executor);
+  AppDatabase.forTesting(super.executor, {SyncBootstrap? syncBootstrap})
+    : _syncBootstrap = syncBootstrap;
+
+  final SyncBootstrap? _syncBootstrap;
 
   @override
   int get schemaVersion => 9;
@@ -342,6 +351,10 @@ class AppDatabase extends _$AppDatabase {
       // every open costs almost nothing and makes the starter set
       // self-healing if an earlier seed was interrupted.
       await seedDefaultFinanceCategories(this);
+      // 021: after the seed, so pristine starter categories are recognized
+      // and skipped. Guarded by `sync_state.bootstrap_enqueued` alone, set
+      // in the same transaction (data-model.md §3).
+      await _syncBootstrap?.enqueueExistingDataIfNeeded(this);
     },
   );
 }

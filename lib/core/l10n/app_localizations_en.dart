@@ -237,6 +237,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnknown => 'Something went wrong. Please try again.';
 
   @override
+  String get errorSyncNetwork =>
+      'No internet connection. Your data is saved on this device and will sync when you\'re back online.';
+
+  @override
+  String get errorSyncTimeout =>
+      'The cloud took too long to respond. We\'ll try again shortly.';
+
+  @override
+  String get errorSyncServer =>
+      'The cloud service is having trouble right now. We\'ll try again shortly.';
+
+  @override
+  String get errorSyncUnauthorized =>
+      'Your cloud session has expired. Sign in again to keep syncing.';
+
+  @override
+  String get errorSyncForbidden =>
+      'This change isn\'t allowed by your cloud account.';
+
+  @override
+  String get errorSyncRejected =>
+      'The cloud couldn\'t accept this change. Review it and try again.';
+
+  @override
+  String get errorSyncConflict =>
+      'This record was changed on another device. Choose which version to keep.';
+
+  @override
   String get peopleListTitle => 'People';
 
   @override

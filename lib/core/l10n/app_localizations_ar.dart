@@ -230,6 +230,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorUnknown => 'حدث خطأ ما. حاول مرة أخرى.';
 
   @override
+  String get errorSyncNetwork =>
+      'لا يوجد اتصال بالإنترنت. بياناتك محفوظة على هذا الجهاز وستتم مزامنتها عند عودة الاتصال.';
+
+  @override
+  String get errorSyncTimeout =>
+      'استغرقت السحابة وقتًا طويلًا للرد. سنحاول مرة أخرى قريبًا.';
+
+  @override
+  String get errorSyncServer =>
+      'تواجه الخدمة السحابية مشكلة الآن. سنحاول مرة أخرى قريبًا.';
+
+  @override
+  String get errorSyncUnauthorized =>
+      'انتهت جلستك السحابية. سجّل الدخول مرة أخرى لمتابعة المزامنة.';
+
+  @override
+  String get errorSyncForbidden => 'حسابك السحابي لا يسمح بهذا التغيير.';
+
+  @override
+  String get errorSyncRejected =>
+      'تعذّر على السحابة قبول هذا التغيير. راجعه وحاول مرة أخرى.';
+
+  @override
+  String get errorSyncConflict =>
+      'تم تغيير هذا السجل على جهاز آخر. اختر النسخة التي تريد الاحتفاظ بها.';
+
+  @override
   String get peopleListTitle => 'الأشخاص';
 
   @override

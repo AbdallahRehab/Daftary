@@ -494,6 +494,48 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get errorUnknown;
 
+  /// No description provided for @errorSyncNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Your data is saved on this device and will sync when you\'re back online.'**
+  String get errorSyncNetwork;
+
+  /// No description provided for @errorSyncTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'The cloud took too long to respond. We\'ll try again shortly.'**
+  String get errorSyncTimeout;
+
+  /// No description provided for @errorSyncServer.
+  ///
+  /// In en, this message translates to:
+  /// **'The cloud service is having trouble right now. We\'ll try again shortly.'**
+  String get errorSyncServer;
+
+  /// No description provided for @errorSyncUnauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cloud session has expired. Sign in again to keep syncing.'**
+  String get errorSyncUnauthorized;
+
+  /// No description provided for @errorSyncForbidden.
+  ///
+  /// In en, this message translates to:
+  /// **'This change isn\'t allowed by your cloud account.'**
+  String get errorSyncForbidden;
+
+  /// No description provided for @errorSyncRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The cloud couldn\'t accept this change. Review it and try again.'**
+  String get errorSyncRejected;
+
+  /// No description provided for @errorSyncConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This record was changed on another device. Choose which version to keep.'**
+  String get errorSyncConflict;
+
   /// No description provided for @peopleListTitle.
   ///
   /// In en, this message translates to:

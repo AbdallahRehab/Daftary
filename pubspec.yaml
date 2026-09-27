@@ -55,6 +55,12 @@ dependencies:
   # 020: optional Liquid Glass UI. Capped below 1.8 because 1.x minors
   # have changed rendering defaults (research.md Decision 1).
   liquid_glass_widgets: '>=1.7.2 <1.8.0'
+  # 021: cloud auth (anonymous + email one-time code), sync RPCs, token refresh.
+  supabase_flutter: ^2.17.2
+  # 021: network-change hint that triggers a sync attempt (never a gate).
+  connectivity_plus: ^7.3.1
+  # 021: secure storage for the cloud session (constitution XII).
+  flutter_secure_storage: ^11.2.0
 
 dev_dependencies:
   flutter_test:

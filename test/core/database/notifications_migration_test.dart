@@ -3,6 +3,8 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'support/v9_fixture.dart';
+
 /// 017 T008 — the v5 -> v6 migration adds `notification_preferences` and
 /// `notification_history` (plus its unique index) and changes nothing else.
 void main() {
@@ -32,6 +34,8 @@ void main() {
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
+    // 021 (v9) additions, so the upgrade runs through v9 for real.
+    dropSyncSupportAdditions(raw);
     raw.execute(
       "INSERT INTO app_settings (id, language_code, theme_mode, updated_at) "
       "VALUES ('singleton', 'ar', 'dark', 300);",
@@ -73,9 +77,12 @@ void main() {
     expect(await db.select(db.financeCategories).get(), hasLength(22));
   });
 
-  test('schemaVersion is 8 (017 bumped it to 6; 018 to 7; 020 to 8)', () {
-    final db = AppDatabase.forTesting(NativeDatabase.memory());
-    addTearDown(db.close);
-    expect(db.schemaVersion, 8);
-  });
+  test(
+    'schemaVersion is 9 (017 bumped it to 6; 018 to 7; 020 to 8; 021 to 9)',
+    () {
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      addTearDown(db.close);
+      expect(db.schemaVersion, 9);
+    },
+  );
 }

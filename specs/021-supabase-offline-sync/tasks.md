@@ -44,7 +44,7 @@ Each task is followed by indented lines:
 
 **Purpose**: Baseline, packages, configuration and platform prerequisites. Maps to plan P0.
 
-- [ ] T001 Record the pre-feature baseline in specs/021-supabase-offline-sync/checklists/baseline.md (new)
+- [X] T001 Record the pre-feature baseline in specs/021-supabase-offline-sync/checklists/baseline.md (new)
   - Deps: none
   - Files: `specs/021-supabase-offline-sync/checklists/baseline.md` (new)
   - Done when:
@@ -55,7 +55,7 @@ Each task is followed by indented lines:
     - The plan §1 facts are confirmed still true: `AppDatabase.schemaVersion == 8`; the 7 DAOs under `lib/features/*/data/datasources/`; no `INTERNET` permission in `android/app/src/main/AndroidManifest.xml`.
   - Validate: this file is the regression reference for T086.
 
-- [ ] T002 Add the three packages to pubspec.yaml and resolve them
+- [X] T002 Add the three packages to pubspec.yaml and resolve them
   - Deps: T001
   - Files: `pubspec.yaml`, `pubspec.lock`
   - Done when these packages are added under `dependencies:`, each with a one-line comment giving its purpose (research Decision 21):
@@ -65,7 +65,7 @@ Each task is followed by indented lines:
     - No other package is added: no rxdart, workmanager, dotenv or logger.
   - Validate: `flutter pub get` succeeds and `flutter analyze` shows no new issues.
 
-- [ ] T003 [P] Add the committed placeholder config config/supabase.example.json (new) and the git-ignore rules in .gitignore
+- [X] T003 [P] Add the committed placeholder config config/supabase.example.json (new) and the git-ignore rules in .gitignore
   - Deps: none
   - Files: `config/supabase.example.json` (new), `.gitignore`
   - Done when:
@@ -73,7 +73,7 @@ Each task is followed by indented lines:
     - `.gitignore` gains `config/*.json`, `!config/supabase.example.json` and `supabase/.temp/`.
   - Validate: `git check-ignore config/supabase.dev.json` succeeds, and `git check-ignore config/supabase.example.json` fails.
 
-- [ ] T004 [P] Create CloudConfig in lib/core/config/cloud_config.dart (new), with a test in test/core/config/cloud_config_test.dart (new)
+- [X] T004 [P] Create CloudConfig in lib/core/config/cloud_config.dart (new), with a test in test/core/config/cloud_config_test.dart (new)
   - Deps: none
   - Files: the two paths above
   - Done when:
@@ -82,7 +82,7 @@ Each task is followed by indented lines:
     - The URL and key appear nowhere else in `lib/`.
   - Validate: a plain `flutter test` (no defines) sees `isConfigured == false`.
 
-- [ ] T005 [P] Add `<uses-permission android:name="android.permission.INTERNET"/>` to android/app/src/main/AndroidManifest.xml
+- [X] T005 [P] Add `<uses-permission android:name="android.permission.INTERNET"/>` to android/app/src/main/AndroidManifest.xml
   - Deps: none
   - Files: `android/app/src/main/AndroidManifest.xml` only. No other Android file changes.
   - Done when: the permission sits next to the existing `POST_NOTIFICATIONS` and `RECEIVE_BOOT_COMPLETED` entries.
@@ -107,7 +107,7 @@ Each task is followed by indented lines:
 
 **⚠️ CRITICAL**: No user-story work starts until this phase is complete.
 
-- [ ] T007 [P] Add the sync failure types in lib/core/error/failure.dart and their messages in lib/core/l10n/failure_message.dart, lib/core/l10n/app_en.arb and lib/core/l10n/app_ar.arb
+- [X] T007 [P] Add the sync failure types in lib/core/error/failure.dart and their messages in lib/core/l10n/failure_message.dart, lib/core/l10n/app_en.arb and lib/core/l10n/app_ar.arb
   - Deps: none
   - Files: the four paths above, plus the regenerated `lib/core/l10n/app_localizations*.dart`
   - Done when:
@@ -115,7 +115,7 @@ Each task is followed by indented lines:
     - Each has a localized, user-friendly message in both Arabic and English.
   - Validate: `flutter gen-l10n`, then `flutter analyze`.
 
-- [ ] T008 [P] Create SyncEntityType in lib/core/sync/sync_entity_type.dart (new)
+- [X] T008 [P] Create SyncEntityType in lib/core/sync/sync_entity_type.dart (new)
   - Deps: none
   - Done when:
     - The enum is `person, moneyTransaction, transactionAudit, financeCategory, financeEntry, exchangeRate, primaryCurrency, conflictResolution`.
@@ -124,7 +124,7 @@ Each task is followed by indented lines:
     - `fromWire` throws on an unknown value.
   - Validate: `test/core/sync/sync_entity_type_test.dart` (new) round-trips every value.
 
-- [ ] T009 [P] Create SyncLogger in lib/core/sync/sync_logger.dart (new), with a test in test/core/sync/sync_logger_test.dart (new)
+- [X] T009 [P] Create SyncLogger in lib/core/sync/sync_logger.dart (new), with a test in test/core/sync/sync_logger_test.dart (new)
   - Deps: none
   - Done when:
     - The `SyncEvent` enum has one value per event, and the enum names map to the logged names: `SYNC_STARTED`, `SYNC_UPLOAD_STARTED`, `SYNC_UPLOAD_SUCCESS`, `SYNC_UPLOAD_FAILED`, `SYNC_DOWNLOAD_STARTED`, `SYNC_DOWNLOAD_SUCCESS`, `SYNC_CONFLICT`, `SYNC_RETRY`, `SYNC_COMPLETED`, `SYNC_ABORTED`, `SYNC_MIGRATION_ENQUEUED` and `SYNC_CURSOR_ADVANCED`.
@@ -133,7 +133,7 @@ Each task is followed by indented lines:
     - It is registered as `@LazySingleton(as: SyncLogger)`.
   - Validate: the test shows that the API cannot accept any key outside the enum, and checks the output format.
 
-- [ ] T010 Define the Drift sync tables in lib/core/database/sync_tables.dart (new)
+- [X] T010 Define the Drift sync tables in lib/core/database/sync_tables.dart (new)
   - Deps: none
   - Done when these tables match data-model.md §2 exactly:
     - `SyncOutbox` has `opId` (PK), `entityType`, `entityId`, `opType` (`upsert` or `delete`), `payloadJson`, `baseRevision` (nullable), `dependsOnRank`, `status` (`pending`, `in_flight`, `failed` or `blocked_conflict`), `attemptCount` (default 0), `lastAttemptAt` (nullable), `nextAttemptAt` (nullable), `errorCode` (nullable, a code only) and `createdAt`. Its indexes are `idx_outbox_ready (status, depends_on_rank, created_at)` and `idx_outbox_entity (entity_type, entity_id, status)`.
@@ -143,7 +143,7 @@ Each task is followed by indented lines:
     - `SyncState` is a single row keyed by `'singleton'`, with `enabled` (default **true**), `noticeShown` (default false), `ownerId` (nullable), `deviceId`, `lastPulledRevision` (default 0), `bootstrapEnqueued` (default false), `initialUploadDone` (default false), `lastAttemptAt`, `lastSuccessAt`, `consecutiveFailures` (default 0) and `lastErrorCode`.
   - Validate: this compiles once registered in T011.
 
-- [ ] T011 Register the sync tables and write the v9 migration in lib/core/database/app_database.dart and lib/core/database/migrations/v9_sync_support.dart (new)
+- [X] T011 Register the sync tables and write the v9 migration in lib/core/database/app_database.dart and lib/core/database/migrations/v9_sync_support.dart (new)
   - Deps: T010
   - Files: the two paths above, plus the regenerated `lib/core/database/app_database.g.dart`
   - Done when:
@@ -154,7 +154,7 @@ Each task is followed by indented lines:
     - It performs **no reads**, following the `beforeOpen` precedent comment. On a fresh install `onCreate` creates everything.
   - Validate: `dart run build_runner build --delete-conflicting-outputs`, then `flutter analyze`.
 
-- [ ] T012 Write the v8→v9 migration test in test/core/database/sync_v9_migration_test.dart (new)
+- [X] T012 Write the v8→v9 migration test in test/core/database/sync_v9_migration_test.dart (new)
   - Deps: T011
   - Done when:
     - The test builds a raw schema-v8 file with a `sqlite3` handle, following the pattern in `test/core/database/migration_currency_support_test.dart`. The file holds people, transactions (including soft-deleted ones), audits, custom and seeded categories, entries, 2 rates and a primary currency.
@@ -163,14 +163,14 @@ Each task is followed by indented lines:
     - A forced failure inside `migrateToSyncSupport` leaves the file at `user_version = 8` with the data intact.
   - Validate: `flutter test test/core/database/sync_v9_migration_test.dart`.
 
-- [ ] T013 [P] Create the watch helper in lib/core/database/watch_tables.dart (new), with a test in test/core/database/watch_tables_test.dart (new)
+- [X] T013 [P] Create the watch helper in lib/core/database/watch_tables.dart (new), with a test in test/core/database/watch_tables_test.dart (new)
   - Deps: T011
   - Done when:
     - `extension WatchTables on AppDatabase { Stream<void> changesOf(Set<TableInfo> tables) }` emits once immediately, then emits (debounced 50 ms) whenever any listed table is written, using `tableUpdates(TableUpdateQuery.onAllTables(...))`.
     - No rxdart is used.
   - Validate: the test inserts into a watched table and gets 1 event, gets 0 events for an unwatched table, and gets 1 event for 5 writes made within 50 ms.
 
-- [ ] T014 [P] Create the outbox coalescer in lib/core/sync/local/outbox_coalescer.dart (new), with a test in test/core/sync/local/outbox_coalescer_test.dart (new)
+- [X] T014 [P] Create the outbox coalescer in lib/core/sync/local/outbox_coalescer.dart (new), with a test in test/core/sync/local/outbox_coalescer_test.dart (new)
   - Deps: T008
   - Done when it is a pure function `coalesce(existingPendingOp?, newOp) → CoalesceDecision`, implementing every row of data-model.md §5:
     - upsert + upsert: replace the payload, keeping `op_id` and `base_revision`.
@@ -181,7 +181,7 @@ Each task is followed by indented lines:
     - It never merges into an operation that is `in_flight`.
   - Validate: one test per row.
 
-- [ ] T015 Create SyncOutbox in lib/core/sync/local/sync_outbox.dart (new), with a test in test/core/sync/local/sync_outbox_test.dart (new)
+- [X] T015 Create SyncOutbox in lib/core/sync/local/sync_outbox.dart (new), with a test in test/core/sync/local/sync_outbox_test.dart (new)
   - Deps: T011, T014
   - Done when:
     - `recordUpsert(type, id, payload)` and `recordDelete(type, id, lastKnownPayload)` must be called *inside* a caller's `_db.transaction`, and assert that a transaction is active.
@@ -193,7 +193,7 @@ Each task is followed by indented lines:
     - Three upserts produce 1 row.
     - Create then delete of a person produces 0 rows.
 
-- [ ] T016 Create the mapper contract and registry in lib/core/sync/sync_mapper_registry.dart (new)
+- [X] T016 Create the mapper contract and registry in lib/core/sync/sync_mapper_registry.dart (new)
   - Deps: T008
   - Done when:
     - It defines `abstract class SyncMapper<Row>` with `type`, `toWire(Row)` and `fromWire(Map, {Row? existingLocal})` (contracts/dart-interfaces.md §2).
@@ -201,21 +201,21 @@ Each task is followed by indented lines:
     - Wire money values are **strings**. Dates are ISO-8601 UTC, and `occurred_on` is `yyyy-MM-dd` in device-local time, together with `tz_offset_minutes`.
   - Validate: compiles, and the registry test in T023 covers it.
 
-- [ ] T017 [P] Create the person mapper in lib/features/people/data/sync/person_sync_mapper.dart (new), with a test in test/features/people/data/sync/person_sync_mapper_test.dart (new)
+- [X] T017 [P] Create the person mapper in lib/features/people/data/sync/person_sync_mapper.dart (new), with a test in test/features/people/data/sync/person_sync_mapper_test.dart (new)
   - Deps: T016
   - Done when:
     - The fields are `id`, `name`, `normalized_name`, `phone_number`, `relationship_tag`, `notes`, `is_archived`, `client_created_at`, `client_updated_at` and `deleted_at`.
     - `avatarPath` is **never** emitted. `fromWire` keeps `existingLocal.avatarPath`, or uses null.
   - Validate: a round trip is lossless apart from `avatarPath`, and a test asserts that the key `avatar_path` is absent.
 
-- [ ] T018 [P] Create the transaction and audit mappers in lib/features/transactions/data/sync/money_transaction_sync_mapper.dart (new) and lib/features/transactions/data/sync/transaction_audit_sync_mapper.dart (new), with tests in test/features/transactions/data/sync/ (new)
+- [X] T018 [P] Create the transaction and audit mappers in lib/features/transactions/data/sync/money_transaction_sync_mapper.dart (new) and lib/features/transactions/data/sync/transaction_audit_sync_mapper.dart (new), with tests in test/features/transactions/data/sync/ (new)
   - Deps: T016
   - Done when:
     - `amount_minor` is a string; `direction` is in {`given`, `received`}; `kind` is in {`initialExchange`, `repayment`}; `occurred_at`, `occurred_on` and `tz_offset_minutes` are derived from `date`; `edited_at` and `deleted_at` are ISO or null; `idempotency_key` and `currency_code` are carried over.
     - The audit mapper carries `change_type` unchanged, with values in {`created`, `edited`, `deleted`}, and `previous_values` as a JSON object.
   - Validate: round trips, including an amount of 9,007,199,254,740,993 minor units (above 2⁵³), which must be lossless.
 
-- [ ] T019 [P] Create the category and entry mappers in lib/features/finance/data/sync/finance_category_sync_mapper.dart (new) and lib/features/finance/data/sync/finance_entry_sync_mapper.dart (new), with tests in test/features/finance/data/sync/ (new)
+- [X] T019 [P] Create the category and entry mappers in lib/features/finance/data/sync/finance_category_sync_mapper.dart (new) and lib/features/finance/data/sync/finance_entry_sync_mapper.dart (new), with tests in test/features/finance/data/sync/ (new)
   - Deps: T016
   - Done when:
     - Categories carry `icon` ↔ `icon_key`, `type` in {`income`, `expense`}, and `is_default`.
@@ -223,21 +223,21 @@ Each task is followed by indented lines:
     - A helper `isPristineSeed(FinanceCategory)` returns true only when the id starts with `seed_` and `name`, `icon` and `isArchived` equal `defaultFinanceCategorySeeds` in `lib/core/database/finance_category_seed.dart`.
   - Validate: round trips, and the pristine-seed cases (renamed, archived, untouched).
 
-- [ ] T020 [P] Create the rate and primary-currency mappers in lib/features/currency/data/sync/exchange_rate_sync_mapper.dart (new) and lib/features/currency/data/sync/primary_currency_sync_mapper.dart (new), with tests in test/features/currency/data/sync/ (new)
+- [X] T020 [P] Create the rate and primary-currency mappers in lib/features/currency/data/sync/exchange_rate_sync_mapper.dart (new) and lib/features/currency/data/sync/primary_currency_sync_mapper.dart (new), with tests in test/features/currency/data/sync/ (new)
   - Deps: T016
   - Done when:
     - Rates carry `rate_micros` as a string, and the id is `rate_<CUR>_<REL>`.
     - Primary currency uses the id `'singleton'` and carries `currency_code`.
   - Validate: round trips.
 
-- [ ] T021 [P] Create the conflict-resolution mapper in lib/features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart (new), with a test in test/features/cloud_sync/data/sync/conflict_resolution_sync_mapper_test.dart (new)
+- [X] T021 [P] Create the conflict-resolution mapper in lib/features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart (new), with a test in test/features/cloud_sync/data/sync/conflict_resolution_sync_mapper_test.dart (new)
   - Deps: T016
   - Done when:
     - `entity_type` is in {`money_transaction`, `finance_entry`}, and `chosen_side` is in {`local`, `server`}.
     - `discarded_values` is a JSON object, and `resolved_at` is ISO.
   - Validate: round trip.
 
-- [ ] T022 Register the third-party singletons in lib/core/di/register_module.dart and regenerate lib/core/di/injection.config.dart
+- [X] T022 Register the third-party singletons in lib/core/di/register_module.dart and regenerate lib/core/di/injection.config.dart
   - Deps: T002, T009, T015, T016, T017, T018, T019, T020, T021
   - Done when:
     - `Connectivity` and `FlutterSecureStorage` are registered as `@lazySingleton`.
@@ -245,7 +245,7 @@ Each task is followed by indented lines:
     - The 8 mappers and the registry are registered.
   - Validate: `dart run build_runner build`, then `flutter test test/` shows no DI resolution errors.
 
-- [ ] T023 Test that the mapper registry resolves every entity type, in test/core/sync/sync_mapper_registry_test.dart (new)
+- [X] T023 Test that the mapper registry resolves every entity type, in test/core/sync/sync_mapper_registry_test.dart (new)
   - Deps: T017–T022
   - Done when: resolving all 8 `SyncEntityType` values through `getIt` succeeds.
   - Validate: `flutter test test/core/sync/`.

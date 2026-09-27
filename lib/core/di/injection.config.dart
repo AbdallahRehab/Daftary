@@ -10,17 +10,25 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:flutter/services.dart' as _i281;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as _i163;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart'
+    as _i346;
 import '../../features/currency/data/datasources/currency_dao.dart' as _i972;
 import '../../features/currency/data/repositories/currency_repository_impl.dart'
     as _i751;
 import '../../features/currency/data/services/drift_currency_usage_checker.dart'
     as _i941;
+import '../../features/currency/data/sync/exchange_rate_sync_mapper.dart'
+    as _i770;
+import '../../features/currency/data/sync/primary_currency_sync_mapper.dart'
+    as _i900;
 import '../../features/currency/domain/ports/currency_usage_checker.dart'
     as _i289;
 import '../../features/currency/domain/repositories/currency_repository.dart'
@@ -52,6 +60,10 @@ import '../../features/finance/data/repositories/category_repository_impl.dart'
     as _i816;
 import '../../features/finance/data/repositories/finance_repository_impl.dart'
     as _i250;
+import '../../features/finance/data/sync/finance_category_sync_mapper.dart'
+    as _i539;
+import '../../features/finance/data/sync/finance_entry_sync_mapper.dart'
+    as _i960;
 import '../../features/finance/domain/repositories/category_repository.dart'
     as _i228;
 import '../../features/finance/domain/repositories/finance_repository.dart'
@@ -124,7 +136,7 @@ import '../../features/financial_education/presentation/cubit/doubling_time_calc
 import '../../features/financial_education/presentation/cubit/savings_rate_calculator_cubit.dart'
     as _i66;
 import '../../features/insights_notifications/data/datasources/in_memory_notification_last_run_store.dart'
-    as _i770;
+    as _i771;
 import '../../features/insights_notifications/data/datasources/notifications_dao.dart'
     as _i338;
 import '../../features/insights_notifications/data/datasources/unavailable_budget_insights_source.dart'
@@ -138,7 +150,7 @@ import '../../features/insights_notifications/data/repositories/notification_pre
 import '../../features/insights_notifications/data/services/flutter_local_notifications_scheduler.dart'
     as _i0;
 import '../../features/insights_notifications/data/services/localized_notification_composer.dart'
-    as _i900;
+    as _i901;
 import '../../features/insights_notifications/data/services/settings_notification_language_provider.dart'
     as _i831;
 import '../../features/insights_notifications/data/services/template_notification_phrasing_service.dart'
@@ -190,6 +202,7 @@ import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart'
 import '../../features/people/data/datasources/people_dao.dart' as _i735;
 import '../../features/people/data/repositories/people_repository_impl.dart'
     as _i1029;
+import '../../features/people/data/sync/person_sync_mapper.dart' as _i334;
 import '../../features/people/domain/repositories/people_repository.dart'
     as _i646;
 import '../../features/people/domain/usecases/archive_person.dart' as _i221;
@@ -228,6 +241,10 @@ import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
     as _i373;
+import '../../features/transactions/data/sync/money_transaction_sync_mapper.dart'
+    as _i315;
+import '../../features/transactions/data/sync/transaction_audit_sync_mapper.dart'
+    as _i92;
 import '../../features/transactions/domain/repositories/transactions_repository.dart'
     as _i957;
 import '../../features/transactions/domain/usecases/add_transaction.dart'
@@ -258,6 +275,9 @@ import '../date/app_clock.dart' as _i956;
 import '../device/device_locale_provider.dart' as _i933;
 import '../money/egp_formatter.dart' as _i999;
 import '../routing/notification_tap_router.dart' as _i172;
+import '../sync/local/sync_outbox.dart' as _i840;
+import '../sync/sync_logger.dart' as _i414;
+import '../sync/sync_mapper_registry.dart' as _i834;
 import 'register_module.dart' as _i291;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -279,6 +299,34 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i281.AssetBundle>(() => registerModule.assetBundle);
     gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
       () => registerModule.localNotificationsPlugin,
+    );
+    gh.lazySingleton<_i895.Connectivity>(() => registerModule.connectivity);
+    gh.lazySingleton<_i558.FlutterSecureStorage>(
+      () => registerModule.secureStorage,
+    );
+    gh.lazySingleton<_i346.ConflictResolutionSyncMapper>(
+      () => const _i346.ConflictResolutionSyncMapper(),
+    );
+    gh.lazySingleton<_i770.ExchangeRateSyncMapper>(
+      () => const _i770.ExchangeRateSyncMapper(),
+    );
+    gh.lazySingleton<_i900.PrimaryCurrencySyncMapper>(
+      () => const _i900.PrimaryCurrencySyncMapper(),
+    );
+    gh.lazySingleton<_i539.FinanceCategorySyncMapper>(
+      () => const _i539.FinanceCategorySyncMapper(),
+    );
+    gh.lazySingleton<_i960.FinanceEntrySyncMapper>(
+      () => const _i960.FinanceEntrySyncMapper(),
+    );
+    gh.lazySingleton<_i334.PersonSyncMapper>(
+      () => const _i334.PersonSyncMapper(),
+    );
+    gh.lazySingleton<_i315.MoneyTransactionSyncMapper>(
+      () => const _i315.MoneyTransactionSyncMapper(),
+    );
+    gh.lazySingleton<_i92.TransactionAuditSyncMapper>(
+      () => const _i92.TransactionAuditSyncMapper(),
     );
     gh.lazySingleton<_i423.BudgetInsightsSource>(
       () => const _i763.UnavailableBudgetInsightsSource(),
@@ -305,17 +353,22 @@ extension GetItInjectableX on _i174.GetIt {
       () => const _i585.CompoundGrowthCalculatorImpl(),
     );
     gh.lazySingleton<_i104.NotificationComposer>(
-      () => const _i900.LocalizedNotificationComposer(),
+      () => const _i901.LocalizedNotificationComposer(),
     );
     gh.lazySingleton<_i956.AppClock>(() => const _i956.SystemAppClock());
     gh.lazySingleton<_i966.CurrencyConverter>(
       () => const _i966.CurrencyConverterImpl(),
     );
+    gh.lazySingleton<_i414.SyncLogger>(() => _i414.DeveloperSyncLogger());
     gh.lazySingleton<_i220.NotificationLastRunStore>(
-      () => _i770.InMemoryNotificationLastRunStore(),
+      () => _i771.InMemoryNotificationLastRunStore(),
     );
     gh.lazySingleton<_i842.SavingsInsightsSource>(
       () => const _i386.UnavailableSavingsInsightsSource(),
+    );
+    gh.lazySingleton<_i840.SyncOutbox>(
+      () =>
+          _i840.DriftSyncOutbox(gh<_i982.AppDatabase>(), gh<_i956.AppClock>()),
     );
     gh.factory<_i897.CalculateSavingsRate>(
       () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
@@ -336,6 +389,18 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i217.CalculateCompoundGrowth>(
       () => _i217.CalculateCompoundGrowth(gh<_i585.CompoundGrowthCalculator>()),
+    );
+    gh.lazySingleton<_i834.SyncMapperRegistry>(
+      () => registerModule.syncMapperRegistry(
+        gh<_i334.PersonSyncMapper>(),
+        gh<_i315.MoneyTransactionSyncMapper>(),
+        gh<_i92.TransactionAuditSyncMapper>(),
+        gh<_i539.FinanceCategorySyncMapper>(),
+        gh<_i960.FinanceEntrySyncMapper>(),
+        gh<_i770.ExchangeRateSyncMapper>(),
+        gh<_i900.PrimaryCurrencySyncMapper>(),
+        gh<_i346.ConflictResolutionSyncMapper>(),
+      ),
     );
     gh.factory<_i972.CurrencyDao>(
       () => _i972.CurrencyDao(gh<_i982.AppDatabase>()),

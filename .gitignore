@@ -46,3 +46,8 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# 021 Offline-First Cloud Sync: real Supabase config files stay local
+# (research.md Decision 12); only the placeholder example is committed.
+config/*.json
+!config/supabase.example.json
+supabase/.temp/

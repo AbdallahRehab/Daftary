@@ -4,6 +4,8 @@
          per flutter_local_notifications' setup requirements. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- 021 Offline-First Cloud Sync: upload/download to Supabase. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"

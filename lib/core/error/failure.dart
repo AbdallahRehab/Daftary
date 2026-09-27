@@ -31,3 +31,52 @@ class NotFoundFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure(super.message);
 }
+
+// 021 Offline-First Cloud Sync — infrastructure failures raised by the sync
+// layer (research.md Decision 20). They surface only through the sync status,
+// never on an existing screen.
+
+/// The device could not reach the cloud (no connection, socket or handshake
+/// error). Transient: retried with backoff.
+class NetworkFailure extends Failure {
+  const NetworkFailure(super.message);
+}
+
+/// A cloud request exceeded its timeout. Transient.
+class TimeoutFailure extends Failure {
+  const TimeoutFailure(super.message);
+}
+
+/// The cloud service failed (5xx, 429, connection-level API errors).
+/// Transient.
+class ServerFailure extends Failure {
+  const ServerFailure(super.message);
+}
+
+/// The cloud session is missing, expired or invalid.
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure(super.message);
+}
+
+/// The cloud refused the request for this owner (row-level security).
+class ForbiddenFailure extends Failure {
+  const ForbiddenFailure(super.message);
+}
+
+/// The cloud rejected an operation by rule. [reason] is a code only (for
+/// example `validation` or `person_has_transactions`), never record content.
+class SyncRejectedFailure extends Failure {
+  const SyncRejectedFailure(this.reason, [String? message])
+    : super(message ?? 'sync rejected: $reason');
+
+  final String reason;
+
+  @override
+  List<Object?> get props => [message, reason];
+}
+
+/// A conflict-resolution action was invalid (for example the conflict no
+/// longer exists). A detected conflict itself is state, not a failure.
+class SyncConflictFailure extends Failure {
+  const SyncConflictFailure(super.message);
+}

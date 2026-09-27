@@ -3,6 +3,8 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'support/v9_fixture.dart';
+
 void main() {
   test('a fresh install starts directly at schemaVersion 3 with the '
       'themeMode column present and nullable', () async {
@@ -78,6 +80,8 @@ void main() {
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
+    // 021 (v9) additions, so the upgrade runs through v9 for real.
+    dropSyncSupportAdditions(raw);
     raw.execute(
       'INSERT INTO app_settings (id, language_code, theme_mode, updated_at) '
       "VALUES ('singleton', 'ar', 'dark', 1);",
@@ -93,8 +97,8 @@ void main() {
       db.appSettings,
     )..where((t) => t.id.equals('singleton'))).getSingle();
 
-    expect(db.schemaVersion, 8);
-    expect(raw.select('PRAGMA user_version').single.values.single, 8);
+    expect(db.schemaVersion, 9);
+    expect(raw.select('PRAGMA user_version').single.values.single, 9);
     final columns = [
       for (final c in raw.select('PRAGMA table_info("app_settings")'))
         c['name'] as String,

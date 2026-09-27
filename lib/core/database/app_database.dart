@@ -9,10 +9,18 @@ import 'package:path_provider/path_provider.dart';
 
 import 'finance_category_seed.dart';
 import 'migrations/v7_currency_support.dart';
+import 'migrations/v9_sync_support.dart';
+import 'sync_tables.dart';
+
+export 'sync_tables.dart';
 
 part 'app_database.g.dart';
 
 @TableIndex(name: 'idx_people_normalized_name', columns: {#normalizedName})
+@TableIndex(
+  name: 'idx_people_archived',
+  columns: {#isArchived, #normalizedName},
+)
 class People extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
@@ -33,6 +41,7 @@ class People extends Table {
   name: 'idx_transactions_person_id',
   columns: {#personId, #deletedAt},
 )
+@TableIndex(name: 'idx_transactions_date', columns: {#date, #deletedAt})
 class MoneyTransactions extends Table {
   TextColumn get id => text()();
   TextColumn get idempotencyKey => text().unique()();
@@ -264,6 +273,12 @@ class ExchangeRates extends Table {
     NotificationHistory,
     PrimaryCurrencySettings,
     ExchangeRates,
+    // 021 Offline-First Cloud Sync (sync_tables.dart).
+    SyncOutboxEntries,
+    SyncRecordMeta,
+    SyncConflicts,
+    ConflictResolutions,
+    SyncState,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -272,7 +287,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -306,6 +321,11 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(appSettings, appSettings.glassEnabled);
         await m.addColumn(appSettings, appSettings.glassTransparency);
         await m.addColumn(appSettings, appSettings.glassIntensity);
+      }
+      if (from < 9) {
+        // 021: the local sync tables, two business indexes and deterministic
+        // exchange-rate ids. No reads (data-model.md §3).
+        await migrateToSyncSupport(this, m);
       }
     },
     beforeOpen: (details) async {

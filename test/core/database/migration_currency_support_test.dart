@@ -3,6 +3,8 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'support/v9_fixture.dart';
+
 /// 018 T020 + T056 — the v6 -> v7 migration (research.md Decision 3,
 /// FR-002/SC-001): every pre-existing amount is labelled `'EGP'`, nothing
 /// else about any row changes, the two new tables (and the unique pair
@@ -36,6 +38,8 @@ void main() {
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_enabled;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_transparency;');
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
+    // 021 (v9) additions, so the upgrade runs through v9 for real.
+    dropSyncSupportAdditions(raw);
     raw.execute('PRAGMA user_version = 6;');
     return raw;
   }
@@ -299,7 +303,7 @@ void main() {
       expect(tx.amountMinorUnits, 25000);
       expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
       expect(await db.select(db.exchangeRates).get(), isEmpty);
-      expect(raw.select('PRAGMA user_version').single.values.single, 8);
+      expect(raw.select('PRAGMA user_version').single.values.single, 9);
     },
   );
 
@@ -341,13 +345,13 @@ void main() {
         "AND name = 'idx_exchange_rates_pair'",
       );
       expect(index.single['sql'] as String, contains('UNIQUE'));
-      expect(raw.select('PRAGMA user_version').single.values.single, 8);
+      expect(raw.select('PRAGMA user_version').single.values.single, 9);
     });
 
-    test('schemaVersion is 8 (018 bumped it to 7; 020 to 8)', () {
+    test('schemaVersion is 9 (018 bumped it to 7; 020 to 8; 021 to 9)', () {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
-      expect(db.schemaVersion, 8);
+      expect(db.schemaVersion, 9);
     });
   });
 }

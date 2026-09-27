@@ -9,6 +9,13 @@ extension FailureMessage on AppLocalizations {
     ValidationFailure() => errorValidation,
     NotFoundFailure() => errorNotFound,
     CacheFailure() => errorCache,
+    NetworkFailure() => errorSyncNetwork,
+    TimeoutFailure() => errorSyncTimeout,
+    ServerFailure() => errorSyncServer,
+    UnauthorizedFailure() => errorSyncUnauthorized,
+    ForbiddenFailure() => errorSyncForbidden,
+    SyncRejectedFailure() => errorSyncRejected,
+    SyncConflictFailure() => errorSyncConflict,
     _ => errorUnknown,
   };
 }

@@ -1130,4 +1130,225 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get syncConflictResolveFailed =>
       'Couldn\'t resolve the conflict. Try again.';
+
+  @override
+  String get syncSettingsTitle => 'Cloud backup & sync';
+
+  @override
+  String get syncStatusUpToDate => 'Up to date';
+
+  @override
+  String syncStatusPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes waiting to sync',
+      one: '1 change waiting to sync',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncStatusSyncing => 'Syncing…';
+
+  @override
+  String get syncStatusOffline =>
+      'Offline. Changes are saved on this device and will sync later.';
+
+  @override
+  String get syncStatusRetrying =>
+      'Couldn\'t reach the cloud. Trying again soon.';
+
+  @override
+  String get syncStatusFailed => 'Some changes couldn\'t sync';
+
+  @override
+  String get syncStatusConflict => 'Some records need your review';
+
+  @override
+  String get syncStatusAuthRequired =>
+      'Your cloud session has ended. Sync will resume once you sign in again.';
+
+  @override
+  String get syncStatusOff => 'Sync is off. Your data stays on this device.';
+
+  @override
+  String get syncStatusUnavailable =>
+      'Cloud backup isn\'t available in this version.';
+
+  @override
+  String get syncStatusUnreadable => 'Some cloud data couldn\'t be read';
+
+  @override
+  String get syncProblemUnreadableMessage =>
+      'Some data from your other devices couldn\'t be read by this version of the app. Nothing was lost. Update the app and syncing will continue.';
+
+  @override
+  String syncLastSynced(String dateTime) {
+    return 'Last synced $dateTime';
+  }
+
+  @override
+  String get syncNeverSynced => 'Not synced yet';
+
+  @override
+  String get syncCountPending => 'Waiting';
+
+  @override
+  String get syncCountFailed => 'Failed';
+
+  @override
+  String get syncCountConflicts => 'Conflicts';
+
+  @override
+  String get syncNowButton => 'Sync now';
+
+  @override
+  String get syncEnabledTitle => 'Back up and sync';
+
+  @override
+  String get syncEnabledSubtitle =>
+      'Keep a copy of your data in the cloud and on your other phones.';
+
+  @override
+  String get syncAccountSectionTitle => 'Account';
+
+  @override
+  String get syncLinkEmailTitle => 'Link email';
+
+  @override
+  String get syncLinkEmailSubtitle =>
+      'Use your email to restore your data on a new phone.';
+
+  @override
+  String get syncSignInTitle => 'Sign in to existing account';
+
+  @override
+  String get syncSignInSubtitle =>
+      'Use the data already backed up with your email.';
+
+  @override
+  String syncLinkedAs(String email) {
+    return 'Linked to $email';
+  }
+
+  @override
+  String get syncConflictsSectionTitle => 'Needs your review';
+
+  @override
+  String syncConflictItemSubtitle(String date) {
+    return 'Changed on two devices · $date';
+  }
+
+  @override
+  String get syncFailedSectionTitle => 'Couldn\'t sync';
+
+  @override
+  String get syncRetryButton => 'Retry';
+
+  @override
+  String get syncKindPerson => 'Person';
+
+  @override
+  String get syncKindTransaction => 'Transaction';
+
+  @override
+  String get syncKindTransactionHistory => 'Transaction history';
+
+  @override
+  String get syncKindFinanceCategory => 'Category';
+
+  @override
+  String get syncKindFinanceEntry => 'Finance entry';
+
+  @override
+  String get syncKindExchangeRate => 'Exchange rate';
+
+  @override
+  String get syncKindPrimaryCurrency => 'Primary currency';
+
+  @override
+  String get syncKindConflictResolution => 'Conflict choice';
+
+  @override
+  String get syncFailedReasonPersonHasTransactions =>
+      'This person has transactions on another device.';
+
+  @override
+  String get syncFailedReasonCategoryTypeMismatch =>
+      'This category\'s type doesn\'t match its entries.';
+
+  @override
+  String get syncFailedReasonInvalid =>
+      'The cloud couldn\'t accept this change.';
+
+  @override
+  String get syncFailedReasonOther => 'This change couldn\'t be sent.';
+
+  @override
+  String get syncEmailLinkTitle => 'Link your email';
+
+  @override
+  String get syncEmailSignInTitle => 'Sign in with email';
+
+  @override
+  String get syncEmailLinkMessage =>
+      'We\'ll send a code to your email. Your data stays as it is.';
+
+  @override
+  String get syncEmailSignInMessage =>
+      'We\'ll send a code to your email. The data on this phone will be added to that account.';
+
+  @override
+  String get syncEmailFieldLabel => 'Email';
+
+  @override
+  String get syncEmailSendCode => 'Send code';
+
+  @override
+  String syncEmailCodeSent(String email) {
+    return 'We sent a code to $email.';
+  }
+
+  @override
+  String get syncEmailCodeFieldLabel => 'Code';
+
+  @override
+  String get syncEmailConfirm => 'Confirm';
+
+  @override
+  String get syncEmailLinkSuccess => 'Email linked';
+
+  @override
+  String get syncEmailSignInSuccess => 'Signed in. Your data will sync now.';
+
+  @override
+  String get syncEmailErrorInvalidCode => 'That code is wrong or has expired.';
+
+  @override
+  String get syncEmailErrorInvalidEmail => 'Enter a valid email address.';
+
+  @override
+  String get syncEmailErrorEmailInUse =>
+      'This email already has an account. Use \"Sign in to existing account\" instead.';
+
+  @override
+  String get syncEmailErrorAccountNotFound => 'No account uses this email.';
+
+  @override
+  String get syncEmailErrorRateLimited =>
+      'Too many attempts. Wait a minute and try again.';
+
+  @override
+  String get syncNoticeTitle => 'Your data can now be backed up';
+
+  @override
+  String get syncNoticeMessage =>
+      'Daftary now keeps a private copy of your records in the cloud, so you can restore them on a new phone. You can turn this off anytime in Settings.';
+
+  @override
+  String get syncNoticeOpenSettings => 'Sync settings';
+
+  @override
+  String get syncNoticeDismiss => 'Got it';
 }

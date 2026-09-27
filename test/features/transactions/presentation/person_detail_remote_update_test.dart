@@ -5,7 +5,6 @@ import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/sync/sync_entity_type.dart';
-import 'package:daftary/features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart';
 import 'package:daftary/features/cloud_sync/domain/usecases/resolve_sync_conflict.dart';
 import 'package:daftary/features/cloud_sync/domain/usecases/watch_sync_conflicts.dart';
 import 'package:daftary/features/cloud_sync/presentation/cubit/sync_conflicts_cubit.dart';
@@ -55,7 +54,7 @@ void main() {
       db,
       getConversionContext: context,
     );
-    final cloudSync = CloudSyncRepositoryImpl(db, h.resolver);
+    final cloudSync = h.cloudSync();
 
     getIt
       ..registerFactory<PersonDetailCubit>(

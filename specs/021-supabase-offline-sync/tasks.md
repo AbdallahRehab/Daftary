@@ -822,7 +822,7 @@ Each task is followed by indented lines:
 
 **Independent Test**: Each of the states up to date, pending, syncing, offline, failed, conflict and auth-required renders correctly in `ar` and `en`, and "Sync now" never starts a second cycle.
 
-- [ ] T076 [US6] Finish the remaining CloudSyncRepository methods in lib/features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart, with a test in test/features/cloud_sync/data/cloud_sync_repository_impl_test.dart (new)
+- [X] T076 [US6] Finish the remaining CloudSyncRepository methods in lib/features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart, with a test in test/features/cloud_sync/data/cloud_sync_repository_impl_test.dart (new)
   - Deps: T073, T060
   - Done when:
     - `watchStatus` combines `SyncScheduler.status` (mapping the core `SchedulerState` to the domain `SyncRuntimeStatus`), `SyncLocalStore.watchCounts` and `sync_state`.
@@ -834,13 +834,13 @@ Each task is followed by indented lines:
     - Errors come back as `Either`.
   - Validate: the unit tests pass.
 
-- [ ] T077 [P] [US6] Create seven use cases in lib/features/cloud_sync/domain/usecases/ (new)
+- [X] T077 [P] [US6] Create seven use cases in lib/features/cloud_sync/domain/usecases/ (new)
   - Deps: T073
   - Files: `watch_sync_status.dart`, `sync_now.dart`, `set_sync_enabled.dart`, `acknowledge_sync_notice.dart`, `retry_failed_sync.dart`, `request_email_code.dart`, `confirm_email_code.dart`
   - Done when: each is `@injectable` and delegates to `CloudSyncRepository`.
   - Validate: `flutter analyze`.
 
-- [ ] T078 [US6] Add email linking and sign-in to lib/core/sync/remote/cloud_auth_data_source.dart
+- [X] T078 [US6] Add email linking and sign-in to lib/core/sync/remote/cloud_auth_data_source.dart
   - Deps: T053
   - Done when:
     - `requestEmailLinkCode(email)` calls `updateUser(UserAttributes(email:))`, and `confirmEmailLink` calls `verifyOTP(type: OtpType.emailChange)`, keeping the same uid.
@@ -848,7 +848,7 @@ Each task is followed by indented lines:
     - The raw email is never logged.
   - Validate: unit tests with a mocked `GoTrueClient` cover code sent, invalid code, and uid retained or changed.
 
-- [ ] T079 [US6] Create three Cubits in lib/features/cloud_sync/presentation/cubit/
+- [X] T079 [US6] Create three Cubits in lib/features/cloud_sync/presentation/cubit/
   - Deps: T076, T077, T078
   - Files: `sync_settings_cubit.dart` and state, `email_link_cubit.dart` and state, `sync_notice_cubit.dart` and state (all new), with tests in `test/features/cloud_sync/presentation/cubit/` (new)
   - Done when:
@@ -857,7 +857,7 @@ Each task is followed by indented lines:
     - `SyncSettingsCubit` disables "Sync now" while the status is `syncing`.
   - Validate: `bloc_test` for every transition.
 
-- [ ] T080 [US6] Create the sync settings page and link it from Settings
+- [X] T080 [US6] Create the sync settings page and link it from Settings
   - Deps: T079
   - Files:
     - `lib/features/cloud_sync/presentation/pages/sync_settings_page.dart` (new)
@@ -875,7 +875,7 @@ Each task is followed by indented lines:
     - No other Settings section changes.
   - Validate: `test/features/cloud_sync/presentation/sync_settings_page_test.dart` (new) renders each status in `ar` and `en`.
 
-- [ ] T081 [US6] Create the one-time sync notice
+- [X] T081 [US6] Create the one-time sync notice
   - Deps: T079
   - Files: `lib/features/cloud_sync/presentation/widgets/sync_notice_sheet.dart` (new), `lib/main.dart` (or `lib/core/routing/main_shell.dart` for the host), and the ARB files
   - Done when: after startup is ready and only when `CloudConfig.isConfigured && !noticeShown`, a dismissible sheet explains backup and links to `/settings/sync`. Dismissing it calls `AcknowledgeSyncNotice`.
@@ -898,7 +898,7 @@ Each task is followed by indented lines:
     - Every FR-061 question is answered by a single query: total given, total received, net, outstanding, count, monthly, yearly, average, people count, active relationships.
     - No view is visible to `anon`.
 
-- [ ] T083 [P] Review observability and add a log-scrub test in test/core/sync/sync_log_scrub_test.dart (new)
+- [X] T083 [P] Review observability and add a log-scrub test in test/core/sync/sync_log_scrub_test.dart (new)
   - Deps: T069, T075
   - Done when: a full engine run against `FakeSyncRemote`, with a spy `SyncLogger`, emits every required event and no field values containing amounts, names, notes, emails or tokens.
   - Validate: the test passes.

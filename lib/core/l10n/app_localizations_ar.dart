@@ -1120,4 +1120,228 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncConflictResolveFailed => 'تعذّر حل التعارض. حاول مرة أخرى.';
+
+  @override
+  String get syncSettingsTitle => 'النسخ الاحتياطي والمزامنة';
+
+  @override
+  String get syncStatusUpToDate => 'كل شيء محدَّث';
+
+  @override
+  String syncStatusPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تغيير في انتظار المزامنة',
+      few: '$count تغييرات في انتظار المزامنة',
+      two: 'تغييران في انتظار المزامنة',
+      one: 'تغيير واحد في انتظار المزامنة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get syncStatusSyncing => 'جارٍ المزامنة…';
+
+  @override
+  String get syncStatusOffline =>
+      'غير متصل. التغييرات محفوظة على هذا الجهاز وستتم مزامنتها لاحقًا.';
+
+  @override
+  String get syncStatusRetrying =>
+      'تعذّر الوصول إلى السحابة. ستتم المحاولة مرة أخرى قريبًا.';
+
+  @override
+  String get syncStatusFailed => 'تعذّرت مزامنة بعض التغييرات';
+
+  @override
+  String get syncStatusConflict => 'بعض السجلات تحتاج إلى مراجعتك';
+
+  @override
+  String get syncStatusAuthRequired =>
+      'انتهت جلستك السحابية. ستُستأنف المزامنة بعد تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get syncStatusOff => 'المزامنة متوقفة. تبقى بياناتك على هذا الجهاز.';
+
+  @override
+  String get syncStatusUnavailable =>
+      'النسخ الاحتياطي السحابي غير متاح في هذا الإصدار.';
+
+  @override
+  String get syncStatusUnreadable => 'تعذّرت قراءة بعض بيانات السحابة';
+
+  @override
+  String get syncProblemUnreadableMessage =>
+      'تعذّر على هذا الإصدار من التطبيق قراءة بعض البيانات القادمة من أجهزتك الأخرى. لم يُفقد أي شيء. حدّث التطبيق وستستمر المزامنة.';
+
+  @override
+  String syncLastSynced(String dateTime) {
+    return 'آخر مزامنة $dateTime';
+  }
+
+  @override
+  String get syncNeverSynced => 'لم تتم المزامنة بعد';
+
+  @override
+  String get syncCountPending => 'في الانتظار';
+
+  @override
+  String get syncCountFailed => 'فشلت';
+
+  @override
+  String get syncCountConflicts => 'تعارضات';
+
+  @override
+  String get syncNowButton => 'زامن الآن';
+
+  @override
+  String get syncEnabledTitle => 'النسخ الاحتياطي والمزامنة';
+
+  @override
+  String get syncEnabledSubtitle =>
+      'احتفظ بنسخة من بياناتك في السحابة وعلى هواتفك الأخرى.';
+
+  @override
+  String get syncAccountSectionTitle => 'الحساب';
+
+  @override
+  String get syncLinkEmailTitle => 'ربط البريد الإلكتروني';
+
+  @override
+  String get syncLinkEmailSubtitle =>
+      'استخدم بريدك الإلكتروني لاستعادة بياناتك على هاتف جديد.';
+
+  @override
+  String get syncSignInTitle => 'تسجيل الدخول إلى حساب موجود';
+
+  @override
+  String get syncSignInSubtitle =>
+      'استخدم البيانات المحفوظة مسبقًا ببريدك الإلكتروني.';
+
+  @override
+  String syncLinkedAs(String email) {
+    return 'مرتبط بـ $email';
+  }
+
+  @override
+  String get syncConflictsSectionTitle => 'تحتاج إلى مراجعتك';
+
+  @override
+  String syncConflictItemSubtitle(String date) {
+    return 'تم التعديل على جهازين · $date';
+  }
+
+  @override
+  String get syncFailedSectionTitle => 'تعذّرت المزامنة';
+
+  @override
+  String get syncRetryButton => 'إعادة المحاولة';
+
+  @override
+  String get syncKindPerson => 'شخص';
+
+  @override
+  String get syncKindTransaction => 'معاملة';
+
+  @override
+  String get syncKindTransactionHistory => 'سجل المعاملة';
+
+  @override
+  String get syncKindFinanceCategory => 'فئة';
+
+  @override
+  String get syncKindFinanceEntry => 'قيد مالي';
+
+  @override
+  String get syncKindExchangeRate => 'سعر صرف';
+
+  @override
+  String get syncKindPrimaryCurrency => 'العملة الأساسية';
+
+  @override
+  String get syncKindConflictResolution => 'اختيار تعارض';
+
+  @override
+  String get syncFailedReasonPersonHasTransactions =>
+      'لهذا الشخص معاملات على جهاز آخر.';
+
+  @override
+  String get syncFailedReasonCategoryTypeMismatch =>
+      'نوع هذه الفئة لا يطابق قيودها.';
+
+  @override
+  String get syncFailedReasonInvalid => 'تعذّر على السحابة قبول هذا التغيير.';
+
+  @override
+  String get syncFailedReasonOther => 'تعذّر إرسال هذا التغيير.';
+
+  @override
+  String get syncEmailLinkTitle => 'ربط بريدك الإلكتروني';
+
+  @override
+  String get syncEmailSignInTitle => 'تسجيل الدخول بالبريد الإلكتروني';
+
+  @override
+  String get syncEmailLinkMessage =>
+      'سنرسل رمزًا إلى بريدك الإلكتروني. تبقى بياناتك كما هي.';
+
+  @override
+  String get syncEmailSignInMessage =>
+      'سنرسل رمزًا إلى بريدك الإلكتروني. ستُضاف البيانات الموجودة على هذا الهاتف إلى ذلك الحساب.';
+
+  @override
+  String get syncEmailFieldLabel => 'البريد الإلكتروني';
+
+  @override
+  String get syncEmailSendCode => 'إرسال الرمز';
+
+  @override
+  String syncEmailCodeSent(String email) {
+    return 'أرسلنا رمزًا إلى $email.';
+  }
+
+  @override
+  String get syncEmailCodeFieldLabel => 'الرمز';
+
+  @override
+  String get syncEmailConfirm => 'تأكيد';
+
+  @override
+  String get syncEmailLinkSuccess => 'تم ربط البريد الإلكتروني';
+
+  @override
+  String get syncEmailSignInSuccess =>
+      'تم تسجيل الدخول. ستتم مزامنة بياناتك الآن.';
+
+  @override
+  String get syncEmailErrorInvalidCode => 'الرمز غير صحيح أو انتهت صلاحيته.';
+
+  @override
+  String get syncEmailErrorInvalidEmail => 'أدخل بريدًا إلكترونيًا صحيحًا.';
+
+  @override
+  String get syncEmailErrorEmailInUse =>
+      'لهذا البريد حساب بالفعل. استخدم \"تسجيل الدخول إلى حساب موجود\" بدلًا من ذلك.';
+
+  @override
+  String get syncEmailErrorAccountNotFound =>
+      'لا يوجد حساب بهذا البريد الإلكتروني.';
+
+  @override
+  String get syncEmailErrorRateLimited =>
+      'محاولات كثيرة. انتظر دقيقة ثم حاول مرة أخرى.';
+
+  @override
+  String get syncNoticeTitle => 'يمكنك الآن نسخ بياناتك احتياطيًا';
+
+  @override
+  String get syncNoticeMessage =>
+      'يحتفظ دفتري الآن بنسخة خاصة من سجلاتك في السحابة، لتتمكن من استعادتها على هاتف جديد. يمكنك إيقاف ذلك في أي وقت من الإعدادات.';
+
+  @override
+  String get syncNoticeOpenSettings => 'إعدادات المزامنة';
+
+  @override
+  String get syncNoticeDismiss => 'حسنًا';
 }

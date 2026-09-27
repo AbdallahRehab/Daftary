@@ -16,6 +16,13 @@ extension FailureMessage on AppLocalizations {
     ForbiddenFailure() => errorSyncForbidden,
     SyncRejectedFailure() => errorSyncRejected,
     SyncConflictFailure() => errorSyncConflict,
+    EmailAuthFailure(:final reason) => switch (reason) {
+      EmailAuthErrorReason.invalidCode => syncEmailErrorInvalidCode,
+      EmailAuthErrorReason.invalidEmail => syncEmailErrorInvalidEmail,
+      EmailAuthErrorReason.emailInUse => syncEmailErrorEmailInUse,
+      EmailAuthErrorReason.accountNotFound => syncEmailErrorAccountNotFound,
+      EmailAuthErrorReason.rateLimited => syncEmailErrorRateLimited,
+    },
     _ => errorUnknown,
   };
 }

@@ -18,7 +18,7 @@ void main() {
 
   setUp(() {
     h = SyncHarness();
-    repository = CloudSyncRepositoryImpl(h.db, h.resolver);
+    repository = h.cloudSync();
   });
 
   tearDown(() => h.close());
@@ -106,17 +106,6 @@ void main() {
         ConflictChoice.keepMine,
       )).getLeft().toNullable(),
       isA<ValidationFailure>(),
-    );
-  });
-
-  test('the T076 methods are not implemented yet', () async {
-    expect(
-      (await repository.syncNow()).getLeft().toNullable(),
-      isA<UnknownFailure>(),
-    );
-    expect(
-      (await repository.setEnabled(true)).getLeft().toNullable(),
-      isA<UnknownFailure>(),
     );
   });
 }

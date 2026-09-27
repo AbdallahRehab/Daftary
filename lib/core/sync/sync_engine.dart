@@ -255,7 +255,15 @@ class SyncEngine {
       } on SyncRemoteException catch (error) {
         return _callFailed(error, const [], started, upload: false);
       }
-      await _applier.applyPage(page);
+      try {
+        await _applier.applyPage(page);
+      } on Object catch (error) {
+        if (!_isUnreadableRow(error)) rethrow;
+        // The whole page is rolled back and the cursor stays: nothing is
+        // skipped or lost. Record it so the Settings page can say so,
+        // instead of failing silently every cycle.
+        return _unreadableRow(started);
+      }
       _logger.event(
         SyncEvent.downloadSuccess,
         fields: {SyncLogField.count: page.changes.length},
@@ -269,6 +277,44 @@ class SyncEngine {
       if (!page.hasMore) break;
     }
     return null;
+  }
+
+  /// Errors the wire mappers throw for a row they cannot parse.
+  static bool _isUnreadableRow(Object error) =>
+      error is FormatException ||
+      error is TypeError ||
+      error is ArgumentError ||
+      error is StateError;
+
+  /// A pulled page could not be applied because a row is unreadable: back
+  /// off like a failed call, with a distinct code.
+  Future<SyncCycleOutcome> _unreadableRow(DateTime started) async {
+    const code = SyncErrorCode.downloadUnreadableRow;
+    final failures = (await _store.readState()).consecutiveFailures + 1;
+    final delay = _backoff.delayFor(failures - 1);
+    await _store.writeState(
+      (s) =>
+          s.copyWith(consecutiveFailures: failures, lastErrorCode: Value(code)),
+    );
+    _logger.event(
+      SyncEvent.retryScheduled,
+      fields: {
+        SyncLogField.errorCode: code,
+        SyncLogField.delayMs: delay.inMilliseconds,
+      },
+    );
+    _logger.event(
+      SyncEvent.syncAborted,
+      fields: {
+        SyncLogField.errorCode: code,
+        SyncLogField.durationMs: _elapsedMs(started),
+      },
+    );
+    return SyncCycleOutcome(
+      SyncCycleResult.retryScheduled,
+      retryAfter: delay,
+      errorCode: code,
+    );
   }
 
   /// T065: once everything queued at upgrade (and since) has reached the

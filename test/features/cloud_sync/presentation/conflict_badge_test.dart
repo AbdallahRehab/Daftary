@@ -134,6 +134,32 @@ void main() {
     }
   });
 
+  group('tap target', () {
+    testWidgets('is at least 48x48 while the pill stays compact, and a tap '
+        'on the pill or its margin fires exactly once', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        wrap(Center(child: ConflictBadge(onTap: () => taps++))),
+      );
+      final target = tester.getSize(find.byKey(ConflictBadge.tapTargetKey));
+      final pill = tester.getSize(find.byKey(ConflictBadge.rootKey));
+      expect(target.width, greaterThanOrEqualTo(48));
+      expect(target.height, greaterThanOrEqualTo(48));
+      expect(pill.height, lessThan(48));
+
+      await tester.tap(find.byKey(ConflictBadge.rootKey));
+      await tester.pumpAndSettle();
+      expect(taps, 1);
+
+      // Just inside the target's top edge: outside the pill.
+      final rect = tester.getRect(find.byKey(ConflictBadge.tapTargetKey));
+      await tester.tapAt(Offset(rect.center.dx, rect.top + 2));
+      await tester.pumpAndSettle();
+      expect(taps, 2);
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+    });
+  });
+
   group('sheet', () {
     for (final (locale, mine, theirs, keepMine) in [
       ('en', 'This device', 'Other device', 'Keep mine'),

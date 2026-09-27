@@ -8,6 +8,8 @@ import '../../../../core/design_system/glass/app_scaffold.dart';
 import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../cloud_sync/presentation/pages/sync_settings_page.dart';
+import '../../../cloud_sync/presentation/widgets/sync_status_subtitle.dart';
 import '../../../currency/presentation/pages/currency_settings_page.dart';
 import '../../../insights_notifications/presentation/pages/notification_settings_page.dart';
 import '../../domain/entities/app_language.dart';
@@ -128,6 +130,21 @@ class SettingsPage extends StatelessWidget {
                   subtitle: Text(l10n.currencySettingsEntrySubtitle),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push(CurrencyRoutes.settings),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Cloud backup and sync entry point (021 US6): its own
+              // screen, subtitled with the live sync status.
+              _SettingsSection(
+                icon: Icons.cloud_outlined,
+                title: l10n.syncSettingsTitle,
+                child: ListTile(
+                  key: const Key('settings_sync_entry'),
+                  leading: const Icon(Icons.cloud_sync_outlined),
+                  title: Text(l10n.syncSettingsTitle),
+                  subtitle: const SyncStatusSubtitle(),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(SyncSettingsRoutes.settings),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

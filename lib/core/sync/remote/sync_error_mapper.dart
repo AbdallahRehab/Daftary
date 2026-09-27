@@ -42,6 +42,11 @@ abstract final class SyncErrorCode {
   static const badResponse = 'bad_response';
   static const invalidRequest = 'invalid_request';
   static const unknown = 'unknown';
+
+  /// A pulled row the local mappers cannot read (a newer server schema or
+  /// a corrupt row). The page is not applied, the cursor stays, and the
+  /// Settings sync page tells the user; the row is never skipped.
+  static const downloadUnreadableRow = 'download_unreadable_row';
 }
 
 /// 021: maps every exception a cloud call can throw to a [Failure] plus a

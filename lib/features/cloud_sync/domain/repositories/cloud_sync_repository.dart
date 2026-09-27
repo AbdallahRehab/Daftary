@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
 import '../entities/sync_conflict_item.dart';
+import '../entities/sync_failed_item.dart';
 import '../entities/sync_status.dart';
 
 /// 021: the only sync API the Presentation layer sees
@@ -21,6 +22,9 @@ abstract class CloudSyncRepository {
 
   /// Queues every failed item again.
   Future<Either<Failure, Unit>> retryFailed();
+
+  /// The changes the cloud refused, oldest first (the Settings list).
+  Stream<List<SyncFailedItem>> watchFailedItems();
 
   /// The open conflicts, oldest first.
   Stream<List<SyncConflictItem>> watchConflicts();

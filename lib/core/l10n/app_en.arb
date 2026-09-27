@@ -649,5 +649,282 @@
   "syncConflictResolveFailed": "Couldn't resolve the conflict. Try again.",
   "@syncConflictResolveFailed": {
     "description": "Error shown when resolving a sync conflict failed."
+  },
+  "syncSettingsTitle": "Cloud backup & sync",
+  "@syncSettingsTitle": {
+    "description": "Title of the cloud backup and sync settings page and its Settings entry."
+  },
+  "syncStatusUpToDate": "Up to date",
+  "@syncStatusUpToDate": {
+    "description": "Sync status: everything is synced."
+  },
+  "syncStatusPending": "{count, plural, =1{1 change waiting to sync} other{{count} changes waiting to sync}}",
+  "@syncStatusPending": {
+    "description": "Sync status: changes not yet uploaded.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncStatusSyncing": "Syncing…",
+  "@syncStatusSyncing": {
+    "description": "Sync status: a sync is running."
+  },
+  "syncStatusOffline": "Offline. Changes are saved on this device and will sync later.",
+  "@syncStatusOffline": {
+    "description": "Sync status: no network."
+  },
+  "syncStatusRetrying": "Couldn't reach the cloud. Trying again soon.",
+  "@syncStatusRetrying": {
+    "description": "Sync status: waiting before retrying."
+  },
+  "syncStatusFailed": "Some changes couldn't sync",
+  "@syncStatusFailed": {
+    "description": "Sync status: some changes were refused."
+  },
+  "syncStatusConflict": "Some records need your review",
+  "@syncStatusConflict": {
+    "description": "Sync status: open conflicts."
+  },
+  "syncStatusAuthRequired": "Your cloud session has ended. Sync will resume once you sign in again.",
+  "@syncStatusAuthRequired": {
+    "description": "Sync status: the session is invalid."
+  },
+  "syncStatusOff": "Sync is off. Your data stays on this device.",
+  "@syncStatusOff": {
+    "description": "Sync status: switched off by the user."
+  },
+  "syncStatusUnavailable": "Cloud backup isn't available in this version.",
+  "@syncStatusUnavailable": {
+    "description": "Sync status: this build has no cloud configuration."
+  },
+  "syncStatusUnreadable": "Some cloud data couldn't be read",
+  "@syncStatusUnreadable": {
+    "description": "Sync status: a downloaded record could not be read."
+  },
+  "syncProblemUnreadableMessage": "Some data from your other devices couldn't be read by this version of the app. Nothing was lost. Update the app and syncing will continue.",
+  "@syncProblemUnreadableMessage": {
+    "description": "Explanation shown when a downloaded record cannot be read."
+  },
+  "syncLastSynced": "Last synced {dateTime}",
+  "@syncLastSynced": {
+    "description": "When the last successful sync finished.",
+    "placeholders": {
+      "dateTime": {
+        "type": "String"
+      }
+    }
+  },
+  "syncNeverSynced": "Not synced yet",
+  "@syncNeverSynced": {
+    "description": "Shown when no sync has succeeded yet."
+  },
+  "syncCountPending": "Waiting",
+  "@syncCountPending": {
+    "description": "Label of the pending-changes count."
+  },
+  "syncCountFailed": "Failed",
+  "@syncCountFailed": {
+    "description": "Label of the failed-changes count."
+  },
+  "syncCountConflicts": "Conflicts",
+  "@syncCountConflicts": {
+    "description": "Label of the open-conflicts count."
+  },
+  "syncNowButton": "Sync now",
+  "@syncNowButton": {
+    "description": "Button that starts a sync."
+  },
+  "syncEnabledTitle": "Back up and sync",
+  "@syncEnabledTitle": {
+    "description": "Title of the switch that turns sync on or off."
+  },
+  "syncEnabledSubtitle": "Keep a copy of your data in the cloud and on your other phones.",
+  "@syncEnabledSubtitle": {
+    "description": "Subtitle of the sync switch."
+  },
+  "syncAccountSectionTitle": "Account",
+  "@syncAccountSectionTitle": {
+    "description": "Title of the account section on the sync page."
+  },
+  "syncLinkEmailTitle": "Link email",
+  "@syncLinkEmailTitle": {
+    "description": "Action to link an email to the cloud account."
+  },
+  "syncLinkEmailSubtitle": "Use your email to restore your data on a new phone.",
+  "@syncLinkEmailSubtitle": {
+    "description": "Subtitle of the link email action."
+  },
+  "syncSignInTitle": "Sign in to existing account",
+  "@syncSignInTitle": {
+    "description": "Action to sign in to an existing cloud account."
+  },
+  "syncSignInSubtitle": "Use the data already backed up with your email.",
+  "@syncSignInSubtitle": {
+    "description": "Subtitle of the sign in action."
+  },
+  "syncLinkedAs": "Linked to {email}",
+  "@syncLinkedAs": {
+    "description": "Shows the masked linked email, for example a***@g***.com.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "syncConflictsSectionTitle": "Needs your review",
+  "@syncConflictsSectionTitle": {
+    "description": "Title of the list of open conflicts."
+  },
+  "syncConflictItemSubtitle": "Changed on two devices · {date}",
+  "@syncConflictItemSubtitle": {
+    "description": "Subtitle of an open conflict row.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "syncFailedSectionTitle": "Couldn't sync",
+  "@syncFailedSectionTitle": {
+    "description": "Title of the list of failed changes."
+  },
+  "syncRetryButton": "Retry",
+  "@syncRetryButton": {
+    "description": "Button that queues the failed changes again."
+  },
+  "syncKindPerson": "Person",
+  "@syncKindPerson": {
+    "description": "Record type label."
+  },
+  "syncKindTransaction": "Transaction",
+  "@syncKindTransaction": {
+    "description": "Record type label."
+  },
+  "syncKindTransactionHistory": "Transaction history",
+  "@syncKindTransactionHistory": {
+    "description": "Record type label."
+  },
+  "syncKindFinanceCategory": "Category",
+  "@syncKindFinanceCategory": {
+    "description": "Record type label."
+  },
+  "syncKindFinanceEntry": "Finance entry",
+  "@syncKindFinanceEntry": {
+    "description": "Record type label."
+  },
+  "syncKindExchangeRate": "Exchange rate",
+  "@syncKindExchangeRate": {
+    "description": "Record type label."
+  },
+  "syncKindPrimaryCurrency": "Primary currency",
+  "@syncKindPrimaryCurrency": {
+    "description": "Record type label."
+  },
+  "syncKindConflictResolution": "Conflict choice",
+  "@syncKindConflictResolution": {
+    "description": "Record type label."
+  },
+  "syncFailedReasonPersonHasTransactions": "This person has transactions on another device.",
+  "@syncFailedReasonPersonHasTransactions": {
+    "description": "Why a change was refused."
+  },
+  "syncFailedReasonCategoryTypeMismatch": "This category's type doesn't match its entries.",
+  "@syncFailedReasonCategoryTypeMismatch": {
+    "description": "Why a change was refused."
+  },
+  "syncFailedReasonInvalid": "The cloud couldn't accept this change.",
+  "@syncFailedReasonInvalid": {
+    "description": "Why a change was refused."
+  },
+  "syncFailedReasonOther": "This change couldn't be sent.",
+  "@syncFailedReasonOther": {
+    "description": "Why a change was refused."
+  },
+  "syncEmailLinkTitle": "Link your email",
+  "@syncEmailLinkTitle": {
+    "description": "Title of the email link sheet."
+  },
+  "syncEmailSignInTitle": "Sign in with email",
+  "@syncEmailSignInTitle": {
+    "description": "Title of the email sign-in sheet."
+  },
+  "syncEmailLinkMessage": "We'll send a code to your email. Your data stays as it is.",
+  "@syncEmailLinkMessage": {
+    "description": "Explains linking an email."
+  },
+  "syncEmailSignInMessage": "We'll send a code to your email. The data on this phone will be added to that account.",
+  "@syncEmailSignInMessage": {
+    "description": "Explains signing in to an existing account."
+  },
+  "syncEmailFieldLabel": "Email",
+  "@syncEmailFieldLabel": {
+    "description": "Label of the email field."
+  },
+  "syncEmailSendCode": "Send code",
+  "@syncEmailSendCode": {
+    "description": "Button that sends the one-time code."
+  },
+  "syncEmailCodeSent": "We sent a code to {email}.",
+  "@syncEmailCodeSent": {
+    "description": "Shown after the code was sent; the email is masked.",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "syncEmailCodeFieldLabel": "Code",
+  "@syncEmailCodeFieldLabel": {
+    "description": "Label of the one-time code field."
+  },
+  "syncEmailConfirm": "Confirm",
+  "@syncEmailConfirm": {
+    "description": "Button that confirms the one-time code."
+  },
+  "syncEmailLinkSuccess": "Email linked",
+  "@syncEmailLinkSuccess": {
+    "description": "Shown after linking an email."
+  },
+  "syncEmailSignInSuccess": "Signed in. Your data will sync now.",
+  "@syncEmailSignInSuccess": {
+    "description": "Shown after signing in."
+  },
+  "syncEmailErrorInvalidCode": "That code is wrong or has expired.",
+  "@syncEmailErrorInvalidCode": {
+    "description": "Email code error."
+  },
+  "syncEmailErrorInvalidEmail": "Enter a valid email address.",
+  "@syncEmailErrorInvalidEmail": {
+    "description": "Email code error."
+  },
+  "syncEmailErrorEmailInUse": "This email already has an account. Use \"Sign in to existing account\" instead.",
+  "@syncEmailErrorEmailInUse": {
+    "description": "Email code error."
+  },
+  "syncEmailErrorAccountNotFound": "No account uses this email.",
+  "@syncEmailErrorAccountNotFound": {
+    "description": "Email code error."
+  },
+  "syncEmailErrorRateLimited": "Too many attempts. Wait a minute and try again.",
+  "@syncEmailErrorRateLimited": {
+    "description": "Email code error."
+  },
+  "syncNoticeTitle": "Your data can now be backed up",
+  "@syncNoticeTitle": {
+    "description": "Title of the one-time sync notice."
+  },
+  "syncNoticeMessage": "Daftary now keeps a private copy of your records in the cloud, so you can restore them on a new phone. You can turn this off anytime in Settings.",
+  "@syncNoticeMessage": {
+    "description": "Body of the one-time sync notice."
+  },
+  "syncNoticeOpenSettings": "Sync settings",
+  "@syncNoticeOpenSettings": {
+    "description": "Button in the notice that opens the sync settings."
+  },
+  "syncNoticeDismiss": "Got it",
+  "@syncNoticeDismiss": {
+    "description": "Button that dismisses the sync notice."
   }
 }

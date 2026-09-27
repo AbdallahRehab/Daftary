@@ -128,4 +128,20 @@ void main() {
     expect(entry, findsOneWidget);
     expect(find.text('Primary currency and exchange rates'), findsOneWidget);
   });
+
+  testWidgets('shows the "Cloud backup & sync" entry (021)', (tester) async {
+    when(() => cubit.state).thenReturn(const SettingsState());
+    await tester.pumpWidget(wrap());
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('settings_sync_entry')),
+      200,
+    );
+    expect(find.text('Cloud backup & sync'), findsWidgets);
+    // This test build has no cloud configuration.
+    expect(
+      find.text("Cloud backup isn't available in this version."),
+      findsOne,
+    );
+  });
 }

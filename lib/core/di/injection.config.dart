@@ -25,12 +25,33 @@ import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart
     as _i346;
 import '../../features/cloud_sync/domain/repositories/cloud_sync_repository.dart'
     as _i948;
+import '../../features/cloud_sync/domain/usecases/acknowledge_sync_notice.dart'
+    as _i305;
+import '../../features/cloud_sync/domain/usecases/confirm_email_code.dart'
+    as _i394;
+import '../../features/cloud_sync/domain/usecases/request_email_code.dart'
+    as _i861;
 import '../../features/cloud_sync/domain/usecases/resolve_sync_conflict.dart'
     as _i1030;
+import '../../features/cloud_sync/domain/usecases/retry_failed_sync.dart'
+    as _i259;
+import '../../features/cloud_sync/domain/usecases/set_sync_enabled.dart'
+    as _i676;
+import '../../features/cloud_sync/domain/usecases/sync_now.dart' as _i399;
+import '../../features/cloud_sync/domain/usecases/watch_failed_sync_items.dart'
+    as _i389;
 import '../../features/cloud_sync/domain/usecases/watch_sync_conflicts.dart'
     as _i1038;
+import '../../features/cloud_sync/domain/usecases/watch_sync_status.dart'
+    as _i178;
+import '../../features/cloud_sync/presentation/cubit/email_link_cubit.dart'
+    as _i1005;
 import '../../features/cloud_sync/presentation/cubit/sync_conflicts_cubit.dart'
     as _i273;
+import '../../features/cloud_sync/presentation/cubit/sync_notice_cubit.dart'
+    as _i738;
+import '../../features/cloud_sync/presentation/cubit/sync_settings_cubit.dart'
+    as _i323;
 import '../../features/currency/data/datasources/currency_dao.dart' as _i973;
 import '../../features/currency/data/repositories/currency_repository_impl.dart'
     as _i751;
@@ -298,7 +319,7 @@ import '../../features/transactions/domain/usecases/watch_person_balances.dart'
 import '../../features/transactions/domain/usecases/watch_person_history.dart'
     as _i210;
 import '../../features/transactions/presentation/cubit/overview_cubit.dart'
-    as _i305;
+    as _i306;
 import '../../features/transactions/presentation/cubit/person_detail_cubit.dart'
     as _i992;
 import '../../features/transactions/presentation/cubit/repayment_form_cubit.dart'
@@ -813,12 +834,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i542.WatchFinanceHistory>(
       () => _i542.WatchFinanceHistory(gh<_i137.FinanceRepository>()),
     );
-    gh.lazySingleton<_i948.CloudSyncRepository>(
-      () => _i241.CloudSyncRepositoryImpl(
-        gh<_i982.AppDatabase>(),
-        gh<_i219.ConflictResolver>(),
-      ),
-    );
     gh.factory<_i1061.PrimaryCurrencyCubit>(
       () => _i1061.PrimaryCurrencyCubit(
         gh<_i1028.WatchPrimaryCurrency>(),
@@ -828,6 +843,16 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i203.SetNotificationPreferences>(
       () => _i203.SetNotificationPreferences(
         gh<_i162.NotificationPreferenceRepository>(),
+      ),
+    );
+    gh.lazySingleton<_i948.CloudSyncRepository>(
+      () => _i241.CloudSyncRepositoryImpl(
+        gh<_i982.AppDatabase>(),
+        gh<_i219.ConflictResolver>(),
+        gh<_i251.SyncScheduler>(),
+        gh<_i339.SyncLocalStore>(),
+        gh<_i597.CloudAuthDataSource>(),
+        gh<_i822.SupabaseInitializer>(),
       ),
     );
     gh.lazySingleton<_i1003.NotificationLanguageProvider>(
@@ -942,11 +967,35 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i577.ChangeGlassAppearance>(),
       ),
     );
+    gh.factory<_i305.AcknowledgeSyncNotice>(
+      () => _i305.AcknowledgeSyncNotice(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i394.ConfirmEmailCode>(
+      () => _i394.ConfirmEmailCode(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i861.RequestEmailCode>(
+      () => _i861.RequestEmailCode(gh<_i948.CloudSyncRepository>()),
+    );
     gh.factory<_i1030.ResolveSyncConflict>(
       () => _i1030.ResolveSyncConflict(gh<_i948.CloudSyncRepository>()),
     );
+    gh.factory<_i259.RetryFailedSync>(
+      () => _i259.RetryFailedSync(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i676.SetSyncEnabled>(
+      () => _i676.SetSyncEnabled(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i399.SyncNow>(
+      () => _i399.SyncNow(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i389.WatchFailedSyncItems>(
+      () => _i389.WatchFailedSyncItems(gh<_i948.CloudSyncRepository>()),
+    );
     gh.factory<_i1038.WatchSyncConflicts>(
       () => _i1038.WatchSyncConflicts(gh<_i948.CloudSyncRepository>()),
+    );
+    gh.factory<_i178.WatchSyncStatus>(
+      () => _i178.WatchSyncStatus(gh<_i948.CloudSyncRepository>()),
     );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
       (personId, _) => _i34.RepaymentFormCubit(
@@ -955,8 +1004,8 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
-    gh.factory<_i305.OverviewCubit>(
-      () => _i305.OverviewCubit(gh<_i615.WatchOverview>()),
+    gh.factory<_i306.OverviewCubit>(
+      () => _i306.OverviewCubit(gh<_i615.WatchOverview>()),
     );
     gh.factory<_i273.SyncConflictsCubit>(
       () => _i273.SyncConflictsCubit(
@@ -977,6 +1026,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1.GetCategories>(),
         gh<_i999.EgpFormatter>(),
         gh<_i903.GetPrimaryCurrency>(),
+      ),
+    );
+    gh.factory<_i1005.EmailLinkCubit>(
+      () => _i1005.EmailLinkCubit(
+        gh<_i861.RequestEmailCode>(),
+        gh<_i394.ConfirmEmailCode>(),
+      ),
+    );
+    gh.factory<_i738.SyncNoticeCubit>(
+      () => _i738.SyncNoticeCubit(
+        gh<_i178.WatchSyncStatus>(),
+        gh<_i305.AcknowledgeSyncNotice>(),
       ),
     );
     gh.factory<_i593.TransactionFormCubit>(
@@ -1028,6 +1089,15 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i39.NotificationSettingsCubit(
         gh<_i203.SetNotificationPreferences>(),
         gh<_i639.RequestNotificationPermission>(),
+      ),
+    );
+    gh.factory<_i323.SyncSettingsCubit>(
+      () => _i323.SyncSettingsCubit(
+        gh<_i178.WatchSyncStatus>(),
+        gh<_i389.WatchFailedSyncItems>(),
+        gh<_i399.SyncNow>(),
+        gh<_i676.SetSyncEnabled>(),
+        gh<_i259.RetryFailedSync>(),
       ),
     );
     return this;

@@ -2059,6 +2059,384 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t resolve the conflict. Try again.'**
   String get syncConflictResolveFailed;
+
+  /// Title of the cloud backup and sync settings page and its Settings entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup & sync'**
+  String get syncSettingsTitle;
+
+  /// Sync status: everything is synced.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get syncStatusUpToDate;
+
+  /// Sync status: changes not yet uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 change waiting to sync} other{{count} changes waiting to sync}}'**
+  String syncStatusPending(int count);
+
+  /// Sync status: a sync is running.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get syncStatusSyncing;
+
+  /// Sync status: no network.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline. Changes are saved on this device and will sync later.'**
+  String get syncStatusOffline;
+
+  /// Sync status: waiting before retrying.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reach the cloud. Trying again soon.'**
+  String get syncStatusRetrying;
+
+  /// Sync status: some changes were refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Some changes couldn\'t sync'**
+  String get syncStatusFailed;
+
+  /// Sync status: open conflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Some records need your review'**
+  String get syncStatusConflict;
+
+  /// Sync status: the session is invalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cloud session has ended. Sync will resume once you sign in again.'**
+  String get syncStatusAuthRequired;
+
+  /// Sync status: switched off by the user.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is off. Your data stays on this device.'**
+  String get syncStatusOff;
+
+  /// Sync status: this build has no cloud configuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup isn\'t available in this version.'**
+  String get syncStatusUnavailable;
+
+  /// Sync status: a downloaded record could not be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Some cloud data couldn\'t be read'**
+  String get syncStatusUnreadable;
+
+  /// Explanation shown when a downloaded record cannot be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Some data from your other devices couldn\'t be read by this version of the app. Nothing was lost. Update the app and syncing will continue.'**
+  String get syncProblemUnreadableMessage;
+
+  /// When the last successful sync finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced {dateTime}'**
+  String syncLastSynced(String dateTime);
+
+  /// Shown when no sync has succeeded yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced yet'**
+  String get syncNeverSynced;
+
+  /// Label of the pending-changes count.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get syncCountPending;
+
+  /// Label of the failed-changes count.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get syncCountFailed;
+
+  /// Label of the open-conflicts count.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicts'**
+  String get syncCountConflicts;
+
+  /// Button that starts a sync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync now'**
+  String get syncNowButton;
+
+  /// Title of the switch that turns sync on or off.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up and sync'**
+  String get syncEnabledTitle;
+
+  /// Subtitle of the sync switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a copy of your data in the cloud and on your other phones.'**
+  String get syncEnabledSubtitle;
+
+  /// Title of the account section on the sync page.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get syncAccountSectionTitle;
+
+  /// Action to link an email to the cloud account.
+  ///
+  /// In en, this message translates to:
+  /// **'Link email'**
+  String get syncLinkEmailTitle;
+
+  /// Subtitle of the link email action.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your email to restore your data on a new phone.'**
+  String get syncLinkEmailSubtitle;
+
+  /// Action to sign in to an existing cloud account.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to existing account'**
+  String get syncSignInTitle;
+
+  /// Subtitle of the sign in action.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the data already backed up with your email.'**
+  String get syncSignInSubtitle;
+
+  /// Shows the masked linked email, for example a***@g***.com.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked to {email}'**
+  String syncLinkedAs(String email);
+
+  /// Title of the list of open conflicts.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs your review'**
+  String get syncConflictsSectionTitle;
+
+  /// Subtitle of an open conflict row.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed on two devices · {date}'**
+  String syncConflictItemSubtitle(String date);
+
+  /// Title of the list of failed changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sync'**
+  String get syncFailedSectionTitle;
+
+  /// Button that queues the failed changes again.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get syncRetryButton;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get syncKindPerson;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction'**
+  String get syncKindTransaction;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction history'**
+  String get syncKindTransactionHistory;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get syncKindFinanceCategory;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance entry'**
+  String get syncKindFinanceEntry;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Exchange rate'**
+  String get syncKindExchangeRate;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary currency'**
+  String get syncKindPrimaryCurrency;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict choice'**
+  String get syncKindConflictResolution;
+
+  /// Why a change was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'This person has transactions on another device.'**
+  String get syncFailedReasonPersonHasTransactions;
+
+  /// Why a change was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'This category\'s type doesn\'t match its entries.'**
+  String get syncFailedReasonCategoryTypeMismatch;
+
+  /// Why a change was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'The cloud couldn\'t accept this change.'**
+  String get syncFailedReasonInvalid;
+
+  /// Why a change was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'This change couldn\'t be sent.'**
+  String get syncFailedReasonOther;
+
+  /// Title of the email link sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Link your email'**
+  String get syncEmailLinkTitle;
+
+  /// Title of the email sign-in sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with email'**
+  String get syncEmailSignInTitle;
+
+  /// Explains linking an email.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a code to your email. Your data stays as it is.'**
+  String get syncEmailLinkMessage;
+
+  /// Explains signing in to an existing account.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll send a code to your email. The data on this phone will be added to that account.'**
+  String get syncEmailSignInMessage;
+
+  /// Label of the email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get syncEmailFieldLabel;
+
+  /// Button that sends the one-time code.
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get syncEmailSendCode;
+
+  /// Shown after the code was sent; the email is masked.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a code to {email}.'**
+  String syncEmailCodeSent(String email);
+
+  /// Label of the one-time code field.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get syncEmailCodeFieldLabel;
+
+  /// Button that confirms the one-time code.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get syncEmailConfirm;
+
+  /// Shown after linking an email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email linked'**
+  String get syncEmailLinkSuccess;
+
+  /// Shown after signing in.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in. Your data will sync now.'**
+  String get syncEmailSignInSuccess;
+
+  /// Email code error.
+  ///
+  /// In en, this message translates to:
+  /// **'That code is wrong or has expired.'**
+  String get syncEmailErrorInvalidCode;
+
+  /// Email code error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get syncEmailErrorInvalidEmail;
+
+  /// Email code error.
+  ///
+  /// In en, this message translates to:
+  /// **'This email already has an account. Use \"Sign in to existing account\" instead.'**
+  String get syncEmailErrorEmailInUse;
+
+  /// Email code error.
+  ///
+  /// In en, this message translates to:
+  /// **'No account uses this email.'**
+  String get syncEmailErrorAccountNotFound;
+
+  /// Email code error.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Wait a minute and try again.'**
+  String get syncEmailErrorRateLimited;
+
+  /// Title of the one-time sync notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data can now be backed up'**
+  String get syncNoticeTitle;
+
+  /// Body of the one-time sync notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary now keeps a private copy of your records in the cloud, so you can restore them on a new phone. You can turn this off anytime in Settings.'**
+  String get syncNoticeMessage;
+
+  /// Button in the notice that opens the sync settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync settings'**
+  String get syncNoticeOpenSettings;
+
+  /// Button that dismisses the sync notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get syncNoticeDismiss;
 }
 
 class _AppLocalizationsDelegate

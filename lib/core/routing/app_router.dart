@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/cloud_sync/presentation/pages/sync_settings_page.dart';
 import '../../features/currency/presentation/pages/currency_settings_page.dart';
 import '../../features/currency/presentation/pages/exchange_rate_form_page.dart';
 import '../../features/currency/presentation/pages/exchange_rate_list_page.dart';
@@ -189,6 +190,11 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: NotificationSettingsRoutes.settings,
               builder: (context, state) => const NotificationSettingsPage(),
+            ),
+            // Cloud backup and sync (021 US6).
+            GoRoute(
+              path: SyncSettingsRoutes.settings,
+              builder: (context, state) => const SyncSettingsPage(),
             ),
             // Currency settings (018): primary currency and the manual
             // exchange rates. `new` is declared before `:code/edit`; the

@@ -71,6 +71,36 @@ void main() {
     await restarted.close();
   });
 
+  test('an unreadable pulled row is recorded, never skipped: the cursor '
+      'stays and the cycle backs off with a distinct code', () async {
+    h.remote.seedServerRow(SyncEntityType.person, personRow('p1'));
+    h.remote.seedServerRow(SyncEntityType.person, {
+      ...personRow('p2'),
+      'name': 42,
+    });
+    final outcome = await h.engine.runCycle();
+    expect(outcome.result, SyncCycleResult.retryScheduled);
+    expect(outcome.errorCode, 'download_unreadable_row');
+    final state = await h.state();
+    expect(state.lastErrorCode, 'download_unreadable_row');
+    expect(state.lastPulledRevision, 0);
+    expect(state.consecutiveFailures, 1);
+    expect(state.lastSuccessAt, isNull);
+    // The page was rolled back as a whole: p1 waits with p2.
+    expect(await people(), isEmpty);
+    final aborted = h.logger.events.lastWhere(
+      (e) => e.$1 == SyncEvent.syncAborted,
+    );
+    expect(aborted.$2[SyncLogField.errorCode], 'download_unreadable_row');
+
+    // Once the server row is readable again, the next cycle applies both
+    // and clears the error.
+    h.remote.seedServerRow(SyncEntityType.person, personRow('p2'));
+    expect(await h.engine.runCycle(), SyncCycleOutcome.completed);
+    expect(await people(), hasLength(2));
+    expect((await h.state()).lastErrorCode, isNull);
+  });
+
   test('a pull failure backs off and keeps the cursor', () async {
     h.remote.seedServerRow(SyncEntityType.person, personRow('p1'));
     h.remote.failNextPulls(1);

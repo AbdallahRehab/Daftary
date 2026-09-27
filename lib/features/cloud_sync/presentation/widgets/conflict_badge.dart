@@ -12,6 +12,10 @@ class ConflictBadge extends StatelessWidget {
   const ConflictBadge({required this.onTap, super.key});
 
   static const rootKey = Key('conflict_badge');
+  static const tapTargetKey = Key('conflict_badge_tap_target');
+
+  /// The minimum touch target, in logical pixels.
+  static const double minTapTarget = 48;
 
   final VoidCallback onTap;
 
@@ -25,32 +29,54 @@ class ConflictBadge extends StatelessWidget {
       excludeSemantics: true,
       child: Tooltip(
         message: l10n.syncConflictBadgeSemantics,
-        child: Material(
-          key: rootKey,
-          color: colorScheme.errorContainer,
-          borderRadius: BorderRadius.circular(AppRadius.pill),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(AppRadius.pill),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.sync_problem,
-                    size: 14,
-                    color: colorScheme.onErrorContainer,
-                  ),
-                  const SizedBox(width: 2),
-                  Text(
-                    l10n.syncConflictBadgeLabel,
-                    style: AppTypography.label.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onErrorContainer,
+        // The pill stays compact; the tap target around it is at least
+        // 48x48 dp (Material and WCAG touch-target size). A tap on the pill
+        // itself is taken by its InkWell (with the ripple), a tap on the
+        // margin by this detector — never both.
+        child: GestureDetector(
+          key: tapTargetKey,
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: minTapTarget,
+              minHeight: minTapTarget,
+            ),
+            child: Center(
+              widthFactor: 1,
+              heightFactor: 1,
+              child: Material(
+                key: rootKey,
+                color: colorScheme.errorContainer,
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.sync_problem,
+                          size: 14,
+                          color: colorScheme.onErrorContainer,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          l10n.syncConflictBadgeLabel,
+                          style: AppTypography.label.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onErrorContainer,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),

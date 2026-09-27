@@ -79,8 +79,13 @@ class FakeCloudAuth implements CloudAuthDataSource {
   @override
   String? get currentUserId => uid;
 
+  String? email;
+
   @override
-  bool get isAnonymous => true;
+  bool get isAnonymous => email == null;
+
+  @override
+  String? get currentEmail => email;
 
   @override
   Future<String> ensureSession() async {

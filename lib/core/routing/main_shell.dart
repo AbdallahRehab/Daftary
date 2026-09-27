@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../design_system/glass/app_navigation_bar.dart';
 import '../design_system/glass/app_scaffold.dart';
 import '../design_system/tokens.dart';
+import '../../features/cloud_sync/presentation/widgets/sync_notice_sheet.dart';
 import '../l10n/app_localizations.dart';
 
 /// The app shell for the three top-level sections: People (home),
@@ -32,7 +33,13 @@ class MainShell extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      // 021 T081: the shell mounts only once startup is ready, so the
+      // one-time sync notice is hosted here. The host is always the root,
+      // so its state survives a layout switch.
+      SyncNoticeHost(child: Builder(builder: _buildShell));
+
+  Widget _buildShell(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final destinations = [
       (Icons.people_outline, Icons.people, l10n.peopleListTitle),

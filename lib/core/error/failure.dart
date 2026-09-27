@@ -80,3 +80,32 @@ class SyncRejectedFailure extends Failure {
 class SyncConflictFailure extends Failure {
   const SyncConflictFailure(super.message);
 }
+
+/// Why an email code request or confirmation was refused (021 US6).
+enum EmailAuthErrorReason {
+  /// The code is wrong or has expired.
+  invalidCode,
+
+  /// The address is not a valid email.
+  invalidEmail,
+
+  /// The address already belongs to another account.
+  emailInUse,
+
+  /// No account uses this address (signing in to an existing account).
+  accountNotFound,
+
+  /// Too many codes were requested; wait before asking again.
+  rateLimited,
+}
+
+/// The cloud refused an email code step. [reason] is a code only; the email
+/// itself is never part of a failure.
+class EmailAuthFailure extends Failure {
+  const EmailAuthFailure(this.reason) : super('email auth refused');
+
+  final EmailAuthErrorReason reason;
+
+  @override
+  List<Object?> get props => [message, reason];
+}

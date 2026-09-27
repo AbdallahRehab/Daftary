@@ -20,7 +20,10 @@ import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dar
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/money_transaction_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/transaction_audit_sync_mapper.dart';
+import 'package:daftary/core/sync/sync_scheduler.dart';
+import 'package:daftary/features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart';
 import 'package:drift/native.dart';
+import 'package:flutter_test/flutter_test.dart' show Fake;
 
 import 'fake_sync_remote.dart';
 import 'sync_test_doubles.dart';
@@ -145,6 +148,18 @@ class SyncHarness {
   static const _person = PersonSyncMapper();
   static const _txn = MoneyTransactionSyncMapper();
   static const _audit = TransactionAuditSyncMapper();
+
+  /// The cloud_sync repository on this harness. Without a [scheduler] it
+  /// serves the conflict methods only.
+  CloudSyncRepositoryImpl cloudSync({SyncScheduler? scheduler}) =>
+      CloudSyncRepositoryImpl(
+        db,
+        resolver,
+        scheduler ?? NoSyncScheduler(),
+        store,
+        auth,
+        supabase,
+      );
 
   /// The session now belongs to [uid], on this device and on the server.
   void switchAccount(String uid) {
@@ -315,3 +330,6 @@ class SyncHarness {
 
   static String get synced => SyncRecordState.synced;
 }
+
+/// A scheduler for tests that never request a cycle.
+class NoSyncScheduler extends Fake implements SyncScheduler {}

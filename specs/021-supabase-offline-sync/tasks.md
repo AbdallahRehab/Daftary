@@ -523,6 +523,7 @@ Each task is followed by indented lines:
   - Validate: `supabase test db`.
 
 - [ ] T050 [US2] Deploy the backend to the remote project and configure its auth (manual)
+  - **Status (2026-09-27)**: All 4 migrations were pushed to `nnrmghwqihqnmtnuxzoq` over the eu-central-1 session pooler (`aws-0-eu-central-1.pooler.supabase.com`), because the direct host is IPv6-only. Verified: 11 tables all have RLS, anon has 0 grants, and RPCs and tables return 401/42501 without a JWT. `config/supabase.dev.json` was created (git-ignored). **Still open:** anonymous sign-ins are OFF (`/auth/v1/settings` reports `anonymous_users: false`), and the email templates still send magic links. Both need the dashboard or `supabase login`.
   - Deps: T048, T049
   - Files: none in the repository.
   - Done when:
@@ -699,7 +700,7 @@ Each task is followed by indented lines:
 
 **Independent Test**: A cloud row inserted for the owner appears on the open Person Detail page after one sync. A cloud archive moves the person to the archived list. Quickstart #5.
 
-- [ ] T066 [US4] Add `sync_pull(p_since bigint, p_limit int default 500) returns jsonb` in a NEW migration file supabase/migrations/<timestamp>_021b_sync_pull.sql (new), then test it in supabase/tests/021_sync_pull.test.sql (new) and deploy it
+- [X] T066 [US4] Add `sync_pull(p_since bigint, p_limit int default 500) returns jsonb` in a NEW migration file supabase/migrations/<timestamp>_021b_sync_pull.sql (new), then test it in supabase/tests/021_sync_pull.test.sql (new) and deploy it
   - Deps: T047, T050. It must not edit the already-deployed `_021_offline_sync.sql`.
   - Done when:
     - It is the `UNION ALL` of the 8 tables where `revision > p_since`, ordered by revision, `limit` capped at 1000, returning `changes`, `max_revision` and `has_more`, with tombstones included (contracts/sync-rpc.md §3).
@@ -888,7 +889,7 @@ Each task is followed by indented lines:
 
 ## Phase 9: Polish & Cross-Cutting Concerns (plan P10)
 
-- [ ] T082 [P] Add the analytics views in a NEW migration file supabase/migrations/<timestamp>_021c_analytics_views.sql (new), test them in supabase/tests/021_views.test.sql (new), and deploy them
+- [X] T082 [P] Add the analytics views in a NEW migration file supabase/migrations/<timestamp>_021c_analytics_views.sql (new), test them in supabase/tests/021_views.test.sql (new), and deploy them
   - Deps: T050, T066 (a later timestamp). It never edits an earlier 021 migration. After the tests pass, run `supabase db push`, and revoke `anon` access inside the file.
   - Done when:
     - `v_monthly_person_flows`, `v_person_balances`, `v_monthly_finance_by_category` and `v_daily_activity` are defined per contracts/supabase-schema.md §7, all `with (security_invoker = true)`.

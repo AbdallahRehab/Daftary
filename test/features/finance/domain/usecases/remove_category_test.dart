@@ -6,6 +6,7 @@ import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart
 import 'package:daftary/features/finance/domain/usecases/remove_category.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/test_daos.dart';
 
 /// The archive-vs-hard-delete branch (FR-010, research.md Decision 4) is
 /// decided by a reference count against the real `finance_entries` table,
@@ -20,7 +21,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    dao = FinanceDao(db);
+    dao = testFinanceDao(db);
     repository = CategoryRepositoryImpl(dao);
     removeCategory = RemoveCategory(repository);
   });

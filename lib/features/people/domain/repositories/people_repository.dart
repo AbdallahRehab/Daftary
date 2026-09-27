@@ -67,6 +67,24 @@ abstract class PeopleRepository {
 
   Future<Either<Failure, Person>> getPersonById(String personId);
 
+  /// 021: [searchActivePeople], re-read whenever people, transactions or
+  /// the conversion inputs of the status filter change — including changes
+  /// the sync engine applies (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, List<Person>>> watchActivePeople({
+    String? nameQuery,
+    RelationshipStatus? statusFilter,
+  });
+
+  /// 021: [getPersonById], re-read whenever people change — so an edit,
+  /// archive or restore made anywhere reaches Person Detail (FR-031).
+  Stream<Either<Failure, Person>> watchPersonById(String personId);
+
+  /// 021: [searchArchivedPeople], re-read whenever people or transactions
+  /// change (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, List<Person>>> watchArchivedPeople({
+    String? nameQuery,
+  });
+
   /// FR-010a: whether at least one Person record exists at all — active
   /// OR archived (unlike [searchActivePeople], which excludes archived).
   /// An archived-only install still proves prior real use.

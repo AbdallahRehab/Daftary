@@ -22,6 +22,14 @@ abstract class CurrencyRepository {
   /// Every configured rate (FR-006/FR-007).
   Future<Either<Failure, List<ExchangeRate>>> getExchangeRates();
 
+  /// 021: [getPrimaryCurrency], re-read whenever it changes — locally or
+  /// through sync (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, PrimaryCurrencySetting>> watchPrimaryCurrency();
+
+  /// 021: [getExchangeRates], re-read whenever a rate changes (FR-031).
+  /// Emits only when the result changes.
+  Stream<Either<Failure, List<ExchangeRate>>> watchExchangeRates();
+
   /// Upserts the rate for (currencyCode → relativeToCurrencyCode). Rejects
   /// `rate <= 0` with `InvalidExchangeRateFailure` (FR-006).
   Future<Either<Failure, ExchangeRate>> setExchangeRate({

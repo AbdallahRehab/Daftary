@@ -1,11 +1,11 @@
 import 'package:daftary/core/database/app_database.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/conversion_fakes.dart';
+import '../../helpers/test_daos.dart';
 
 /// T079 — the Scale/Scope ceiling from plan.md: ~5,000 finance entries, with
 /// summary, breakdown, and history each expected inside 1s.
@@ -27,7 +27,7 @@ void main() {
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    repository = FinanceRepositoryImpl(FinanceDao(db));
+    repository = FinanceRepositoryImpl(testFinanceDao(db));
 
     final categories = await db.select(db.financeCategories).get();
     final now = DateTime.now().millisecondsSinceEpoch;

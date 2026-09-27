@@ -19,9 +19,12 @@ import 'package:daftary/features/transactions/domain/repositories/transactions_r
 import 'package:daftary/features/transactions/domain/usecases/add_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/edit_transaction.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_history.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
+import 'package:daftary/features/people/domain/usecases/watch_person.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_history.dart';
+import 'package:daftary/features/people/domain/usecases/watch_active_people.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balances.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
 import 'package:daftary/features/transactions/presentation/cubit/transaction_form_cubit.dart';
 import 'package:daftary/features/transactions/presentation/pages/person_detail_page.dart';
@@ -37,6 +40,7 @@ import 'package:mocktail/mocktail.dart';
 import '../features/transactions/helpers/currency_test_doubles.dart';
 
 import '../helpers/stub_person_balances.dart';
+import '../helpers/watch_stubs.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -86,6 +90,7 @@ Widget _wrap({String initialLocation = '/people/p1'}) {
 void main() {
   late MockPeopleRepository peopleRepository;
   late MockTransactionsRepository transactionsRepository;
+  late FakeTableChanges changes;
   late MockCreatePerson createPerson;
   late MockAddTransaction addTransaction;
   late MockEditTransaction editTransaction;
@@ -105,21 +110,30 @@ void main() {
     registerFallbackValue(DateTime(2026));
   });
 
+  WatchPrimaryCurrency watchPrimary() {
+    final repository = currencyRepositoryWith();
+    stubCurrencyWatches(repository, changes);
+    return WatchPrimaryCurrency(repository);
+  }
+
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    changes = FakeTableChanges();
     stubPersonBalancesFromSingle(transactionsRepository);
+    stubPeopleWatches(peopleRepository, changes);
+    stubTransactionsWatches(transactionsRepository, changes);
     createPerson = MockCreatePerson();
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
 
     getIt.registerFactory<PersonDetailCubit>(
       () => PersonDetailCubit(
-        peopleRepository,
-        GetPersonBalance(transactionsRepository),
-        GetPersonHistory(transactionsRepository),
+        WatchPerson(peopleRepository),
+        WatchPersonBalance(transactionsRepository),
+        WatchPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
-        getPrimaryCurrencyReturning(),
+        watchPrimary(),
       ),
     );
     getIt.registerFactory<TransactionFormCubit>(
@@ -133,8 +147,8 @@ void main() {
     );
     getIt.registerFactory<PersonListCubit>(
       () => PersonListCubit(
-        peopleRepository,
-        GetPersonBalances(transactionsRepository),
+        WatchActivePeople(peopleRepository),
+        WatchPersonBalances(transactionsRepository),
         ArchivePerson(peopleRepository),
         RestorePerson(peopleRepository),
       ),
@@ -145,12 +159,15 @@ void main() {
     ).thenAnswer((_) async => Right(ahmed));
   });
 
-  tearDown(() => getIt.reset());
+  tearDown(() async {
+    await getIt.reset();
+    await changes.close();
+  });
 
   /// Backs [transactionsRepository]'s `getPersonHistory`/`getPersonBalance`
   /// for `p1` with a mutable in-memory list, so a save that goes through
-  /// [addTransaction] and a subsequent `PersonDetailCubit.refresh()` see
-  /// each other's effect exactly like the real DB-backed repository would
+  /// [addTransaction] and `PersonDetailCubit`'s live subscription see each
+  /// other's effect exactly like the real DB-backed repository would
   /// (data-model.md: `PersonBalance.net` is "computed fresh on every
   /// `TransactionsRepository.getPersonBalance` call").
   List<MoneyTransaction> wireHistoryStore() {
@@ -202,6 +219,7 @@ void main() {
         createdAt: now,
       );
       store.add(transaction);
+      changes.notify();
       return Right(transaction);
     });
   }
@@ -619,6 +637,7 @@ void main() {
           createdAt: now,
         );
         store.add(transaction);
+        changes.notify();
         completer.complete(Right(transaction));
         await tester.pumpAndSettle();
 

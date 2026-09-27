@@ -7,13 +7,15 @@ import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/domain/usecases/archive_person.dart';
 import 'package:daftary/features/people/domain/usecases/restore_person.dart';
+import 'package:daftary/features/people/domain/usecases/watch_active_people.dart';
+import 'package:daftary/features/people/domain/usecases/watch_archived_people.dart';
 import 'package:daftary/features/people/presentation/cubit/archived_people_cubit.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dart';
 import 'package:daftary/features/people/presentation/pages/archived_people_page.dart';
 import 'package:daftary/features/people/presentation/pages/people_list_page.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balances.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
@@ -21,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../helpers/stub_person_balances.dart';
+import '../helpers/watch_stubs.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -29,9 +32,9 @@ class MockTransactionsRepository extends Mock
 
 /// A minimal router fixture (mirroring `test/widget/main_shell_test.dart`)
 /// reproducing the `/` <-> `/people/archived` and `/` <-> `/people/:id`
-/// round trips this feature's reload-on-return fixes depend on. The
-/// destination pages are simple placeholders — this test is about
-/// `PeopleListPage`'s own reload behavior, not the destination screens.
+/// round trips the 005 archive-refresh fixes depend on (met, since 021, by
+/// live subscriptions). The destination pages are simple placeholders —
+/// this test is about `PeopleListPage`'s own behavior.
 GoRouter _buildTestRouter() {
   return GoRouter(
     initialLocation: '/',
@@ -68,6 +71,7 @@ Widget _wrap() {
 void main() {
   late MockPeopleRepository peopleRepository;
   late MockTransactionsRepository transactionsRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026);
   final ahmed = Person(
@@ -88,19 +92,22 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    changes = FakeTableChanges();
     stubPersonBalancesFromSingle(transactionsRepository);
+    stubPeopleWatches(peopleRepository, changes);
+    stubTransactionsWatches(transactionsRepository, changes);
 
     getIt.registerFactory<PersonListCubit>(
       () => PersonListCubit(
-        peopleRepository,
-        GetPersonBalances(transactionsRepository),
+        WatchActivePeople(peopleRepository),
+        WatchPersonBalances(transactionsRepository),
         ArchivePerson(peopleRepository),
         RestorePerson(peopleRepository),
       ),
     );
     getIt.registerFactory<ArchivedPeopleCubit>(
       () => ArchivedPeopleCubit(
-        peopleRepository,
+        WatchArchivedPeople(peopleRepository),
         RestorePerson(peopleRepository),
       ),
     );
@@ -115,7 +122,10 @@ void main() {
     );
   });
 
-  tearDown(() => getIt.reset());
+  tearDown(() async {
+    await getIt.reset();
+    await changes.close();
+  });
 
   testWidgets(
     'a balance blocked on a missing rate shows its native amount and a '
@@ -163,8 +173,8 @@ void main() {
   );
 
   testWidgets(
-    'reloads the active list after returning from the archived-list push '
-    '(the originally reported bug\'s root-cause call site)',
+    'an unarchive on the archived list shows on return with no reload '
+    '(the originally reported bug\'s root-cause call site; 021 FR-031)',
     (tester) async {
       when(
         () => peopleRepository.searchActivePeople(
@@ -195,21 +205,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ArchivedPeoplePage), findsOneWidget);
 
-      await tester.pageBack();
-      await tester.pumpAndSettle();
-
-      expect(find.byType(PeopleListPage), findsOneWidget);
-      verify(
+      // Sara is unarchived while the archived list is open: only the table
+      // notification reaches the list underneath.
+      when(
         () => peopleRepository.searchActivePeople(
           nameQuery: any(named: 'nameQuery'),
           statusFilter: any(named: 'statusFilter'),
         ),
-      ).called(1);
+      ).thenAnswer((_) async => Right([ahmed, sara]));
+      changes.notify();
+      await tester.pumpAndSettle();
+
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PeopleListPage), findsOneWidget);
+      expect(find.text('Sara'), findsOneWidget);
     },
   );
 
-  testWidgets('reloads the active list after returning from a person-tile push '
-      '(User Story 2)', (tester) async {
+  testWidgets('returning from a person-tile push needs no reload — the list '
+      'is live (User Story 2, 021 FR-031)', (tester) async {
     when(
       () => peopleRepository.searchActivePeople(
         nameQuery: any(named: 'nameQuery'),
@@ -235,17 +251,18 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(PeopleListPage), findsOneWidget);
-    verify(
+    expect(find.text('Ahmed'), findsOneWidget);
+    verifyNever(
       () => peopleRepository.searchActivePeople(
         nameQuery: any(named: 'nameQuery'),
         statusFilter: any(named: 'statusFilter'),
       ),
-    ).called(1);
+    );
   });
 
   testWidgets(
     'a search term is preserved and a newly-unarchived matching person is '
-    'included after the archived-list reload-on-return fires (FR-005)',
+    'included once the unarchive is written (FR-005, 021 FR-031)',
     (tester) async {
       // Initial load (empty query) and the not-yet-unarchived "Sa" search
       // both start empty — Sara isn't in the active list yet.
@@ -276,7 +293,7 @@ void main() {
       expect(find.byType(AppTextField), findsWidgets);
 
       // Sara gets unarchived while the user is on the archived list, so the
-      // next active-list reload (on return) must now include her.
+      // live active list (still filtered by "Sa") must now include her.
       when(
         () => peopleRepository.searchActivePeople(
           nameQuery: 'Sa',
@@ -285,6 +302,8 @@ void main() {
       ).thenAnswer((_) async => Right([sara]));
 
       await tester.tap(find.byTooltip(l10n.archivedPeopleAction));
+      await tester.pumpAndSettle();
+      changes.notify();
       await tester.pumpAndSettle();
       await tester.pageBack();
       await tester.pumpAndSettle();

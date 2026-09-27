@@ -2,24 +2,31 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_overview.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_overview.dart';
 import 'package:daftary/features/transactions/presentation/cubit/overview_cubit.dart';
 import 'package:daftary/features/transactions/presentation/cubit/overview_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../helpers/watch_stubs.dart';
+
 class MockTransactionsRepository extends Mock
     implements TransactionsRepository {}
 
 void main() {
   late MockTransactionsRepository repository;
+  late FakeTableChanges changes;
 
   setUp(() {
     repository = MockTransactionsRepository();
+    changes = FakeTableChanges();
+    stubTransactionsWatches(repository, changes);
   });
 
-  OverviewCubit buildCubit() => OverviewCubit(GetOverview(repository));
+  tearDown(() => changes.close());
+
+  OverviewCubit buildCubit() => OverviewCubit(WatchOverview(repository));
 
   const withBalances = OverviewSummary(
     totalOwedToUser: Money.egp(150000),
@@ -45,14 +52,14 @@ void main() {
   );
 
   blocTest<OverviewCubit, OverviewState>(
-    'load() reflects the current totals immediately (FR-014, AC2)',
+    'subscribe() reflects the current totals immediately (FR-014, AC2)',
     build: buildCubit,
     setUp: () {
       when(
         () => repository.getOverview(),
       ).thenAnswer((_) async => const Right(withBalances));
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       isA<OverviewState>().having(
         (s) => s.status,
@@ -71,17 +78,38 @@ void main() {
   );
 
   blocTest<OverviewCubit, OverviewState>(
-    'a second load() (e.g. after a transaction changes elsewhere) refreshes the totals',
+    'the totals change after a transaction is added elsewhere, with no '
+    'reload (021 FR-031)',
+    build: buildCubit,
+    act: (cubit) async {
+      when(
+        () => repository.getOverview(),
+      ).thenAnswer((_) async => const Right(allSettled));
+      await cubit.subscribe();
+      when(
+        () => repository.getOverview(),
+      ).thenAnswer((_) async => const Right(withBalances));
+      changes.notify();
+    },
+    wait: const Duration(milliseconds: 10),
+    verify: (cubit) {
+      expect(cubit.state.summary?.totalOwedToUser, const Money.egp(150000));
+      expect(cubit.state.isAllSettled, isFalse);
+    },
+  );
+
+  blocTest<OverviewCubit, OverviewState>(
+    'a second subscribe() re-reads the totals',
     build: buildCubit,
     act: (cubit) async {
       when(
         () => repository.getOverview(),
       ).thenAnswer((_) async => const Right(withBalances));
-      await cubit.load();
+      await cubit.subscribe();
       when(
         () => repository.getOverview(),
       ).thenAnswer((_) async => const Right(allSettled));
-      await cubit.load();
+      await cubit.resubscribe();
     },
     verify: (cubit) {
       expect(cubit.state.isAllSettled, isTrue);
@@ -96,7 +124,7 @@ void main() {
         () => repository.getOverview(),
       ).thenAnswer((_) async => const Right(allSettled));
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.status, OverviewStatus.success);
       expect(cubit.state.isAllSettled, isTrue);
@@ -130,7 +158,7 @@ void main() {
         ),
       );
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.status, OverviewStatus.success);
       expect(cubit.state.isAllSettled, isFalse);

@@ -49,6 +49,12 @@ import '../../features/currency/domain/usecases/set_exchange_rate.dart'
     as _i485;
 import '../../features/currency/domain/usecases/set_primary_currency.dart'
     as _i801;
+import '../../features/currency/domain/usecases/watch_conversion_context.dart'
+    as _i132;
+import '../../features/currency/domain/usecases/watch_exchange_rates.dart'
+    as _i166;
+import '../../features/currency/domain/usecases/watch_primary_currency.dart'
+    as _i1028;
 import '../../features/currency/presentation/cubit/exchange_rate_form_cubit.dart'
     as _i954;
 import '../../features/currency/presentation/cubit/exchange_rate_list_cubit.dart'
@@ -87,6 +93,11 @@ import '../../features/finance/domain/usecases/restore_finance_entry.dart'
     as _i1008;
 import '../../features/finance/domain/usecases/seed_default_categories.dart'
     as _i717;
+import '../../features/finance/domain/usecases/watch_categories.dart' as _i520;
+import '../../features/finance/domain/usecases/watch_finance_history.dart'
+    as _i542;
+import '../../features/finance/domain/usecases/watch_finance_summary.dart'
+    as _i240;
 import '../../features/finance/presentation/cubit/category_form_cubit.dart'
     as _i1030;
 import '../../features/finance/presentation/cubit/category_management_cubit.dart'
@@ -205,13 +216,18 @@ import '../../features/people/data/repositories/people_repository_impl.dart'
 import '../../features/people/data/sync/person_sync_mapper.dart' as _i334;
 import '../../features/people/domain/repositories/people_repository.dart'
     as _i646;
-import '../../features/people/domain/usecases/archive_person.dart' as _i221;
+import '../../features/people/domain/usecases/archive_person.dart' as _i222;
 import '../../features/people/domain/usecases/create_person.dart' as _i789;
 import '../../features/people/domain/usecases/delete_person.dart' as _i907;
 import '../../features/people/domain/usecases/edit_person.dart' as _i101;
 import '../../features/people/domain/usecases/find_possible_duplicate_person.dart'
     as _i769;
 import '../../features/people/domain/usecases/restore_person.dart' as _i49;
+import '../../features/people/domain/usecases/watch_active_people.dart'
+    as _i277;
+import '../../features/people/domain/usecases/watch_archived_people.dart'
+    as _i781;
+import '../../features/people/domain/usecases/watch_person.dart' as _i462;
 import '../../features/people/presentation/cubit/archived_people_cubit.dart'
     as _i62;
 import '../../features/people/presentation/cubit/person_form_cubit.dart'
@@ -262,6 +278,14 @@ import '../../features/transactions/domain/usecases/get_person_history.dart'
     as _i610;
 import '../../features/transactions/domain/usecases/record_repayment.dart'
     as _i426;
+import '../../features/transactions/domain/usecases/watch_overview.dart'
+    as _i615;
+import '../../features/transactions/domain/usecases/watch_person_balance.dart'
+    as _i221;
+import '../../features/transactions/domain/usecases/watch_person_balances.dart'
+    as _i330;
+import '../../features/transactions/domain/usecases/watch_person_history.dart'
+    as _i210;
 import '../../features/transactions/presentation/cubit/overview_cubit.dart'
     as _i305;
 import '../../features/transactions/presentation/cubit/person_detail_cubit.dart'
@@ -379,6 +403,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i445.BundledEducationContentDataSource>(
       () => _i445.BundledEducationContentDataSource(gh<_i281.AssetBundle>()),
     );
+    gh.factory<_i972.CurrencyDao>(
+      () => _i972.CurrencyDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i770.ExchangeRateSyncMapper>(),
+        gh<_i900.PrimaryCurrencySyncMapper>(),
+      ),
+    );
     gh.lazySingleton<_i289.CurrencyUsageChecker>(
       () => _i941.DriftCurrencyUsageChecker(gh<_i982.AppDatabase>()),
     );
@@ -389,6 +421,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i217.CalculateCompoundGrowth>(
       () => _i217.CalculateCompoundGrowth(gh<_i585.CompoundGrowthCalculator>()),
+    );
+    gh.factory<_i684.TransactionsDao>(
+      () => _i684.TransactionsDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i315.MoneyTransactionSyncMapper>(),
+        gh<_i92.TransactionAuditSyncMapper>(),
+      ),
     );
     gh.lazySingleton<_i834.SyncMapperRegistry>(
       () => registerModule.syncMapperRegistry(
@@ -402,24 +442,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i346.ConflictResolutionSyncMapper>(),
       ),
     );
-    gh.factory<_i972.CurrencyDao>(
-      () => _i972.CurrencyDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i443.FinanceDao>(
-      () => _i443.FinanceDao(gh<_i982.AppDatabase>()),
-    );
     gh.factory<_i338.NotificationsDao>(
       () => _i338.NotificationsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i360.OnboardingDao>(
       () => _i360.OnboardingDao(gh<_i982.AppDatabase>()),
     );
-    gh.factory<_i735.PeopleDao>(() => _i735.PeopleDao(gh<_i982.AppDatabase>()));
     gh.factory<_i586.SettingsDao>(
       () => _i586.SettingsDao(gh<_i982.AppDatabase>()),
-    );
-    gh.factory<_i684.TransactionsDao>(
-      () => _i684.TransactionsDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i896.CompoundGrowthCalculatorCubit>(
       () => _i896.CompoundGrowthCalculatorCubit(
@@ -431,6 +461,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i209.NotificationScheduler>(
       () => _i0.FlutterLocalNotificationsScheduler(
         gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
+    );
+    gh.factory<_i443.FinanceDao>(
+      () => _i443.FinanceDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i539.FinanceCategorySyncMapper>(),
+        gh<_i960.FinanceEntrySyncMapper>(),
       ),
     );
     gh.factory<_i480.HandleNotificationTap>(
@@ -453,6 +491,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i751.CurrencyRepositoryImpl(
         gh<_i972.CurrencyDao>(),
         gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i735.PeopleDao>(
+      () => _i735.PeopleDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i334.PersonSyncMapper>(),
       ),
     );
     gh.factory<_i66.SavingsRateCalculatorCubit>(
@@ -511,6 +556,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i485.SetExchangeRate>(
       () => _i485.SetExchangeRate(gh<_i87.CurrencyRepository>()),
     );
+    gh.factory<_i132.WatchConversionContext>(
+      () => _i132.WatchConversionContext(gh<_i87.CurrencyRepository>()),
+    );
+    gh.factory<_i166.WatchExchangeRates>(
+      () => _i166.WatchExchangeRates(gh<_i87.CurrencyRepository>()),
+    );
+    gh.factory<_i1028.WatchPrimaryCurrency>(
+      () => _i1028.WatchPrimaryCurrency(gh<_i87.CurrencyRepository>()),
+    );
     gh.factory<_i801.SetPrimaryCurrency>(
       () => _i801.SetPrimaryCurrency(
         gh<_i87.CurrencyRepository>(),
@@ -545,6 +599,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
         gh<_i764.GetExchangeRates>(),
         gh<_i485.SetExchangeRate>(),
+      ),
+    );
+    gh.factory<_i240.WatchFinanceSummary>(
+      () => _i240.WatchFinanceSummary(
+        gh<_i137.FinanceRepository>(),
+        gh<_i132.WatchConversionContext>(),
+        gh<_i844.GetFinanceSummary>(),
       ),
     );
     gh.lazySingleton<_i12.NotificationHistoryRepository>(
@@ -583,6 +644,18 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i426.RecordRepayment>(
       () => _i426.RecordRepayment(gh<_i957.TransactionsRepository>()),
     );
+    gh.factory<_i615.WatchOverview>(
+      () => _i615.WatchOverview(gh<_i957.TransactionsRepository>()),
+    );
+    gh.factory<_i221.WatchPersonBalance>(
+      () => _i221.WatchPersonBalance(gh<_i957.TransactionsRepository>()),
+    );
+    gh.factory<_i330.WatchPersonBalances>(
+      () => _i330.WatchPersonBalances(gh<_i957.TransactionsRepository>()),
+    );
+    gh.factory<_i210.WatchPersonHistory>(
+      () => _i210.WatchPersonHistory(gh<_i957.TransactionsRepository>()),
+    );
     gh.factory<_i577.ChangeGlassAppearance>(
       () => _i577.ChangeGlassAppearance(gh<_i674.SettingsRepository>()),
     );
@@ -600,13 +673,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i333.GetThemeModePreference>(
       () => _i333.GetThemeModePreference(gh<_i674.SettingsRepository>()),
-    );
-    gh.factory<_i398.ExchangeRateListCubit>(
-      () => _i398.ExchangeRateListCubit(
-        gh<_i903.GetPrimaryCurrency>(),
-        gh<_i764.GetExchangeRates>(),
-        gh<_i1025.RemoveExchangeRate>(),
-      ),
     );
     gh.factory<_i274.ArticleCubit>(
       () => _i274.ArticleCubit(gh<_i481.GetArticle>()),
@@ -629,11 +695,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i717.SeedDefaultCategories>(
       () => _i717.SeedDefaultCategories(gh<_i228.CategoryRepository>()),
     );
-    gh.factory<_i1061.PrimaryCurrencyCubit>(
-      () => _i1061.PrimaryCurrencyCubit(
-        gh<_i903.GetPrimaryCurrency>(),
-        gh<_i801.SetPrimaryCurrency>(),
-      ),
+    gh.factory<_i520.WatchCategories>(
+      () => _i520.WatchCategories(gh<_i228.CategoryRepository>()),
     );
     gh.factory<_i159.AddFinanceEntry>(
       () => _i159.AddFinanceEntry(gh<_i137.FinanceRepository>()),
@@ -650,15 +713,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1008.RestoreFinanceEntry>(
       () => _i1008.RestoreFinanceEntry(gh<_i137.FinanceRepository>()),
     );
-    gh.factory<_i987.FinanceHistoryCubit>(
-      () => _i987.FinanceHistoryCubit(
-        gh<_i844.GetFinanceSummary>(),
-        gh<_i853.GetCategoryBreakdown>(),
-        gh<_i27.GetFinanceHistory>(),
-        gh<_i1.GetCategories>(),
-        gh<_i1065.DeleteFinanceEntry>(),
-        gh<_i1008.RestoreFinanceEntry>(),
-        gh<_i137.FinanceRepository>(),
+    gh.factory<_i542.WatchFinanceHistory>(
+      () => _i542.WatchFinanceHistory(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i1061.PrimaryCurrencyCubit>(
+      () => _i1061.PrimaryCurrencyCubit(
+        gh<_i1028.WatchPrimaryCurrency>(),
+        gh<_i801.SetPrimaryCurrency>(),
       ),
     );
     gh.factory<_i203.SetNotificationPreferences>(
@@ -666,14 +727,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i162.NotificationPreferenceRepository>(),
       ),
     );
-    gh.factory<_i231.FinanceMonthSummaryCubit>(
-      () => _i231.FinanceMonthSummaryCubit(gh<_i844.GetFinanceSummary>()),
-    );
     gh.lazySingleton<_i1003.NotificationLanguageProvider>(
       () => _i831.SettingsNotificationLanguageProvider(
         gh<_i1032.GetLanguagePreference>(),
         gh<_i933.DeviceLocaleProvider>(),
       ),
+    );
+    gh.factory<_i231.FinanceMonthSummaryCubit>(
+      () => _i231.FinanceMonthSummaryCubit(gh<_i240.WatchFinanceSummary>()),
     );
     gh.lazySingleton<_i552.NotificationEngine>(
       () => _i552.NotificationEngineImpl(
@@ -691,11 +752,35 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i220.NotificationLastRunStore>(),
       ),
     );
+    gh.factory<_i109.CategoryManagementCubit>(
+      () => _i109.CategoryManagementCubit(
+        gh<_i520.WatchCategories>(),
+        gh<_i490.RemoveCategory>(),
+      ),
+    );
     gh.lazySingleton<_i548.NotificationRecomputeTrigger>(
       () => _i548.NotificationRecomputeTrigger(
         gh<_i552.NotificationEngine>(),
         gh<_i220.NotificationLastRunStore>(),
         gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i398.ExchangeRateListCubit>(
+      () => _i398.ExchangeRateListCubit(
+        gh<_i1028.WatchPrimaryCurrency>(),
+        gh<_i166.WatchExchangeRates>(),
+        gh<_i1025.RemoveExchangeRate>(),
+      ),
+    );
+    gh.factory<_i987.FinanceHistoryCubit>(
+      () => _i987.FinanceHistoryCubit(
+        gh<_i240.WatchFinanceSummary>(),
+        gh<_i853.GetCategoryBreakdown>(),
+        gh<_i542.WatchFinanceHistory>(),
+        gh<_i520.WatchCategories>(),
+        gh<_i1065.DeleteFinanceEntry>(),
+        gh<_i1008.RestoreFinanceEntry>(),
+        gh<_i137.FinanceRepository>(),
       ),
     );
     gh.factory<_i791.ResolveOnboardingStatus>(
@@ -705,8 +790,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i957.TransactionsRepository>(),
       ),
     );
-    gh.factory<_i221.ArchivePerson>(
-      () => _i221.ArchivePerson(gh<_i646.PeopleRepository>()),
+    gh.factory<_i222.ArchivePerson>(
+      () => _i222.ArchivePerson(gh<_i646.PeopleRepository>()),
     );
     gh.factory<_i789.CreatePerson>(
       () => _i789.CreatePerson(gh<_i646.PeopleRepository>()),
@@ -719,6 +804,23 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i49.RestorePerson>(
       () => _i49.RestorePerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i277.WatchActivePeople>(
+      () => _i277.WatchActivePeople(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i781.WatchArchivedPeople>(
+      () => _i781.WatchArchivedPeople(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i462.WatchPerson>(
+      () => _i462.WatchPerson(gh<_i646.PeopleRepository>()),
+    );
+    gh.factory<_i1018.PersonListCubit>(
+      () => _i1018.PersonListCubit(
+        gh<_i277.WatchActivePeople>(),
+        gh<_i330.WatchPersonBalances>(),
+        gh<_i222.ArchivePerson>(),
+        gh<_i49.RestorePerson>(),
+      ),
     );
     gh.factory<_i639.RequestNotificationPermission>(
       () => _i639.RequestNotificationPermission(
@@ -744,30 +846,13 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
-    gh.factory<_i992.PersonDetailCubit>(
-      () => _i992.PersonDetailCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i750.GetPersonBalance>(),
-        gh<_i610.GetPersonHistory>(),
-        gh<_i645.DeleteTransaction>(),
-        gh<_i903.GetPrimaryCurrency>(),
-      ),
-    );
     gh.factory<_i305.OverviewCubit>(
-      () => _i305.OverviewCubit(gh<_i942.GetOverview>()),
+      () => _i305.OverviewCubit(gh<_i615.WatchOverview>()),
     );
     gh.factory<_i1030.CategoryFormCubit>(
       () => _i1030.CategoryFormCubit(
         gh<_i24.CreateCategory>(),
         gh<_i611.EditCategory>(),
-      ),
-    );
-    gh.factory<_i1018.PersonListCubit>(
-      () => _i1018.PersonListCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i313.GetPersonBalances>(),
-        gh<_i221.ArchivePerson>(),
-        gh<_i49.RestorePerson>(),
       ),
     );
     gh.factory<_i505.FinanceEntryFormCubit>(
@@ -777,12 +862,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1.GetCategories>(),
         gh<_i999.EgpFormatter>(),
         gh<_i903.GetPrimaryCurrency>(),
-      ),
-    );
-    gh.factory<_i109.CategoryManagementCubit>(
-      () => _i109.CategoryManagementCubit(
-        gh<_i1.GetCategories>(),
-        gh<_i490.RemoveCategory>(),
       ),
     );
     gh.factory<_i593.TransactionFormCubit>(
@@ -800,13 +879,28 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i430.OnboardingRepository>(),
       ),
     );
+    gh.factory<_i62.ArchivedPeopleCubit>(
+      () => _i62.ArchivedPeopleCubit(
+        gh<_i781.WatchArchivedPeople>(),
+        gh<_i49.RestorePerson>(),
+      ),
+    );
     gh.factory<_i668.PersonFormCubit>(
       () => _i668.PersonFormCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i789.CreatePerson>(),
         gh<_i101.EditPerson>(),
-        gh<_i221.ArchivePerson>(),
+        gh<_i222.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
+      ),
+    );
+    gh.factory<_i992.PersonDetailCubit>(
+      () => _i992.PersonDetailCubit(
+        gh<_i462.WatchPerson>(),
+        gh<_i221.WatchPersonBalance>(),
+        gh<_i210.WatchPersonHistory>(),
+        gh<_i645.DeleteTransaction>(),
+        gh<_i1028.WatchPrimaryCurrency>(),
       ),
     );
     gh.lazySingleton<_i247.AppStartupCubit>(
@@ -819,12 +913,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i39.NotificationSettingsCubit(
         gh<_i203.SetNotificationPreferences>(),
         gh<_i639.RequestNotificationPermission>(),
-      ),
-    );
-    gh.factory<_i62.ArchivedPeopleCubit>(
-      () => _i62.ArchivedPeopleCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i49.RestorePerson>(),
       ),
     );
     return this;

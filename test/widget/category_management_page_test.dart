@@ -6,8 +6,8 @@ import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
-import 'package:daftary/features/finance/domain/usecases/get_categories.dart';
 import 'package:daftary/features/finance/domain/usecases/remove_category.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_categories.dart';
 import 'package:daftary/features/finance/presentation/cubit/category_management_cubit.dart';
 import 'package:daftary/features/finance/presentation/pages/category_management_page.dart';
 import 'package:daftary/features/finance/presentation/widgets/category_icon_registry.dart';
@@ -16,6 +16,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../helpers/watch_stubs.dart';
 
 class MockCategoryRepository extends Mock implements CategoryRepository {}
 
@@ -72,11 +74,14 @@ Widget _wrap(ThemeData theme) => MaterialApp.router(
 
 void main() {
   late MockCategoryRepository repository;
+  late FakeTableChanges changes;
 
   setUpAll(() => registerFallbackValue(CategoryType.expense));
 
   setUp(() {
     repository = MockCategoryRepository();
+    changes = FakeTableChanges();
+    stubCategoryWatches(repository, changes);
     when(
       () => repository.getCategories(
         type: any(named: 'type'),
@@ -86,13 +91,16 @@ void main() {
 
     getIt.registerFactory<CategoryManagementCubit>(
       () => CategoryManagementCubit(
-        GetCategories(repository),
+        WatchCategories(repository),
         RemoveCategory(repository),
       ),
     );
   });
 
-  tearDown(() => getIt.reset());
+  tearDown(() async {
+    await getIt.reset();
+    await changes.close();
+  });
 
   testWidgets('renders right-to-left under the Arabic locale', (tester) async {
     await tester.pumpWidget(_wrap(buildLightTheme()));

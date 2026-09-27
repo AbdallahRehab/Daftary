@@ -3,7 +3,6 @@ import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/currency/domain/entities/conversion_context.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
@@ -16,6 +15,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/conversion_fakes.dart';
+import '../../../../helpers/test_daos.dart';
 
 class MockFinanceRepository extends Mock implements FinanceRepository {}
 
@@ -148,7 +148,7 @@ void main() {
 
     setUp(() {
       db = AppDatabase.forTesting(NativeDatabase.memory());
-      repository = FinanceRepositoryImpl(FinanceDao(db));
+      repository = FinanceRepositoryImpl(testFinanceDao(db));
       useCase = summaryUseCase(repository);
     });
 
@@ -370,7 +370,7 @@ void main() {
 
     setUp(() {
       db = AppDatabase.forTesting(NativeDatabase.memory());
-      repository = FinanceRepositoryImpl(FinanceDao(db));
+      repository = FinanceRepositoryImpl(testFinanceDao(db));
     });
 
     tearDown(() => db.close());

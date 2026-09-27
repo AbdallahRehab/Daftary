@@ -5,6 +5,7 @@ import 'package:daftary/features/currency/domain/entities/exchange_rate.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
 import 'package:daftary/features/currency/domain/usecases/get_conversion_context.dart';
 import 'package:daftary/features/currency/domain/usecases/get_primary_currency.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_conversion_context.dart';
 import 'package:daftary/features/currency/domain/entities/primary_currency_setting.dart';
 import 'package:daftary/features/finance/domain/repositories/finance_repository.dart';
 import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.dart';
@@ -62,3 +63,15 @@ GetCategoryBreakdown breakdownUseCase(
   FakeGetConversionContext(context),
   const CurrencyConverterImpl(),
 );
+
+/// 021: a [WatchConversionContext] that emits [source]'s current answer
+/// once — rates never change mid-test unless a test re-subscribes.
+class FakeWatchConversionContext implements WatchConversionContext {
+  FakeWatchConversionContext(this.source);
+
+  final FakeGetConversionContext source;
+
+  @override
+  Stream<Either<Failure, ConversionContext>> call() =>
+      Stream.fromFuture(source());
+}

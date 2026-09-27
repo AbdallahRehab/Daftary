@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/money/currency.dart';
 import '../../domain/entities/currency_failures.dart';
-import '../../domain/usecases/get_primary_currency.dart';
 import '../../domain/usecases/set_primary_currency.dart';
+import '../../domain/usecases/watch_primary_currency.dart';
 import 'primary_currency_state.dart';
 import 'rate_input.dart';
 
@@ -12,25 +14,61 @@ import 'rate_input.dart';
 /// FR-012). A switch refused for want of a rate surfaces as
 /// [PrimaryCurrencyState.isRatePromptPending]; the page then asks for the
 /// rate and calls [confirmSwitchWithRate] (or [cancelPendingSwitch]).
+///
+/// 021: the primary currency is a live [WatchPrimaryCurrency] subscription,
+/// cancelled in [close], so a change applied by sync shows too (FR-031).
 @injectable
 class PrimaryCurrencyCubit extends Cubit<PrimaryCurrencyState> {
-  PrimaryCurrencyCubit(this._getPrimary, this._setPrimary)
+  PrimaryCurrencyCubit(this._watchPrimary, this._setPrimary)
     : super(const PrimaryCurrencyState());
 
-  final GetPrimaryCurrency _getPrimary;
+  final WatchPrimaryCurrency _watchPrimary;
   final SetPrimaryCurrency _setPrimary;
 
-  Future<void> load() async {
-    final result = await _getPrimary();
-    result.fold(
-      (_) => emit(state.copyWith(status: PrimaryCurrencyStatus.loadFailure)),
-      (setting) => emit(
-        state.copyWith(
-          status: PrimaryCurrencyStatus.ready,
-          primary: setting.currency,
+  StreamSubscription<void>? _subscription;
+  Completer<void>? _firstResult;
+
+  /// Subscribes to the primary currency, replacing any earlier
+  /// subscription. The returned future completes on the first result.
+  Future<void> subscribe() {
+    _cancelSubscription();
+    final firstResult = _firstResult = Completer<void>();
+    _subscription = _watchPrimary().listen((result) {
+      if (isClosed) return;
+      result.fold(
+        (_) => emit(state.copyWith(status: PrimaryCurrencyStatus.loadFailure)),
+        (setting) => emit(
+          state.copyWith(
+            status: PrimaryCurrencyStatus.ready,
+            primary: setting.currency,
+          ),
         ),
-      ),
-    );
+      );
+      _completeFirstResult();
+    });
+    return firstResult.future;
+  }
+
+  /// Retry: subscribes again from scratch.
+  Future<void> resubscribe() => subscribe();
+
+  void _completeFirstResult() {
+    final firstResult = _firstResult;
+    if (firstResult != null && !firstResult.isCompleted) {
+      firstResult.complete();
+    }
+  }
+
+  void _cancelSubscription() {
+    _subscription?.cancel();
+    _subscription = null;
+    _completeFirstResult();
+  }
+
+  @override
+  Future<void> close() {
+    _cancelSubscription();
+    return super.close();
   }
 
   /// Requests a switch to [next]. No-op for the current primary or while a

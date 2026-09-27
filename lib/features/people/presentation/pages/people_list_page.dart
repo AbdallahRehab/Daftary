@@ -27,7 +27,7 @@ class PeopleListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PersonListCubit>()..load(),
+      create: (_) => getIt<PersonListCubit>()..subscribe(),
       child: const _PeopleListView(),
     );
   }
@@ -181,7 +181,8 @@ class _PeopleListView extends StatelessWidget {
                     title: l10n.errorLoadTitle,
                     message: l10n.messageFor(state.failure),
                     actionLabel: l10n.commonRetry,
-                    onAction: () => context.read<PersonListCubit>().load(),
+                    onAction: () =>
+                        context.read<PersonListCubit>().resubscribe(),
                   );
                 }
                 if (state.items.isEmpty) {
@@ -193,7 +194,8 @@ class _PeopleListView extends StatelessWidget {
                   );
                 }
                 return RefreshIndicator(
-                  onRefresh: () => context.read<PersonListCubit>().load(),
+                  onRefresh: () =>
+                      context.read<PersonListCubit>().resubscribe(),
                   child: ListView.separated(
                     // Clears the FAB so the last row's archive action is
                     // never hidden underneath it.
@@ -247,50 +249,31 @@ class _PeopleListView extends StatelessWidget {
     );
   }
 
-  // This call site follows the reload-on-return convention fixed by
-  // feature 005-archive-state-refresh — do not omit on new pushes from
-  // this screen.
+  // 021: no reload on return — the list is a live subscription, so a
+  // change made on any pushed screen is already reflected here (this
+  // replaces the 005-archive-state-refresh reload-on-return convention).
   Future<void> _addPerson(BuildContext context) async {
     final result = await context.push<Person?>('/people/new');
-    if (context.mounted) {
-      await context.read<PersonListCubit>().load();
-    }
     if (result != null && context.mounted) {
       await context.push('/people/${result.id}');
     }
   }
 
-  // This call site follows the reload-on-return convention fixed by
-  // feature 005-archive-state-refresh — do not omit on new pushes from
-  // this screen.
   Future<void> _recordTransaction(BuildContext context) async {
     final result = await context.push<MoneyTransaction?>('/transactions/new');
-    if (context.mounted) {
-      await context.read<PersonListCubit>().load();
-    }
     if (result != null && context.mounted) {
       await context.push('/people/${result.personId}');
     }
   }
 
-  // Root-cause call site for the originally reported bug
-  // (005-archive-state-refresh research.md Decision 1): unarchiving from
-  // the archived list previously never reloaded this list on return.
-  Future<void> _openArchivedList(BuildContext context) async {
-    await context.push('/people/archived');
-    if (context.mounted) {
-      await context.read<PersonListCubit>().load();
-    }
-  }
+  // 005-archive-state-refresh Decision 1 (an unarchive in the archived
+  // list, or an archive/edit in Person Detail, must show here on return)
+  // is now met by the live subscription.
+  Future<void> _openArchivedList(BuildContext context) =>
+      context.push('/people/archived');
 
-  // 005-archive-state-refresh Decision 1: an archive/edit triggered from
-  // Person Detail must also be reflected here on return.
-  Future<void> _openPersonDetail(BuildContext context, String personId) async {
-    await context.push('/people/$personId');
-    if (context.mounted) {
-      await context.read<PersonListCubit>().load();
-    }
-  }
+  Future<void> _openPersonDetail(BuildContext context, String personId) =>
+      context.push('/people/$personId');
 
   Future<void> _archive(BuildContext context, String personId) {
     return context.read<PersonListCubit>().archive(personId);

@@ -1,6 +1,5 @@
 import 'package:daftary/core/database/app_database.dart' show AppDatabase;
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
@@ -11,6 +10,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../helpers/conversion_fakes.dart';
+import '../../../../helpers/test_daos.dart';
 
 /// T065 — `DeleteFinanceEntry` / `RestoreFinanceEntry` (FR-020).
 ///
@@ -29,7 +29,7 @@ void main() {
 
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    repository = FinanceRepositoryImpl(FinanceDao(db));
+    repository = FinanceRepositoryImpl(testFinanceDao(db));
     deleteFinanceEntry = DeleteFinanceEntry(repository);
     restoreFinanceEntry = RestoreFinanceEntry(repository);
   });

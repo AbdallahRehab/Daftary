@@ -12,17 +12,19 @@ import 'package:daftary/features/finance/domain/entities/finance_summary.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
 import 'package:daftary/features/finance/domain/repositories/finance_repository.dart';
 import 'package:daftary/features/finance/domain/usecases/delete_finance_entry.dart';
-import 'package:daftary/features/finance/domain/usecases/get_categories.dart';
 import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.dart';
-import 'package:daftary/features/finance/domain/usecases/get_finance_history.dart';
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/finance/domain/usecases/restore_finance_entry.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_categories.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_finance_history.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_finance_summary.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_history_cubit.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_history_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../helpers/watch_stubs.dart';
 import '../../helpers/conversion_fakes.dart';
 
 class MockFinanceRepository extends Mock implements FinanceRepository {}
@@ -39,6 +41,7 @@ void main() {
   late MockFinanceRepository financeRepository;
   late FakeGetConversionContext getConversionContext;
   late MockCategoryRepository categoryRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
@@ -119,6 +122,9 @@ void main() {
     getConversionContext = FakeGetConversionContext();
     financeRepository = MockFinanceRepository();
     categoryRepository = MockCategoryRepository();
+    changes = FakeTableChanges();
+    stubFinanceWatches(financeRepository, changes);
+    stubCategoryWatches(categoryRepository, changes);
 
     when(
       () => categoryRepository.getCategories(
@@ -151,29 +157,35 @@ void main() {
     ).thenAnswer((_) async => Right([expenseEntry, incomeEntry]));
   });
 
+  tearDown(() => changes.close());
+
   FinanceHistoryCubit buildCubit() => FinanceHistoryCubit(
-    GetFinanceSummary(
+    WatchFinanceSummary(
       financeRepository,
-      getConversionContext,
-      const CurrencyConverterImpl(),
+      FakeWatchConversionContext(getConversionContext),
+      GetFinanceSummary(
+        financeRepository,
+        getConversionContext,
+        const CurrencyConverterImpl(),
+      ),
     ),
     GetCategoryBreakdown(
       financeRepository,
       getConversionContext,
       const CurrencyConverterImpl(),
     ),
-    GetFinanceHistory(financeRepository),
-    GetCategories(categoryRepository),
+    WatchFinanceHistory(financeRepository),
+    WatchCategories(categoryRepository),
     DeleteFinanceEntry(financeRepository),
     RestoreFinanceEntry(financeRepository),
     financeRepository,
   );
 
   blocTest<FinanceHistoryCubit, FinanceHistoryState>(
-    'load() resolves "this month" and loads summary, breakdown, and history '
+    'subscribe() resolves "this month" and shows summary, breakdown, and history '
     'together (FR-014/FR-015/FR-012)',
     build: buildCubit,
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       isA<FinanceHistoryState>().having(
         (s) => s.status,
@@ -225,7 +237,7 @@ void main() {
     '(FR-016)',
     build: buildCubit,
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.periodChanged(FinancePeriodPreset.lastMonth);
     },
     verify: (cubit) {
@@ -258,7 +270,7 @@ void main() {
     'a custom range is used verbatim for all three queries (FR-016)',
     build: buildCubit,
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.periodChanged(
         FinancePeriodPreset.custom,
         customRange: DateRange(
@@ -284,7 +296,7 @@ void main() {
     'clearFilters drops both (FR-013)',
     build: buildCubit,
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.typeFilterChanged(FinanceEntryType.expense);
       await cubit.categoryFilterChanged('seed_groceries');
       await cubit.clearFilters();
@@ -315,7 +327,7 @@ void main() {
     'applies',
     build: buildCubit,
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.categoryFilterChanged('seed_groceries');
       await cubit.typeFilterChanged(FinanceEntryType.income);
     },
@@ -340,7 +352,7 @@ void main() {
         ),
       ).thenAnswer((_) async => const Right(<FinanceEntry>[]));
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.isTrueEmpty, isTrue);
       expect(cubit.state.isNoMatch, isFalse);
@@ -361,7 +373,7 @@ void main() {
       ).thenAnswer((_) async => const Right(<FinanceEntry>[]));
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.periodChanged(FinancePeriodPreset.lastMonth);
     },
     verify: (cubit) {
@@ -379,7 +391,7 @@ void main() {
         () => financeRepository.getSummaryTotals(any()),
       ).thenAnswer((_) async => const Left(CacheFailure('db is unhappy')));
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.isFailure, isTrue);
       expect(cubit.state.failure, const CacheFailure('db is unhappy'));
@@ -407,6 +419,7 @@ void main() {
         invocation,
       ) async {
         deletedIds.add(invocation.positionalArguments.first as String);
+        changes.notify();
         return const Right(unit);
       });
       when(() => financeRepository.restoreEntry(any())).thenAnswer((
@@ -414,6 +427,7 @@ void main() {
       ) async {
         final id = invocation.positionalArguments.first as String;
         deletedIds.remove(id);
+        changes.notify();
         return Right(id == expenseEntry.id ? expenseEntry : incomeEntry);
       });
     });
@@ -422,9 +436,10 @@ void main() {
       'deleting removes the entry and exposes it for the undo window',
       build: buildCubit,
       act: (cubit) async {
-        await cubit.load();
+        await cubit.subscribe();
         await cubit.deleteEntry(expenseEntry.id);
       },
+      wait: const Duration(milliseconds: 10),
       verify: (cubit) {
         expect(cubit.state.pendingUndoEntryId, expenseEntry.id);
         expect(cubit.state.entries.map((e) => e.id), ['i1']);
@@ -433,18 +448,20 @@ void main() {
     );
 
     blocTest<FinanceHistoryCubit, FinanceHistoryState>(
-      'undo within the window restores the entry and reloads all three',
+      'undo within the window restores the entry and the subscription '
+      'refreshes all three with no reload',
       build: buildCubit,
       act: (cubit) async {
-        await cubit.load();
+        await cubit.subscribe();
         await cubit.deleteEntry(expenseEntry.id);
         await cubit.undoDelete(expenseEntry.id);
       },
+      wait: const Duration(milliseconds: 10),
       verify: (cubit) {
         expect(cubit.state.pendingUndoEntryId, isNull);
         expect(cubit.state.entries.map((e) => e.id), ['e1', 'i1']);
         verify(() => financeRepository.restoreEntry('e1')).called(1);
-        // Three loads: the initial one, the post-delete one, the post-undo
+        // Three reads: the initial one, the post-delete one, the post-undo
         // one — the totals never lag behind the list.
         verify(() => financeRepository.getSummaryTotals(any())).called(3);
       },
@@ -455,7 +472,7 @@ void main() {
       'entry deleted',
       build: () => buildCubit()..undoWindow = const Duration(milliseconds: 20),
       act: (cubit) async {
-        await cubit.load();
+        await cubit.subscribe();
         await cubit.deleteEntry(expenseEntry.id);
         await Future<void>.delayed(const Duration(milliseconds: 60));
       },
@@ -486,7 +503,7 @@ void main() {
       'a missing rate carries the blocked summary, naming the currency, up '
       'to the state (FR-009)',
       build: buildCubit,
-      act: (cubit) => cubit.load(),
+      act: (cubit) => cubit.subscribe(),
       verify: (cubit) {
         final summary = cubit.state.summary!;
         expect(cubit.state.status, FinanceHistoryStatus.success);
@@ -507,7 +524,7 @@ void main() {
         );
         return buildCubit();
       },
-      act: (cubit) => cubit.load(),
+      act: (cubit) => cubit.subscribe(),
       verify: (cubit) {
         final summary = cubit.state.summary!;
         expect(summary.isBlocked, isFalse);
@@ -516,4 +533,53 @@ void main() {
       },
     );
   });
+
+  test('an entry added elsewhere reaches the subscribed history with no '
+      'reload (021 FR-031)', () async {
+    var entries = [expenseEntry];
+    when(
+      () => financeRepository.getHistory(
+        filter: any(named: 'filter'),
+        limit: any(named: 'limit'),
+        offset: any(named: 'offset'),
+      ),
+    ).thenAnswer((_) async => Right(entries));
+    final cubit = buildCubit();
+    addTearDown(cubit.close);
+    await cubit.subscribe();
+    expect(cubit.state.entries.map((e) => e.id), ['e1']);
+
+    entries = [expenseEntry, incomeEntry];
+    changes.notify();
+    await pumpEventQueue();
+
+    expect(cubit.state.entries.map((e) => e.id), ['e1', 'i1']);
+  });
+
+  test(
+    'loadMore() widens the watched window without a loading state',
+    () async {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.subscribe();
+      final states = <FinanceHistoryState>[];
+      final subscription = cubit.stream.listen(states.add);
+      addTearDown(subscription.cancel);
+
+      await cubit.loadMore();
+
+      expect(
+        states.map((s) => s.status),
+        isNot(contains(FinanceHistoryStatus.loading)),
+      );
+      final limits = verify(
+        () => financeRepository.getHistory(
+          filter: any(named: 'filter'),
+          limit: captureAny(named: 'limit'),
+          offset: any(named: 'offset'),
+        ),
+      ).captured;
+      expect(limits, [50, 100]);
+    },
+  );
 }

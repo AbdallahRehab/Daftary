@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../../domain/entities/category_breakdown_item.dart';
@@ -222,6 +223,19 @@ class FinanceRepositoryImpl implements FinanceRepository {
       return Left(CacheFailure('Failed to compute category breakdown: $e'));
     }
   }
+
+  @override
+  Stream<Either<Failure, List<FinanceEntry>>> watchHistory({
+    FinanceHistoryFilter? filter,
+    required int limit,
+  }) => _dao.entriesChanged().reRead(
+    () => getHistory(filter: filter, limit: limit),
+  );
+
+  @override
+  Stream<Either<Failure, FinancePeriodTotals>> watchSummaryTotals(
+    DateRange period,
+  ) => _dao.entriesChanged().reRead(() => getSummaryTotals(period));
 
   @override
   Future<Either<Failure, bool>> hasAnyEntry() async {

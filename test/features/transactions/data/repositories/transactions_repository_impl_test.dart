@@ -1,8 +1,6 @@
 import 'package:daftary/core/database/app_database.dart'
     hide isNull, isNotNull, ExchangeRate;
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/people/data/datasources/people_dao.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
@@ -12,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:daftary/features/currency/domain/entities/exchange_rate.dart';
 
 import '../../helpers/currency_test_doubles.dart';
+import '../../../../helpers/test_daos.dart';
 
 void main() {
   late AppDatabase db;
@@ -20,8 +19,8 @@ void main() {
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    repository = TransactionsRepositoryImpl(TransactionsDao(db), db);
-    final person = await PeopleDao(
+    repository = TransactionsRepositoryImpl(testTransactionsDao(db), db);
+    final person = await testPeopleDao(
       db,
     ).insertPerson(id: 'p1', name: 'Ahmed', createdAt: DateTime(2026));
     personId = person.id;
@@ -234,7 +233,7 @@ void main() {
       'totals/groups active and archived people, and includes an archived '
       'person with a non-zero balance in the totals (FR-024, Clarifications)',
       () async {
-        final dao = PeopleDao(db);
+        final dao = testPeopleDao(db);
         final sara = await dao.insertPerson(
           id: 'p2',
           name: 'Sara',
@@ -432,7 +431,7 @@ void main() {
       Currency primary = Currency.egp,
       List<ExchangeRate> rates = const [],
     }) => TransactionsRepositoryImpl(
-      TransactionsDao(db),
+      testTransactionsDao(db),
       db,
       getConversionContext: getConversionContextWith(
         primary: primary,
@@ -685,7 +684,7 @@ void main() {
     });
 
     group('getOverview', () {
-      Future<void> addPerson(String id, String name) => PeopleDao(
+      Future<void> addPerson(String id, String name) => testPeopleDao(
         db,
       ).insertPerson(id: id, name: name, createdAt: DateTime(2026));
 
@@ -811,13 +810,13 @@ void main() {
     test('matches getPersonBalance for every person: converted, blocked, '
         'deleted rows, and no transactions at all', () async {
       final repo = TransactionsRepositoryImpl(
-        TransactionsDao(db),
+        testTransactionsDao(db),
         db,
         getConversionContext: getConversionContextWith(
           rates: [rate(Currency.usd, Currency.egp, 50)],
         ),
       );
-      final peopleDao = PeopleDao(db);
+      final peopleDao = testPeopleDao(db);
       for (final id in ['p2', 'p3']) {
         await peopleDao.insertPerson(
           id: id,

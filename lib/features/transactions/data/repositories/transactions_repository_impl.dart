@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart' as db;
 import '../../../../core/database/balance_queries.dart';
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../../../currency/domain/entities/conversion_context.dart';
@@ -80,8 +81,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         note: db.Value(note),
         createdAt: DateTime.now().millisecondsSinceEpoch,
       );
-      final row = await _dao.insertTransactionIdempotent(companion);
-      await _writeCreatedAuditEntry(row.id);
+      final row = await _insertWithCreatedAudit(companion);
       return Right(row.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to record transaction: $e'));
@@ -118,8 +118,7 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
           note: db.Value(note),
           createdAt: DateTime.now().millisecondsSinceEpoch,
         );
-        final row = await _dao.insertTransactionIdempotent(companion);
-        await _writeCreatedAuditEntry(row.id);
+        final row = await _insertWithCreatedAudit(companion);
         return Right(row.toDomain());
       } catch (e) {
         return Left(CacheFailure('Failed to record repayment: $e'));
@@ -159,16 +158,20 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         note: db.Value(note),
         editedAt: db.Value(now.millisecondsSinceEpoch),
       );
-      final updated = await _dao.updateTransaction(transactionId, companion);
-      await _dao.insertAuditEntry(
-        db.TransactionAuditEntriesCompanion.insert(
-          id: _uuid.v4(),
-          transactionId: transactionId,
-          changeType: AuditChangeType.edited.dbValue,
-          previousValuesJson: db.Value(previousValuesJson),
-          changedAt: now.millisecondsSinceEpoch,
-        ),
-      );
+      // The edit, its audit entry and both outbox rows commit together.
+      final updated = await _db.transaction(() async {
+        final updated = await _dao.updateTransaction(transactionId, companion);
+        await _dao.insertAuditEntry(
+          db.TransactionAuditEntriesCompanion.insert(
+            id: _uuid.v4(),
+            transactionId: transactionId,
+            changeType: AuditChangeType.edited.dbValue,
+            previousValuesJson: db.Value(previousValuesJson),
+            changedAt: now.millisecondsSinceEpoch,
+          ),
+        );
+        return updated;
+      });
       return Right(updated.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to edit transaction: $e'));
@@ -190,16 +193,20 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         'note': existing.note,
       });
       final now = DateTime.now();
-      await _dao.softDelete(transactionId, now);
-      await _dao.insertAuditEntry(
-        db.TransactionAuditEntriesCompanion.insert(
-          id: _uuid.v4(),
-          transactionId: transactionId,
-          changeType: AuditChangeType.deleted.dbValue,
-          previousValuesJson: db.Value(previousValuesJson),
-          changedAt: now.millisecondsSinceEpoch,
-        ),
-      );
+      // The soft delete, its audit entry and both outbox rows commit
+      // together.
+      await _db.transaction(() async {
+        await _dao.softDelete(transactionId, now);
+        await _dao.insertAuditEntry(
+          db.TransactionAuditEntriesCompanion.insert(
+            id: _uuid.v4(),
+            transactionId: transactionId,
+            changeType: AuditChangeType.deleted.dbValue,
+            previousValuesJson: db.Value(previousValuesJson),
+            changedAt: now.millisecondsSinceEpoch,
+          ),
+        );
+      });
       return const Right(unit);
     } catch (e) {
       return Left(CacheFailure('Failed to delete transaction: $e'));
@@ -369,6 +376,35 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         : TransactionDirection.given;
   }
 
+  /// Every table a converted balance depends on: amounts, the people they
+  /// belong to, and the conversion inputs (018).
+  Set<db.TableInfo<db.Table, Object?>> get _balanceTables => {
+    _db.moneyTransactions,
+    _db.people,
+    _db.exchangeRates,
+    _db.primaryCurrencySettings,
+  };
+
+  @override
+  Stream<Either<Failure, List<MoneyTransaction>>> watchPersonHistory(
+    String personId,
+  ) => _db.watchEither({
+    _db.moneyTransactions,
+  }, () => getPersonHistory(personId));
+
+  @override
+  Stream<Either<Failure, PersonBalance>> watchPersonBalance(String personId) =>
+      _db.watchEither(_balanceTables, () => getPersonBalance(personId));
+
+  @override
+  Stream<Either<Failure, Map<String, PersonBalance>>> watchPersonBalances(
+    List<String> personIds,
+  ) => _db.watchEither(_balanceTables, () => getPersonBalances(personIds));
+
+  @override
+  Stream<Either<Failure, OverviewSummary>> watchOverview() =>
+      _db.watchEither(_balanceTables, getOverview);
+
   @override
   Future<Either<Failure, bool>> hasAnyTransaction() async {
     try {
@@ -378,6 +414,18 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
         CacheFailure('Failed to check for existing transactions: $e'),
       );
     }
+  }
+
+  /// Inserts idempotently and writes the `created` audit entry in one
+  /// transaction, so both rows and their outbox entries commit together.
+  Future<db.MoneyTransaction> _insertWithCreatedAudit(
+    db.MoneyTransactionsCompanion companion,
+  ) {
+    return _db.transaction(() async {
+      final row = await _dao.insertTransactionIdempotent(companion);
+      await _writeCreatedAuditEntry(row.id);
+      return row;
+    });
   }
 
   Future<void> _writeCreatedAuditEntry(String transactionId) {

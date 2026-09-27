@@ -1,9 +1,9 @@
 import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/test_daos.dart';
 
 /// T107 (Phase 9 performance validation, SC-005): seeds 500 people /
 /// 10,000 transactions directly via batch inserts (bypassing the DAO/
@@ -16,7 +16,7 @@ void main() {
       'people / 10,000 transactions (SC-005)', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    final repository = TransactionsRepositoryImpl(TransactionsDao(db), db);
+    final repository = TransactionsRepositoryImpl(testTransactionsDao(db), db);
 
     const peopleCount = 500;
     const transactionsPerPerson = 20; // 500 * 20 = 10,000 total.

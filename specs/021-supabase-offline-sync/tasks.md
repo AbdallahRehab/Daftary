@@ -271,7 +271,7 @@ Each task is followed by indented lines:
 
 ### Tests for User Story 1 (write first; they must FAIL before implementation)
 
-- [ ] T024 [P] [US1] Write the DAO outbox guard test in test/core/sync/dao_outbox_guard_test.dart (new)
+- [X] T024 [P] [US1] Write the DAO outbox guard test in test/core/sync/dao_outbox_guard_test.dart (new)
   - Deps: T015
   - Done when, for every mutating public method of the four DAOs listed below, called against an in-memory database, it asserts that exactly one outbox row with the expected `entity_type` and `op_type` exists afterwards. The only exception is the idempotent no-op path, which must record nothing. The methods are:
     - `PeopleDao`: `insertPerson`, `updatePerson`, `setArchived`, `deletePerson`
@@ -280,7 +280,7 @@ Each task is followed by indented lines:
     - `CurrencyDao`: `upsertPrimary`, `upsertRate`, `deleteRatesFrom`
   - Validate: the test fails before T025–T028 and passes after them. Until those land it may fail to *compile*, because the DAO constructors change. Keep it out of any full `flutter test` run until T025–T028 are merged, or write it and T025–T028 in the same change.
 
-- [ ] T025 [P] [US1] Record outbox entries in lib/features/people/data/datasources/people_dao.dart
+- [X] T025 [P] [US1] Record outbox entries in lib/features/people/data/datasources/people_dao.dart
   - Deps: T015, T017
   - Done when:
     - Each write method wraps its write in `_db.transaction` and calls `recordUpsert(person, id, mapper.toWire(row))`.
@@ -288,7 +288,7 @@ Each task is followed by indented lines:
     - `SyncOutbox` and the mapper are injected through the constructor.
   - Validate: the people rows of T024 pass, and `test/features/people/data/repositories/people_repository_impl_test.dart` still passes.
 
-- [ ] T026 [P] [US1] Record outbox entries in lib/features/transactions/data/datasources/transactions_dao.dart
+- [X] T026 [P] [US1] Record outbox entries in lib/features/transactions/data/datasources/transactions_dao.dart
   - Deps: T015, T018
   - Done when:
     - `insertTransactionIdempotent` records only when it actually inserted a row.
@@ -297,12 +297,12 @@ Each task is followed by indented lines:
     - Everything joins the repository's existing transaction for edit or delete together with its audit entry.
   - Validate: T024's transaction rows pass, and `test/features/transactions/data/repositories/transactions_repository_impl_test.dart` passes.
 
-- [ ] T027 [P] [US1] Record outbox entries in lib/features/finance/data/datasources/finance_dao.dart
+- [X] T027 [P] [US1] Record outbox entries in lib/features/finance/data/datasources/finance_dao.dart
   - Deps: T015, T019
   - Done when: every category and entry write records an outbox entry, with `deleteCategory` recording a delete. `lib/core/database/finance_category_seed.dart` stays untouched: seeding writes directly and records nothing.
   - Validate: T024's finance rows pass, the finance repository tests pass, and a fresh install produces 0 outbox rows.
 
-- [ ] T028 [P] [US1] Record outbox entries in lib/features/currency/data/datasources/currency_dao.dart and use deterministic rate ids in lib/features/currency/data/repositories/currency_repository_impl.dart
+- [X] T028 [P] [US1] Record outbox entries in lib/features/currency/data/datasources/currency_dao.dart and use deterministic rate ids in lib/features/currency/data/repositories/currency_repository_impl.dart
   - Deps: T015, T020
   - Done when:
     - `upsertRate` receives `newId: 'rate_${currencyCode}_$relativeToCurrencyCode'`, which replaces `_uuid.v4()`.
@@ -312,7 +312,7 @@ Each task is followed by indented lines:
 
 ### Reactive reads for User Story 1
 
-- [ ] T029 [P] [US1] Add watch methods to the people repository and create two use cases
+- [X] T029 [P] [US1] Add watch methods to the people repository and create two use cases
   - Deps: T013
   - Files:
     - `lib/features/people/domain/repositories/people_repository.dart`
@@ -328,7 +328,7 @@ Each task is followed by indented lines:
     - After `createPerson` there is a new emission containing the person.
     - After `archivePerson` the person moves from the active stream to the archived stream.
 
-- [ ] T030 [P] [US1] Add watch methods to the transactions repository and create four use cases
+- [X] T030 [P] [US1] Add watch methods to the transactions repository and create four use cases
   - Deps: T013
   - Files:
     - `lib/features/transactions/domain/repositories/transactions_repository.dart`
@@ -342,7 +342,7 @@ Each task is followed by indented lines:
     - After `addTransaction` the history and balance streams emit the new state.
     - Changing an exchange rate re-emits the converted balance.
 
-- [ ] T031 [P] [US1] Add watch methods to the finance and category repositories and create three use cases
+- [X] T031 [P] [US1] Add watch methods to the finance and category repositories and create three use cases
   - Deps: T013
   - Files:
     - `lib/features/finance/domain/repositories/finance_repository.dart`
@@ -356,7 +356,7 @@ Each task is followed by indented lines:
     - `watchSummaryTotals(period)` and `watchCategories(...)` take the same parameters as the existing `getCategories`.
   - Validate: the streams emit after entry and category writes, and `watchHistory(limit: 50)` never emits more than 50 rows.
 
-- [ ] T032 [US1] Add watch methods to the currency repository and create two use cases
+- [X] T032 [US1] Add watch methods to the currency repository and create two use cases
   - Deps: T013, T028 (both edit `currency_repository_impl.dart`, so they run in sequence)
   - Files:
     - `lib/features/currency/domain/repositories/currency_repository.dart`
@@ -367,7 +367,7 @@ Each task is followed by indented lines:
   - Done when: `watchExchangeRates()` and `watchPrimaryCurrency()` emit after writes.
   - Validate: the watch tests pass.
 
-- [ ] T033 [US1] Move PersonListCubit to subscriptions
+- [X] T033 [US1] Move PersonListCubit to subscriptions
   - Deps: T029, T030
   - Files:
     - `lib/features/people/presentation/cubit/person_list_cubit.dart` and `person_list_state.dart`
@@ -381,13 +381,13 @@ Each task is followed by indented lines:
     - The retry button calls `resubscribe()`.
   - Validate: a `bloc_test` shows that a person created through the repository appears with no `load()` call, and that archiving removes it.
 
-- [ ] T034 [US1] Move ArchivedPeopleCubit to subscriptions
+- [X] T034 [US1] Move ArchivedPeopleCubit to subscriptions
   - Deps: T029
   - Files: `lib/features/people/presentation/cubit/archived_people_cubit.dart`, `lib/features/people/presentation/pages/archived_people_page.dart`, `test/features/people/presentation/cubit/archived_people_cubit_test.dart`
   - Done when: restoring a person updates the list with no reload, and the 005 archive-refresh behavior is kept.
   - Validate: `bloc_test`, plus `integration_test/archive_state_refresh_flow_test.dart` passes.
 
-- [ ] T035 [US1] Move PersonDetailCubit to subscriptions
+- [X] T035 [US1] Move PersonDetailCubit to subscriptions
   - Deps: T030
   - Files: `lib/features/transactions/presentation/cubit/person_detail_cubit.dart`, `lib/features/transactions/presentation/pages/person_detail_page.dart`, `test/features/transactions/presentation/cubit/person_detail_cubit_test.dart`
   - Done when:
@@ -396,13 +396,13 @@ Each task is followed by indented lines:
     - The page drops its post-navigation reloads.
   - Validate: a `bloc_test` shows that adding, editing or deleting a transaction emits new history and balance with no `refresh()`, and there are no duplicate rows (the 004 acceptance scenarios).
 
-- [ ] T036 [US1] Move OverviewCubit to subscriptions
+- [X] T036 [US1] Move OverviewCubit to subscriptions
   - Deps: T030
   - Files: `lib/features/transactions/presentation/cubit/overview_cubit.dart`, `lib/features/transactions/presentation/pages/overview_page.dart`, `test/features/transactions/presentation/cubit/overview_cubit_test.dart`
   - Done when: the Cubit subscribes to `WatchOverview`, and the "reload from other screens" calls are removed.
   - Validate: a `bloc_test` shows the totals change after a transaction is added elsewhere.
 
-- [ ] T037 [US1] Move FinanceHistoryCubit to subscriptions
+- [X] T037 [US1] Move FinanceHistoryCubit to subscriptions
   - Deps: T031
   - Files: `lib/features/finance/presentation/cubit/finance_history_cubit.dart`, `lib/features/finance/presentation/pages/finance_history_page.dart`, `test/features/finance/presentation/cubit/finance_history_cubit_test.dart`
   - Done when:
@@ -411,19 +411,19 @@ Each task is followed by indented lines:
     - Pull-to-refresh stays as a resubscribe.
   - Validate: `bloc_test` for add, delete and restore.
 
-- [ ] T038 [US1] Move FinanceMonthSummaryCubit to subscriptions
+- [X] T038 [US1] Move FinanceMonthSummaryCubit to subscriptions
   - Deps: T031
   - Files: `lib/features/finance/presentation/cubit/finance_month_summary_cubit.dart`, `lib/features/finance/presentation/widgets/finance_month_summary_card.dart`, `test/features/finance/presentation/cubit/finance_month_summary_cubit_test.dart` (new)
   - Done when: the Cubit subscribes to `WatchFinanceSummary(period)`.
   - Validate: `bloc_test`.
 
-- [ ] T039 [US1] Move CategoryManagementCubit to subscriptions
+- [X] T039 [US1] Move CategoryManagementCubit to subscriptions
   - Deps: T031
   - Files: `lib/features/finance/presentation/cubit/category_management_cubit.dart`, `lib/features/finance/presentation/pages/category_management_page.dart`, `test/features/finance/presentation/cubit/category_management_cubit_test.dart`
   - Done when: the Cubit subscribes to `WatchCategories`, and the reload after the form closes is removed.
   - Validate: `bloc_test`.
 
-- [ ] T040 [US1] Move ExchangeRateListCubit and PrimaryCurrencyCubit to subscriptions
+- [X] T040 [US1] Move ExchangeRateListCubit and PrimaryCurrencyCubit to subscriptions
   - Deps: T032
   - Files:
     - `lib/features/currency/presentation/cubit/exchange_rate_list_cubit.dart` and `primary_currency_cubit.dart`
@@ -432,12 +432,12 @@ Each task is followed by indented lines:
   - Done when: both Cubits subscribe to their watch streams, and the post-navigation `load()` calls are removed.
   - Validate: `bloc_test`, plus `integration_test/currency_flows_test.dart`.
 
-- [ ] T041 [US1] Register the new watch use cases for DI and regenerate lib/core/di/injection.config.dart
+- [X] T041 [US1] Register the new watch use cases for DI and regenerate lib/core/di/injection.config.dart
   - Deps: T029–T040
   - Done when: all 11 `Watch*` use cases are `@injectable` and the Cubit constructors resolve.
   - Validate: `dart run build_runner build`, `flutter analyze`, then `flutter test`.
 
-- [ ] T042 [US1] Test that the outbox survives a restart, in test/core/sync/local/outbox_persistence_test.dart (new)
+- [X] T042 [US1] Test that the outbox survives a restart, in test/core/sync/local/outbox_persistence_test.dart (new)
   - Deps: T025–T028
   - Done when:
     - Against a file-backed temporary database, the test makes mutations, closes the database, reopens it, and finds identical outbox rows with `status = 'pending'`.

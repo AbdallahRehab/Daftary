@@ -2,7 +2,6 @@ import 'package:daftary/core/database/app_database.dart' as db;
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/currency.dart';
-import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
 import 'package:daftary/features/currency/domain/entities/currency_failures.dart';
 import 'package:daftary/features/currency/domain/entities/exchange_rate.dart';
@@ -10,6 +9,7 @@ import 'package:daftary/features/currency/domain/entities/primary_currency_setti
 import 'package:drift/native.dart';
 import 'package:fpdart/fpdart.dart' hide State;
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/test_daos.dart';
 
 class _FakeClock implements AppClock {
   DateTime current = DateTime(2026, 9, 1, 10);
@@ -28,7 +28,7 @@ void main() {
     database = db.AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
     clock = _FakeClock();
-    repository = CurrencyRepositoryImpl(CurrencyDao(database), clock);
+    repository = CurrencyRepositoryImpl(testCurrencyDao(database), clock);
   });
 
   T right<T>(Either<Failure, T> either) =>
@@ -108,6 +108,8 @@ void main() {
         );
         final firstId =
             (await database.select(database.exchangeRates).get()).single.id;
+        // 021: the id is the pair, so devices converge on one cloud row.
+        expect(firstId, 'rate_USD_EGP');
 
         clock.current = DateTime(2026, 9, 5, 8);
         final updated = right<ExchangeRate>(

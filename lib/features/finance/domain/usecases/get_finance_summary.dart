@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../currency/domain/entities/conversion_context.dart';
 import '../../../currency/domain/entities/conversion_result.dart';
 import '../../../currency/domain/services/currency_converter.dart';
 import '../../../currency/domain/usecases/get_conversion_context.dart';
@@ -34,36 +35,46 @@ class GetFinanceSummary {
     final contextResult = await _getConversionContext();
     return contextResult.fold(left, (context) async {
       final totalsResult = await _repository.getSummaryTotals(period);
-      return totalsResult.map((totals) {
-        final income = _converter.sumToTargetCurrency(
-          amounts: totals.income,
-          targetCurrency: context.primary,
-          rates: context.rates,
-        );
-        final expense = _converter.sumToTargetCurrency(
-          amounts: totals.expense,
-          targetCurrency: context.primary,
-          rates: context.rates,
-        );
-        return switch ((income, expense)) {
-          (SumTotal(value: final income), SumTotal(value: final expense)) =>
-            FinanceSummary(
-              totalIncome: income,
-              totalExpense: expense,
-              period: period,
-            ),
-          _ => FinanceSummary.blocked(
-            period: period,
-            currency: context.primary,
-            missingRatesFor: {
-              if (income case SumBlocked(:final missingRatesFor))
-                ...missingRatesFor,
-              if (expense case SumBlocked(:final missingRatesFor))
-                ...missingRatesFor,
-            }.toList(),
-          ),
-        };
-      });
+      return totalsResult.map(
+        (totals) => summarize(totals: totals, context: context, period: period),
+      );
     });
+  }
+
+  /// Converts one period's per-currency [totals] into [context]'s primary
+  /// currency — the pure step `WatchFinanceSummary` (021) reuses.
+  FinanceSummary summarize({
+    required FinancePeriodTotals totals,
+    required ConversionContext context,
+    required DateRange period,
+  }) {
+    final income = _converter.sumToTargetCurrency(
+      amounts: totals.income,
+      targetCurrency: context.primary,
+      rates: context.rates,
+    );
+    final expense = _converter.sumToTargetCurrency(
+      amounts: totals.expense,
+      targetCurrency: context.primary,
+      rates: context.rates,
+    );
+    return switch ((income, expense)) {
+      (SumTotal(value: final income), SumTotal(value: final expense)) =>
+        FinanceSummary(
+          totalIncome: income,
+          totalExpense: expense,
+          period: period,
+        ),
+      _ => FinanceSummary.blocked(
+        period: period,
+        currency: context.primary,
+        missingRatesFor: {
+          if (income case SumBlocked(:final missingRatesFor))
+            ...missingRatesFor,
+          if (expense case SumBlocked(:final missingRatesFor))
+            ...missingRatesFor,
+        }.toList(),
+      ),
+    };
   }
 }

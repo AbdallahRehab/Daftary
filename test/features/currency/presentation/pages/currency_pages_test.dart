@@ -189,7 +189,7 @@ void main() {
     setUp(() {
       cubit = _MockListCubit();
       when(() => cubit.remove(any())).thenAnswer((_) async {});
-      when(() => cubit.load()).thenAnswer((_) async {});
+      when(() => cubit.subscribe()).thenAnswer((_) async {});
     });
 
     testWidgets('each rate reads "1 USD = 50.25 EGP" with its date, under '

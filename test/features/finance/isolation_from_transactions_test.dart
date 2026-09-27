@@ -1,11 +1,9 @@
 import 'dart:io';
 
 import 'package:daftary/core/database/app_database.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
@@ -14,6 +12,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/conversion_fakes.dart';
+import '../../helpers/test_daos.dart';
 
 /// T075 / FR-023 — the boundary between this feature and the existing
 /// person-to-person ledger.
@@ -31,8 +30,8 @@ void main() {
 
   setUp(() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
-    finance = FinanceRepositoryImpl(FinanceDao(db));
-    transactions = TransactionsRepositoryImpl(TransactionsDao(db), db);
+    finance = FinanceRepositoryImpl(testFinanceDao(db));
+    transactions = TransactionsRepositoryImpl(testTransactionsDao(db), db);
 
     await db
         .into(db.people)

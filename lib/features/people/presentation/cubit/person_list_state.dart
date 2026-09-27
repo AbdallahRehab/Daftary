@@ -40,8 +40,7 @@ class PersonListState extends Equatable {
   /// Non-null while an `archive()` call is in flight for that person id;
   /// `archive()` is a no-op re-entrancy guard when called again with the
   /// same id while it is already set (FR-006). Cleared once the use case
-  /// call (success or failure) completes and, on success, the subsequent
-  /// `load()` has emitted.
+  /// call (success or failure) completes.
   final String? processingPersonId;
 
   /// The person a just-completed `archive()` removed from the list. Set for

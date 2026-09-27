@@ -2,12 +2,10 @@ import 'package:daftary/core/database/app_database.dart' hide isNull;
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
 import 'package:daftary/features/currency/domain/usecases/get_conversion_context.dart';
 import 'package:daftary/features/currency/domain/usecases/get_primary_currency.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/category_repository_impl.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/category_breakdown_item.dart';
@@ -21,12 +19,10 @@ import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_entry_form_cubit.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_entry_form_state.dart';
-import 'package:daftary/features/people/data/datasources/people_dao.dart';
 import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/usecases/create_person.dart';
 import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/models/transaction_mapper.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
@@ -41,6 +37,7 @@ import 'package:daftary/features/transactions/presentation/cubit/transaction_for
 import 'package:daftary/features/transactions/presentation/cubit/transaction_form_state.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../helpers/test_daos.dart';
 
 /// 018 T038 — release-blocking regression anchor for FR-015 / SC-008: a
 /// user who only ever uses EGP must see NO behavior change from the
@@ -92,24 +89,24 @@ void main() {
     await db.select(db.financeCategories).get();
 
     currencyRepository = CurrencyRepositoryImpl(
-      CurrencyDao(db),
+      testCurrencyDao(db),
       const SystemAppClock(),
     );
     getPrimaryCurrency = GetPrimaryCurrency(currencyRepository);
     getConversionContext = GetConversionContext(currencyRepository);
     peopleRepository = PeopleRepositoryImpl(
-      PeopleDao(db),
+      testPeopleDao(db),
       const FindPossibleDuplicatePerson(),
       db,
       getConversionContext: getConversionContext,
     );
     transactionsRepository = TransactionsRepositoryImpl(
-      TransactionsDao(db),
+      testTransactionsDao(db),
       db,
       getConversionContext: getConversionContext,
     );
-    financeRepository = FinanceRepositoryImpl(FinanceDao(db));
-    categoryRepository = CategoryRepositoryImpl(FinanceDao(db));
+    financeRepository = FinanceRepositoryImpl(testFinanceDao(db));
+    categoryRepository = CategoryRepositoryImpl(testFinanceDao(db));
     getFinanceSummary = GetFinanceSummary(
       financeRepository,
       getConversionContext,

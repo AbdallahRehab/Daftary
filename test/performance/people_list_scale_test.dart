@@ -1,19 +1,18 @@
 import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/date/app_clock.dart';
-import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
 import 'package:daftary/features/currency/domain/usecases/get_conversion_context.dart';
-import 'package:daftary/features/people/data/datasources/people_dao.dart';
 import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
 import 'package:daftary/features/people/domain/usecases/archive_person.dart';
 import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';
 import 'package:daftary/features/people/domain/usecases/restore_person.dart';
+import 'package:daftary/features/people/domain/usecases/watch_active_people.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balances.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/test_daos.dart';
 
 /// The People list is the home screen and reloads on every search
 /// keystroke, filter change, and return from another screen, so its load
@@ -25,15 +24,15 @@ void main() {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
     final getContext = GetConversionContext(
-      CurrencyRepositoryImpl(CurrencyDao(db), SystemAppClock()),
+      CurrencyRepositoryImpl(testCurrencyDao(db), SystemAppClock()),
     );
     final transactions = TransactionsRepositoryImpl(
-      TransactionsDao(db),
+      testTransactionsDao(db),
       db,
       getConversionContext: getContext,
     );
     final people = PeopleRepositoryImpl(
-      PeopleDao(db),
+      testPeopleDao(db),
       const FindPossibleDuplicatePerson(),
       db,
       getConversionContext: getContext,
@@ -72,23 +71,23 @@ void main() {
     });
 
     final cubit = PersonListCubit(
-      people,
-      GetPersonBalances(transactions),
+      WatchActivePeople(people),
+      WatchPersonBalances(transactions),
       ArchivePerson(people),
       RestorePerson(people),
     );
     addTearDown(cubit.close);
 
-    await cubit.load(); // warm-up
+    await cubit.subscribe(); // warm-up
     final stopwatch = Stopwatch()..start();
     const runs = 5;
     for (var r = 0; r < runs; r++) {
-      await cubit.load();
+      await cubit.resubscribe();
     }
     stopwatch.stop();
     final perLoad = stopwatch.elapsedMilliseconds / runs;
     // ignore: avoid_print
-    print('PersonListCubit.load(): ${perLoad.toStringAsFixed(1)} ms/load');
+    print('PersonListCubit.subscribe(): ${perLoad.toStringAsFixed(1)} ms/load');
 
     expect(cubit.state.items, hasLength(peopleCount));
     // Measured at ~341 ms/load before balances were batched (one query set

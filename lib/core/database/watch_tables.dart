@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:fpdart/fpdart.dart';
+
+import '../error/failure.dart';
+import '../utils/either_equality.dart';
 import 'app_database.dart';
 
 /// 021: the reactive-read primitive (research.md Decision 14). Repositories
@@ -46,4 +50,30 @@ extension WatchTables on AppDatabase {
     );
     return controller.stream;
   }
+}
+
+/// 021: the repository-side `watch*` building block (contracts/
+/// dart-interfaces.md §3).
+extension WatchQuery on AppDatabase {
+  /// Re-runs [query] — an existing `get*` read, unchanged — once now and
+  /// again after every burst of writes to [tables], and emits only results
+  /// that differ from the previous one. Results are compared deeply, so a
+  /// re-read that returns an equal list or map is swallowed. Queries never
+  /// overlap: a burst during a slow read waits for it.
+  Stream<Either<Failure, T>> watchEither<T>(
+    Set<TableInfo<Table, Object?>> tables,
+    Future<Either<Failure, T>> Function() query, {
+    Duration debounce = const Duration(milliseconds: 50),
+  }) => changesOf(tables, debounce: debounce).reRead(query);
+}
+
+/// 021: turns a change signal (such as [WatchTables.changesOf]) into the
+/// result of re-running a read.
+extension ReReadOnChange on Stream<void> {
+  /// Runs [query] on every event and emits its result when it differs from
+  /// the previous one (compared deeply, see [sameResult]). Queries never
+  /// overlap.
+  Stream<Either<Failure, T>> reRead<T>(
+    Future<Either<Failure, T>> Function() query,
+  ) => asyncMap((_) => query()).distinct(sameResult);
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/currency.dart';
@@ -6,6 +8,8 @@ import 'package:daftary/features/currency/domain/entities/primary_currency_setti
 import 'package:daftary/features/currency/domain/usecases/get_exchange_rates.dart';
 import 'package:daftary/features/currency/domain/usecases/get_primary_currency.dart';
 import 'package:daftary/features/currency/domain/usecases/remove_exchange_rate.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_exchange_rates.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
 import 'package:daftary/features/currency/presentation/cubit/exchange_rate_list_cubit.dart';
 import 'package:daftary/features/currency/presentation/cubit/exchange_rate_list_state.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +21,27 @@ class _MockGetPrimary extends Mock implements GetPrimaryCurrency {}
 class _MockGetRates extends Mock implements GetExchangeRates {}
 
 class _MockRemove extends Mock implements RemoveExchangeRate {}
+
+/// 021: the Cubit watches; these emit the mocked read's answer once.
+class _WatchPrimaryFrom implements WatchPrimaryCurrency {
+  _WatchPrimaryFrom(this.get);
+
+  final GetPrimaryCurrency get;
+
+  @override
+  Stream<Either<Failure, PrimaryCurrencySetting>> call() =>
+      Stream.fromFuture(get());
+}
+
+class _WatchRatesFrom implements WatchExchangeRates {
+  _WatchRatesFrom(this.get);
+
+  final GetExchangeRates get;
+
+  @override
+  Stream<Either<Failure, List<ExchangeRate>>> call() =>
+      Stream.fromFuture(get());
+}
 
 ExchangeRate _rate(Currency from, Currency to, int micros) => ExchangeRate(
   currency: from,
@@ -46,8 +71,11 @@ void main() {
     ).thenAnswer((_) async => Right([sarUsd, usdEgp, eurEgp]));
   });
 
-  ExchangeRateListCubit build() =>
-      ExchangeRateListCubit(getPrimary, getRates, remove);
+  ExchangeRateListCubit build() => ExchangeRateListCubit(
+    _WatchPrimaryFrom(getPrimary),
+    _WatchRatesFrom(getRates),
+    remove,
+  );
 
   final loaded = ExchangeRateListState(
     status: ExchangeRateListStatus.ready,
@@ -55,19 +83,19 @@ void main() {
   );
 
   blocTest<ExchangeRateListCubit, ExchangeRateListState>(
-    'load: rates against the primary first, stale-primary rates after',
+    'subscribe: rates against the primary first, stale-primary rates after',
     build: build,
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [loaded],
   );
 
   blocTest<ExchangeRateListCubit, ExchangeRateListState>(
-    'load failure',
+    'subscribe failure',
     build: build,
     setUp: () => when(
       () => getRates(),
     ).thenAnswer((_) async => const Left(CacheFailure('x'))),
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       const ExchangeRateListState(status: ExchangeRateListStatus.loadFailure),
     ],
@@ -118,4 +146,34 @@ void main() {
       verifyNever(() => remove('EUR'));
     },
   );
+
+  test('a rate saved elsewhere reaches the subscribed list with no reload '
+      '(021 FR-031)', () async {
+    final rates = StreamController<Either<Failure, List<ExchangeRate>>>();
+    addTearDown(rates.close);
+    final cubit = ExchangeRateListCubit(
+      _WatchPrimaryFrom(getPrimary),
+      _StreamWatchRates(rates.stream),
+      remove,
+    );
+    addTearDown(cubit.close);
+    final first = cubit.subscribe();
+    rates.add(Right([usdEgp]));
+    await first;
+    expect(cubit.state.rates, [usdEgp]);
+
+    rates.add(Right([usdEgp, eurEgp]));
+    await pumpEventQueue();
+
+    expect(cubit.state.rates, [eurEgp, usdEgp]);
+  });
+}
+
+class _StreamWatchRates implements WatchExchangeRates {
+  _StreamWatchRates(this.stream);
+
+  final Stream<Either<Failure, List<ExchangeRate>>> stream;
+
+  @override
+  Stream<Either<Failure, List<ExchangeRate>>> call() => stream;
 }

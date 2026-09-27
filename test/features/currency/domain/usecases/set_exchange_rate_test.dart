@@ -1,7 +1,6 @@
 import 'package:daftary/core/database/app_database.dart' as db;
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/money/currency.dart';
-import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
 import 'package:daftary/features/currency/domain/entities/currency_failures.dart';
 import 'package:daftary/features/currency/domain/entities/exchange_rate.dart';
@@ -9,6 +8,7 @@ import 'package:daftary/features/currency/domain/usecases/get_exchange_rates.dar
 import 'package:daftary/features/currency/domain/usecases/set_exchange_rate.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/test_daos.dart';
 
 class _FakeClock implements AppClock {
   DateTime current = DateTime(2026, 9, 1, 9);
@@ -29,7 +29,7 @@ void main() {
     database = db.AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
     clock = _FakeClock();
-    final repository = CurrencyRepositoryImpl(CurrencyDao(database), clock);
+    final repository = CurrencyRepositoryImpl(testCurrencyDao(database), clock);
     setRate = SetExchangeRate(repository);
     getRates = GetExchangeRates(repository);
   });

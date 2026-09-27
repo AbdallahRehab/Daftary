@@ -27,7 +27,7 @@ class ExchangeRateListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ExchangeRateListCubit>()..load(),
+      create: (_) => getIt<ExchangeRateListCubit>()..subscribe(),
       child: const ExchangeRateListView(),
     );
   }
@@ -39,12 +39,10 @@ class ExchangeRateListView extends StatelessWidget {
   static const Key addButtonKey = Key('exchange_rate_add');
   static const Key disclosureKey = Key('exchange_rate_disclosure');
 
-  Future<void> _open(BuildContext context, String location) async {
-    final cubit = context.read<ExchangeRateListCubit>();
-    await context.push<void>(location);
-    // Reload whatever the form did — including nothing.
-    if (!cubit.isClosed) await cubit.load();
-  }
+  // 021: no reload on return — whatever the form saved reaches the list
+  // through its live subscription.
+  Future<void> _open(BuildContext context, String location) =>
+      context.push<void>(location);
 
   Future<void> _confirmRemove(BuildContext context, ExchangeRate rate) async {
     final l10n = AppLocalizations.of(context)!;
@@ -105,7 +103,7 @@ class ExchangeRateListView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.md),
                   TextButton(
                     onPressed: () =>
-                        context.read<ExchangeRateListCubit>().load(),
+                        context.read<ExchangeRateListCubit>().resubscribe(),
                     child: Text(l10n.commonRetry),
                   ),
                 ],

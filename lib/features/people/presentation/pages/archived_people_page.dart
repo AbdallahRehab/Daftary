@@ -23,7 +23,7 @@ class ArchivedPeoplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ArchivedPeopleCubit>()..load(),
+      create: (_) => getIt<ArchivedPeopleCubit>()..subscribe(),
       child: const _ArchivedPeopleView(),
     );
   }
@@ -66,7 +66,8 @@ class _ArchivedPeopleView extends StatelessWidget {
                     title: l10n.errorLoadTitle,
                     message: l10n.messageFor(state.failure),
                     actionLabel: l10n.commonRetry,
-                    onAction: () => context.read<ArchivedPeopleCubit>().load(),
+                    onAction: () =>
+                        context.read<ArchivedPeopleCubit>().resubscribe(),
                   );
                 }
                 if (state.people.isEmpty) {
@@ -108,9 +109,9 @@ class _ArchivedPeopleView extends StatelessWidget {
                                     child: RelationshipTagChip(tag: tag),
                                   )
                                 : null,
-                            // 005-archive-state-refresh Decision 1: this
-                            // call site previously never reloaded the
-                            // archived list on return from Person Detail.
+                            // 005-archive-state-refresh Decision 1: a change
+                            // made in Person Detail shows here on return —
+                            // 021: through the live subscription.
                             onTap: () => _openPersonDetail(context, person.id),
                             trailing: TextButton(
                               onPressed: isRestoring
@@ -134,10 +135,6 @@ class _ArchivedPeopleView extends StatelessWidget {
     );
   }
 
-  Future<void> _openPersonDetail(BuildContext context, String personId) async {
-    await context.push('/people/$personId');
-    if (context.mounted) {
-      await context.read<ArchivedPeopleCubit>().load();
-    }
-  }
+  Future<void> _openPersonDetail(BuildContext context, String personId) =>
+      context.push('/people/$personId');
 }

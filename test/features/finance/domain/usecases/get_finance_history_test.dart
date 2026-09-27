@@ -1,7 +1,6 @@
 import 'package:daftary/core/database/app_database.dart' show AppDatabase;
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
@@ -12,6 +11,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
+import '../../../../helpers/test_daos.dart';
 
 class MockFinanceRepository extends Mock implements FinanceRepository {}
 
@@ -96,7 +96,7 @@ void main() {
 
     setUp(() {
       db = AppDatabase.forTesting(NativeDatabase.memory());
-      repository = FinanceRepositoryImpl(FinanceDao(db));
+      repository = FinanceRepositoryImpl(testFinanceDao(db));
       useCase = GetFinanceHistory(repository);
     });
 

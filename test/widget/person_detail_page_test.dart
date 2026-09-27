@@ -8,8 +8,10 @@ import 'package:daftary/features/transactions/domain/entities/money_transaction.
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_history.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
+import 'package:daftary/features/people/domain/usecases/watch_person.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_history.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
 import 'package:daftary/features/transactions/presentation/pages/person_detail_page.dart';
 import 'package:daftary/features/transactions/presentation/widgets/transaction_list_tile.dart';
@@ -20,6 +22,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../features/transactions/helpers/currency_test_doubles.dart';
+import '../helpers/watch_stubs.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -29,6 +32,7 @@ class MockTransactionsRepository extends Mock
 void main() {
   late MockPeopleRepository peopleRepository;
   late MockTransactionsRepository transactionsRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026, 1, 1);
   final ahmed = Person(
@@ -39,22 +43,34 @@ void main() {
     updatedAt: now,
   );
 
+  WatchPrimaryCurrency watchPrimary() {
+    final repository = currencyRepositoryWith();
+    stubCurrencyWatches(repository, changes);
+    return WatchPrimaryCurrency(repository);
+  }
+
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    changes = FakeTableChanges();
+    stubPeopleWatches(peopleRepository, changes);
+    stubTransactionsWatches(transactionsRepository, changes);
 
     getIt.registerFactory<PersonDetailCubit>(
       () => PersonDetailCubit(
-        peopleRepository,
-        GetPersonBalance(transactionsRepository),
-        GetPersonHistory(transactionsRepository),
+        WatchPerson(peopleRepository),
+        WatchPersonBalance(transactionsRepository),
+        WatchPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
-        getPrimaryCurrencyReturning(),
+        watchPrimary(),
       ),
     );
   });
 
-  tearDown(() => getIt.reset());
+  tearDown(() async {
+    await getIt.reset();
+    await changes.close();
+  });
 
   Widget wrap(Widget child) {
     return MaterialApp(

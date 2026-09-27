@@ -2,12 +2,10 @@ import 'package:daftary/core/database/app_database.dart' hide ExchangeRate;
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/currency/domain/entities/exchange_rate.dart';
-import 'package:daftary/features/people/data/datasources/people_dao.dart';
 import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
 import 'package:daftary/features/people/domain/entities/people_failures.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
@@ -16,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../transactions/helpers/currency_test_doubles.dart';
+import '../../../../helpers/test_daos.dart';
 
 void main() {
   late AppDatabase db;
@@ -24,7 +23,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     repository = PeopleRepositoryImpl(
-      PeopleDao(db),
+      testPeopleDao(db),
       const FindPossibleDuplicatePerson(),
       db,
     );
@@ -149,7 +148,7 @@ void main() {
     PeopleRepositoryImpl repositoryWith({
       List<ExchangeRate> rates = const [],
     }) => PeopleRepositoryImpl(
-      PeopleDao(db),
+      testPeopleDao(db),
       const FindPossibleDuplicatePerson(),
       db,
       getConversionContext: getConversionContextWith(rates: rates),
@@ -160,10 +159,13 @@ void main() {
       String name,
       List<(Money, bool)> entries,
     ) async {
-      await PeopleDao(
+      await testPeopleDao(
         db,
       ).insertPerson(id: id, name: name, createdAt: DateTime(2026));
-      final transactions = TransactionsRepositoryImpl(TransactionsDao(db), db);
+      final transactions = TransactionsRepositoryImpl(
+        testTransactionsDao(db),
+        db,
+      );
       var i = 0;
       for (final (amount, given) in entries) {
         await transactions.addTransaction(

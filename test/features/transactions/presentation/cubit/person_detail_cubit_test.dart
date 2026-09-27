@@ -2,19 +2,22 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
+import 'package:daftary/features/people/domain/usecases/watch_person.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balance.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_history.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_history.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../helpers/watch_stubs.dart';
 import '../../helpers/currency_test_doubles.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
@@ -25,6 +28,7 @@ class MockTransactionsRepository extends Mock
 void main() {
   late MockPeopleRepository peopleRepository;
   late MockTransactionsRepository transactionsRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026);
   final ahmed = Person(
@@ -38,15 +42,27 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    changes = FakeTableChanges();
+    stubPeopleWatches(peopleRepository, changes);
+    stubTransactionsWatches(transactionsRepository, changes);
   });
 
-  PersonDetailCubit buildCubit() => PersonDetailCubit(
-    peopleRepository,
-    GetPersonBalance(transactionsRepository),
-    GetPersonHistory(transactionsRepository),
-    DeleteTransaction(transactionsRepository),
-    getPrimaryCurrencyReturning(),
-  );
+  tearDown(() => changes.close());
+
+  WatchPrimaryCurrency watchPrimary([Currency primary = Currency.egp]) {
+    final repository = currencyRepositoryWith(primary: primary);
+    stubCurrencyWatches(repository, changes);
+    return WatchPrimaryCurrency(repository);
+  }
+
+  PersonDetailCubit buildCubit({Currency primary = Currency.egp}) =>
+      PersonDetailCubit(
+        WatchPerson(peopleRepository),
+        WatchPersonBalance(transactionsRepository),
+        WatchPersonHistory(transactionsRepository),
+        DeleteTransaction(transactionsRepository),
+        watchPrimary(primary),
+      );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
     'resolves to theyOweYou for a positive net (FR-009)',
@@ -63,7 +79,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
     },
-    act: (cubit) => cubit.load('p1'),
+    act: (cubit) => cubit.subscribe('p1'),
     expect: () => [
       isA<PersonDetailState>().having(
         (s) => s.status,
@@ -95,7 +111,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
     },
-    act: (cubit) => cubit.load('p1'),
+    act: (cubit) => cubit.subscribe('p1'),
     expect: () => [
       isA<PersonDetailState>(),
       isA<PersonDetailState>().having(
@@ -121,7 +137,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
     },
-    act: (cubit) => cubit.load('p1'),
+    act: (cubit) => cubit.subscribe('p1'),
     expect: () => [
       isA<PersonDetailState>(),
       isA<PersonDetailState>().having(
@@ -157,7 +173,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => Right([tx]));
     },
-    act: (cubit) => cubit.load('p1'),
+    act: (cubit) => cubit.subscribe('p1'),
     verify: (cubit) {
       expect(cubit.state.person, ahmed);
       expect(cubit.state.history, hasLength(1));
@@ -179,7 +195,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('missing'),
       ).thenAnswer((_) async => const Right([]));
     },
-    act: (cubit) => cubit.load('missing'),
+    act: (cubit) => cubit.subscribe('missing'),
     expect: () => [
       isA<PersonDetailState>(),
       isA<PersonDetailState>().having(
@@ -191,79 +207,100 @@ void main() {
   );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
-    'deleteTransaction soft-deletes then refreshes so the balance '
-    'recalculates immediately (US6 Acceptance Scenario 2)',
+    'deleteTransaction soft-deletes and the subscription recalculates the '
+    'balance with no refresh (US6 Acceptance Scenario 2)',
     build: buildCubit,
     setUp: () {
+      var net = const Money.egp(200000);
       when(
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
-      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async =>
-            const Right(PersonBalance(personId: 'p1', net: Money.egp(200000))),
-      );
+      when(
+        () => transactionsRepository.getPersonBalance('p1'),
+      ).thenAnswer((_) async => Right(PersonBalance(personId: 'p1', net: net)));
       when(
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
-      when(
-        () => transactionsRepository.deleteTransaction('t1'),
-      ).thenAnswer((_) async => const Right(unit));
+      when(() => transactionsRepository.deleteTransaction('t1')).thenAnswer((
+        _,
+      ) async {
+        // The soft delete writes the table; only the notification follows.
+        net = const Money.egp(0);
+        changes.notify();
+        return const Right(unit);
+      });
     },
     act: (cubit) async {
-      await cubit.load('p1');
-      // The balance drops after the delete — refresh() must be re-run to
-      // pick up the new value, not just report success.
-      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async =>
-            const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
-      );
+      await cubit.subscribe('p1');
       await cubit.deleteTransaction('t1');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       verify(() => transactionsRepository.deleteTransaction('t1')).called(1);
       expect(cubit.state.balance?.status, RelationshipStatus.settled);
     },
   );
 
-  blocTest<PersonDetailCubit, PersonDetailState>(
-    'refresh() reflects the updated balance after an edit (US6 Acceptance '
-    'Scenario 1) — the same mechanism the edit flow re-invokes on return',
-    build: buildCubit,
-    setUp: () {
+  test(
+    'adding, editing and deleting a transaction elsewhere updates history '
+    'and balance with no refresh and no duplicate rows (004, 021 FR-031)',
+    () async {
+      MoneyTransaction tx(String id, int minorUnits) => MoneyTransaction(
+        id: id,
+        idempotencyKey: 'k$id',
+        personId: 'p1',
+        amount: Money.egp(minorUnits),
+        direction: TransactionDirection.given,
+        kind: TransactionKind.initialExchange,
+        date: now,
+        createdAt: now,
+      );
+      var history = <MoneyTransaction>[];
       when(
         () => peopleRepository.getPersonById('p1'),
       ).thenAnswer((_) async => Right(ahmed));
       when(
         () => transactionsRepository.getPersonHistory('p1'),
-      ).thenAnswer((_) async => const Right([]));
+      ).thenAnswer((_) async => Right(history));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async =>
-            const Right(PersonBalance(personId: 'p1', net: Money.egp(100000))),
+        (_) async => Right(
+          PersonBalance(
+            personId: 'p1',
+            net: Money.egp(
+              history.fold(0, (sum, t) => sum + t.amount.minorUnits),
+            ),
+          ),
+        ),
       );
-    },
-    act: (cubit) async {
-      await cubit.load('p1');
-      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
-        (_) async =>
-            const Right(PersonBalance(personId: 'p1', net: Money.egp(300000))),
-      );
-      await cubit.refresh();
-    },
-    verify: (cubit) {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.subscribe('p1');
+      expect(cubit.state.history, isEmpty);
+
+      history = [tx('t1', 100000)];
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.history.map((t) => t.id), ['t1']);
+      expect(cubit.state.balance?.net, const Money.egp(100000));
+
+      history = [tx('t1', 300000)];
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.history.map((t) => t.id), ['t1']);
       expect(cubit.state.balance?.net, const Money.egp(300000));
+
+      history = [];
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.history, isEmpty);
+      expect(cubit.state.balance?.status, RelationshipStatus.settled);
     },
   );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
     'a balance blocked on a missing rate is surfaced as-is with the primary '
     'currency (018 FR-009)',
-    build: () => PersonDetailCubit(
-      peopleRepository,
-      GetPersonBalance(transactionsRepository),
-      GetPersonHistory(transactionsRepository),
-      DeleteTransaction(transactionsRepository),
-      getPrimaryCurrencyReturning(Currency.usd),
-    ),
+    build: () => buildCubit(primary: Currency.usd),
     setUp: () {
       when(
         () => peopleRepository.getPersonById('p1'),
@@ -284,7 +321,7 @@ void main() {
         () => transactionsRepository.getPersonHistory('p1'),
       ).thenAnswer((_) async => const Right([]));
     },
-    act: (cubit) => cubit.load('p1'),
+    act: (cubit) => cubit.subscribe('p1'),
     verify: (cubit) {
       final balance = cubit.state.balance!;
       expect(cubit.state.status, PersonDetailStatus.success);

@@ -27,17 +27,12 @@ import '../widgets/period_selector.dart';
 /// The finance history screen (US3): summary, per-category breakdown, and
 /// the filtered entry list for one selected period — all three driven by a
 /// single Cubit so they can never disagree about which period they show.
-/// Navigates to [location] and reloads the history once it pops.
-///
-/// Every one of this screen's destinations can change what the screen
-/// shows — a new entry, an edited amount, a renamed or archived category —
-/// and `context.push` alone leaves the list, the totals, and the breakdown
-/// showing pre-navigation data until something else happens to reload them.
-Future<void> _pushAndReload(BuildContext context, String location) async {
-  final cubit = context.read<FinanceHistoryCubit>();
-  await context.push<void>(location);
-  if (!cubit.isClosed) await cubit.load();
-}
+/// Navigates to [location]. No reload on return: every change a
+/// destination can make — a new entry, an edited amount, a renamed or
+/// archived category — reaches this screen through the Cubit's live
+/// subscriptions (021).
+Future<void> _push(BuildContext context, String location) =>
+    context.push<void>(location);
 
 class FinanceHistoryPage extends StatelessWidget {
   const FinanceHistoryPage({super.key});
@@ -45,7 +40,7 @@ class FinanceHistoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<FinanceHistoryCubit>()..load(),
+      create: (_) => getIt<FinanceHistoryCubit>()..subscribe(),
       child: const _FinanceHistoryView(),
     );
   }
@@ -64,7 +59,7 @@ class _FinanceHistoryView extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.category_outlined),
             tooltip: l10n.financeManageCategoriesAction,
-            onPressed: () => _pushAndReload(context, '/finance/categories'),
+            onPressed: () => _push(context, '/finance/categories'),
           ),
         ],
       ),
@@ -80,7 +75,7 @@ class _FinanceHistoryView extends StatelessWidget {
               title: l10n.errorLoadTitle,
               message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
-              onAction: () => context.read<FinanceHistoryCubit>().load(),
+              onAction: () => context.read<FinanceHistoryCubit>().resubscribe(),
             );
           }
           // FR-017 — nothing has ever been recorded, so no period or filter
@@ -93,7 +88,7 @@ class _FinanceHistoryView extends StatelessWidget {
               message: l10n.financeEmptyMessage,
               actionLabel: l10n.financeAddFirstEntryAction,
               onAction: () =>
-                  _pushAndReload(context, '/finance/entries/new?type=expense'),
+                  _push(context, '/finance/entries/new?type=expense'),
             );
           }
 
@@ -101,7 +96,7 @@ class _FinanceHistoryView extends StatelessWidget {
           final rowCount = state.entries.isEmpty ? 1 : state.entries.length;
 
           return RefreshIndicator(
-            onRefresh: () => context.read<FinanceHistoryCubit>().load(),
+            onRefresh: () => context.read<FinanceHistoryCubit>().resubscribe(),
             child: ListView.builder(
               padding:
                   const EdgeInsets.fromLTRB(
@@ -144,10 +139,8 @@ class _FinanceHistoryView extends StatelessWidget {
                       : categoryDisplayName(l10n, category),
                   categoryIconKey: category?.icon ?? 'other',
                   primaryCurrency: state.primaryCurrency,
-                  onEdit: () => _pushAndReload(
-                    context,
-                    '/finance/entries/${entry.id}/edit',
-                  ),
+                  onEdit: () =>
+                      _push(context, '/finance/entries/${entry.id}/edit'),
                   onDelete: () => _confirmDelete(context, entry),
                 );
               },
@@ -348,15 +341,13 @@ class _AddEntryActions extends StatelessWidget {
         AppFab.small(
           heroTag: 'finance-add-income',
           tooltip: l10n.financeAddIncomeAction,
-          onPressed: () =>
-              _pushAndReload(context, '/finance/entries/new?type=income'),
+          onPressed: () => _push(context, '/finance/entries/new?type=income'),
           child: const Icon(Icons.arrow_downward),
         ),
         const SizedBox(height: AppSpacing.sm),
         AppFab.extended(
           heroTag: 'finance-add-expense',
-          onPressed: () =>
-              _pushAndReload(context, '/finance/entries/new?type=expense'),
+          onPressed: () => _push(context, '/finance/entries/new?type=expense'),
           icon: const Icon(Icons.add),
           label: Text(l10n.financeAddExpenseAction),
         ),

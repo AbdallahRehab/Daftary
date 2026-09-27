@@ -42,6 +42,13 @@ abstract class CategoryRepository {
     bool includeArchived = false,
   });
 
+  /// 021: [getCategories], re-read whenever categories change — locally
+  /// or through sync (FR-031). Same parameters as [getCategories].
+  Stream<Either<Failure, List<Category>>> watchCategories({
+    required CategoryType type,
+    bool includeArchived = false,
+  });
+
   /// One category by id, archived or not — what an entry being edited uses
   /// to resolve a category that has since been archived (FR-011).
   Future<Either<Failure, Category>> getCategoryById(String categoryId);

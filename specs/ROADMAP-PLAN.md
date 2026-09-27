@@ -18,6 +18,8 @@ The `/speckit-clarify` pass raised 5 architecture-defining questions. The produc
 
 **Backend decision — confirmed 2026-09-22: no backend.** Daftary stays a fully local, offline-only, single-device app. **V3.5 Cloud Backup/Sync and V3.6 Family/Shared Finances are dropped from the active roadmap** (not deferred — out of scope unless the product direction changes later). Every other item in this document (V1.5/V2, plus V3.1/3.2/3.3/3.4) is unaffected and fully spec'd.
 
+**Superseded (2026-09-27) by spec 021 — Offline-First Cloud Sync (Supabase), [`specs/021-supabase-offline-sync/spec.md`](021-supabase-offline-sync/spec.md).** The "no backend" decision above no longer holds: Daftary now gets a Supabase backend for cloud backup and multi-device sync, while staying offline-first (the local database remains the source of truth and every feature keeps working without a network). V3.5 is back in scope as spec 021. V3.6 Family/Shared Finances remains dropped — 021 syncs one owner's data only, with no sharing between users.
+
 ---
 
 ## 1. Current Implementation Analysis
@@ -260,8 +262,8 @@ Lighter detail by design — each of these is genuinely further out, and several
 ### V3.4 — Multi-Currency Support
 **Prerequisites**: none blocking, but touches `core/money/Money` (currently implicitly EGP-only) and every screen that formats an amount — genuinely cross-cutting, which is exactly why it's deferred rather than threaded through V1.5/V2 as a moving target. **Architecture direction**: add a currency code alongside every stored minor-unit amount, an explicit "primary currency" setting for totals/aggregation, and a conversion-rate source decision (static/manual vs. a rate-fetching service — the latter would be this app's second-ever network dependency after AI Assistant).
 
-### V3.5 — Cloud Backup & Multi-Device Sync — **DROPPED (2026-09-22)**
-Product owner confirmed Daftary stays local-only, no backend. This item is out of scope, not deferred.
+### V3.5 — Cloud Backup & Multi-Device Sync — ~~DROPPED (2026-09-22)~~ **SUPERSEDED (2026-09-27) — now spec 021**
+~~Product owner confirmed Daftary stays local-only, no backend. This item is out of scope, not deferred.~~ **Superseded**: reinstated as spec 021 — Offline-First Cloud Sync (Supabase), [`specs/021-supabase-offline-sync/spec.md`](021-supabase-offline-sync/spec.md). That spec and its plan are authoritative.
 
 ### V3.6 — Family / Shared Finances — **DROPPED (2026-09-22)**
 Depended entirely on V3.5. Out of scope for the same reason.
@@ -301,7 +303,7 @@ V3.2 Financial Education (independent; one optional graceful-degrading soft     
         read of V2.3 Savings for a pre-fill convenience, not a hard dependency)   │
 V3.3 Proactive Insights/Reminders ◄── V2.5, V2.2, V2.3                       │
 V3.4 Multi-Currency (independent, but touches core/money used by everything)│
-V3.5 Cloud Backup/Sync ── DROPPED (no backend, confirmed 2026-09-22)        │
+V3.5 Cloud Backup/Sync ── now spec 021 (the 2026-09-22 drop is superseded)  │
 V3.6 Family/Shared Finances ── DROPPED (depended on V3.5)
 ```
 
@@ -593,7 +595,7 @@ Identical to the constitution's existing Definition of Done (`.specify/memory/co
 ## Blockers / Unresolved Decisions
 
 1. **The 5 clarify questions from 2026-09-22 are still unanswered.** This entire document is built on their recommended (Option A) defaults. Confirm or override before `/speckit-specify` runs for Occasions (Q2), OCR (Q4), Savings (Q5), or AI Assistant (Q3) — Home Dashboard/Reports/Budgets are unaffected by any of the 5 and can proceed regardless.
-2. ~~Whether this product ever gets a backend at all~~ — **Resolved 2026-09-22: no backend.** V3.5 (Cloud Backup/Sync) and V3.6 (Family/Shared Finances) are dropped from the roadmap as a result (see §4).
+2. ~~Whether this product ever gets a backend at all~~ — **Resolved 2026-09-22: no backend.** V3.5 (Cloud Backup/Sync) and V3.6 (Family/Shared Finances) are dropped from the roadmap as a result (see §4). **Superseded 2026-09-27**: V3.5 is reinstated as spec 021 (Supabase backend, offline-first), [`specs/021-supabase-offline-sync/spec.md`](021-supabase-offline-sync/spec.md); V3.6 stays dropped.
 3. **Final bottom-navigation architecture** (§9) is explicitly left open until Occasions is real — recommended to revisit then rather than lock in now.
 4. **Budget period model** (§V2.2) assumes a simple recurring monthly limit per category, matching the brief's own example exactly; if multi-period (weekly/yearly) budgets turn out to matter, that's a scope addition to confirm before Budgets' own `/speckit-specify`, not something this document invents unprompted.
 5. **OCR's on-device Arabic-handwriting accuracy ceiling** is a known, accepted limitation of Option A (Q4) — the manual review/correction screen exists specifically to absorb it, but it's worth setting expectations that on-device recognition of handwritten Arabic notes will be materially weaker than printed text, before that feature's UX is judged against it.
@@ -625,7 +627,7 @@ All `/speckit-specify` → `/speckit-plan` → `/speckit-tasks` cycles below are
 
 **Total new tasks specified: ~812**, across 12 features.
 
-**Dropped, not blocked**: V3.5 Cloud Backup/Sync and V3.6 Family/Shared Finances are out of scope — confirmed 2026-09-22 that Daftary stays local-only, no backend. All 12 remaining active roadmap items (everything above) are fully spec'd; the roadmap now has no open product questions blocking it.
+**Dropped, not blocked**: V3.6 Family/Shared Finances is out of scope. V3.5 Cloud Backup/Sync was dropped on 2026-09-22 ("local-only, no backend"); **that decision is superseded (2026-09-27) by spec 021**, [`specs/021-supabase-offline-sync/spec.md`](021-supabase-offline-sync/spec.md), which is outside this 12-feature table. All 12 remaining active roadmap items (everything above) are fully spec'd; the roadmap now has no open product questions blocking it.
 
 **Implementation status**: on hold at the product owner's request — specs are ready for review; no code will be written until explicitly told to proceed (see §17 for the implementation sequencing plan when that time comes).
 

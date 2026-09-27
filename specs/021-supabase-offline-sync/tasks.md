@@ -903,12 +903,12 @@ Each task is followed by indented lines:
   - Done when: a full engine run against `FakeSyncRemote`, with a spy `SyncLogger`, emits every required event and no field values containing amounts, names, notes, emails or tokens.
   - Validate: the test passes.
 
-- [ ] T084 [P] Update the roadmap in specs/ROADMAP-PLAN.md
+- [X] T084 [P] Update the roadmap in specs/ROADMAP-PLAN.md
   - Deps: none
   - Done when: the 2026-09-22 "no backend; V3.5 dropped" decision is marked superseded by 021, with a link to this spec.
   - Validate: review.
 
-- [ ] T085 [P] Add a sync performance check in test/performance/sync_upload_perf_test.dart (new)
+- [X] T085 [P] Add a sync performance check in test/performance/sync_upload_perf_test.dart (new)
   - Deps: T065
   - Done when:
     - Bootstrapping 5,000 transactions takes under 5 s in memory.
@@ -957,7 +957,7 @@ Each task is followed by indented lines:
   - Done when: `flutter pub deps --style=compact` shows only the 3 intended direct additions, and `flutter pub outdated` has no incompatible constraints.
   - Validate: a note in `checklists/baseline.md`.
 
-- [ ] T092 [P] Add a guard test that every table is classified as synced or local-only, in test/core/sync/table_classification_guard_test.dart (new)
+- [X] T092 [P] Add a guard test that every table is classified as synced or local-only, in test/core/sync/table_classification_guard_test.dart (new)
   - Deps: T011, T016
   - Done when:
     - The test lists `AppDatabase.allTables` and asserts that each one is in exactly one of two lists: synced (it has a `SyncMapper` registered) or `localOnlyTables`, declared in `lib/core/sync/sync_entity_type.dart`. The local-only list is `app_settings`, `onboarding_status`, `notification_preferences`, `notification_history` and the 5 sync tables.

@@ -422,6 +422,12 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
     db.MoneyTransactionsCompanion companion,
   ) {
     return _db.transaction(() async {
+      // A retried save with the same idempotency key returns the existing
+      // row; it must not append (and later upload) a second `created` entry.
+      final existing = await _dao.getByIdempotencyKey(
+        companion.idempotencyKey.value,
+      );
+      if (existing != null) return existing;
       final row = await _dao.insertTransactionIdempotent(companion);
       await _writeCreatedAuditEntry(row.id);
       return row;

@@ -69,6 +69,28 @@ void main() {
       },
     );
 
+    test(
+      'a retried call writes no second created audit entry and queues nothing new',
+      () async {
+        for (var i = 0; i < 2; i++) {
+          await repository.addTransaction(
+            idempotencyKey: 'key-1',
+            personId: personId,
+            amount: const Money.egp(200000),
+            direction: TransactionDirection.received,
+            date: DateTime(2026, 1, 1),
+          );
+        }
+
+        final audits = await db.select(db.transactionAuditEntries).get();
+        expect(audits, hasLength(1));
+        final queuedAudits = await (db.select(
+          db.syncOutboxEntries,
+        )..where((o) => o.entityType.equals('transaction_audit'))).get();
+        expect(queuedAudits, hasLength(1));
+      },
+    );
+
     test('rejects a zero amount (FR-005)', () async {
       final result = await repository.addTransaction(
         idempotencyKey: 'key-1',

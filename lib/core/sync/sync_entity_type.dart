@@ -32,3 +32,24 @@ enum SyncEntityType {
     throw ArgumentError.value(value, 'value', 'Unknown sync entity type');
   }
 }
+
+/// 021 FR-006: the local SQL tables that never sync. Every table in
+/// `AppDatabase.allTables` is either synced (a [SyncEntityType] with a
+/// registered `SyncMapper`) or listed here. This is enforced by
+/// `test/core/sync/table_classification_guard_test.dart`, so a table added
+/// by a future feature fails that test until it is classified.
+///
+/// `conflict_resolutions` is not here: it syncs, as
+/// [SyncEntityType.conflictResolution].
+const Set<String> localOnlyTables = {
+  // Device preferences and state.
+  'app_settings',
+  'onboarding_status',
+  'notification_preferences',
+  'notification_history',
+  // The sync machinery itself (sync_tables.dart).
+  'sync_outbox',
+  'sync_record_meta',
+  'sync_conflicts',
+  'sync_state',
+};

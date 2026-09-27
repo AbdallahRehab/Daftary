@@ -3,18 +3,21 @@ import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
-import 'package:daftary/features/finance/domain/usecases/get_categories.dart';
 import 'package:daftary/features/finance/domain/usecases/remove_category.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_categories.dart';
 import 'package:daftary/features/finance/presentation/cubit/category_management_cubit.dart';
 import 'package:daftary/features/finance/presentation/cubit/category_management_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../../helpers/watch_stubs.dart';
+
 class MockCategoryRepository extends Mock implements CategoryRepository {}
 
 void main() {
   late MockCategoryRepository repository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026);
   Category category(
@@ -41,7 +44,11 @@ void main() {
 
   setUp(() {
     repository = MockCategoryRepository();
+    changes = FakeTableChanges();
+    stubCategoryWatches(repository, changes);
   });
+
+  tearDown(() => changes.close());
 
   void stubList(
     CategoryType type,
@@ -57,16 +64,16 @@ void main() {
   }
 
   CategoryManagementCubit buildCubit() => CategoryManagementCubit(
-    GetCategories(repository),
+    WatchCategories(repository),
     RemoveCategory(repository),
   );
 
   blocTest<CategoryManagementCubit, CategoryManagementState>(
-    'load() lists active and archived categories separately, asking for '
+    'subscribe() lists active and archived categories separately, asking for '
     'archived ones (FR-010/FR-011)',
     build: buildCubit,
     setUp: () => stubList(CategoryType.expense, [groceries, rent, oldFuel]),
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       isA<CategoryManagementState>().having(
         (s) => s.status,
@@ -91,7 +98,7 @@ void main() {
   );
 
   blocTest<CategoryManagementCubit, CategoryManagementState>(
-    'load() surfaces a failure as state with a retryable message',
+    'subscribe() surfaces a failure as state with a retryable message',
     build: buildCubit,
     setUp: () {
       when(
@@ -101,7 +108,7 @@ void main() {
         ),
       ).thenAnswer((_) async => const Left(CacheFailure('db unavailable')));
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     skip: 1,
     expect: () => [
       isA<CategoryManagementState>()
@@ -115,14 +122,14 @@ void main() {
   );
 
   blocTest<CategoryManagementCubit, CategoryManagementState>(
-    'typeChanged() reloads for the new direction',
+    'typeChanged() resubscribes for the new direction',
     build: buildCubit,
     setUp: () {
       stubList(CategoryType.expense, [groceries]);
       stubList(CategoryType.income, [salary]);
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.typeChanged(CategoryType.income);
     },
     verify: (cubit) {
@@ -140,7 +147,7 @@ void main() {
   );
 
   blocTest<CategoryManagementCubit, CategoryManagementState>(
-    'removeCategory() on a never-used category reloads it out of the list '
+    'removeCategory() on a never-used category drops it from the live list '
     '(the hard-delete branch, decided by the repository)',
     build: buildCubit,
     setUp: () {
@@ -155,13 +162,15 @@ void main() {
         _,
       ) async {
         removed = true;
+        changes.notify();
         return const Right(unit);
       });
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.removeCategory('seed_groceries');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       expect(cubit.state.active, [rent]);
       expect(cubit.state.archived, isEmpty);
@@ -170,7 +179,7 @@ void main() {
   );
 
   blocTest<CategoryManagementCubit, CategoryManagementState>(
-    'removeCategory() on a referenced category reloads it into the archived '
+    'removeCategory() on a referenced category moves it into the archived '
     'section — the same call, the other branch, no flag passed',
     build: buildCubit,
     setUp: () {
@@ -191,13 +200,15 @@ void main() {
         _,
       ) async {
         removed = true;
+        changes.notify();
         return const Right(unit);
       });
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.removeCategory('seed_groceries');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       expect(cubit.state.active, [rent]);
       expect(cubit.state.archived.single.id, 'seed_groceries');
@@ -217,9 +228,10 @@ void main() {
       ).thenAnswer((_) async => const Left(CacheFailure('remove failed')));
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.removeCategory('seed_groceries');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       expect(cubit.state.failure, const CacheFailure('remove failed'));
       expect(cubit.state.active, [groceries, rent]);

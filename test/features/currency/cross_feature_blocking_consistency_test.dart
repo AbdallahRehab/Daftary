@@ -4,7 +4,6 @@ import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/core/money/money.dart';
-import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
 import 'package:daftary/features/currency/data/services/drift_currency_usage_checker.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
@@ -13,7 +12,6 @@ import 'package:daftary/features/currency/domain/usecases/remove_exchange_rate.d
 import 'package:daftary/features/currency/domain/usecases/set_exchange_rate.dart';
 import 'package:daftary/features/currency/domain/usecases/set_primary_currency.dart';
 import 'package:daftary/features/currency/presentation/widgets/rate_needed_banner.dart';
-import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/repositories/category_repository_impl.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/category.dart';
@@ -26,7 +24,6 @@ import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/finance/presentation/widgets/category_breakdown_bar.dart';
 import 'package:daftary/features/finance/presentation/widgets/finance_summary_card.dart';
-import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
@@ -35,6 +32,7 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart' hide State;
+import '../../helpers/test_daos.dart';
 
 /// 018 T040 + T041 (+ T042 verification) — release-blocking anchors for
 /// FR-008 ("no aggregate screen is exempt") and FR-009 (a missing rate
@@ -181,7 +179,7 @@ void main() {
   Future<void> wire() async {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     currencyRepository = CurrencyRepositoryImpl(
-      CurrencyDao(db),
+      testCurrencyDao(db),
       const SystemAppClock(),
     );
     final getConversionContext = GetConversionContext(currencyRepository);
@@ -193,11 +191,11 @@ void main() {
       setExchangeRate,
     );
     transactions = TransactionsRepositoryImpl(
-      TransactionsDao(db),
+      testTransactionsDao(db),
       db,
       getConversionContext: getConversionContext,
     );
-    finance = FinanceRepositoryImpl(FinanceDao(db));
+    finance = FinanceRepositoryImpl(testFinanceDao(db));
     getFinanceSummary = GetFinanceSummary(
       finance,
       getConversionContext,
@@ -208,7 +206,7 @@ void main() {
       getConversionContext,
       const CurrencyConverterImpl(),
     );
-    getCategories = GetCategories(CategoryRepositoryImpl(FinanceDao(db)));
+    getCategories = GetCategories(CategoryRepositoryImpl(testFinanceDao(db)));
     await seed();
   }
 

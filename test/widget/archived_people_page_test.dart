@@ -4,6 +4,7 @@ import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/domain/usecases/restore_person.dart';
+import 'package:daftary/features/people/domain/usecases/watch_archived_people.dart';
 import 'package:daftary/features/people/presentation/cubit/archived_people_cubit.dart';
 import 'package:daftary/features/people/presentation/pages/archived_people_page.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../helpers/watch_stubs.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -47,6 +50,7 @@ Widget _wrap() {
 
 void main() {
   late MockPeopleRepository peopleRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026);
   final ahmed = Person(
@@ -66,20 +70,25 @@ void main() {
 
   setUp(() {
     peopleRepository = MockPeopleRepository();
+    changes = FakeTableChanges();
+    stubPeopleWatches(peopleRepository, changes);
 
     getIt.registerFactory<ArchivedPeopleCubit>(
       () => ArchivedPeopleCubit(
-        peopleRepository,
+        WatchArchivedPeople(peopleRepository),
         RestorePerson(peopleRepository),
       ),
     );
   });
 
-  tearDown(() => getIt.reset());
+  tearDown(() async {
+    await getIt.reset();
+    await changes.close();
+  });
 
   testWidgets(
-    'reloads the archived list after returning from its own detail push '
-    '(User Story 2)',
+    'returning from its own detail push needs no reload — the list is live '
+    '(User Story 2, 021 FR-031)',
     (tester) async {
       when(
         () => peopleRepository.searchArchivedPeople(
@@ -104,17 +113,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(ArchivedPeoplePage), findsOneWidget);
-      verify(
+      expect(find.text('Ahmed'), findsOneWidget);
+      verifyNever(
         () => peopleRepository.searchArchivedPeople(
           nameQuery: any(named: 'nameQuery'),
         ),
-      ).called(1);
+      );
     },
   );
 
   testWidgets(
-    'search term is preserved across the detail-push reload-on-return, and '
-    'a newly-archived matching person appears (FR-005)',
+    'search term is preserved while a person archived on the detail screen '
+    'appears live (FR-005, 021 FR-031)',
     (tester) async {
       when(
         () => peopleRepository.searchArchivedPeople(nameQuery: null),
@@ -139,13 +149,15 @@ void main() {
       expect(find.text('Sara'), findsNothing);
 
       // Sara gets archived while the user is on Ahmed's detail screen —
-      // the next reload (with the "a" filter still applied, which she now
-      // also matches) must surface her immediately on return.
+      // the live list (with the "a" filter still applied, which she now
+      // also matches) must surface her by the time the user returns.
       when(
         () => peopleRepository.searchArchivedPeople(nameQuery: 'a'),
       ).thenAnswer((_) async => Right([ahmed, sara]));
 
       await tester.tap(find.text('Ahmed'));
+      await tester.pumpAndSettle();
+      changes.notify();
       await tester.pumpAndSettle();
       await tester.pageBack();
       await tester.pumpAndSettle();

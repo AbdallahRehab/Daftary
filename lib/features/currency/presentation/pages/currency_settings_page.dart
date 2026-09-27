@@ -45,7 +45,7 @@ class CurrencySettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PrimaryCurrencyCubit>()..load(),
+      create: (_) => getIt<PrimaryCurrencyCubit>()..subscribe(),
       child: const CurrencySettingsView(),
     );
   }
@@ -122,7 +122,7 @@ class CurrencySettingsView extends StatelessWidget {
             child: CircularProgressIndicator(),
           ),
           PrimaryCurrencyStatus.loadFailure => _LoadFailureView(
-            onRetry: () => context.read<PrimaryCurrencyCubit>().load(),
+            onRetry: () => context.read<PrimaryCurrencyCubit>().resubscribe(),
           ),
           PrimaryCurrencyStatus.ready => _buildReady(context, state),
         },

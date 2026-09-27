@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/finance_entry_type.dart';
@@ -150,6 +151,14 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return Left(CacheFailure('Failed to load categories: $e'));
     }
   }
+
+  @override
+  Stream<Either<Failure, List<Category>>> watchCategories({
+    required CategoryType type,
+    bool includeArchived = false,
+  }) => _dao.categoriesChanged().reRead(
+    () => getCategories(type: type, includeArchived: includeArchived),
+  );
 
   @override
   Future<Either<Failure, Category>> getCategoryById(String categoryId) async {

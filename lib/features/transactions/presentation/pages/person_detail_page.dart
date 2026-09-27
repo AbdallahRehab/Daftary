@@ -34,7 +34,7 @@ class PersonDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PersonDetailCubit>()..load(personId),
+      create: (_) => getIt<PersonDetailCubit>()..subscribe(personId),
       child: _PersonDetailView(personId: personId),
     );
   }
@@ -101,7 +101,7 @@ class _PersonDetailView extends StatelessWidget {
               title: l10n.errorLoadTitle,
               message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
-              onAction: () => context.read<PersonDetailCubit>().load(personId),
+              onAction: () => context.read<PersonDetailCubit>().resubscribe(),
             );
           }
 
@@ -244,42 +244,25 @@ class _PersonDetailView extends StatelessWidget {
     );
   }
 
-  Future<void> _recordTransaction(BuildContext context) async {
-    await context.push<MoneyTransaction?>(
-      '/transactions/new?personId=$personId',
-    );
-    if (context.mounted) {
-      await context.read<PersonDetailCubit>().refresh();
-    }
-  }
+  // 021: none of the pushes below reloads on return — the page is a live
+  // subscription, so the change is already on screen (the 004 fix).
+  Future<void> _recordTransaction(BuildContext context) =>
+      context.push<MoneyTransaction?>('/transactions/new?personId=$personId');
 
-  Future<void> _recordRepayment(BuildContext context) async {
-    await context.push('/people/$personId/repayment');
-    if (context.mounted) {
-      await context.read<PersonDetailCubit>().refresh();
-    }
-  }
+  Future<void> _recordRepayment(BuildContext context) =>
+      context.push('/people/$personId/repayment');
 
-  Future<void> _editPerson(BuildContext context) async {
-    await context.push('/people/$personId/edit');
-    if (context.mounted) {
-      await context.read<PersonDetailCubit>().refresh();
-    }
-  }
+  Future<void> _editPerson(BuildContext context) =>
+      context.push('/people/$personId/edit');
 
   Future<void> _editTransaction(
     BuildContext context,
     MoneyTransaction transaction,
     Person person,
-  ) async {
-    await context.push<MoneyTransaction?>(
-      '/transactions/${transaction.id}/edit',
-      extra: TransactionEditArgs(transaction: transaction, person: person),
-    );
-    if (context.mounted) {
-      await context.read<PersonDetailCubit>().refresh();
-    }
-  }
+  ) => context.push<MoneyTransaction?>(
+    '/transactions/${transaction.id}/edit',
+    extra: TransactionEditArgs(transaction: transaction, person: person),
+  );
 
   Future<void> _deleteTransaction(
     BuildContext context,

@@ -1,8 +1,13 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
+import '../../../../core/sync/local/sync_outbox.dart';
+import '../../../../core/sync/sync_entity_type.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_history_filter.dart';
+import '../sync/finance_category_sync_mapper.dart';
+import '../sync/finance_entry_sync_mapper.dart';
 
 /// One category's aggregate in one currency within a period, straight off
 /// the `GROUP BY category_id, currency_code` — the category's display
@@ -48,30 +53,75 @@ class SummaryTotalRow {
 ///
 /// No query in this class joins against `people` or `money_transactions`
 /// (FR-023); the boundary is enforced by `isolation_from_transactions_test`.
+///
+/// 021: every category and entry write records its change to the
+/// [SyncOutbox] inside the same `_db.transaction` (plan.md §7). The
+/// first-launch category seed (`finance_category_seed.dart`) writes directly
+/// and records nothing.
 @injectable
 class FinanceDao {
-  FinanceDao(this._db);
+  FinanceDao(this._db, this._outbox, this._categoryMapper, this._entryMapper);
 
   final db.AppDatabase _db;
+  final SyncOutbox _outbox;
+  final FinanceCategorySyncMapper _categoryMapper;
+  final FinanceEntrySyncMapper _entryMapper;
+
+  /// Queues an upsert of entry [id]'s current row. Must run inside a
+  /// transaction.
+  Future<db.FinanceEntry> _recordEntryUpsert(String id) async {
+    final row = (await getEntryById(id))!;
+    await _outbox.recordUpsert(
+      SyncEntityType.financeEntry,
+      id,
+      _entryMapper.toWire(row),
+    );
+    return row;
+  }
+
+  /// Queues an upsert of category [id]'s current row. Must run inside a
+  /// transaction.
+  Future<db.FinanceCategory> _recordCategoryUpsert(String id) async {
+    final row = (await getCategoryById(id))!;
+    await _outbox.recordUpsert(
+      SyncEntityType.financeCategory,
+      id,
+      _categoryMapper.toWire(row),
+    );
+    return row;
+  }
+
+  // ---------------------------------------------------------- change signals
+
+  /// 021: fires now and after every burst of writes to `finance_entries`.
+  Stream<void> entriesChanged() => _db.changesOf({_db.financeEntries});
+
+  /// 021: fires now and after every burst of writes to
+  /// `finance_categories`.
+  Stream<void> categoriesChanged() => _db.changesOf({_db.financeCategories});
 
   // ---------------------------------------------------------------- entries
 
   /// Inserts [companion]; if a row with the same `idempotency_key` already
-  /// exists (unique index — FR-021), the unique-constraint violation is
-  /// swallowed and the already-persisted row is returned instead of
-  /// erroring. Mirrors `TransactionsDao.insertTransactionIdempotent`.
+  /// exists (unique index — FR-021), the already-persisted row is returned
+  /// instead of erroring, and nothing is queued for upload. Mirrors
+  /// `TransactionsDao.insertTransactionIdempotent`.
   Future<db.FinanceEntry> insertEntryIdempotent(
     db.FinanceEntriesCompanion companion,
-  ) async {
+  ) {
     final idempotencyKey = companion.idempotencyKey.value;
-    try {
-      await _db.into(_db.financeEntries).insert(companion);
-    } catch (_) {
+    return _db.transaction(() async {
       final existing = await getEntryByIdempotencyKey(idempotencyKey);
       if (existing != null) return existing;
-      rethrow;
-    }
-    return (await getEntryByIdempotencyKey(idempotencyKey))!;
+      await _db.into(_db.financeEntries).insert(companion);
+      final inserted = (await getEntryByIdempotencyKey(idempotencyKey))!;
+      await _outbox.recordUpsert(
+        SyncEntityType.financeEntry,
+        inserted.id,
+        _entryMapper.toWire(inserted),
+      );
+      return inserted;
+    });
   }
 
   Future<db.FinanceEntry?> getEntryByIdempotencyKey(String key) => (_db.select(
@@ -87,27 +137,41 @@ class FinanceDao {
   Future<db.FinanceEntry> updateEntry(
     String id,
     db.FinanceEntriesCompanion companion,
-  ) async {
-    await (_db.update(
-      _db.financeEntries,
-    )..where((t) => t.id.equals(id))).write(companion);
-    return (await getEntryById(id))!;
+  ) {
+    return _db.transaction(() async {
+      await (_db.update(
+        _db.financeEntries,
+      )..where((t) => t.id.equals(id))).write(companion);
+      return _recordEntryUpsert(id);
+    });
   }
 
+  /// A soft delete uploads as an upsert carrying `deleted_at`.
   Future<void> softDeleteEntry(String id, DateTime deletedAt) {
-    return (_db.update(
-      _db.financeEntries,
-    )..where((t) => t.id.equals(id))).write(
-      db.FinanceEntriesCompanion(
-        deletedAt: db.Value(deletedAt.millisecondsSinceEpoch),
-      ),
-    );
+    return _db.transaction(() async {
+      final updated =
+          await (_db.update(
+            _db.financeEntries,
+          )..where((t) => t.id.equals(id))).write(
+            db.FinanceEntriesCompanion(
+              deletedAt: db.Value(deletedAt.millisecondsSinceEpoch),
+            ),
+          );
+      if (updated > 0) await _recordEntryUpsert(id);
+    });
   }
 
   /// Un-sets the soft-delete tombstone (research.md Decision 8's undo).
   Future<void> restoreEntry(String id) {
-    return (_db.update(_db.financeEntries)..where((t) => t.id.equals(id)))
-        .write(const db.FinanceEntriesCompanion(deletedAt: db.Value(null)));
+    return _db.transaction(() async {
+      final updated =
+          await (_db.update(
+            _db.financeEntries,
+          )..where((t) => t.id.equals(id))).write(
+            const db.FinanceEntriesCompanion(deletedAt: db.Value(null)),
+          );
+      if (updated > 0) await _recordEntryUpsert(id);
+    });
   }
 
   /// Filtered, paginated history, newest date first, soft-deleted rows
@@ -301,35 +365,54 @@ class FinanceDao {
 
   Future<db.FinanceCategory> insertCategory(
     db.FinanceCategoriesCompanion companion,
-  ) async {
-    await _db.into(_db.financeCategories).insert(companion);
-    return (await getCategoryById(companion.id.value))!;
+  ) {
+    return _db.transaction(() async {
+      await _db.into(_db.financeCategories).insert(companion);
+      return _recordCategoryUpsert(companion.id.value);
+    });
   }
 
   Future<db.FinanceCategory> updateCategory(
     String id,
     db.FinanceCategoriesCompanion companion,
-  ) async {
-    await (_db.update(
-      _db.financeCategories,
-    )..where((t) => t.id.equals(id))).write(companion);
-    return (await getCategoryById(id))!;
+  ) {
+    return _db.transaction(() async {
+      await (_db.update(
+        _db.financeCategories,
+      )..where((t) => t.id.equals(id))).write(companion);
+      return _recordCategoryUpsert(id);
+    });
   }
 
   Future<void> archiveCategory(String id, DateTime updatedAt) {
-    return (_db.update(
-      _db.financeCategories,
-    )..where((t) => t.id.equals(id))).write(
-      db.FinanceCategoriesCompanion(
-        isArchived: const db.Value(true),
-        updatedAt: db.Value(updatedAt.millisecondsSinceEpoch),
-      ),
-    );
+    return _db.transaction(() async {
+      final updated =
+          await (_db.update(
+            _db.financeCategories,
+          )..where((t) => t.id.equals(id))).write(
+            db.FinanceCategoriesCompanion(
+              isArchived: const db.Value(true),
+              updatedAt: db.Value(updatedAt.millisecondsSinceEpoch),
+            ),
+          );
+      if (updated > 0) await _recordCategoryUpsert(id);
+    });
   }
 
+  /// Hard-deletes [id] locally and queues a cloud tombstone carrying the
+  /// row's last snapshot (read first, in the same transaction).
   Future<void> deleteCategory(String id) {
-    return (_db.delete(
-      _db.financeCategories,
-    )..where((t) => t.id.equals(id))).go();
+    return _db.transaction(() async {
+      final existing = await getCategoryById(id);
+      if (existing == null) return;
+      await (_db.delete(
+        _db.financeCategories,
+      )..where((t) => t.id.equals(id))).go();
+      await _outbox.recordDelete(
+        SyncEntityType.financeCategory,
+        id,
+        _categoryMapper.toWire(existing),
+      );
+    });
   }
 }

@@ -33,7 +33,7 @@ class CategoryManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<CategoryManagementCubit>()..load(),
+      create: (_) => getIt<CategoryManagementCubit>()..subscribe(),
       child: const _CategoryManagementView(),
     );
   }
@@ -145,7 +145,7 @@ class _Body extends StatelessWidget {
         title: l10n.errorLoadTitle,
         message: l10n.messageFor(state.failure),
         actionLabel: l10n.commonRetry,
-        onAction: () => context.read<CategoryManagementCubit>().load(),
+        onAction: () => context.read<CategoryManagementCubit>().resubscribe(),
       );
     }
 
@@ -296,12 +296,9 @@ Future<void> _openForm(
   String? editingCategoryId,
   CategoryType? type,
 }) async {
-  final cubit = context.read<CategoryManagementCubit>();
+  // 021: no re-read on return — the form's create/edit reaches this screen
+  // through its live subscription.
   await (editingCategoryId == null
       ? context.push<void>('/finance/categories/new', extra: type)
       : context.push<void>('/finance/categories/$editingCategoryId/edit'));
-  // Re-read after the push resolves: the form owns its own cubit, so this
-  // screen only learns about a create/edit by asking again.
-  if (cubit.isClosed) return;
-  await cubit.load();
 }

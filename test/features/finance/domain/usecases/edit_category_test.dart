@@ -7,6 +7,7 @@ import 'package:daftary/features/finance/domain/entities/finance_failures.dart';
 import 'package:daftary/features/finance/domain/usecases/edit_category.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/test_daos.dart';
 
 /// `EditCategory` is exercised against a real in-memory database rather
 /// than a mock repository, because the property under test (FR-009) is a
@@ -22,7 +23,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    dao = FinanceDao(db);
+    dao = testFinanceDao(db);
     repository = CategoryRepositoryImpl(dao);
     editCategory = EditCategory(repository);
   });

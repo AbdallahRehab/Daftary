@@ -5,6 +5,7 @@ import 'package:daftary/features/currency/domain/entities/currency_failures.dart
 import 'package:daftary/features/currency/domain/entities/primary_currency_setting.dart';
 import 'package:daftary/features/currency/domain/usecases/get_primary_currency.dart';
 import 'package:daftary/features/currency/domain/usecases/set_primary_currency.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
 import 'package:daftary/features/currency/presentation/cubit/primary_currency_cubit.dart';
 import 'package:daftary/features/currency/presentation/cubit/primary_currency_state.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +15,17 @@ import 'package:mocktail/mocktail.dart';
 class _MockGetPrimary extends Mock implements GetPrimaryCurrency {}
 
 class _MockSetPrimary extends Mock implements SetPrimaryCurrency {}
+
+/// 021: the Cubit watches; these emit the mocked read's answer once.
+class _WatchPrimaryFrom implements WatchPrimaryCurrency {
+  _WatchPrimaryFrom(this.get);
+
+  final GetPrimaryCurrency get;
+
+  @override
+  Stream<Either<Failure, PrimaryCurrencySetting>> call() =>
+      Stream.fromFuture(get());
+}
 
 void main() {
   late _MockGetPrimary getPrimary;
@@ -34,7 +46,8 @@ void main() {
     );
   });
 
-  PrimaryCurrencyCubit build() => PrimaryCurrencyCubit(getPrimary, setPrimary);
+  PrimaryCurrencyCubit build() =>
+      PrimaryCurrencyCubit(_WatchPrimaryFrom(getPrimary), setPrimary);
 
   void stubSet(Either<Failure, Unit> result) {
     when(
@@ -46,22 +59,22 @@ void main() {
   }
 
   blocTest<PrimaryCurrencyCubit, PrimaryCurrencyState>(
-    'load emits ready with the stored primary',
+    'subscribe emits ready with the stored primary',
     build: build,
     setUp: () => when(() => getPrimary()).thenAnswer(
       (_) async => const Right(PrimaryCurrencySetting(currency: Currency.sar)),
     ),
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [ready.copyWith(primary: Currency.sar)],
   );
 
   blocTest<PrimaryCurrencyCubit, PrimaryCurrencyState>(
-    'load failure emits loadFailure',
+    'subscribe failure emits loadFailure',
     build: build,
     setUp: () => when(
       () => getPrimary(),
     ).thenAnswer((_) async => const Left(CacheFailure('x'))),
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       const PrimaryCurrencyState(status: PrimaryCurrencyStatus.loadFailure),
     ],

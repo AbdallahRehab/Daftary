@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart';
 import '../../../../core/database/balance_queries.dart';
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../currency/domain/entities/conversion_context.dart';
 import '../../../currency/domain/usecases/get_conversion_context.dart';
@@ -239,6 +240,33 @@ class PeopleRepositoryImpl implements PeopleRepository {
       return Left(CacheFailure('Failed to search archived people: $e'));
     }
   }
+
+  @override
+  Stream<Either<Failure, List<Person>>> watchActivePeople({
+    String? nameQuery,
+    RelationshipStatus? statusFilter,
+  }) => _db.watchEither(
+    {
+      _db.people,
+      _db.moneyTransactions,
+      // The status filter converts balances into the primary currency.
+      _db.exchangeRates,
+      _db.primaryCurrencySettings,
+    },
+    () => searchActivePeople(nameQuery: nameQuery, statusFilter: statusFilter),
+  );
+
+  @override
+  Stream<Either<Failure, Person>> watchPersonById(String personId) =>
+      _db.watchEither({_db.people}, () => getPersonById(personId));
+
+  @override
+  Stream<Either<Failure, List<Person>>> watchArchivedPeople({
+    String? nameQuery,
+  }) => _db.watchEither({
+    _db.people,
+    _db.moneyTransactions,
+  }, () => searchArchivedPeople(nameQuery: nameQuery));
 
   @override
   Future<Either<Failure, Person>> getPersonById(String personId) async {

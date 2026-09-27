@@ -28,7 +28,7 @@ class OverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<OverviewCubit>()..load(),
+      create: (_) => getIt<OverviewCubit>()..subscribe(),
       child: const _OverviewView(),
     );
   }
@@ -53,14 +53,14 @@ class _OverviewView extends StatelessWidget {
               title: l10n.errorLoadTitle,
               message: l10n.messageFor(state.failure),
               actionLabel: l10n.commonRetry,
-              onAction: () => context.read<OverviewCubit>().load(),
+              onAction: () => context.read<OverviewCubit>().resubscribe(),
             );
           }
 
           final summary = state.summary!;
           if (state.isAllSettled) {
             return RefreshIndicator(
-              onRefresh: () => context.read<OverviewCubit>().load(),
+              onRefresh: () => context.read<OverviewCubit>().resubscribe(),
               child: ListView(
                 padding:
                     const EdgeInsets.all(AppSpacing.md) +
@@ -87,7 +87,7 @@ class _OverviewView extends StatelessWidget {
           }
 
           return RefreshIndicator(
-            onRefresh: () => context.read<OverviewCubit>().load(),
+            onRefresh: () => context.read<OverviewCubit>().resubscribe(),
             child: ListView(
               padding:
                   const EdgeInsets.all(AppSpacing.md) +

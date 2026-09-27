@@ -25,7 +25,7 @@ class FinanceMonthSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<FinanceMonthSummaryCubit>()..load(),
+      create: (_) => getIt<FinanceMonthSummaryCubit>()..subscribe(),
       child: const _FinanceMonthSummaryView(),
     );
   }

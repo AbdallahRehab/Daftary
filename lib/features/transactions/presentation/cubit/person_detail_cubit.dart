@@ -1,101 +1,166 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../currency/domain/usecases/get_primary_currency.dart';
-import '../../../people/domain/repositories/people_repository.dart';
+import '../../../../core/error/failure.dart';
+import '../../../currency/domain/entities/primary_currency_setting.dart';
+import '../../../currency/domain/usecases/watch_primary_currency.dart';
+import '../../../people/domain/entities/person.dart';
+import '../../../people/domain/usecases/watch_person.dart';
+import '../../domain/entities/money_transaction.dart';
+import '../../domain/entities/person_balance.dart';
 import '../../domain/usecases/delete_transaction.dart';
-import '../../domain/usecases/get_person_balance.dart';
-import '../../domain/usecases/get_person_history.dart';
+import '../../domain/usecases/watch_person_balance.dart';
+import '../../domain/usecases/watch_person_history.dart';
 import 'person_detail_state.dart';
 
-/// Loads a person's balance + full history together (US2) and exposes a
-/// single [load] entry point that other flows (repayment, edit, delete)
-/// call again to refresh after a mutation (FR-014).
+/// A person's balance + full history together (US2).
+///
+/// 021: every part of the page is a live subscription — the person, their
+/// balance, their history and the primary currency — so adding, editing or
+/// deleting a transaction (here, on another screen, or through sync)
+/// updates the page with no refresh (FR-014, FR-031). All subscriptions are
+/// cancelled in [close].
 @injectable
 class PersonDetailCubit extends Cubit<PersonDetailState> {
   PersonDetailCubit(
-    this._peopleRepository,
-    this._getPersonBalance,
-    this._getPersonHistory,
+    this._watchPerson,
+    this._watchPersonBalance,
+    this._watchPersonHistory,
     this._deleteTransaction,
-    this._getPrimaryCurrency,
+    this._watchPrimaryCurrency,
   ) : super(const PersonDetailState());
 
-  final PeopleRepository _peopleRepository;
-  final GetPersonBalance _getPersonBalance;
-  final GetPersonHistory _getPersonHistory;
+  final WatchPerson _watchPerson;
+  final WatchPersonBalance _watchPersonBalance;
+  final WatchPersonHistory _watchPersonHistory;
   final DeleteTransaction _deleteTransaction;
-  final GetPrimaryCurrency _getPrimaryCurrency;
+  final WatchPrimaryCurrency _watchPrimaryCurrency;
 
   String? _personId;
+  final _subscriptions = <StreamSubscription<void>>[];
+  Completer<void>? _firstResult;
 
-  Future<void> load(String personId) async {
+  Either<Failure, Person>? _person;
+  Either<Failure, PersonBalance>? _balance;
+  Either<Failure, List<MoneyTransaction>>? _history;
+  Either<Failure, PrimaryCurrencySetting>? _primary;
+
+  /// Subscribes to everything the page shows for [personId], replacing any
+  /// earlier subscription. The returned future completes once the first
+  /// complete result has been emitted.
+  Future<void> subscribe(String personId) {
+    _cancelSubscriptions();
     _personId = personId;
+    _person = null;
+    _balance = null;
+    _history = null;
+    _primary = null;
     emit(state.copyWith(status: PersonDetailStatus.loading));
 
-    final personResult = await _peopleRepository.getPersonById(personId);
-    final balanceResult = await _getPersonBalance(personId);
-    final historyResult = await _getPersonHistory(personId);
-    // Only decides which history rows get a currency chip — a failed read
-    // keeps the previous value rather than failing the whole page.
-    final primaryResult = await _getPrimaryCurrency();
-    final primaryCurrency = primaryResult.match(
-      (_) => state.primaryCurrency,
-      (setting) => setting.currency,
-    );
+    final firstResult = _firstResult = Completer<void>();
+    _subscriptions.addAll([
+      _watchPerson(
+        personId,
+      ).listen((result) => _update(() => _person = result)),
+      _watchPersonBalance(
+        personId,
+      ).listen((result) => _update(() => _balance = result)),
+      _watchPersonHistory(
+        personId,
+      ).listen((result) => _update(() => _history = result)),
+      _watchPrimaryCurrency().listen(
+        (result) => _update(() => _primary = result),
+      ),
+    ]);
+    return firstResult.future;
+  }
 
-    final failure = personResult.isLeft()
-        ? personResult
-        : balanceResult.isLeft()
-        ? balanceResult
-        : historyResult.isLeft()
-        ? historyResult
-        : null;
+  /// Retry: subscribes again, from scratch, to the displayed person.
+  Future<void> resubscribe() {
+    final personId = _personId;
+    if (personId == null) return Future.value();
+    return subscribe(personId);
+  }
 
-    if (failure != null) {
-      emit(
-        state.copyWith(
-          status: PersonDetailStatus.failure,
-          failure: failure.match((l) => l, (_) => null),
-        ),
-      );
+  /// Records [change], then emits once every part has arrived.
+  void _update(void Function() change) {
+    if (isClosed) return;
+    change();
+    final person = _person;
+    final balance = _balance;
+    final history = _history;
+    final primary = _primary;
+    if (person == null ||
+        balance == null ||
+        history == null ||
+        primary == null) {
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: PersonDetailStatus.success,
-        person: personResult.getOrElse((_) => throw StateError('unreachable')),
-        balance: balanceResult.getOrElse(
-          (_) => throw StateError('unreachable'),
+    final failure = [
+      person,
+      balance,
+      history,
+    ].map((result) => result.getLeft().toNullable()).nonNulls.firstOrNull;
+    if (failure != null) {
+      emit(
+        state.copyWith(status: PersonDetailStatus.failure, failure: failure),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          status: PersonDetailStatus.success,
+          person: person.toNullable(),
+          balance: balance.toNullable(),
+          history: history.toNullable(),
+          // Only decides which history rows get a currency chip — a failed
+          // read keeps the previous value rather than failing the page.
+          primaryCurrency: primary.match(
+            (_) => state.primaryCurrency,
+            (setting) => setting.currency,
+          ),
         ),
-        history: historyResult.getOrElse(
-          (_) => throw StateError('unreachable'),
-        ),
-        primaryCurrency: primaryCurrency,
-      ),
-    );
-  }
-
-  /// Re-runs [load] for the currently displayed person — call after any
-  /// transaction mutation so the balance/history stay in sync (FR-014).
-  Future<void> refresh() {
-    final personId = _personId;
-    if (personId == null) return Future.value();
-    return load(personId);
+      );
+    }
+    _completeFirstResult();
   }
 
   /// Soft-deletes [transactionId] (after the caller has already shown the
-  /// "cannot be undone" confirmation, FR-016) and refreshes so the balance
-  /// recalculates immediately (US6 Acceptance Scenario 2).
+  /// "cannot be undone" confirmation, FR-016). The live subscriptions then
+  /// recalculate the balance and drop the row (US6 Acceptance Scenario 2).
   Future<void> deleteTransaction(String transactionId) async {
     final result = await _deleteTransaction(transactionId);
-    await result.match(
+    if (isClosed) return;
+    result.match(
       // Deliberately keeps `status` as-is (rather than `failure`) so the
       // already-loaded balance/history stay visible; the page surfaces
       // `failure` via a transient snackbar instead of a full-page error.
-      (failure) async => emit(state.copyWith(failure: failure)),
-      (_) => refresh(),
+      (failure) => emit(state.copyWith(failure: failure)),
+      (_) {},
     );
+  }
+
+  void _completeFirstResult() {
+    final firstResult = _firstResult;
+    if (firstResult != null && !firstResult.isCompleted) {
+      firstResult.complete();
+    }
+  }
+
+  void _cancelSubscriptions() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
+    _completeFirstResult();
+  }
+
+  @override
+  Future<void> close() {
+    _cancelSubscriptions();
+    return super.close();
   }
 }

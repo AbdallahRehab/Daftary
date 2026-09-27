@@ -81,6 +81,26 @@ abstract class TransactionsRepository {
   /// `null` (blocked) when a contributing currency has no exchange rate.
   Future<Either<Failure, OverviewSummary>> getOverview();
 
+  /// 021: [getPersonHistory], re-read whenever transactions change —
+  /// locally or through sync (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, List<MoneyTransaction>>> watchPersonHistory(
+    String personId,
+  );
+
+  /// 021: [getPersonBalance], re-read whenever transactions, people,
+  /// exchange rates or the primary currency change (FR-031).
+  Stream<Either<Failure, PersonBalance>> watchPersonBalance(String personId);
+
+  /// 021: [getPersonBalances], re-read on the same tables as
+  /// [watchPersonBalance] (FR-031).
+  Stream<Either<Failure, Map<String, PersonBalance>>> watchPersonBalances(
+    List<String> personIds,
+  );
+
+  /// 021: [getOverview], re-read on the same tables as
+  /// [watchPersonBalance] (FR-031).
+  Stream<Either<Failure, OverviewSummary>> watchOverview();
+
   /// FR-010a: whether at least one MoneyTransaction record exists at all —
   /// including soft-deleted rows (`deletedAt IS NOT NULL`). A since-deleted
   /// transaction still proves the app was previously used.

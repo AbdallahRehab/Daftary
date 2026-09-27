@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
-import 'package:uuid/uuid.dart';
 
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/date/app_clock.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
@@ -22,7 +22,10 @@ class CurrencyRepositoryImpl implements CurrencyRepository {
   final CurrencyDao _dao;
   final AppClock _clock;
 
-  static const _uuid = Uuid();
+  /// 021: a rate's id is its currency pair, so two devices that set the
+  /// same pair offline converge on one cloud row (data-model.md §1).
+  static String rateIdFor(String currencyCode, String relativeTo) =>
+      'rate_${currencyCode}_$relativeTo';
 
   @override
   Future<Either<Failure, List<Currency>>> getSupportedCurrencies() async =>
@@ -65,6 +68,14 @@ class CurrencyRepositoryImpl implements CurrencyRepository {
   }
 
   @override
+  Stream<Either<Failure, PrimaryCurrencySetting>> watchPrimaryCurrency() =>
+      _dao.primaryChanged().reRead(getPrimaryCurrency);
+
+  @override
+  Stream<Either<Failure, List<ExchangeRate>>> watchExchangeRates() =>
+      _dao.ratesChanged().reRead(getExchangeRates);
+
+  @override
   Future<Either<Failure, ExchangeRate>> setExchangeRate({
     required String currencyCode,
     required String relativeToCurrencyCode,
@@ -80,7 +91,7 @@ class CurrencyRepositoryImpl implements CurrencyRepository {
     }
     try {
       final row = await _dao.upsertRate(
-        newId: _uuid.v4(),
+        newId: rateIdFor(currencyCode, relativeToCurrencyCode),
         currencyCode: currencyCode,
         relativeToCurrencyCode: relativeToCurrencyCode,
         rateMicros: ExchangeRate.toMicros(rate),

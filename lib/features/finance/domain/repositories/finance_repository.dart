@@ -83,6 +83,19 @@ abstract class FinanceRepository {
     FinanceEntryType? type,
   });
 
+  /// 021: [getHistory]'s first [limit] rows, re-read whenever entries
+  /// change — locally or through sync (FR-031). Only the loaded window is
+  /// watched; paging raises [limit].
+  Stream<Either<Failure, List<FinanceEntry>>> watchHistory({
+    FinanceHistoryFilter? filter,
+    required int limit,
+  });
+
+  /// 021: [getSummaryTotals], re-read whenever entries change (FR-031).
+  Stream<Either<Failure, FinancePeriodTotals>> watchSummaryTotals(
+    DateRange period,
+  );
+
   /// FR-017: whether any entry exists at all, including soft-deleted ones —
   /// what separates the true first-use empty state from "your filter
   /// matched nothing" (FR-018).

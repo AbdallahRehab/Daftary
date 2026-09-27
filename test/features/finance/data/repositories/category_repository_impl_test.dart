@@ -6,6 +6,7 @@ import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart
 import 'package:daftary/features/finance/domain/entities/finance_failures.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../../../../helpers/test_daos.dart';
 
 void main() {
   late AppDatabase db;
@@ -15,7 +16,7 @@ void main() {
   setUp(() {
     db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    dao = FinanceDao(db);
+    dao = testFinanceDao(db);
     repository = CategoryRepositoryImpl(dao);
   });
 

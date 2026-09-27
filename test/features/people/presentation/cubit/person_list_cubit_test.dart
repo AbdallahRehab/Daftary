@@ -7,16 +7,18 @@ import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/people/domain/usecases/archive_person.dart';
 import 'package:daftary/features/people/domain/usecases/restore_person.dart';
+import 'package:daftary/features/people/domain/usecases/watch_active_people.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_cubit.dart';
 import 'package:daftary/features/people/presentation/cubit/person_list_state.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
-import 'package:daftary/features/transactions/domain/usecases/get_person_balances.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balances.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../helpers/stub_person_balances.dart';
+import '../../../../helpers/watch_stubs.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -26,6 +28,7 @@ class MockTransactionsRepository extends Mock
 void main() {
   late MockPeopleRepository peopleRepository;
   late MockTransactionsRepository transactionsRepository;
+  late FakeTableChanges changes;
 
   final now = DateTime(2026);
   final ahmed = Person(
@@ -46,18 +49,23 @@ void main() {
   setUp(() {
     peopleRepository = MockPeopleRepository();
     transactionsRepository = MockTransactionsRepository();
+    changes = FakeTableChanges();
     stubPersonBalancesFromSingle(transactionsRepository);
+    stubPeopleWatches(peopleRepository, changes);
+    stubTransactionsWatches(transactionsRepository, changes);
   });
 
+  tearDown(() => changes.close());
+
   PersonListCubit buildCubit() => PersonListCubit(
-    peopleRepository,
-    GetPersonBalances(transactionsRepository),
+    WatchActivePeople(peopleRepository),
+    WatchPersonBalances(transactionsRepository),
     ArchivePerson(peopleRepository),
     RestorePerson(peopleRepository),
   );
 
   blocTest<PersonListCubit, PersonListState>(
-    'load() lists active people with their balances',
+    'subscribe() lists active people with their balances',
     build: buildCubit,
     setUp: () {
       when(
@@ -75,7 +83,7 @@ void main() {
             const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.status, PersonListStatus.success);
       expect(cubit.state.items, hasLength(2));
@@ -102,6 +110,7 @@ void main() {
       );
     },
     act: (cubit) => cubit.nameQueryChanged('Sara'),
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       expect(cubit.state.items, hasLength(1));
       expect(cubit.state.items.single.person.name, 'Sara');
@@ -124,6 +133,7 @@ void main() {
       );
     },
     act: (cubit) => cubit.statusFilterChanged(RelationshipStatus.youOweThem),
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       expect(cubit.state.statusFilter, RelationshipStatus.youOweThem);
       expect(cubit.state.items.single.person.id, 'p2');
@@ -131,9 +141,8 @@ void main() {
   );
 
   blocTest<PersonListCubit, PersonListState>(
-    'load() re-reads the current nameQuery/statusFilter rather than '
-    'resetting them on a second call (005-archive-state-refresh research.md '
-    'Decision 4)',
+    'subscribe() re-reads the current nameQuery/statusFilter rather than '
+    'resetting them (005-archive-state-refresh research.md Decision 4)',
     build: buildCubit,
     seed: () => const PersonListState(
       nameQuery: 'Sara',
@@ -151,7 +160,7 @@ void main() {
             const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       verify(
         () => peopleRepository.searchActivePeople(
@@ -180,25 +189,22 @@ void main() {
   );
 
   blocTest<PersonListCubit, PersonListState>(
-    'archive(id) sets processingPersonId while in flight, reloads on '
-    'success, and clears it once the reload has emitted',
+    'archive(id) sets processingPersonId while in flight, drops the row on '
+    'success without a reload, and clears processingPersonId',
     build: buildCubit,
-    seed: () =>
-        const PersonListState(status: PersonListStatus.success, items: []),
+    seed: () => PersonListState(
+      status: PersonListStatus.success,
+      items: [
+        PersonListItem(
+          person: ahmed,
+          balance: const PersonBalance(personId: 'p1', net: Money.egp(0)),
+        ),
+      ],
+    ),
     setUp: () {
       when(
         () => peopleRepository.archivePerson('p1'),
       ).thenAnswer((_) async => const Right(unit));
-      when(
-        () => peopleRepository.searchActivePeople(
-          nameQuery: null,
-          statusFilter: null,
-        ),
-      ).thenAnswer((_) async => Right([sara]));
-      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
-        (_) async =>
-            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
-      );
     },
     act: (cubit) => cubit.archive('p1'),
     expect: () => [
@@ -207,21 +213,50 @@ void main() {
         'processingPersonId',
         'p1',
       ),
-      isA<PersonListState>().having(
-        (s) => s.status,
-        'status',
-        PersonListStatus.loading,
-      ),
       isA<PersonListState>()
-          .having((s) => s.status, 'status', PersonListStatus.success)
-          .having((s) => s.processingPersonId, 'processingPersonId', 'p1'),
-      isA<PersonListState>().having(
-        (s) => s.processingPersonId,
-        'processingPersonId',
-        isNull,
-      ),
+          .having((s) => s.items, 'items', isEmpty)
+          .having((s) => s.processingPersonId, 'processingPersonId', isNull)
+          .having((s) => s.lastArchived, 'lastArchived', ahmed),
     ],
+    verify: (_) {
+      verifyNever(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      );
+    },
   );
+
+  test('an archive made elsewhere reaches a subscribed list with no reload '
+      '(021 FR-031)', () async {
+    var active = [ahmed, sara];
+    when(
+      () => peopleRepository.searchActivePeople(
+        nameQuery: null,
+        statusFilter: null,
+      ),
+    ).thenAnswer((_) async => Right(active));
+    when(() => transactionsRepository.getPersonBalance(any())).thenAnswer(
+      (invocation) async => Right(
+        PersonBalance(
+          personId: invocation.positionalArguments.first as String,
+          net: const Money.egp(0),
+        ),
+      ),
+    );
+    final cubit = buildCubit();
+    addTearDown(cubit.close);
+    await cubit.subscribe();
+    expect(cubit.state.items, hasLength(2));
+
+    // Another screen archives Sara; only the table notification arrives.
+    active = [ahmed];
+    changes.notify();
+    await pumpEventQueue();
+
+    expect(cubit.state.items.map((i) => i.person), [ahmed]);
+  });
 
   blocTest<PersonListCubit, PersonListState>(
     'a failed archive() leaves the person in the list, sets an error '
@@ -273,7 +308,7 @@ void main() {
             const Left<Failure, List<Person>>(CacheFailure('DB unavailable')),
       );
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     expect: () => [
       isA<PersonListState>(),
       isA<PersonListState>().having(
@@ -312,7 +347,7 @@ void main() {
             const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
       );
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.status, PersonListStatus.success);
       final blocked = cubit.state.items.firstWhere((i) => i.person.id == 'p1');
@@ -351,26 +386,32 @@ void main() {
   );
 
   blocTest<PersonListCubit, PersonListState>(
-    'undoArchive(id) restores the person and reloads the list',
+    'undoArchive(id) restores the person and the subscription brings it '
+    'back with no reload',
     build: buildCubit,
-    seed: () =>
-        const PersonListState(status: PersonListStatus.success, items: []),
     setUp: () {
-      when(
-        () => peopleRepository.restorePerson('p1'),
-      ).thenAnswer((_) async => const Right(unit));
+      var active = <Person>[];
+      when(() => peopleRepository.restorePerson('p1')).thenAnswer((_) async {
+        active = [ahmed];
+        changes.notify();
+        return const Right(unit);
+      });
       when(
         () => peopleRepository.searchActivePeople(
           nameQuery: null,
           statusFilter: null,
         ),
-      ).thenAnswer((_) async => Right([ahmed]));
+      ).thenAnswer((_) async => Right(active));
       when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
         (_) async =>
             const Right(PersonBalance(personId: 'p1', net: Money.egp(0))),
       );
     },
-    act: (cubit) => cubit.undoArchive('p1'),
+    act: (cubit) async {
+      await cubit.subscribe();
+      await cubit.undoArchive('p1');
+    },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       verify(() => peopleRepository.restorePerson('p1')).called(1);
       expect(cubit.state.items.map((i) => i.person), [ahmed]);
@@ -379,7 +420,7 @@ void main() {
   );
 
   test(
-    'a superseded load never overwrites a newer one (fast typing)',
+    'a superseded subscription never overwrites a newer one (fast typing)',
     () async {
       final slowSearch = Completer<Either<Failure, List<Person>>>();
       when(

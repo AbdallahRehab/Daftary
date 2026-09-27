@@ -3,40 +3,52 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import 'package:fpdart/fpdart.dart';
+
 import '../../../../core/error/failure.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/category_breakdown_item.dart';
+import '../../domain/entities/finance_entry.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_history_filter.dart';
+import '../../domain/entities/finance_summary.dart';
 import '../../domain/repositories/finance_repository.dart';
 import '../../domain/usecases/delete_finance_entry.dart';
-import '../../domain/usecases/get_categories.dart';
 import '../../domain/usecases/get_category_breakdown.dart';
-import '../../domain/usecases/get_finance_history.dart';
-import '../../domain/usecases/get_finance_summary.dart';
 import '../../domain/usecases/restore_finance_entry.dart';
+import '../../domain/usecases/watch_categories.dart';
+import '../../domain/usecases/watch_finance_history.dart';
+import '../../domain/usecases/watch_finance_summary.dart';
 import 'finance_history_state.dart';
 
 /// Drives the finance history screen: one selected period and filter set,
 /// against which the summary (FR-014), the per-category breakdown (FR-015),
-/// and the entry list (FR-012/FR-013) are always loaded together — so the
+/// and the entry list (FR-012/FR-013) are always shown together — so the
 /// three can never show different periods at the same time.
+///
+/// 021: the screen is live. The Cubit subscribes to the loaded history
+/// window ([WatchFinanceHistory] with `limit: loadedCount`), the period's
+/// summary ([WatchFinanceSummary]) and both directions' categories
+/// ([WatchCategories]); every emission re-reads the breakdown and the
+/// true-empty flag against the same period, so an add, delete, restore or
+/// a synced change shows with no reload (FR-031). All subscriptions are
+/// cancelled in [close].
 @injectable
 class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
   FinanceHistoryCubit(
-    this._getSummary,
+    this._watchSummary,
     this._getBreakdown,
-    this._getHistory,
-    this._getCategories,
+    this._watchHistory,
+    this._watchCategories,
     this._deleteEntry,
     this._restoreEntry,
     this._repository,
   ) : super(FinanceHistoryState());
 
-  final GetFinanceSummary _getSummary;
+  final WatchFinanceSummary _watchSummary;
   final GetCategoryBreakdown _getBreakdown;
-  final GetFinanceHistory _getHistory;
-  final GetCategories _getCategories;
+  final WatchFinanceHistory _watchHistory;
+  final WatchCategories _watchCategories;
   final DeleteFinanceEntry _deleteEntry;
   final RestoreFinanceEntry _restoreEntry;
 
@@ -44,6 +56,9 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
   /// distinction (FR-017/FR-018) is a repository-level question with no
   /// use case of its own.
   final FinanceRepository _repository;
+
+  /// The history page size; [loadMore] widens the watched window by this.
+  static const pageSize = 50;
 
   /// How long the undo affordance stays available after a delete
   /// (research.md Decision 8). Read by the page so the SnackBar and the
@@ -53,11 +68,143 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
 
   Timer? _undoTimer;
 
-  /// Resolves the default period ("this month") and loads everything the
-  /// screen renders in one pass.
-  Future<void> load() async {
+  /// How many history rows the current subscription watches.
+  int _loadedCount = pageSize;
+
+  final _subscriptions = <StreamSubscription<void>>[];
+  Completer<void>? _firstResult;
+
+  /// Bumped by every subscription and every derived re-read, so a stale
+  /// read never overwrites a newer one.
+  int _generation = 0;
+
+  Either<Failure, List<FinanceEntry>>? _entries;
+  Either<Failure, FinanceSummary>? _summary;
+  Either<Failure, List<Category>>? _expenseCategories;
+  Either<Failure, List<Category>>? _incomeCategories;
+
+  /// Subscribes for the default period ("this month") and shows everything
+  /// the screen renders. The returned future completes once the first
+  /// complete result has been emitted.
+  Future<void> subscribe() {
     emit(state.copyWith(status: FinanceHistoryStatus.loading));
-    await _reload();
+    return _subscribe();
+  }
+
+  /// Retry and pull to refresh: subscribes again from scratch.
+  Future<void> resubscribe() => subscribe();
+
+  /// "Load more": widens the watched history window by [pageSize] without
+  /// a loading state, so the list keeps its scroll position.
+  Future<void> loadMore() {
+    _loadedCount += pageSize;
+    return _subscribe();
+  }
+
+  Future<void> _subscribe() {
+    _cancelSubscriptions();
+    _generation++;
+    _entries = null;
+    _summary = null;
+    _expenseCategories = null;
+    _incomeCategories = null;
+
+    final firstResult = _firstResult = Completer<void>();
+    _subscriptions.addAll([
+      _watchHistory(
+        filter: state.filter,
+        limit: _loadedCount,
+      ).listen((result) => _onChange(() => _entries = result)),
+      _watchSummary(
+        state.period,
+      ).listen((result) => _onChange(() => _summary = result)),
+      // Archived categories included: an entry filed under one before it
+      // was archived still has to resolve a name and an icon (FR-011).
+      _watchCategories(
+        type: CategoryType.expense,
+        includeArchived: true,
+      ).listen((result) => _onChange(() => _expenseCategories = result)),
+      _watchCategories(
+        type: CategoryType.income,
+        includeArchived: true,
+      ).listen((result) => _onChange(() => _incomeCategories = result)),
+    ]);
+    return firstResult.future;
+  }
+
+  /// Records [change]; once every stream has delivered, re-reads the
+  /// breakdown and the true-empty flag and emits the whole screen.
+  Future<void> _onChange(void Function() change) async {
+    if (isClosed) return;
+    change();
+    final entries = _entries;
+    final summary = _summary;
+    final expenseCategories = _expenseCategories;
+    final incomeCategories = _incomeCategories;
+    if (entries == null ||
+        summary == null ||
+        expenseCategories == null ||
+        incomeCategories == null) {
+      return;
+    }
+    final generation = ++_generation;
+
+    final streamed = <Either<Failure, Object>>[
+      expenseCategories,
+      incomeCategories,
+      summary,
+      entries,
+    ];
+    for (final result in streamed) {
+      final failure = result.getLeft().toNullable();
+      if (failure != null) return _finish(() => _emitFailure(failure));
+    }
+
+    final hasAnyEntryResult = await _repository.hasAnyEntry();
+    if (generation != _generation || isClosed) return;
+    final hasAnyEntryFailure = hasAnyEntryResult.getLeft().toNullable();
+    if (hasAnyEntryFailure != null) {
+      return _finish(() => _emitFailure(hasAnyEntryFailure));
+    }
+
+    final breakdownResult = await _getBreakdown(
+      state.period,
+      type: state.typeFilter,
+    );
+    if (generation != _generation || isClosed) return;
+    final breakdownFailure = breakdownResult.getLeft().toNullable();
+    if (breakdownFailure != null) {
+      return _finish(() => _emitFailure(breakdownFailure));
+    }
+
+    _finish(
+      () => emit(
+        state.copyWith(
+          status: FinanceHistoryStatus.success,
+          hasAnyEntry: hasAnyEntryResult.toNullable() ?? false,
+          categories: [
+            ...expenseCategories.toNullable() ?? const <Category>[],
+            ...incomeCategories.toNullable() ?? const <Category>[],
+          ],
+          summary: summary.toNullable(),
+          breakdown: breakdownResult.toNullable() ?? CategoryBreakdown.empty,
+          entries: entries.toNullable() ?? const [],
+          clearFailure: true,
+        ),
+      ),
+    );
+  }
+
+  void _finish(void Function() emitResult) {
+    emitResult();
+    _completeFirstResult();
+  }
+
+  void _completeFirstResult() {
+    final firstResult = _firstResult;
+    if (firstResult != null && !firstResult.isCompleted) {
+      firstResult.complete();
+    }
   }
 
   /// FR-016: switching the period recalculates the summary, the breakdown,
@@ -82,7 +229,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         period: period,
       ),
     );
-    await _reload();
+    await _subscribe();
   }
 
   /// A `null` [type] means "both directions" (the `filterAll` option).
@@ -101,7 +248,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         clearCategoryFilter: !categoryStillApplies,
       ),
     );
-    await _reload();
+    await _subscribe();
   }
 
   /// A `null` [categoryId] means "all categories".
@@ -113,7 +260,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         clearCategoryFilter: categoryId == null,
       ),
     );
-    await _reload();
+    await _subscribe();
   }
 
   /// Drops the type and category filters, keeping the selected period —
@@ -126,12 +273,13 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
         clearCategoryFilter: true,
       ),
     );
-    await _reload();
+    await _subscribe();
   }
 
   /// FR-020: the soft delete commits immediately (research.md Decision 8),
   /// and [FinanceHistoryState.pendingUndoEntryId] carries the just-deleted
-  /// id for as long as the undo affordance should stay up.
+  /// id for as long as the undo affordance should stay up. The live
+  /// subscription drops the row and recalculates the totals.
   Future<void> deleteEntry(String entryId) async {
     final result = await _deleteEntry(entryId);
     final failure = result.getLeft().toNullable();
@@ -141,7 +289,6 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
     }
     _undoTimer?.cancel();
     emit(state.copyWith(pendingUndoEntryId: entryId));
-    await _reload();
     _undoTimer = Timer(undoWindow, () {
       if (isClosed) return;
       emit(state.copyWith(clearPendingUndoEntryId: true));
@@ -150,7 +297,7 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
 
   /// Reverses a delete while its window is still open. A late or duplicate
   /// tap is harmless — `RestoreFinanceEntry` treats an already-active entry
-  /// as a quiet success.
+  /// as a quiet success. The live subscription brings the row back.
   Future<void> undoDelete(String entryId) async {
     _undoTimer?.cancel();
     final result = await _restoreEntry(entryId);
@@ -160,52 +307,6 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
       return;
     }
     emit(state.copyWith(clearPendingUndoEntryId: true));
-    await _reload();
-  }
-
-  /// The single place the three period-scoped queries are issued, so they
-  /// are always run against the same period and filter.
-  Future<void> _reload() async {
-    final period = state.period;
-
-    final hasAnyEntryResult = await _repository.hasAnyEntry();
-    final hasAnyEntryFailure = hasAnyEntryResult.getLeft().toNullable();
-    if (hasAnyEntryFailure != null) return _emitFailure(hasAnyEntryFailure);
-    final hasAnyEntry = hasAnyEntryResult.toNullable() ?? false;
-
-    final categories = <Category>[];
-    for (final type in CategoryType.values) {
-      // Archived categories included: an entry filed under one before it was
-      // archived still has to resolve a name and an icon (FR-011).
-      final result = await _getCategories(type: type, includeArchived: true);
-      final failure = result.getLeft().toNullable();
-      if (failure != null) return _emitFailure(failure);
-      categories.addAll(result.toNullable() ?? const []);
-    }
-
-    final summaryResult = await _getSummary(period);
-    final summaryFailure = summaryResult.getLeft().toNullable();
-    if (summaryFailure != null) return _emitFailure(summaryFailure);
-
-    final breakdownResult = await _getBreakdown(period, type: state.typeFilter);
-    final breakdownFailure = breakdownResult.getLeft().toNullable();
-    if (breakdownFailure != null) return _emitFailure(breakdownFailure);
-
-    final historyResult = await _getHistory(filter: state.filter);
-    final historyFailure = historyResult.getLeft().toNullable();
-    if (historyFailure != null) return _emitFailure(historyFailure);
-
-    emit(
-      state.copyWith(
-        status: FinanceHistoryStatus.success,
-        hasAnyEntry: hasAnyEntry,
-        categories: categories,
-        summary: summaryResult.toNullable(),
-        breakdown: breakdownResult.toNullable() ?? CategoryBreakdown.empty,
-        entries: historyResult.toNullable() ?? const [],
-        clearFailure: true,
-      ),
-    );
   }
 
   Category? _categoryById(String? id) {
@@ -222,9 +323,19 @@ class FinanceHistoryCubit extends Cubit<FinanceHistoryState> {
     );
   }
 
+  void _cancelSubscriptions() {
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
+    // A superseded subscription will never deliver; release its waiter.
+    _completeFirstResult();
+  }
+
   @override
   Future<void> close() {
     _undoTimer?.cancel();
+    _cancelSubscriptions();
     return super.close();
   }
 }

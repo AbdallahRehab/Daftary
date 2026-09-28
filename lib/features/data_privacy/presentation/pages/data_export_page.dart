@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -32,8 +35,8 @@ class DataExportView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.exportTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.exportTitle)),
       body: BlocBuilder<ExportCubit, ExportState>(
         builder: (context, state) {
           final cubit = context.read<ExportCubit>();
@@ -65,7 +68,7 @@ class _IdleBody extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg) + AppGlassInsets.of(context),
       children: [
         Icon(Icons.file_download_outlined, size: 48, color: onSurfaceVariant),
         const SizedBox(height: AppSpacing.md),
@@ -120,7 +123,7 @@ class _ReadyBody extends StatelessWidget {
     final cubit = context.read<ExportCubit>();
     final colors = Theme.of(context).colorScheme;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg) + AppGlassInsets.of(context),
       children: [
         Icon(
           Icons.check_circle_outline,

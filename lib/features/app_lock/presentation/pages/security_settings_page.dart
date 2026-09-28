@@ -4,6 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -36,8 +39,8 @@ class _SecuritySettingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.securitySettingsTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.securitySettingsTitle)),
       body: BlocConsumer<AppLockSettingsCubit, AppLockSettingsState>(
         listenWhen: (previous, current) =>
             current.outcome != null ||
@@ -90,7 +93,7 @@ class _SecuritySettingsList extends StatelessWidget {
     final enabled = state.isEnabled;
     final interactive = !state.isSubmitting;
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       children: [
         _SecuritySection(
           icon: Icons.lock_outline,

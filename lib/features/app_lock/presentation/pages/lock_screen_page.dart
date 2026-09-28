@@ -97,6 +97,10 @@ class _LockScreenViewState extends State<_LockScreenView> {
         // lock screen itself can never be popped.
         return PopScope(
           canPop: false,
+          // A plain Scaffold on purpose, never Liquid Glass (020): like onboarding,
+          // the lock overlay (lock screen, Forgot PIN, wipe) is a full-screen
+          // security flow above the router, and must stay maximally legible and
+          // render-safe whatever the user's glass preference.
           child: Scaffold(
             body: SafeArea(
               child: state.isLoading

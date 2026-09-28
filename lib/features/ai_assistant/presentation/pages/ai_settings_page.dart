@@ -7,6 +7,9 @@ import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -99,8 +102,8 @@ class _AISettingsViewState extends State<AISettingsView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.aiSettingsTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.aiSettingsTitle)),
       body: MultiBlocListener(
         listeners: [
           // FR-003: a validated provider + key only ever leads to the
@@ -159,7 +162,9 @@ class _AISettingsViewState extends State<AISettingsView> {
                 break;
             }
             return ListView(
-              padding: const EdgeInsets.all(AppSpacing.md),
+              padding:
+                  const EdgeInsets.all(AppSpacing.md) +
+                  AppGlassInsets.of(context),
               children: [
                 if (state.isEnabled)
                   _EnabledSummary(state: state)

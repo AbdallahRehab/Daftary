@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -60,8 +63,8 @@ class _PinSetupView extends StatelessWidget {
           onPopInvokedWithResult: (didPop, _) {
             if (!didPop && !locked && isConfirming) cubit.startOver();
           },
-          child: Scaffold(
-            appBar: AppBar(
+          child: AppScaffold(
+            appBar: AppTopBar(
               title: Text(switch (state.mode) {
                 PinSetupMode.initialSetup => l10n.appLockPinSetupTitle,
                 PinSetupMode.change => l10n.appLockPinChangeTitle,
@@ -76,7 +79,10 @@ class _PinSetupView extends StatelessWidget {
                     : () => Navigator.of(context).pop(false),
               ),
             ),
-            body: SafeArea(child: _PinSetupBody(state: state)),
+            // Under glass the body starts behind the app bar: the scroll
+            // view takes the top inset, SafeArea the rest (as with glass
+            // OFF, where the body's top padding is already zero).
+            body: SafeArea(top: false, child: _PinSetupBody(state: state)),
           ),
         );
       },
@@ -114,10 +120,12 @@ class _PinSetupBody extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.lg,
-        ),
+        padding:
+            const EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.lg,
+            ) +
+            AppGlassInsets.of(context),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Column(

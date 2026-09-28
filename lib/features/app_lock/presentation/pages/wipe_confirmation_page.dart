@@ -59,6 +59,10 @@ class _WipeConfirmationPageState extends State<WipeConfirmationPage> {
         return PopScope(
           // Leaving mid-wipe would not stop it, only hide its outcome.
           canPop: !isBusy,
+          // A plain Scaffold on purpose, never Liquid Glass (020): like onboarding,
+          // the lock overlay (lock screen, Forgot PIN, wipe) is a full-screen
+          // security flow above the router, and must stay maximally legible and
+          // render-safe whatever the user's glass preference.
           child: Scaffold(
             appBar: AppBar(title: Text(l10n.appLockWipeTitle)),
             body: SafeArea(

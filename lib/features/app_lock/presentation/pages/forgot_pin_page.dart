@@ -47,6 +47,10 @@ class _ForgotPinView extends StatelessWidget {
           previous.biometricStatus != BiometricRecoveryStatus.verified &&
           current.biometricStatus == BiometricRecoveryStatus.verified,
       listener: (context, _) => _setNewPin(context),
+      // A plain Scaffold on purpose, never Liquid Glass (020): like onboarding,
+      // the lock overlay (lock screen, Forgot PIN, wipe) is a full-screen
+      // security flow above the router, and must stay maximally legible and
+      // render-safe whatever the user's glass preference.
       child: Scaffold(
         appBar: AppBar(title: Text(l10n.appLockForgotTitle)),
         body: SafeArea(

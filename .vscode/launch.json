@@ -8,18 +8,21 @@
         {
             "name": "Daftary",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "toolArgs": ["--dart-define-from-file=config/supabase.dev.json"]
         },
         {
             "name": "Daftary (profile mode)",
             "request": "launch",
             "type": "dart",
+            "toolArgs": ["--dart-define-from-file=config/supabase.dev.json"],
             "flutterMode": "profile"
         },
         {
             "name": "Daftary (release mode)",
             "request": "launch",
             "type": "dart",
+            "toolArgs": ["--dart-define-from-file=config/supabase.dev.json"],
             "flutterMode": "release"
         }
     ]

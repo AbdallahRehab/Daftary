@@ -54,11 +54,11 @@
 
 ### Session 2026-09-27
 
-*The user moved on to `/speckit.plan` without answering Q1–Q3. The recommended options were taken as **assumed decisions**. Each one can be overridden before `/speckit.tasks`, and the plan says which artifacts would change.*
+*Q1–Q3 were first taken as assumed recommended answers when planning started. The user confirmed all three on 2026-09-27, after implementation.*
 
-- Q: How should a user's cloud data be tied to them, given the app has no login today? → A (assumed): Silent anonymous sign-in on the first online launch. An optional "Link email" (one-time code) in Settings upgrades the **same** user id, which enables restore and a second device. Signing into an existing account on a device merges that device's local data into the account. Sign-out is out of scope.
-- Q: Is sync on automatically after the upgrade, or opt-in? → A (assumed): On by default. A one-time, dismissible notice explains it, and a switch in Settings turns it off. While sync is off, no network request is made, but local changes are still queued, so turning sync on later uploads everything.
-- Q: Do a person's phone number and notes go to the cloud? → A (assumed): Yes, both are synced and protected by owner-only row-level security. The avatar file path is never synced.
+- Q: How should a user's cloud data be tied to them, given the app has no login today? → A (confirmed by the user 2026-09-27): Silent anonymous sign-in on the first online launch. An optional "Link email" (one-time code) in Settings upgrades the **same** user id, which enables restore and a second device. Signing into an existing account on a device merges that device's local data into the account. Sign-out is out of scope.
+- Q: Is sync on automatically after the upgrade, or opt-in? → A (confirmed by the user 2026-09-27): On by default. A one-time, dismissible notice explains it, and a switch in Settings turns it off. While sync is off, no network request is made, but local changes are still queued, so turning sync on later uploads everything.
+- Q: Do a person's phone number and notes go to the cloud? → A (confirmed by the user 2026-09-27): Yes, both are synced and protected by owner-only row-level security. The avatar file path is never synced.
 - Q: What does the user see offline, while pending, while syncing, and on failure or conflict? → A (codebase-derived): Existing screens are unchanged. There is a sync section in Settings (status, last sync, pending, failed and conflict counts, "Sync now", the on/off switch, "Link email"). The only per-record marker is a small conflict badge on a transaction or finance entry that is in conflict. Tapping it opens the keep-mine / keep-theirs choice.
 - Q: Do the 004/005 "appears only after reload" fixes need separate work? → A (codebase-derived): No. The affected Cubits switch from imperative `load()`/`refresh()`-after-mutation to watching local-database changes (FR-031). That covers user edits and sync-applied changes in one mechanism.
 

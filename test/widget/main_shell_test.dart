@@ -78,7 +78,7 @@ const _phone = Size(390, 844);
 const _tablet = Size(1280, 800);
 
 void main() {
-  testWidgets('renders the 3 destinations in People/Overview/Settings order '
+  testWidgets('renders the 3 destinations in People/Home/Settings order '
       'under LTR', (tester) async {
     await _setSize(tester, _phone);
     await tester.pumpWidget(_wrap(const Locale('en')));
@@ -90,7 +90,7 @@ void main() {
 
     expect(destinations, hasLength(3));
     expect(destinations[0].label, 'People');
-    expect(destinations[1].label, 'Overview');
+    expect(destinations[1].label, 'Home');
     expect(destinations[2].label, 'Settings');
 
     // LTR: destinations lay out left-to-right, so x offsets increase.
@@ -113,7 +113,7 @@ void main() {
     expect(destinations, hasLength(3));
     // Underlying destination order/icons are unchanged (Arabic labels)...
     expect(destinations[0].label, 'الأشخاص');
-    expect(destinations[1].label, 'نظرة عامة');
+    expect(destinations[1].label, 'الرئيسية');
     expect(destinations[2].label, 'الإعدادات');
 
     // ...but under RTL, NavigationBar mirrors layout automatically: the
@@ -166,7 +166,8 @@ void main() {
       await tester.pumpWidget(_wrap(const Locale('en')));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Overview').last);
+      // The second destination is labelled Home since 012.
+      await tester.tap(find.text('Home').last);
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('page_Overview')), findsOneWidget);

@@ -1271,6 +1271,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncKindConflictResolution => 'Conflict choice';
 
   @override
+  String get syncKindOccasion => 'Occasion';
+
+  @override
+  String get syncKindBudget => 'Budget';
+
+  @override
+  String get syncKindBudgetAllocation => 'Budget category';
+
+  @override
   String get syncFailedReasonPersonHasTransactions =>
       'This person has transactions on another device.';
 
@@ -1351,4 +1360,1826 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncNoticeDismiss => 'Got it';
+
+  @override
+  String get appLockLockTitle => 'Daftary is locked';
+
+  @override
+  String get appLockLockPrompt => 'Enter your PIN to continue';
+
+  @override
+  String get appLockLockBiometricReason =>
+      'Unlock Daftary to see your finances';
+
+  @override
+  String get appLockLockUseBiometric => 'Unlock with biometrics';
+
+  @override
+  String get appLockLockBiometricInProgress =>
+      'Waiting for biometric confirmation. You can also enter your PIN.';
+
+  @override
+  String get appLockLockVerifying => 'Checking your PIN…';
+
+  @override
+  String get appLockLockIncorrectPin => 'Incorrect PIN. Please try again.';
+
+  @override
+  String get appLockLockBiometricFailed =>
+      'Biometric unlock didn\'t work. Try again or enter your PIN.';
+
+  @override
+  String get appLockLockBiometricUnavailable =>
+      'Biometric unlock isn\'t available on this device right now. Enter your PIN instead.';
+
+  @override
+  String get appLockLockUnexpectedError =>
+      'Something went wrong. Please try again.';
+
+  @override
+  String get appLockLockCooldownTitle => 'Too many incorrect attempts';
+
+  @override
+  String appLockLockCooldownMessage(String time) {
+    return 'PIN entry is paused. Try again in $time.';
+  }
+
+  @override
+  String get appLockLockCooldownBiometricHint =>
+      'You can still unlock with biometrics.';
+
+  @override
+  String get appLockPinPadDelete => 'Delete last digit';
+
+  @override
+  String get appLockPinPadSubmit => 'Confirm PIN';
+
+  @override
+  String appLockPinPadDigitsEntered(int count) {
+    return 'PIN digits entered: $count';
+  }
+
+  @override
+  String get appLockPinSetupTitle => 'Set a PIN';
+
+  @override
+  String get appLockPinChangeTitle => 'Change PIN';
+
+  @override
+  String get appLockPinResetTitle => 'Set a new PIN';
+
+  @override
+  String get appLockPinVerifyCurrentPrompt => 'Enter your current PIN';
+
+  @override
+  String get appLockPinVerifyCurrentHint =>
+      'To change your PIN, first confirm it\'s you.';
+
+  @override
+  String get appLockPinEnterNewPrompt => 'Choose a PIN';
+
+  @override
+  String get appLockPinEnterNewHint =>
+      'Use 4 to 6 digits. Your PIN never leaves this device.';
+
+  @override
+  String get appLockPinConfirmNewPrompt => 'Enter the same PIN again';
+
+  @override
+  String get appLockPinConfirmNewHint =>
+      'This makes sure you typed the PIN you meant.';
+
+  @override
+  String get appLockPinMismatch =>
+      'The PINs don\'t match. Enter the confirmation again.';
+
+  @override
+  String get appLockPinInvalid => 'Your PIN must be 4 to 6 digits.';
+
+  @override
+  String get appLockPinIncorrectCurrent =>
+      'That\'s not your current PIN. Please try again.';
+
+  @override
+  String get appLockPinBiometricFailed =>
+      'Biometric check didn\'t work. Try again or enter your current PIN.';
+
+  @override
+  String get appLockPinBiometricUnavailable =>
+      'Biometrics aren\'t available right now. Enter your current PIN instead.';
+
+  @override
+  String get appLockPinUnexpectedError =>
+      'Couldn\'t save your PIN. Please try again.';
+
+  @override
+  String get appLockPinStartOver => 'Start over';
+
+  @override
+  String get appLockPinUseBiometric => 'Use biometrics instead';
+
+  @override
+  String get appLockPinBiometricReason =>
+      'Confirm it\'s you to change your PIN';
+
+  @override
+  String get appLockPinSaving => 'Saving your PIN…';
+
+  @override
+  String get budgetMonthNavPrevious => 'Previous month';
+
+  @override
+  String get budgetMonthNavNext => 'Next month';
+
+  @override
+  String budgetMonthNavCurrentLabel(String month) {
+    return 'Budget month: $month';
+  }
+
+  @override
+  String budgetCopyFromMonthAction(String month) {
+    return 'Copy $month\'s budget';
+  }
+
+  @override
+  String budgetCopyFromMonthMessage(String month) {
+    return 'Start from the plan you made for $month. You can adjust it afterwards without changing $month.';
+  }
+
+  @override
+  String get budgetCopyInProgress => 'Copying…';
+
+  @override
+  String budgetCopySuccess(String month) {
+    return 'Budget copied from $month';
+  }
+
+  @override
+  String get budgetCopyFailed => 'Couldn\'t copy the budget. Please try again.';
+
+  @override
+  String get budgetCopyAlreadyExists => 'This month already has a budget.';
+
+  @override
+  String get budgetTrendTitle => 'Spending trends';
+
+  @override
+  String get budgetTrendSubtitle => 'Planned vs. actual, last 6 months';
+
+  @override
+  String get budgetTrendOverall => 'Overall';
+
+  @override
+  String get budgetTrendCategoryLabel => 'Category';
+
+  @override
+  String get budgetTrendPlanned => 'Planned';
+
+  @override
+  String get budgetTrendActual => 'Actual';
+
+  @override
+  String get budgetTrendOverPlan => 'Over plan';
+
+  @override
+  String get budgetTrendNoBudget => 'No budget';
+
+  @override
+  String get budgetTrendInsufficientTitle => 'Not enough history yet';
+
+  @override
+  String get budgetTrendInsufficientMessage =>
+      'Trends need a budget in at least 2 months. Keep budgeting and check back next month.';
+
+  @override
+  String budgetTrendMonthSummary(String month, String planned, String actual) {
+    return '$month: planned $planned, actual $actual';
+  }
+
+  @override
+  String get commonRestore => 'Restore';
+
+  @override
+  String get commonConfirm => 'Confirm';
+
+  @override
+  String get commonSearch => 'Search';
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get commonError => 'Something went wrong';
+
+  @override
+  String get onboardingAiAssistantTitle => 'Get help making sense of it all';
+
+  @override
+  String get onboardingAiAssistantDescription =>
+      'An AI assistant can help you review and organize what you\'ve recorded — it does not give financial advice or guarantee outcomes.';
+
+  @override
+  String get financeTitle => 'Income & expenses';
+
+  @override
+  String get financeUndoAction => 'Undo';
+
+  @override
+  String get occasionsTitle => 'Occasions';
+
+  @override
+  String get occasionsEmptyTitle => 'No occasions yet';
+
+  @override
+  String get occasionsEmptyMessage =>
+      'Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.';
+
+  @override
+  String get occasionAddAction => 'New occasion';
+
+  @override
+  String get occasionAddFirstAction => 'Create your first occasion';
+
+  @override
+  String get occasionSearchHint => 'Search occasions';
+
+  @override
+  String get occasionFilterTypeLabel => 'Type';
+
+  @override
+  String get occasionFilterAllTypes => 'All types';
+
+  @override
+  String get occasionFilterDateRangeLabel => 'Date range';
+
+  @override
+  String get occasionFilterDateFromLabel => 'From';
+
+  @override
+  String get occasionFilterDateToLabel => 'To';
+
+  @override
+  String get occasionFilterAllDates => 'Any date';
+
+  @override
+  String get occasionClearFiltersAction => 'Clear filters';
+
+  @override
+  String get occasionNoMatchTitle => 'No matching occasions';
+
+  @override
+  String get occasionNoMatchMessage =>
+      'No occasions match your search or filters. Try a different name, type, or date range.';
+
+  @override
+  String get occasionArchivedAction => 'Archived occasions';
+
+  @override
+  String get occasionArchivedTitle => 'Archived occasions';
+
+  @override
+  String get occasionArchivedEmptyTitle => 'No archived occasions';
+
+  @override
+  String get occasionArchivedEmptyMessage =>
+      'Occasions you archive will appear here, with their contributions and balances intact.';
+
+  @override
+  String get occasionArchivedLabel => 'Archived';
+
+  @override
+  String get occasionUpcomingLabel => 'Upcoming';
+
+  @override
+  String get occasionTypeWedding => 'Wedding';
+
+  @override
+  String get occasionTypeEngagement => 'Engagement';
+
+  @override
+  String get occasionTypeBirthday => 'Birthday';
+
+  @override
+  String get occasionTypeNewbornSebou => 'Newborn (Sebou)';
+
+  @override
+  String get occasionTypeCondolence => 'Condolence';
+
+  @override
+  String get occasionTypeCelebration => 'Celebration';
+
+  @override
+  String get occasionTypeOther => 'Other';
+
+  @override
+  String get occasionTypeCustomLabel => 'Custom type';
+
+  @override
+  String get occasionTypeCustomHint => 'Write your own type, e.g. graduation';
+
+  @override
+  String get occasionFormCreateTitle => 'New occasion';
+
+  @override
+  String get occasionFormEditTitle => 'Edit occasion';
+
+  @override
+  String get occasionNameLabel => 'Occasion name';
+
+  @override
+  String get occasionNameHint => 'e.g. Ahmed\'s wedding';
+
+  @override
+  String get occasionNameRequiredError => 'Occasion name is required';
+
+  @override
+  String get occasionDateLabel => 'Date';
+
+  @override
+  String get occasionTypeLabel => 'Type';
+
+  @override
+  String get occasionTypeRequiredError => 'Choose an occasion type';
+
+  @override
+  String get occasionNotesLabel => 'Notes (optional)';
+
+  @override
+  String get occasionCreateAction => 'Create occasion';
+
+  @override
+  String get occasionUpdateAction => 'Save changes';
+
+  @override
+  String get occasionEditAction => 'Edit occasion';
+
+  @override
+  String get occasionDeleteAction => 'Delete occasion';
+
+  @override
+  String get occasionArchiveAction => 'Archive occasion';
+
+  @override
+  String get occasionRestoreAction => 'Restore occasion';
+
+  @override
+  String get occasionParticipantFormAddTitle => 'Add participant';
+
+  @override
+  String get occasionParticipantFormEditTitle => 'Edit contribution';
+
+  @override
+  String get occasionParticipantPersonLabel => 'Person';
+
+  @override
+  String get occasionParticipantAmountLabel => 'Amount (EGP)';
+
+  @override
+  String get occasionParticipantAmountInvalidError =>
+      'Enter a valid amount greater than zero';
+
+  @override
+  String get occasionParticipantDirectionLabel => 'Direction';
+
+  @override
+  String get occasionParticipantDirectionReceived => 'I received from them';
+
+  @override
+  String get occasionParticipantDirectionGiven => 'I gave them';
+
+  @override
+  String get occasionParticipantNoteLabel => 'Note (optional)';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceLabel =>
+      'Counts toward their balance';
+
+  @override
+  String get occasionParticipantCountsTowardBalanceHint =>
+      'Condolence money isn\'t expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.';
+
+  @override
+  String get occasionParticipantSaveAction => 'Save participant';
+
+  @override
+  String get occasionParticipantUpdateAction => 'Save changes';
+
+  @override
+  String get occasionDetailTotalReceived => 'Total received';
+
+  @override
+  String get occasionDetailTotalGiven => 'Total given';
+
+  @override
+  String get occasionDetailNet => 'Net';
+
+  @override
+  String get occasionSettlementSettled => 'Settled';
+
+  @override
+  String occasionSettlementMoreReceived(String amount) {
+    return '$amount more received than given';
+  }
+
+  @override
+  String occasionSettlementMoreGiven(String amount) {
+    return '$amount more given than received';
+  }
+
+  @override
+  String get occasionParticipantsHeader => 'Participants';
+
+  @override
+  String get occasionParticipantsEmptyTitle => 'No participants yet';
+
+  @override
+  String get occasionParticipantsEmptyMessage =>
+      'Add the first person who gave or received money at this occasion.';
+
+  @override
+  String get occasionAddParticipantAction => 'Add participant';
+
+  @override
+  String get occasionEditParticipantAction => 'Edit contribution';
+
+  @override
+  String get occasionRemoveParticipantAction => 'Remove contribution';
+
+  @override
+  String get occasionContributionBadge => 'Occasion';
+
+  @override
+  String get occasionRemoveParticipantConfirmTitle =>
+      'Remove this contribution?';
+
+  @override
+  String get occasionRemoveParticipantConfirmMessage =>
+      'It will also disappear from this person\'s history and balance. This can\'t be undone.';
+
+  @override
+  String get occasionDeleteConfirmTitle => 'Delete this occasion?';
+
+  @override
+  String occasionDeleteConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'This also removes $count contributions and updates the balance of everyone who took part. This can\'t be undone.',
+      one:
+          'This also removes 1 contribution and updates that person\'s balance. This can\'t be undone.',
+      zero:
+          'This occasion has no contributions recorded yet. This can\'t be undone.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get occasionArchiveConfirmTitle => 'Archive this occasion?';
+
+  @override
+  String get occasionArchiveConfirmMessage =>
+      'It moves to archived occasions. Its contributions stay in everyone\'s history and balances, and you can restore it any time.';
+
+  @override
+  String get occasionRestoreConfirmTitle => 'Restore this occasion?';
+
+  @override
+  String get occasionRestoreConfirmMessage =>
+      'It will appear in your occasions list again.';
+
+  @override
+  String get occasionAttachmentsHeader => 'Photos';
+
+  @override
+  String get occasionAttachPhotoAction => 'Attach photo';
+
+  @override
+  String get occasionAttachFromCameraAction => 'Take a photo';
+
+  @override
+  String get occasionAttachFromGalleryAction => 'Choose from gallery';
+
+  @override
+  String get occasionAttachmentsEmptyTitle => 'No photos yet';
+
+  @override
+  String get occasionAttachmentsEmptyMessage =>
+      'Attach a photo of the envelope list, the invitation, or the occasion itself to keep it with this record.';
+
+  @override
+  String get occasionRemoveAttachmentAction => 'Remove photo';
+
+  @override
+  String get occasionRemoveAttachmentConfirmTitle => 'Remove this photo?';
+
+  @override
+  String get occasionRemoveAttachmentConfirmMessage =>
+      'The photo will be deleted from this occasion. This can\'t be undone.';
+
+  @override
+  String get occasionCameraPermissionDeniedTitle =>
+      'Camera access is turned off';
+
+  @override
+  String get occasionCameraPermissionDeniedMessage =>
+      'Daftary needs your camera to take a photo for this occasion. Open your device settings and allow camera access for Daftary, or choose a photo from your gallery instead.';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedTitle =>
+      'Photo access is turned off';
+
+  @override
+  String get occasionPhotoLibraryPermissionDeniedMessage =>
+      'Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.';
+
+  @override
+  String get occasionOpenSettingsAction => 'Open settings';
+
+  @override
+  String get ocrCaptureTitle => 'Scan paper';
+
+  @override
+  String get ocrCaptureHeadline => 'Turn a paper list into entries';
+
+  @override
+  String get ocrCaptureMessage =>
+      'Photograph a list of names and amounts. Everything is read on this device, and nothing is saved until you review it.';
+
+  @override
+  String get ocrCaptureTakePhoto => 'Take a photo';
+
+  @override
+  String get ocrCaptureChooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get ocrCaptureUnsupportedTitle =>
+      'Scanning isn\'t available on this device';
+
+  @override
+  String get ocrCaptureUnsupportedMessage =>
+      'This device can\'t run on-device text recognition, so scanning a paper won\'t work here. You can still add transactions manually.';
+
+  @override
+  String get ocrCaptureEnterManually => 'Enter manually';
+
+  @override
+  String get ocrPrepTitle => 'Prepare the image';
+
+  @override
+  String get ocrPrepHint =>
+      'Crop to just the list of names and amounts, then even out the lighting for the best reading.';
+
+  @override
+  String get ocrPrepCropRotate => 'Crop and rotate';
+
+  @override
+  String get ocrPrepRecrop => 'Redo the crop';
+
+  @override
+  String get ocrPrepEnhance => 'Enhance';
+
+  @override
+  String get ocrPrepEnhanceAgain => 'Enhance again';
+
+  @override
+  String get ocrPrepProcess => 'Read the paper';
+
+  @override
+  String get ocrPrepProcessingTitle => 'Reading your paper';
+
+  @override
+  String get ocrPrepProcessingMessage =>
+      'Text recognition is running on this device. Nothing is uploaded anywhere.';
+
+  @override
+  String get ocrPrepCancel => 'Cancel';
+
+  @override
+  String get ocrPrepInterruptedTitle => 'That didn\'t finish';
+
+  @override
+  String get ocrPrepInterruptedMessage =>
+      'Reading stopped before it finished, probably because the app was interrupted. Nothing was saved, so you can try again.';
+
+  @override
+  String get ocrPrepRetry => 'Try again';
+
+  @override
+  String get ocrPrepDefaultDirectionLabel => 'Default direction for this list';
+
+  @override
+  String get ocrPrepDefaultDirectionHint =>
+      'Applied to every entry whose direction can\'t be read from the paper. You can change any entry while reviewing.';
+
+  @override
+  String get ocrPrepDirectionReceived => 'Money received';
+
+  @override
+  String get ocrPrepDirectionGiven => 'Money given';
+
+  @override
+  String get ocrFailureNoTextTitle => 'No text found';
+
+  @override
+  String get ocrFailureNoTextMessage =>
+      'No readable text was found in this photo. A sharper, better lit, straight-on shot usually fixes it.';
+
+  @override
+  String get ocrFailureNoCandidatesTitle => 'No entries could be made';
+
+  @override
+  String get ocrFailureNoCandidatesMessage =>
+      'Text was found, but no line looked like a name and an amount. Try cropping to just the list, or enter the entries manually.';
+
+  @override
+  String get ocrFailurePermissionTitle => 'Permission needed';
+
+  @override
+  String get ocrFailurePermissionMessage =>
+      'Scanning needs access to your camera or photos to read the paper. Grant access from the app\'s settings, then try again.';
+
+  @override
+  String get ocrFailureUnsupportedTitle =>
+      'Scanning isn\'t available on this device';
+
+  @override
+  String get ocrFailureUnsupportedMessage =>
+      'This device can\'t run on-device text recognition. Manual entry works exactly the same way.';
+
+  @override
+  String get ocrFailureGenericTitle => 'The scan didn\'t work';
+
+  @override
+  String get ocrFailureGenericMessage =>
+      'Something went wrong while reading the paper. Nothing was saved, so you can try again or enter the entries manually.';
+
+  @override
+  String get ocrFailureRetakePhoto => 'Retake the photo';
+
+  @override
+  String get ocrFailureRecrop => 'Adjust the crop and retry';
+
+  @override
+  String get ocrFailureManualEntry => 'Enter manually';
+
+  @override
+  String get ocrFailureOpenSettings => 'Open settings';
+
+  @override
+  String get ocrConfidenceLow => 'Low confidence';
+
+  @override
+  String get ocrConfidenceMedium => 'Medium confidence';
+
+  @override
+  String get ocrConfidenceHigh => 'High confidence';
+
+  @override
+  String get ocrConfidenceInferred => 'Inferred, not read';
+
+  @override
+  String get ocrReviewTitle => 'Review entries';
+
+  @override
+  String get ocrReviewBatchSectionTitle => 'Applies to the whole batch';
+
+  @override
+  String get ocrReviewBatchSectionMessage =>
+      'These choices apply to every entry that does not have its own. Nothing is saved until you confirm.';
+
+  @override
+  String get ocrReviewBatchDirectionLabel => 'Default direction';
+
+  @override
+  String get ocrReviewDirectionLabel => 'Direction';
+
+  @override
+  String get ocrReviewDirectionReceived => 'Received';
+
+  @override
+  String get ocrReviewDirectionGiven => 'Given';
+
+  @override
+  String get ocrReviewDirectionRequired =>
+      'Choose a direction for this entry, or set a default for the batch.';
+
+  @override
+  String get ocrReviewPersonLabel => 'Person';
+
+  @override
+  String get ocrReviewPersonRequired => 'Enter the person\'s name.';
+
+  @override
+  String get ocrReviewDuplicateWarningAction => 'Similar names already saved';
+
+  @override
+  String get ocrReviewAmountLabel => 'Amount';
+
+  @override
+  String get ocrReviewAmountRequired => 'Enter an amount greater than zero.';
+
+  @override
+  String get ocrReviewAmountInvalid =>
+      'Enter a valid amount, for example 150.50';
+
+  @override
+  String get ocrReviewDateLabel => 'Date';
+
+  @override
+  String get ocrReviewNotesLabel => 'Notes';
+
+  @override
+  String get ocrReviewRawTextAction => 'Original text';
+
+  @override
+  String get ocrReviewRawTextLabel => 'Read from the page';
+
+  @override
+  String get ocrReviewEditedBadge => 'Edited';
+
+  @override
+  String get ocrReviewDiscardAction => 'Discard this entry';
+
+  @override
+  String get ocrReviewIncompleteTitle => 'Not ready to save';
+
+  @override
+  String get ocrReviewIncompleteBatchMessage =>
+      'Some entries are still missing required details. Nothing was saved.';
+
+  @override
+  String get ocrReviewConfirmAction => 'Confirm and save';
+
+  @override
+  String get ocrReviewConfirmBlockedHint =>
+      'Complete or discard the highlighted entries before saving.';
+
+  @override
+  String get ocrReviewNothingToConfirm =>
+      'There is nothing left to save in this scan.';
+
+  @override
+  String get ocrReviewCancelAction => 'Cancel scan';
+
+  @override
+  String get ocrReviewCancelPromptTitle => 'Discard your corrections?';
+
+  @override
+  String get ocrReviewCancelPromptMessage =>
+      'You have corrected some entries. Cancelling this scan discards that work and saves nothing.';
+
+  @override
+  String get ocrReviewCancelPromptConfirm => 'Discard and cancel';
+
+  @override
+  String get ocrReviewCancelPromptKeep => 'Keep reviewing';
+
+  @override
+  String get ocrReviewEmptyTitle => 'No entries left';
+
+  @override
+  String get ocrReviewEmptyMessage =>
+      'You discarded every entry from this scan. Cancel the scan, or go back and photograph the page again.';
+
+  @override
+  String get ocrReviewLoadErrorTitle => 'Could not open this scan';
+
+  @override
+  String get ocrReviewLoadErrorMessage =>
+      'The scan and its entries could not be loaded. Nothing was saved.';
+
+  @override
+  String get ocrReviewRetryAction => 'Try again';
+
+  @override
+  String get ocrReviewSaveErrorMessage =>
+      'The entries could not be saved. Nothing was recorded, so you can try again safely.';
+
+  @override
+  String get ocrReviewOccasionLabel => 'Occasion';
+
+  @override
+  String get ocrReviewOccasionNone => 'No occasion';
+
+  @override
+  String get ocrReviewOccasionClear => 'Remove the occasion tag';
+
+  @override
+  String get ocrReviewOccasionPickerTitle => 'Tag this batch to an occasion';
+
+  @override
+  String get ocrReviewOccasionEmpty =>
+      'You have no occasions yet. Create one from the Occasions screen first.';
+
+  @override
+  String get ocrHistoryTitle => 'Scan history';
+
+  @override
+  String get ocrHistoryEmptyTitle => 'No scans yet';
+
+  @override
+  String get ocrHistoryEmptyMessage =>
+      'Once you scan a paper list, every scan you keep shows up here with its photo and what came of it.';
+
+  @override
+  String get ocrHistoryErrorTitle => 'Couldn\'t load your scans';
+
+  @override
+  String get ocrHistoryErrorMessage =>
+      'Something went wrong while reading your scan history. Try again.';
+
+  @override
+  String get ocrHistoryStatusProcessing => 'Processing';
+
+  @override
+  String get ocrHistoryStatusNeedsReview => 'Waiting for review';
+
+  @override
+  String get ocrHistoryStatusConfirmed => 'Confirmed';
+
+  @override
+  String get ocrHistoryStatusDiscarded => 'Produced nothing';
+
+  @override
+  String get ocrHistoryStatusFailed => 'Nothing could be read';
+
+  @override
+  String ocrHistoryConfirmedEntries(Object count) {
+    return '$count entries confirmed';
+  }
+
+  @override
+  String get ocrHistoryDeleteAction => 'Delete scan';
+
+  @override
+  String get ocrHistoryDeleteTitle => 'Delete this scan?';
+
+  @override
+  String get ocrHistoryDeleteMessage =>
+      'This deletes the scan and its photo from your device. The transactions it created are not deleted and stay in your records.';
+
+  @override
+  String get ocrHistoryDeleteConfirm => 'Delete scan';
+
+  @override
+  String get ocrScanDetailTitle => 'Scan details';
+
+  @override
+  String get ocrScanDetailImageMissing =>
+      'The photo for this scan is no longer on your device.';
+
+  @override
+  String get ocrScanDetailEntriesTitle => 'Entries read from the paper';
+
+  @override
+  String get ocrScanDetailNoEntries => 'No entries were read from this scan.';
+
+  @override
+  String get ocrScanDetailUnknownPerson => 'No name read';
+
+  @override
+  String get ocrScanDetailNoAmount => 'No amount read';
+
+  @override
+  String get ocrScanDetailEntryStatusPending => 'Not reviewed';
+
+  @override
+  String get ocrScanDetailEntryStatusConfirmed => 'Confirmed';
+
+  @override
+  String get ocrScanDetailEntryStatusDiscarded => 'Discarded';
+
+  @override
+  String get ocrScanDetailTransactionsTitle => 'Transactions created';
+
+  @override
+  String get ocrScanDetailNoTransactionsMessage =>
+      'This scan created no transactions.';
+
+  @override
+  String get ocrScanDetailTransactionsKeptNote =>
+      'These are real transactions in your records. Deleting this scan does not delete them.';
+
+  @override
+  String get ocrScanDetailDeleteAction => 'Delete scan';
+
+  @override
+  String get ocrScanDetailDeleteTitle => 'Delete this scan?';
+
+  @override
+  String ocrScanDetailDeleteMessage(Object count) {
+    return 'This deletes the scan and its photo from your device. The $count transactions it created are not deleted and stay in your records — you just lose the link back to the original photo.';
+  }
+
+  @override
+  String get ocrScanDetailDeleteConfirm => 'Delete scan';
+
+  @override
+  String get ocrScanDetailDeletedMessage =>
+      'Scan deleted. Its transactions were kept.';
+
+  @override
+  String get ocrScanDetailErrorTitle => 'Couldn\'t load this scan';
+
+  @override
+  String get ocrScanDetailErrorMessage =>
+      'Something went wrong while reading this scan.';
+
+  @override
+  String get budgetsTitle => 'Budgets';
+
+  @override
+  String get budgetsOverviewEntrySubtitle =>
+      'Plan this month\'s spending by category';
+
+  @override
+  String get budgetFormCreateTitle => 'New budget';
+
+  @override
+  String get budgetFormEditTitle => 'Edit budget';
+
+  @override
+  String get budgetFormMonthLabel => 'Month';
+
+  @override
+  String get budgetExpectedIncomeLabel => 'Expected income (optional)';
+
+  @override
+  String get budgetExpectedIncomeHelp =>
+      'For reference only — it never changes how spending is tracked.';
+
+  @override
+  String get budgetAllocationsHeader => 'Planned spending by category';
+
+  @override
+  String get budgetAllocationsEmpty =>
+      'No categories yet. Pick an expense category below to start planning.';
+
+  @override
+  String get budgetAddCategoryHeader => 'Add a category';
+
+  @override
+  String get budgetAllCategoriesAdded =>
+      'Every active expense category is already in this budget.';
+
+  @override
+  String get budgetPlannedAmountLabel => 'Planned amount';
+
+  @override
+  String get budgetRemoveAllocationAction => 'Remove from budget';
+
+  @override
+  String get budgetAmountRequiredError =>
+      'Enter a planned amount (0 is allowed)';
+
+  @override
+  String get budgetAmountInvalidError => 'Enter a valid amount';
+
+  @override
+  String get budgetAmountNegativeError => 'The amount can\'t be negative';
+
+  @override
+  String get budgetTotalPlannedLabel => 'Total planned';
+
+  @override
+  String budgetExceedsIncomeWarning(String amount) {
+    return 'Planned spending exceeds expected income by $amount';
+  }
+
+  @override
+  String get budgetExceedsIncomeSaveNote => 'You can still save this budget.';
+
+  @override
+  String get budgetDeleteAction => 'Delete budget';
+
+  @override
+  String get budgetDeleteConfirmTitle => 'Delete this budget?';
+
+  @override
+  String budgetDeleteConfirmMessage(String month) {
+    return 'The plan for $month will be removed. Your recorded expenses are not affected.';
+  }
+
+  @override
+  String get budgetDeletedConfirmation => 'Budget deleted';
+
+  @override
+  String get budgetAlreadyExistsError =>
+      'This month already has a budget. Open it to make changes.';
+
+  @override
+  String get budgetDuplicateCategoryError =>
+      'This category is already in the budget.';
+
+  @override
+  String get budgetNotFoundError => 'This budget no longer exists.';
+
+  @override
+  String budgetEmptyTitle(String month) {
+    return 'No budget for $month';
+  }
+
+  @override
+  String get budgetEmptyMessage =>
+      'Plan how much you intend to spend in each category, then track it against your real expenses.';
+
+  @override
+  String get budgetCreateAction => 'Create budget';
+
+  @override
+  String get budgetLoadErrorTitle => 'Couldn\'t load this budget';
+
+  @override
+  String get budgetOverallTitle => 'Overall';
+
+  @override
+  String get budgetPlannedLabel => 'Planned';
+
+  @override
+  String get budgetActualLabel => 'Spent';
+
+  @override
+  String get budgetRemainingLabel => 'Remaining';
+
+  @override
+  String get budgetOverByLabel => 'Over by';
+
+  @override
+  String budgetSpentOfPlanned(String actual, String planned) {
+    return '$actual of $planned';
+  }
+
+  @override
+  String budgetRemainingAmount(String amount) {
+    return '$amount left';
+  }
+
+  @override
+  String budgetOverByAmount(String amount) {
+    return '$amount over';
+  }
+
+  @override
+  String budgetPercentUsed(int percent) {
+    return '$percent% used';
+  }
+
+  @override
+  String get budgetPercentNotApplicable => 'Nothing planned';
+
+  @override
+  String get budgetStatusOnTrack => 'On track';
+
+  @override
+  String get budgetStatusNearFull => 'Near limit';
+
+  @override
+  String get budgetStatusOverBudget => 'Over budget';
+
+  @override
+  String get budgetCategoryArchivedTag => 'Archived';
+
+  @override
+  String get budgetCategoryMissingName => 'Deleted category';
+
+  @override
+  String get budgetCategoriesHeader => 'Categories';
+
+  @override
+  String get budgetNoAllocationsMessage =>
+      'This budget has no categories yet. Edit it to add planned amounts.';
+
+  @override
+  String get budgetExpectedIncomeDisplay => 'Expected income';
+
+  @override
+  String get budgetUnbudgetedTitle => 'Unbudgeted spending';
+
+  @override
+  String get budgetUnbudgetedMessage =>
+      'Spent this month in categories that aren\'t in your budget.';
+
+  @override
+  String get budgetUnbudgetedTotalLabel => 'Total unbudgeted';
+
+  @override
+  String get homeTitle => 'Home';
+
+  @override
+  String get homeFinancialSnapshotTitle => 'Financial snapshot';
+
+  @override
+  String get homeFinanceThisMonthTitle => 'This month';
+
+  @override
+  String get homeFinanceIncome => 'Income';
+
+  @override
+  String get homeFinanceExpenses => 'Expenses';
+
+  @override
+  String get homeFinanceNet => 'Net';
+
+  @override
+  String get homeQuickActionsTitle => 'Quick actions';
+
+  @override
+  String get homeQuickAddExpense => 'Add expense';
+
+  @override
+  String get homeQuickAddIncome => 'Add income';
+
+  @override
+  String get homeQuickAddPerson => 'Add person';
+
+  @override
+  String get homeQuickMoneyReceived => 'Money received';
+
+  @override
+  String get homeQuickMoneyGiven => 'Money given';
+
+  @override
+  String get homeQuickAddOccasion => 'Add occasion';
+
+  @override
+  String get homeQuickScanPaper => 'Scan paper';
+
+  @override
+  String get homeSectionsTitle => 'Sections';
+
+  @override
+  String get homeInsightsTitle => 'Insights';
+
+  @override
+  String get homeInsightsPlaceholder =>
+      'Insights will appear here once the AI Assistant is set up.';
+
+  @override
+  String get homeUpcomingTitle => 'Upcoming';
+
+  @override
+  String get homeUpcomingPlaceholder =>
+      'Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.';
+
+  @override
+  String get homeOverviewLoadError => 'Couldn\'t load your balances.';
+
+  @override
+  String get homeFinanceLoadError =>
+      'Couldn\'t load this month\'s income and expenses.';
+
+  @override
+  String get homeFullErrorMessage =>
+      'Your dashboard couldn\'t be loaded. Please try again.';
+
+  @override
+  String get homeEmptyTitle => 'Welcome to Daftary';
+
+  @override
+  String get homeEmptyMessage =>
+      'Keep track of who owes you, what you owe, and where your money goes each month — all on your device.';
+
+  @override
+  String get homeEmptyAction => 'Add your first person';
+
+  @override
+  String get reportsTitle => 'Reports';
+
+  @override
+  String get reportsOpenAction => 'Reports';
+
+  @override
+  String get reportsTrendTitle => 'Monthly trend';
+
+  @override
+  String reportsTrendSubtitle(int months) {
+    return 'Income and expenses over the last $months months';
+  }
+
+  @override
+  String get reportsBreakdownTitle => 'Spending by category';
+
+  @override
+  String get reportsIncome => 'Income';
+
+  @override
+  String get reportsExpenses => 'Expenses';
+
+  @override
+  String get reportsNet => 'Net';
+
+  @override
+  String get reportsPeriodThisMonth => 'This month';
+
+  @override
+  String get reportsPeriodLastMonth => 'Last month';
+
+  @override
+  String get reportsPeriodLast3Months => 'Last 3 months';
+
+  @override
+  String get reportsPeriodLast6Months => 'Last 6 months';
+
+  @override
+  String get reportsBreakdownEmpty => 'No expenses recorded for this period.';
+
+  @override
+  String get reportsEmptyTitle => 'No reports yet';
+
+  @override
+  String get reportsEmptyMessage =>
+      'Record your first income or expense to start seeing trends and category breakdowns.';
+
+  @override
+  String get reportsEmptyAction => 'Add an entry';
+
+  @override
+  String get reportsLoadError =>
+      'Your reports couldn\'t be loaded. Please try again.';
+
+  @override
+  String get reportsExportAction => 'Export my data';
+
+  @override
+  String reportsCategoryShare(String percent) {
+    return '$percent%';
+  }
+
+  @override
+  String get exportTitle => 'Export my data';
+
+  @override
+  String get exportDescription =>
+      'Create one CSV file containing a complete copy of your data: people, transactions, income and expense entries, categories, and settings. The file is created on your device and you choose where to send it.';
+
+  @override
+  String get exportGenerateAction => 'Create export file';
+
+  @override
+  String get exportGenerating => 'Preparing your export…';
+
+  @override
+  String get exportReadyTitle => 'Your export is ready';
+
+  @override
+  String exportReadyMessage(int count) {
+    return '$count records were included.';
+  }
+
+  @override
+  String get exportShareAction => 'Share file';
+
+  @override
+  String get exportRegenerateAction => 'Create a new export';
+
+  @override
+  String get exportError =>
+      'Your export couldn\'t be created. No partial file was saved. Please try again.';
+
+  @override
+  String get exportShareError =>
+      'The share sheet couldn\'t be opened. Please try again.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get settingsDataSectionTitle => 'Your data';
+
+  @override
+  String get settingsExportTile => 'Export my data';
+
+  @override
+  String get settingsDangerZoneTitle => 'Danger zone';
+
+  @override
+  String get settingsDeleteDataTile => 'Delete my data';
+
+  @override
+  String get settingsDeleteDataSubtitle =>
+      'Permanently erase everything stored in Daftary';
+
+  @override
+  String get securitySettingsTitle => 'Security';
+
+  @override
+  String get securitySettingsTileSubtitle =>
+      'App lock, PIN and screenshot protection';
+
+  @override
+  String get appLockSettingsSectionTitle => 'App lock';
+
+  @override
+  String get appLockSettingsToggleTitle => 'Lock Daftary';
+
+  @override
+  String get appLockSettingsToggleSubtitle =>
+      'Ask for your PIN whenever you open the app';
+
+  @override
+  String get appLockSettingsBiometricTitle => 'Unlock with fingerprint or face';
+
+  @override
+  String get appLockSettingsBiometricSubtitle => 'Your PIN still works too';
+
+  @override
+  String get appLockSettingsBiometricUnavailable =>
+      'Not available on this device. Set up fingerprint or face unlock in your device settings first.';
+
+  @override
+  String get appLockSettingsChangePinTile => 'Change PIN';
+
+  @override
+  String get appLockSettingsTimeoutTitle => 'Lock after leaving the app';
+
+  @override
+  String get appLockSettingsTimeoutImmediately => 'Immediately';
+
+  @override
+  String get appLockSettingsTimeout30Seconds => 'After 30 seconds';
+
+  @override
+  String get appLockSettingsTimeout1Minute => 'After 1 minute';
+
+  @override
+  String get appLockSettingsTimeout5Minutes => 'After 5 minutes';
+
+  @override
+  String get appLockSettingsScreenshotProtectionTitle =>
+      'Screenshot protection';
+
+  @override
+  String get appLockSettingsScreenshotProtectionStatus => 'Always on';
+
+  @override
+  String get appLockSettingsScreenshotProtectionBody =>
+      'Screenshots and screen recordings can\'t capture your data, and the recent-apps view shows a placeholder instead. Sharing and exporting still work.';
+
+  @override
+  String get appLockSettingsDisableTitle => 'Turn off app lock?';
+
+  @override
+  String get appLockSettingsDisableMessage =>
+      'Daftary will open without a PIN. Your PIN will be deleted, so turning app lock on again means choosing a new one. Screenshot protection stays on.';
+
+  @override
+  String get appLockSettingsDisableConfirm => 'Turn off';
+
+  @override
+  String get appLockSettingsBiometricReason =>
+      'Confirm it\'s you to turn off app lock';
+
+  @override
+  String get appLockSettingsReauthTitle => 'Enter your PIN';
+
+  @override
+  String get appLockSettingsReauthMessage =>
+      'Confirm it\'s you to turn off app lock.';
+
+  @override
+  String get appLockSettingsReauthPinLabel => 'Current PIN';
+
+  @override
+  String get appLockSettingsReauthConfirm => 'Confirm';
+
+  @override
+  String get appLockSettingsReauthIncorrect =>
+      'That PIN isn\'t right. Try again.';
+
+  @override
+  String appLockSettingsReauthLockedOut(String duration) {
+    return 'Too many wrong attempts. Try again in $duration.';
+  }
+
+  @override
+  String get appLockSettingsReauthFailed =>
+      'Couldn\'t check your PIN. Try again.';
+
+  @override
+  String get appLockSettingsEnabledMessage => 'App lock is on';
+
+  @override
+  String get appLockSettingsDisabledMessage => 'App lock is off';
+
+  @override
+  String get appLockSettingsPinChangedMessage => 'PIN changed';
+
+  @override
+  String get appLockSettingsSaveFailed =>
+      'Couldn\'t save this change. Try again.';
+
+  @override
+  String get appLockSettingsLoadFailed =>
+      'Couldn\'t load your security settings.';
+
+  @override
+  String get deleteDataTitle => 'Delete my data';
+
+  @override
+  String get deleteDataWarningTitle => 'This is permanent';
+
+  @override
+  String get deleteDataWarningMessage =>
+      'This will permanently delete all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, and settings from this device — and your cloud backup, if you use one. This cannot be undone. Consider exporting your data first.';
+
+  @override
+  String get deleteDataExportFirstAction => 'Export my data first';
+
+  @override
+  String get deleteDataConfirmPhrase => 'DELETE';
+
+  @override
+  String deleteDataConfirmLabel(String phrase) {
+    return 'Type $phrase to confirm';
+  }
+
+  @override
+  String deleteDataConfirmHint(String phrase) {
+    return '$phrase';
+  }
+
+  @override
+  String get deleteDataConfirmAction => 'Delete everything';
+
+  @override
+  String get deleteDataCancelAction => 'Cancel';
+
+  @override
+  String get deleteDataInProgress => 'Deleting your data…';
+
+  @override
+  String get deleteDataError =>
+      'Your data couldn\'t be deleted. Nothing was removed — all your data is still intact. Please try again.';
+
+  @override
+  String get deleteDataCloudUnreachableError =>
+      'Your cloud backup couldn\'t be reached, so nothing was deleted — all your data is still intact. Connect to the internet and try again.';
+
+  @override
+  String get appLockForgotTitle => 'Forgot PIN';
+
+  @override
+  String get appLockForgotBiometricTitle => 'Verify it\'s you';
+
+  @override
+  String get appLockForgotBiometricMessage =>
+      'Confirm it\'s you with biometrics, then choose a new PIN. None of your data will be touched.';
+
+  @override
+  String get appLockForgotBiometricAction => 'Verify with biometrics';
+
+  @override
+  String get appLockForgotBiometricReason =>
+      'Verify your identity to set a new Daftary PIN';
+
+  @override
+  String get appLockForgotBiometricFailed =>
+      'Biometric verification didn\'t succeed. You can try again.';
+
+  @override
+  String get appLockForgotBiometricRetry => 'Try again';
+
+  @override
+  String get appLockForgotChooseWipeAction => 'Erase all data instead';
+
+  @override
+  String get appLockForgotWipeTitle => 'The only way back in';
+
+  @override
+  String get appLockForgotWipeMessage =>
+      'Your PIN can\'t be reset. Without your PIN or biometrics, the only way to use the app again is to erase all of its data from this device and start fresh. If you linked cloud backup to your email, your backup is kept, and you can restore it afterwards by signing in with that email.';
+
+  @override
+  String get appLockForgotWipeContinueAction => 'Continue to erase data';
+
+  @override
+  String get appLockForgotBackAction => 'Back to lock screen';
+
+  @override
+  String get appLockWipeTitle => 'Erase all data';
+
+  @override
+  String get appLockWipeWarningTitle => 'This is permanent';
+
+  @override
+  String get appLockWipeWarningMessage =>
+      'This will permanently erase all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, settings, and your App Lock PIN from this device. It cannot be undone, and Daftary cannot recover it.';
+
+  @override
+  String get appLockWipeConfirmAction => 'Erase everything';
+
+  @override
+  String get appLockWipeCancelAction => 'Cancel';
+
+  @override
+  String get appLockWipeInProgress => 'Erasing your data…';
+
+  @override
+  String get appLockWipeError =>
+      'Your data couldn\'t be erased. Nothing was removed — your data and PIN are unchanged. Please try again.';
+
+  @override
+  String get aiAssistantTitle => 'AI Assistant';
+
+  @override
+  String get aiAssistantHomeEntrySubtitle =>
+      'Ask questions about your own money. Off until you set it up.';
+
+  @override
+  String get aiSettingsTitle => 'AI Assistant settings';
+
+  @override
+  String get aiSettingsIntroTitle => 'The assistant is off';
+
+  @override
+  String get aiSettingsIntroMessage =>
+      'To turn it on, choose your AI provider, enter your own API key, and review exactly what will be shared. Daftary never ships with a key of its own.';
+
+  @override
+  String get aiSettingsProviderSectionTitle => 'Provider';
+
+  @override
+  String get aiSettingsProviderCustom => 'Custom provider';
+
+  @override
+  String get aiSettingsCustomProviderHint =>
+      'Any provider with an OpenAI-compatible chat API that supports tool calling.';
+
+  @override
+  String get aiSettingsCustomBaseUrlLabel => 'API base URL (https://…)';
+
+  @override
+  String get aiSettingsCustomModelLabel => 'Model name';
+
+  @override
+  String get aiSettingsApiKeySectionTitle => 'API key';
+
+  @override
+  String get aiSettingsApiKeyLabel => 'Your API key';
+
+  @override
+  String get aiSettingsApiKeyNote =>
+      'Stored only in this device\'s secure storage and sent only to the provider you chose. It is never shown again after you save it.';
+
+  @override
+  String get aiSettingsProviderRequired => 'Choose a provider';
+
+  @override
+  String get aiSettingsCustomBaseUrlInvalid =>
+      'Enter a full address starting with https://';
+
+  @override
+  String get aiSettingsCustomModelRequired => 'Enter the model name';
+
+  @override
+  String get aiSettingsApiKeyRequired => 'Enter your API key';
+
+  @override
+  String get aiSettingsApiKeyMalformed =>
+      'This doesn\'t look like a complete API key';
+
+  @override
+  String get aiSettingsContinueAction => 'Continue';
+
+  @override
+  String get aiSettingsEnabledTitle => 'The assistant is on';
+
+  @override
+  String aiSettingsEnabledProvider(String provider) {
+    return 'Provider: $provider';
+  }
+
+  @override
+  String get aiSettingsApiKeySaved => 'API key: saved securely (hidden)';
+
+  @override
+  String aiSettingsConsentAcceptedOn(String date) {
+    return 'Data-sharing disclosure accepted on $date';
+  }
+
+  @override
+  String get aiSettingsChangeCredentialsAction => 'Change provider or key';
+
+  @override
+  String get aiSettingsChangeCredentialsTitle => 'Change provider or key';
+
+  @override
+  String get aiSettingsChangeCredentialsMessage =>
+      'Enter the new key. The key saved now will be discarded once the new one is saved.';
+
+  @override
+  String get aiSettingsSaveCredentialsAction => 'Save new key';
+
+  @override
+  String get aiSettingsCancelAction => 'Cancel';
+
+  @override
+  String get aiSettingsDisableAction => 'Turn off assistant';
+
+  @override
+  String get aiSettingsDisableConfirmTitle => 'Turn off the assistant?';
+
+  @override
+  String get aiSettingsDisableConfirmMessage =>
+      'Nothing more will be sent to your AI provider. Your saved API key will be deleted from this device, so turning the assistant back on means entering a key and accepting the data-sharing disclosure again. Your conversation history is kept.';
+
+  @override
+  String get aiSettingsDisableConfirmAction => 'Turn off';
+
+  @override
+  String get aiSettingsEnabledMessage => 'AI assistant turned on';
+
+  @override
+  String get aiSettingsCredentialsUpdatedMessage =>
+      'Provider and key updated. The previous key was discarded.';
+
+  @override
+  String get aiSettingsDisabledMessage =>
+      'AI assistant turned off. Your API key was deleted from this device.';
+
+  @override
+  String get aiSettingsSaveFailed =>
+      'Your AI assistant settings couldn\'t be saved. Nothing was changed. Please try again.';
+
+  @override
+  String get aiSettingsLoadFailed =>
+      'AI assistant settings couldn\'t be loaded.';
+
+  @override
+  String aiSettingsCustomProviderName(String host) {
+    return 'your custom provider ($host)';
+  }
+
+  @override
+  String get aiConsentTitle => 'Before you turn on the assistant';
+
+  @override
+  String get aiConsentIntro =>
+      'Here is exactly what happens when you ask the assistant a question:';
+
+  @override
+  String get aiConsentPointMinimal =>
+      'Only the small piece of data needed to answer that one question is sent — for example, one category\'s total for one month. Never a full copy of your records.';
+
+  @override
+  String aiConsentPointProviderOnly(String provider) {
+    return 'It goes only to $provider, using your own key. Never to Daftary, and never to anyone else.';
+  }
+
+  @override
+  String get aiConsentPointOnDemand =>
+      'Nothing is sent until you ask a question.';
+
+  @override
+  String get aiConsentPointReadOnly =>
+      'The assistant can only read and explain your figures. It can never add, change, or delete anything.';
+
+  @override
+  String get aiConsentPointCost =>
+      'Your provider may charge your account for each question.';
+
+  @override
+  String get aiConsentPointDisable =>
+      'You can turn the assistant off at any time. That immediately stops anything more from being sent and deletes your key from this device.';
+
+  @override
+  String get aiConsentAcceptAction => 'I agree, turn it on';
+
+  @override
+  String get aiConsentDeclineAction => 'Not now';
+
+  @override
+  String get aiChatTitle => 'AI Assistant';
+
+  @override
+  String get aiChatInputHint =>
+      'Ask about your spending, budgets, or balances…';
+
+  @override
+  String get aiChatSendAction => 'Send question';
+
+  @override
+  String get aiChatEmptyTitle => 'Ask about your own money';
+
+  @override
+  String get aiChatEmptyMessage =>
+      'For example: \"How much did I spend on food this month?\" Answers come only from your own records in Daftary.';
+
+  @override
+  String get aiChatClearAction => 'Clear conversation';
+
+  @override
+  String get aiChatClearConfirmTitle => 'Clear this conversation?';
+
+  @override
+  String get aiChatClearConfirmMessage =>
+      'All questions and answers will be deleted from this device. Your financial records won\'t be affected.';
+
+  @override
+  String get aiChatClearConfirmAction => 'Clear';
+
+  @override
+  String get aiChatClearedMessage => 'Conversation cleared';
+
+  @override
+  String get aiChatClearFailed =>
+      'The conversation couldn\'t be cleared. Please try again.';
+
+  @override
+  String get aiChatLoadEarlierAction => 'Show earlier messages';
+
+  @override
+  String get aiChatLoadFailed => 'Your conversation couldn\'t be loaded.';
+
+  @override
+  String get aiChatTypingLabel => 'The assistant is preparing an answer';
+
+  @override
+  String get aiChatYouLabel => 'You';
+
+  @override
+  String get aiChatAssistantLabel => 'Assistant';
+
+  @override
+  String get aiChatMessageFailedLabel => 'Not answered';
+
+  @override
+  String get aiChatInterruptedLabel =>
+      'Not answered: the assistant was turned off before a reply arrived';
+
+  @override
+  String get aiChatDisabledTitle => 'The assistant is off';
+
+  @override
+  String get aiChatDisabledMessage =>
+      'Turn it on in the assistant settings to start asking questions about your money.';
+
+  @override
+  String get aiChatOpenSettingsAction => 'Open settings';
+
+  @override
+  String get aiChatSettingsAction => 'Assistant settings';
+
+  @override
+  String get aiChatReadOnlyNotice =>
+      'The assistant can only read and explain your figures. It can\'t add, change, or delete anything, so nothing was changed. You can do that yourself from the app.';
+
+  @override
+  String get aiChatNothingChangedLabel => 'Nothing in your records was changed';
+
+  @override
+  String get aiFailureInvalidApiKeyTitle => 'API key not accepted';
+
+  @override
+  String get aiFailureInvalidApiKeyMessage =>
+      'Your provider rejected your API key. It may be wrong, expired, or revoked. Update it to keep asking questions.';
+
+  @override
+  String get aiFailureRateLimitedTitle => 'Too many requests';
+
+  @override
+  String get aiFailureRateLimitedMessage =>
+      'Your provider is limiting requests right now. Wait a minute or two, then try again.';
+
+  @override
+  String get aiFailureNetworkTitle => 'No internet connection';
+
+  @override
+  String get aiFailureNetworkMessage =>
+      'The assistant needs an internet connection. Everything else in Daftary keeps working offline.';
+
+  @override
+  String get aiFailureProviderErrorTitle => 'Provider unavailable';
+
+  @override
+  String get aiFailureProviderErrorMessage =>
+      'Your AI provider is having a problem on its side. Please try again in a little while.';
+
+  @override
+  String get aiFailureUnrecognizedTitle => 'Unexpected reply';
+
+  @override
+  String get aiFailureUnrecognizedMessage =>
+      'The assistant\'s reply couldn\'t be understood. Please try asking again.';
+
+  @override
+  String get aiFailureLocalTitle => 'Couldn\'t save';
+
+  @override
+  String get aiFailureLocalMessage =>
+      'Your question couldn\'t be saved on this device. Please try again.';
+
+  @override
+  String get aiFailureRetryAction => 'Try again';
+
+  @override
+  String get aiFailureUpdateKeyAction => 'Update API key';
+
+  @override
+  String get aiObservationLabel => 'Observation';
+
+  @override
+  String get aiObservationSemanticLabel =>
+      'Observation from the assistant, based on your own records';
 }

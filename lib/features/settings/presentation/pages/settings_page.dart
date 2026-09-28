@@ -179,6 +179,62 @@ class SettingsPage extends StatelessWidget {
                   onTap: () => context.push('/financial-education'),
                 ),
               ),
+              const SizedBox(height: AppSpacing.lg),
+              // AI assistant entry point (014): turning it on (provider, own
+              // API key, consent) or off lives in Settings as well as behind
+              // Home's chat entry.
+              _SettingsSection(
+                icon: Icons.auto_awesome_outlined,
+                title: l10n.aiAssistantTitle,
+                child: ListTile(
+                  key: const Key('settings_ai_assistant_entry'),
+                  leading: const Icon(Icons.smart_toy_outlined),
+                  title: Text(l10n.aiSettingsTitle),
+                  subtitle: Text(l10n.aiAssistantHomeEntrySubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/ai-assistant'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _SettingsSection(
+                icon: Icons.shield_outlined,
+                title: l10n.securitySettingsTitle,
+                child: ListTile(
+                  leading: const Icon(Icons.lock_outline),
+                  title: Text(l10n.appLockSettingsSectionTitle),
+                  subtitle: Text(l10n.securitySettingsTileSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/security'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              _SettingsSection(
+                icon: Icons.folder_outlined,
+                title: l10n.settingsDataSectionTitle,
+                child: ListTile(
+                  leading: const Icon(Icons.ios_share_outlined),
+                  title: Text(l10n.settingsExportTile),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/export'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Last on the page, and in the theme's error color, so the
+              // one irreversible action is never mistaken for a preference
+              // (013 FR-013).
+              _SettingsSection(
+                icon: Icons.warning_amber_outlined,
+                title: l10n.settingsDangerZoneTitle,
+                child: ListTile(
+                  iconColor: Theme.of(context).colorScheme.error,
+                  textColor: Theme.of(context).colorScheme.error,
+                  leading: const Icon(Icons.delete_forever_outlined),
+                  title: Text(l10n.settingsDeleteDataTile),
+                  subtitle: Text(l10n.settingsDeleteDataSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/settings/delete-data'),
+                ),
+              ),
             ],
           );
         },

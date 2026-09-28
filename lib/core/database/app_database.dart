@@ -11,6 +11,7 @@ import '../sync/sync_bootstrap.dart';
 import 'finance_category_seed.dart';
 import 'migrations/v7_currency_support.dart';
 import 'migrations/v9_sync_support.dart';
+import 'migrations/v10_merge_features.dart';
 import 'sync_tables.dart';
 
 export 'sync_tables.dart';
@@ -43,6 +44,14 @@ class People extends Table {
   columns: {#personId, #deletedAt},
 )
 @TableIndex(name: 'idx_transactions_date', columns: {#date, #deletedAt})
+@TableIndex(
+  name: 'idx_transactions_occasion_id',
+  columns: {#occasionId, #deletedAt},
+)
+@TableIndex(
+  name: 'idx_transactions_ocr_scan_id',
+  columns: {#ocrScanId, #deletedAt},
+)
 class MoneyTransactions extends Table {
   TextColumn get id => text()();
   TextColumn get idempotencyKey => text().unique()();
@@ -56,9 +65,177 @@ class MoneyTransactions extends Table {
   TextColumn get kind => text()();
   IntColumn get date => integer()();
   TextColumn get note => text().nullable()();
+
+  /// The [Occasions] row this contribution was recorded under (008).
+  /// `NULL` for every ordinary transaction — which is every row that
+  /// existed before this feature, so the migration needs no backfill.
+  TextColumn get occasionId => text().nullable().references(Occasions, #id)();
+
+  /// Whether this row counts toward the person's net balance (008 FR-018).
+  /// `TRUE` for every kind but an occasion contribution recorded as
+  /// non-counting, so the default keeps all pre-existing rows correct.
+  BoolColumn get countsTowardBalance =>
+      boolean().withDefault(const Constant(true))();
+
+  /// How this row was created: `'manual'` or `'ocr'` (009 FR-012). The
+  /// default keeps every pre-009 row correct with no backfill — they were
+  /// all typed in by hand.
+  TextColumn get source => text().withDefault(const Constant('manual'))();
+
+  /// The [OcrScans] row this transaction was confirmed from (009).
+  /// `NULL` for every manually entered row. Intentionally *not* declared
+  /// as a `references()` FK: 009 FR-023 lets the user delete a past scan
+  /// while the transactions it produced stay — a real FK would either
+  /// block that delete or cascade it, and both are wrong here
+  /// (data-model.md Relationships).
+  TextColumn get ocrScanId => text().nullable()();
   IntColumn get createdAt => integer()();
   IntColumn get editedAt => integer().nullable()();
   IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// A named social event the user tracks money around (008). Carries no
+/// money of its own: its totals are always aggregated from the
+/// [MoneyTransactions] rows pointing at it, never stored here
+/// (008 research.md Decision 4).
+@TableIndex(
+  name: 'idx_occasions_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(name: 'idx_occasions_date', columns: {#date, #deletedAt})
+@TableIndex(name: 'idx_occasions_type', columns: {#type})
+class Occasions extends Table {
+  TextColumn get id => text()();
+  TextColumn get idempotencyKey => text()();
+  TextColumn get name => text()();
+
+  /// Epoch millis, date-only. May be in the future (pre-planned occasions).
+  IntColumn get date => integer()();
+
+  /// A standard `OccasionType` value or free text, same open-set pattern as
+  /// [People.relationshipTag] (008 research.md Decision 6).
+  TextColumn get type => text()();
+  TextColumn get notes => text().nullable()();
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// A photo attached to an [Occasions] row (008 FR-017). Only a local path
+/// into the app's private sandboxed storage is stored — never a remote URL,
+/// and the bytes are never uploaded.
+@TableIndex(
+  name: 'idx_occasion_attachments_occasion_id',
+  columns: {#occasionId, #deletedAt},
+)
+class OccasionAttachments extends Table {
+  TextColumn get id => text()();
+  TextColumn get occasionId => text().references(Occasions, #id)();
+  TextColumn get filePath => text()();
+  IntColumn get createdAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One user-initiated paper-scanning session (009). Holds the prepared
+/// image and the batch-level choices that apply to everything parsed out of
+/// it, but never any money: the money only exists once the user confirms
+/// the review, as ordinary [MoneyTransactions] rows (009 research.md
+/// Decision 5).
+@TableIndex(
+  name: 'idx_ocr_scans_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(name: 'idx_ocr_scans_status', columns: {#status, #deletedAt})
+class OcrScans extends Table {
+  TextColumn get id => text()();
+
+  /// Regenerated per confirm attempt; the UNIQUE index above is what makes
+  /// a double-tapped confirm a no-op rather than a second batch of
+  /// transactions (009 FR-021).
+  TextColumn get idempotencyKey => text()();
+
+  /// Path into the app's own sandboxed storage. Never a remote URL — the
+  /// bytes are never uploaded (009 FR-019/FR-023).
+  TextColumn get sourceImagePath => text()();
+  TextColumn get cropBounds => text().nullable()();
+  IntColumn get rotationDegrees => integer().withDefault(const Constant(0))();
+
+  /// `'processing'|'needsReview'|'confirmed'|'discarded'|'failed'`.
+  TextColumn get status => text()();
+
+  /// Set when the user tags the whole batch to an occasion at review time
+  /// (009 FR-014), so every entry confirmed afterwards is recorded as that
+  /// occasion's contribution (008).
+  TextColumn get occasionId => text().nullable().references(Occasions, #id)();
+
+  /// `'given'|'received'`, or `NULL` while the user has not chosen a batch
+  /// default yet (009 FR-005).
+  TextColumn get defaultDirection => text().nullable()();
+
+  /// 018: the ISO 4217 code every amount read off this page is recorded in
+  /// — the primary currency when the scan started, so review and confirm
+  /// agree even if the primary currency changes in between.
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
+  IntColumn get createdAt => integer()();
+  IntColumn get completedAt => integer().nullable()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One proposed transaction parsed out of an [OcrScans] row, before the
+/// user has agreed to it (009).
+///
+/// Persisted rather than held in memory so a half-reviewed scan survives
+/// the app being backgrounded mid-review — but persisted *as a suggestion*:
+/// nothing here counts toward any balance, and the only way a row in this
+/// table becomes money is `confirmScanBatch` (constitution Principle X).
+@TableIndex(name: 'idx_candidate_entries_scan_id', columns: {#scanId})
+class CandidateEntries extends Table {
+  TextColumn get id => text()();
+  TextColumn get scanId => text().references(OcrScans, #id)();
+
+  /// `'pendingReview'|'confirmed'|'discarded'`.
+  TextColumn get status =>
+      text().withDefault(const Constant('pendingReview'))();
+  TextColumn get personName => text()();
+
+  /// Per-field provenance, stored as a `kind`/`level` pair per field
+  /// (009 data-model.md's `FieldConfidence`): `'read'|'inferred'` and
+  /// `'low'|'medium'|'high'|'none'`. Kept as two columns rather than one
+  /// encoded string so a future query can filter on either half.
+  TextColumn get personNameConfidenceKind => text()();
+  TextColumn get personNameConfidenceLevel => text()();
+  TextColumn get matchedPersonId => text().nullable().references(People, #id)();
+  IntColumn get amountMinorUnits => integer().nullable()();
+  TextColumn get amountConfidenceKind => text()();
+  TextColumn get amountConfidenceLevel => text()();
+  TextColumn get direction => text().nullable()();
+  TextColumn get directionConfidenceKind => text()();
+  TextColumn get directionConfidenceLevel => text()();
+  IntColumn get date => integer().nullable()();
+  TextColumn get dateConfidenceKind => text()();
+  TextColumn get dateConfidenceLevel => text()();
+  TextColumn get notes => text().nullable()();
+
+  /// The unedited recognized line this entry was parsed from, so review can
+  /// compare against the page and a past scan stays explainable.
+  TextColumn get rawOcrText => text()();
+  IntColumn get createdAt => integer()();
+  IntColumn get editedAt => integer().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -133,6 +310,78 @@ class FinanceEntries extends Table {
   IntColumn get createdAt => integer()();
   IntColumn get editedAt => integer().nullable()();
   IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// A user's spending plan for one calendar month (010). Carries planned
+/// figures only — every "actual" figure is derived at read time from 007's
+/// `FinanceEntries` through `FinanceRepository`, never stored here, and no
+/// 007 table gains a column for it (010 FR-022).
+@TableIndex(
+  name: 'idx_budgets_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+// Partial: a soft-deleted budget must not block re-creating one for the
+// same month (010 data-model.md Lifecycle).
+@TableIndex.sql(
+  'CREATE UNIQUE INDEX idx_budgets_month ON budgets (month) '
+  'WHERE deleted_at IS NULL',
+)
+class Budgets extends Table {
+  TextColumn get id => text()();
+  TextColumn get idempotencyKey => text()();
+
+  /// `'YYYY-MM'` — at most one active budget per calendar month.
+  TextColumn get month => text()();
+
+  /// Optional reference figure (010 FR-003); never aggregated from income
+  /// entries.
+  IntColumn get expectedIncomeMinorUnits => integer().nullable()();
+
+  /// 018: the ISO 4217 code every planned figure of this budget (and its
+  /// allocations) is in — the primary currency when the budget was
+  /// created, so switching the primary currency later never reinterprets a
+  /// plan. Actual spend is converted into it at read time.
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One expense category's planned amount within a [Budgets] row (010).
+/// Removed by hard delete: it is plan data with no financial history of its
+/// own (010 research.md Decision 5).
+@TableIndex(
+  name: 'idx_budget_allocations_budget_category',
+  columns: {#budgetId, #categoryId},
+  unique: true,
+)
+@TableIndex(
+  name: 'idx_budget_allocations_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(name: 'idx_budget_allocations_budget_id', columns: {#budgetId})
+class BudgetCategoryAllocations extends Table {
+  TextColumn get id => text()();
+
+  /// What lets a retried "add allocation" return the row it already wrote
+  /// instead of tripping the `(budget_id, category_id)` duplicate guard —
+  /// without it a retry and a genuine duplicate would be indistinguishable.
+  TextColumn get idempotencyKey => text()();
+  TextColumn get budgetId => text().references(Budgets, #id)();
+  TextColumn get categoryId => text().references(FinanceCategories, #id)();
+
+  /// `>= 0`; zero is a valid plan (010 FR-002).
+  IntColumn get plannedAmountMinorUnits => integer()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -257,6 +506,77 @@ class ExchangeRates extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// The single, continuous assistant conversation (014). At most one row per
+/// installation, created lazily on first use.
+///
+/// Named `Ai…` rather than `AI…` so drift derives the SQL name
+/// `ai_conversations` (not `a_i_conversations`); `@DataClassName` keeps the
+/// generated row class from shadowing the domain `AIConversation` entity.
+@DataClassName('AiConversationRow')
+class AiConversations extends Table {
+  TextColumn get id => text()();
+  IntColumn get createdAt => integer()();
+  IntColumn get lastActivityAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One question or answer within [AiConversations] (014). Owns no money and
+/// references no other feature's table (FR-023).
+@DataClassName('AiMessageRow')
+@TableIndex(
+  name: 'idx_ai_messages_conversation_created',
+  columns: {#conversationId, #createdAt},
+)
+class AiMessages extends Table {
+  TextColumn get id => text()();
+  TextColumn get conversationId => text().references(AiConversations, #id)();
+
+  /// `'user'|'assistant'`.
+  TextColumn get sender => text()();
+  TextColumn get content => text()();
+
+  /// `'sent'|'answered'|'failed'`.
+  TextColumn get status => text()();
+
+  /// Set only when [status] is `'failed'`: `'invalidApiKey'|'rateLimited'|
+  /// 'network'|'providerError'|'unrecognizedResponse'`.
+  TextColumn get failureReason => text().nullable()();
+
+  /// Which tool/use-case pairs grounded an assistant answer's figures.
+  TextColumn get groundingRefsJson => text().nullable()();
+  IntColumn get createdAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// The assistant's configuration (014). Single-row table under the fixed
+/// `id` `'singleton'`, same pattern as [AppSettings]. Holds only non-secret
+/// metadata — the API key itself lives exclusively in secure storage
+/// (014 research.md Decision 3), never here, not even as a hash.
+@DataClassName('AiSettingsRow')
+class AiSettings extends Table {
+  TextColumn get id => text()();
+  BoolColumn get isEnabled => boolean().withDefault(const Constant(false))();
+  TextColumn get providerId => text().nullable()();
+  BoolColumn get hasStoredCredential =>
+      boolean().withDefault(const Constant(false))();
+  IntColumn get consentAcceptedAt => integer().nullable()();
+  IntColumn get updatedAt => integer()();
+
+  /// The `observationKey` of the last proactive observation surfaced in the
+  /// conversation (User Story 7 AC3 / FR-020 no-repeat rule), or `null`
+  /// when none was ever surfaced. Not user data in its own right — only a
+  /// de-duplication marker; written only after the observation was
+  /// successfully narrated and persisted.
+  TextColumn get lastObservationKey => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
@@ -280,6 +600,15 @@ class ExchangeRates extends Table {
     SyncConflicts,
     ConflictResolutions,
     SyncState,
+    Occasions,
+    OccasionAttachments,
+    OcrScans,
+    CandidateEntries,
+    Budgets,
+    BudgetCategoryAllocations,
+    AiConversations,
+    AiMessages,
+    AiSettings,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -296,7 +625,7 @@ class AppDatabase extends _$AppDatabase {
   final SyncBootstrap? _syncBootstrap;
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -315,26 +644,39 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(financeCategories);
         await m.createTable(financeEntries);
       }
-      if (from < 6) {
+      // A pre-merge feature-line install (008/009/010/014) also reports
+      // 6..9 but has none of main's v6..v9 schema, all of which is purely
+      // additive over v5 — so it replays main's steps from v5.
+      final mainFrom =
+          from >= 6 && from <= 9 && await isPreMergeFeatureLine(this)
+          ? 5
+          : from;
+      if (mainFrom < 6) {
         // 017: purely additive — no existing table is touched.
         await m.createTable(notificationPreferences);
         await m.createTable(notificationHistory);
         await m.createIndex(idxNotificationHistorySource);
       }
-      if (from < 7) {
+      if (mainFrom < 7) {
         await migrateToCurrencySupport(this, m);
       }
-      if (from < 8) {
+      if (mainFrom < 8) {
         // 020: purely additive and nullable — no backfill, so existing rows
         // read as "never set" and resolve to the glass defaults.
         await m.addColumn(appSettings, appSettings.glassEnabled);
         await m.addColumn(appSettings, appSettings.glassTransparency);
         await m.addColumn(appSettings, appSettings.glassIntensity);
       }
-      if (from < 9) {
+      if (mainFrom < 9) {
         // 021: the local sync tables, two business indexes and deterministic
         // exchange-rate ids. No reads (data-model.md §3).
         await migrateToSyncSupport(this, m);
+      }
+      if (from < 10) {
+        // The 008/009/010/014 line and the 016-021 line both shipped a
+        // "v6..v9" of their own before they were merged, so this step
+        // reconciles instead of assuming (v10_merge_features.dart).
+        await migrateToMergedFeatures(this, m);
       }
     },
     beforeOpen: (details) async {

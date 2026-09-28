@@ -1,12 +1,16 @@
 import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/sync/local/sync_outbox.dart';
+import 'package:daftary/features/budgets/data/datasources/budgets_dao.dart';
+import 'package:daftary/features/budgets/data/sync/budget_sync_mapper.dart';
 import 'package:daftary/features/currency/data/datasources/currency_dao.dart';
 import 'package:daftary/features/currency/data/sync/exchange_rate_sync_mapper.dart';
 import 'package:daftary/features/currency/data/sync/primary_currency_sync_mapper.dart';
 import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dart';
+import 'package:daftary/features/occasions/data/datasources/occasions_dao.dart';
+import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
 import 'package:daftary/features/people/data/datasources/people_dao.dart';
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
@@ -42,4 +46,14 @@ CurrencyDao testCurrencyDao(AppDatabase db) => CurrencyDao(
   testOutbox(db),
   const ExchangeRateSyncMapper(),
   const PrimaryCurrencySyncMapper(),
+);
+
+OccasionsDao testOccasionsDao(AppDatabase db) =>
+    OccasionsDao(db, testOutbox(db), const OccasionSyncMapper());
+
+BudgetsDao testBudgetsDao(AppDatabase db) => BudgetsDao(
+  db,
+  testOutbox(db),
+  const BudgetSyncMapper(),
+  const BudgetAllocationSyncMapper(),
 );

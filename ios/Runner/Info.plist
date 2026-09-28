@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Daftary uses the camera so you can photograph an occasion — an invitation, a receipt, or the event itself — or a paper list of names and amounts to turn into entries. Photos stay on this device and are never uploaded.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Daftary uses Face ID so you can unlock the app without typing your PIN, if you turn this on in Security settings. Face ID data never leaves the device and is never seen by Daftary.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Daftary needs access to your photo library so you can attach an existing photo to an occasion, or pick a photo of a paper list to turn into entries. Photos stay on this device and are never uploaded.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

@@ -38,7 +38,11 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_bloc: ^9.1.0
-  equatable: ^3.0.0
+  # Held at the 2.x line (not ^3.0.0) because fl_chart (010) still
+  # depends on equatable ^2.0.7 and uses `EquatableMixin`, which 3.0 removed.
+  # Every Equatable class in this app uses `extends Equatable`, which 2.1
+  # supports identically.
+  equatable: ^2.1.0
   get_it: ^9.3.0
   injectable: ^3.0.0
   drift: ^2.22.1
@@ -66,6 +70,42 @@ dependencies:
   # failure (research.md Decision 20).
   http: ^1.6.0
 
+  # FR-017: camera/gallery capture for occasion photo attachments. Wrapped
+  # behind `core/media/AttachmentPickerService` so the upcoming OCR feature
+  # can reuse the same capture flow (research.md Decision 7).
+  image_picker: ^1.1.2
+
+  # 009 OCR: on-device text recognition (Google ML Kit, Latin script model).
+  # Runs entirely on-device with zero network calls (FR-019, research.md
+  # Decision 1).
+  google_mlkit_text_recognition: ^0.17.1
+  # 009 OCR: native crop/rotate UI for the pre-OCR preparation step
+  # (FR-002, research.md Decision 2).
+  image_cropper: ^9.0.0
+  # 009 OCR: pure-Dart image processing, used only for the deterministic
+  # brightness/contrast linear-stretch enhancement pass (research.md
+  # Decision 2) — no ML-based "smart" enhancement.
+  image: ^4.3.0
+
+  # 010 Budgets: grouped planned-vs-actual bar chart for the spending trend
+  # view (FR-014, research.md Decision 4).
+  fl_chart: ^1.2.0
+
+  # 013 Data export: hands the generated CSV to the OS share sheet (FR-010).
+  # Wrapped behind `data_privacy/ShareService`; only SharePlusService imports it.
+  share_plus: ^13.3.0
+
+  # 014 AI assistant also keeps the user's provider API key in
+  # flutter_secure_storage (above), wrapped behind
+  # `ai_assistant/SecureCredentialStore` — never in drift.
+  # 015 App Lock: OS biometric prompt (research.md Decision 1/FR-005).
+  # Wrapped behind `app_lock/BiometricService`; only
+  # LocalAuthBiometricService imports it.
+  local_auth: ^3.0.2
+  # 015 App Lock: HMAC-SHA256 for PBKDF2 PIN hashing (research.md
+  # Decision 7). Used only by `app_lock/PinHasher`.
+  crypto: ^3.0.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,8 +127,9 @@ dev_dependencies:
   bloc_test: ^10.0.0
   mocktail: ^1.0.4
   # 021: drives the sync scheduler's timers (debounce, periodic, backoff)
-  # without waiting in real time. Already resolved via flutter_test.
-  fake_async: ^1.3.0
+  # without waiting in real time; 015: AppLifecycleObserver's inactivity
+  # timer. Already resolved via flutter_test.
+  fake_async: ^1.3.3
   integration_test:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4

@@ -406,6 +406,136 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       _db.watchEither(_balanceTables, getOverview);
 
   @override
+  Future<Either<Failure, MoneyTransaction>> addOccasionContribution({
+    required String idempotencyKey,
+    required String personId,
+    required String occasionId,
+    required Money amount,
+    required TransactionDirection direction,
+    required bool countsTowardBalance,
+    required DateTime date,
+    String? note,
+    String? ocrScanId,
+  }) async {
+    final validation = _validateAmountAndPerson(amount, personId);
+    if (validation != null) return Left(validation);
+    try {
+      final companion = db.MoneyTransactionsCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
+        direction: direction.dbValue,
+        kind: TransactionKind.occasionContribution.dbValue,
+        date: _dateOnlyMillis(date),
+        note: db.Value(note),
+        occasionId: db.Value(occasionId),
+        // Persisted per row rather than derived from the occasion's current
+        // type, so later re-typing an occasion never silently moves a
+        // balance (008 research.md Decision 3).
+        countsTowardBalance: db.Value(countsTowardBalance),
+        // 008's occasion link and 009's scan link are independent columns
+        // on the same row: an OCR-confirmed, occasion-tagged entry carries
+        // both, and a manually entered one carries only the first.
+        source: db.Value(
+          ocrScanId == null
+              ? TransactionSource.manual.dbValue
+              : TransactionSource.ocr.dbValue,
+        ),
+        ocrScanId: db.Value(ocrScanId),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _insertWithCreatedAudit(companion);
+      return Right(row.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to record contribution: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MoneyTransaction>> addOcrSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required String ocrScanId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  }) async {
+    final validation = _validateAmountAndPerson(amount, personId);
+    if (validation != null) return Left(validation);
+    try {
+      final companion = db.MoneyTransactionsCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
+        direction: direction.dbValue,
+        kind: TransactionKind.initialExchange.dbValue,
+        date: _dateOnlyMillis(date),
+        note: db.Value(note),
+        // The two columns that make this row honest about where it came
+        // from, and traceable back to the page it was read off (009
+        // FR-012). Everything else about the row is an ordinary
+        // transaction, deliberately: there is one ledger, not an
+        // "OCR ledger" alongside it (009 research.md Decision 5).
+        source: db.Value(TransactionSource.ocr.dbValue),
+        ocrScanId: db.Value(ocrScanId),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _insertWithCreatedAudit(companion);
+      return Right(row.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to record scanned transaction: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MoneyTransaction>>> getTransactionsForScan(
+    String ocrScanId,
+  ) async {
+    try {
+      final rows = await _dao.getTransactionsForScan(ocrScanId);
+      return Right(rows.map((row) => row.toDomain()).toList());
+    } catch (e) {
+      return Left(CacheFailure('Failed to load transactions for scan: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MoneyTransaction>>> getContributionsForOccasion(
+    String occasionId,
+  ) async {
+    try {
+      final rows = await _dao.getContributionsForOccasion(occasionId);
+      return Right(rows.map((row) => row.toDomain()).toList());
+    } catch (e) {
+      return Left(CacheFailure('Failed to load contributions: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, String>>> getOccasionNamesForPerson(
+    String personId,
+  ) async {
+    try {
+      return Right(await _dao.occasionNamesForPerson(personId));
+    } catch (e) {
+      return Left(CacheFailure('Failed to load occasion names: $e'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, Map<String, String>>> watchOccasionNamesForPerson(
+    String personId,
+  ) => _db.watchEither({
+    _db.moneyTransactions,
+    _db.occasions,
+  }, () => getOccasionNamesForPerson(personId));
+
+  @override
   Future<Either<Failure, bool>> hasAnyTransaction() async {
     try {
       return Right(await _dao.hasAnyTransaction());

@@ -101,6 +101,81 @@ abstract class TransactionsRepository {
   /// [watchPersonBalance] (FR-031).
   Stream<Either<Failure, OverviewSummary>> watchOverview();
 
+  /// Creates a `MoneyTransaction` with `kind = occasionContribution` linked
+  /// to [occasionId] (008). Called only by `OccasionsRepositoryImpl` —
+  /// Presentation goes through `OccasionsRepository.addParticipantContribution`
+  /// instead, so the occasion-specific validation (the occasion must exist
+  /// and not be deleted) lives in exactly one place. Same idempotency
+  /// contract as [addTransaction]. [ocrScanId] (009, optional) marks the
+  /// row OCR-sourced when the contribution came from a confirmed scan
+  /// batch; `null` for ordinary manual entry, which is unchanged 008
+  /// behaviour.
+  Future<Either<Failure, MoneyTransaction>> addOccasionContribution({
+    required String idempotencyKey,
+    required String personId,
+    required String occasionId,
+    required Money amount,
+    required TransactionDirection direction,
+    required bool countsTowardBalance,
+    required DateTime date,
+    String? note,
+    String? ocrScanId,
+  });
+
+  /// Every non-deleted contribution row for one occasion, across all
+  /// participants, oldest first — backs the occasion detail screen's
+  /// participant list and its `OccasionSummary` aggregation (008).
+  Future<Either<Failure, List<MoneyTransaction>>> getContributionsForOccasion(
+    String occasionId,
+  );
+
+  /// Occasion id → occasion name, for every occasion-linked row in
+  /// [personId]'s history (008). Read in one query so the person's history
+  /// list can label each contribution with its occasion without a lookup
+  /// per row — and read here, from the shared `AppDatabase`, rather than by
+  /// depending on the `occasions` feature, which depends on this one
+  /// (constitution Principle II: the arrow points one way).
+  Future<Either<Failure, Map<String, String>>> getOccasionNamesForPerson(
+    String personId,
+  );
+
+  /// [getOccasionNamesForPerson], re-read whenever transactions or
+  /// occasions change — a new contribution or a renamed occasion relabels
+  /// the history with no refresh (021 FR-031).
+  Stream<Either<Failure, Map<String, String>>> watchOccasionNamesForPerson(
+    String personId,
+  );
+
+  /// Creates a transaction with `source = ocr`, linked to [ocrScanId]
+  /// (009 FR-012).
+  ///
+  /// Called only by `OcrRepositoryImpl.confirmScanBatch` — Presentation
+  /// never calls it, for the same reason Presentation never calls
+  /// [addOccasionContribution]: the review/confirm gate that makes an OCR
+  /// row legitimate (constitution Principle X) lives in exactly one place,
+  /// and a second caller here would be a way around it.
+  ///
+  /// [kind] is always `initialExchange`; an occasion-tagged scan goes
+  /// through `OccasionsRepository.addParticipantContribution` instead, so
+  /// 008's occasion rules stay defined once. Same idempotency contract as
+  /// [addTransaction].
+  Future<Either<Failure, MoneyTransaction>> addOcrSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required String ocrScanId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  });
+
+  /// Every non-deleted transaction this scan produced, oldest first (009
+  /// FR-018) — what the scan-detail screen lists. Read through
+  /// `ocr_scan_id`, the one-way link described in 009 data-model.md.
+  Future<Either<Failure, List<MoneyTransaction>>> getTransactionsForScan(
+    String ocrScanId,
+  );
+
   /// FR-010a: whether at least one MoneyTransaction record exists at all —
   /// including soft-deleted rows (`deletedAt IS NOT NULL`). A since-deleted
   /// transaction still proves the app was previously used.

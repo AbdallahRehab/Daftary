@@ -11,7 +11,8 @@ import '../../domain/entities/money_transaction.dart';
 /// One row in a person's transaction history: type, amount, direction,
 /// date, note, and an "edited" marker when `editedAt != null` (FR-010,
 /// FR-015). A repayment renders visibly distinct from a regular exchange
-/// (User Story 3, Acceptance Scenario 1).
+/// (User Story 3, Acceptance Scenario 1), and an occasion contribution
+/// distinct from both, carrying the occasion's name (008 US2 AC4).
 ///
 /// 018: the amount always renders in the record's own currency (FR-010);
 /// a record whose currency differs from [primaryCurrency] also gets a
@@ -20,6 +21,7 @@ class TransactionListTile extends StatelessWidget {
   const TransactionListTile({
     required this.transaction,
     super.key,
+    this.occasionName,
     this.onTap,
     this.onDelete,
     this.primaryCurrency = Currency.egp,
@@ -32,6 +34,12 @@ class TransactionListTile extends StatelessWidget {
   /// 021: a sync-conflict marker, set only while the record is in conflict
   /// — null leaves the row exactly as before.
   final Widget? conflictBadge;
+
+  /// The linked occasion's name, resolved once per screen by
+  /// `PersonDetailCubit` rather than per row (008). Ignored unless the row
+  /// really is a contribution, so a stale name can never mislabel an
+  /// ordinary transaction.
+  final String? occasionName;
   final VoidCallback? onTap;
   final VoidCallback? onDelete;
 
@@ -40,11 +48,17 @@ class TransactionListTile extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final isGiven = transaction.direction == TransactionDirection.given;
     final isRepayment = transaction.kind == TransactionKind.repayment;
+    final occasionName = this.occasionName;
+    final showOccasion =
+        transaction.kind == TransactionKind.occasionContribution &&
+        occasionName != null &&
+        occasionName.isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
     final financeColors = context.financeColors;
     final amountColor = isGiven
         ? financeColors.negative
         : financeColors.positive;
-    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+    final onSurfaceVariant = colorScheme.onSurfaceVariant;
     final locale = Localizations.localeOf(context).languageCode;
     final formatter = EgpFormatter(locale: locale);
     final dateLabel = AppDateFormatter(locale: locale).format(transaction.date);
@@ -78,6 +92,29 @@ class TransactionListTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppRadius.sm),
               ),
               child: Text(l10n.repaymentLabel, style: AppTypography.label),
+            ),
+          if (showOccasion)
+            Semantics(
+              // The visible text is the occasion's own name, so the kind it
+              // stands for is announced rather than left implicit.
+              label: '${l10n.occasionContributionBadge}: $occasionName',
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xs,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
+                ),
+                child: Text(
+                  occasionName,
+                  style: AppTypography.label.copyWith(
+                    color: colorScheme.onSecondaryContainer,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
           if (transaction.isEdited)
             Text(

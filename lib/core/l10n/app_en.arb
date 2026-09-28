@@ -823,6 +823,9 @@
     "description": "Record type label."
   },
   "syncKindConflictResolution": "Conflict choice",
+  "syncKindOccasion": "Occasion",
+  "syncKindBudget": "Budget",
+  "syncKindBudgetAllocation": "Budget category",
   "@syncKindConflictResolution": {
     "description": "Record type label."
   },
@@ -926,5 +929,876 @@
   "syncNoticeDismiss": "Got it",
   "@syncNoticeDismiss": {
     "description": "Button that dismisses the sync notice."
-  }
+  },
+  "appLockLockTitle": "Daftary is locked",
+  "appLockLockPrompt": "Enter your PIN to continue",
+  "appLockLockBiometricReason": "Unlock Daftary to see your finances",
+  "appLockLockUseBiometric": "Unlock with biometrics",
+  "appLockLockBiometricInProgress": "Waiting for biometric confirmation. You can also enter your PIN.",
+  "appLockLockVerifying": "Checking your PIN…",
+  "appLockLockIncorrectPin": "Incorrect PIN. Please try again.",
+  "appLockLockBiometricFailed": "Biometric unlock didn't work. Try again or enter your PIN.",
+  "appLockLockBiometricUnavailable": "Biometric unlock isn't available on this device right now. Enter your PIN instead.",
+  "appLockLockUnexpectedError": "Something went wrong. Please try again.",
+  "appLockLockCooldownTitle": "Too many incorrect attempts",
+  "appLockLockCooldownMessage": "PIN entry is paused. Try again in {time}.",
+  "@appLockLockCooldownMessage": {
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "0:30"
+      }
+    }
+  },
+  "appLockLockCooldownBiometricHint": "You can still unlock with biometrics.",
+  "appLockPinPadDelete": "Delete last digit",
+  "appLockPinPadSubmit": "Confirm PIN",
+  "appLockPinPadDigitsEntered": "PIN digits entered: {count}",
+  "@appLockPinPadDigitsEntered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "appLockPinSetupTitle": "Set a PIN",
+  "appLockPinChangeTitle": "Change PIN",
+  "appLockPinResetTitle": "Set a new PIN",
+  "appLockPinVerifyCurrentPrompt": "Enter your current PIN",
+  "appLockPinVerifyCurrentHint": "To change your PIN, first confirm it's you.",
+  "appLockPinEnterNewPrompt": "Choose a PIN",
+  "appLockPinEnterNewHint": "Use 4 to 6 digits. Your PIN never leaves this device.",
+  "appLockPinConfirmNewPrompt": "Enter the same PIN again",
+  "appLockPinConfirmNewHint": "This makes sure you typed the PIN you meant.",
+  "appLockPinMismatch": "The PINs don't match. Enter the confirmation again.",
+  "appLockPinInvalid": "Your PIN must be 4 to 6 digits.",
+  "appLockPinIncorrectCurrent": "That's not your current PIN. Please try again.",
+  "appLockPinBiometricFailed": "Biometric check didn't work. Try again or enter your current PIN.",
+  "appLockPinBiometricUnavailable": "Biometrics aren't available right now. Enter your current PIN instead.",
+  "appLockPinUnexpectedError": "Couldn't save your PIN. Please try again.",
+  "appLockPinStartOver": "Start over",
+  "appLockPinUseBiometric": "Use biometrics instead",
+  "appLockPinBiometricReason": "Confirm it's you to change your PIN",
+  "appLockPinSaving": "Saving your PIN…",
+  "budgetMonthNavPrevious": "Previous month",
+  "budgetMonthNavNext": "Next month",
+  "budgetMonthNavCurrentLabel": "Budget month: {month}",
+  "@budgetMonthNavCurrentLabel": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthAction": "Copy {month}'s budget",
+  "@budgetCopyFromMonthAction": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFromMonthMessage": "Start from the plan you made for {month}. You can adjust it afterwards without changing {month}.",
+  "@budgetCopyFromMonthMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyInProgress": "Copying…",
+  "budgetCopySuccess": "Budget copied from {month}",
+  "@budgetCopySuccess": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetCopyFailed": "Couldn't copy the budget. Please try again.",
+  "budgetCopyAlreadyExists": "This month already has a budget.",
+  "budgetTrendTitle": "Spending trends",
+  "budgetTrendSubtitle": "Planned vs. actual, last 6 months",
+  "budgetTrendOverall": "Overall",
+  "budgetTrendCategoryLabel": "Category",
+  "budgetTrendPlanned": "Planned",
+  "budgetTrendActual": "Actual",
+  "budgetTrendOverPlan": "Over plan",
+  "budgetTrendNoBudget": "No budget",
+  "budgetTrendInsufficientTitle": "Not enough history yet",
+  "budgetTrendInsufficientMessage": "Trends need a budget in at least 2 months. Keep budgeting and check back next month.",
+  "budgetTrendMonthSummary": "{month}: planned {planned}, actual {actual}",
+  "@budgetTrendMonthSummary": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      },
+      "actual": {
+        "type": "String"
+      }
+    }
+  },
+  "commonRestore": "Restore",
+  "commonConfirm": "Confirm",
+  "commonSearch": "Search",
+  "commonOk": "OK",
+  "commonError": "Something went wrong",
+  "onboardingAiAssistantTitle": "Get help making sense of it all",
+  "onboardingAiAssistantDescription": "An AI assistant can help you review and organize what you've recorded — it does not give financial advice or guarantee outcomes.",
+  "financeTitle": "Income & expenses",
+  "financeUndoAction": "Undo",
+  "occasionsTitle": "Occasions",
+  "occasionsEmptyTitle": "No occasions yet",
+  "occasionsEmptyMessage": "Weddings, engagements, birthdays, sebou celebrations, condolences — create an occasion to record who gave or received money at it.",
+  "occasionAddAction": "New occasion",
+  "occasionAddFirstAction": "Create your first occasion",
+  "occasionSearchHint": "Search occasions",
+  "occasionFilterTypeLabel": "Type",
+  "occasionFilterAllTypes": "All types",
+  "occasionFilterDateRangeLabel": "Date range",
+  "occasionFilterDateFromLabel": "From",
+  "occasionFilterDateToLabel": "To",
+  "occasionFilterAllDates": "Any date",
+  "occasionClearFiltersAction": "Clear filters",
+  "occasionNoMatchTitle": "No matching occasions",
+  "occasionNoMatchMessage": "No occasions match your search or filters. Try a different name, type, or date range.",
+  "occasionArchivedAction": "Archived occasions",
+  "occasionArchivedTitle": "Archived occasions",
+  "occasionArchivedEmptyTitle": "No archived occasions",
+  "occasionArchivedEmptyMessage": "Occasions you archive will appear here, with their contributions and balances intact.",
+  "occasionArchivedLabel": "Archived",
+  "occasionUpcomingLabel": "Upcoming",
+  "occasionTypeWedding": "Wedding",
+  "occasionTypeEngagement": "Engagement",
+  "occasionTypeBirthday": "Birthday",
+  "occasionTypeNewbornSebou": "Newborn (Sebou)",
+  "occasionTypeCondolence": "Condolence",
+  "occasionTypeCelebration": "Celebration",
+  "occasionTypeOther": "Other",
+  "occasionTypeCustomLabel": "Custom type",
+  "occasionTypeCustomHint": "Write your own type, e.g. graduation",
+  "occasionFormCreateTitle": "New occasion",
+  "occasionFormEditTitle": "Edit occasion",
+  "occasionNameLabel": "Occasion name",
+  "occasionNameHint": "e.g. Ahmed's wedding",
+  "occasionNameRequiredError": "Occasion name is required",
+  "occasionDateLabel": "Date",
+  "occasionTypeLabel": "Type",
+  "occasionTypeRequiredError": "Choose an occasion type",
+  "occasionNotesLabel": "Notes (optional)",
+  "occasionCreateAction": "Create occasion",
+  "occasionUpdateAction": "Save changes",
+  "occasionEditAction": "Edit occasion",
+  "occasionDeleteAction": "Delete occasion",
+  "occasionArchiveAction": "Archive occasion",
+  "occasionRestoreAction": "Restore occasion",
+  "occasionParticipantFormAddTitle": "Add participant",
+  "occasionParticipantFormEditTitle": "Edit contribution",
+  "occasionParticipantPersonLabel": "Person",
+  "occasionParticipantAmountLabel": "Amount (EGP)",
+  "occasionParticipantAmountInvalidError": "Enter a valid amount greater than zero",
+  "occasionParticipantDirectionLabel": "Direction",
+  "occasionParticipantDirectionReceived": "I received from them",
+  "occasionParticipantDirectionGiven": "I gave them",
+  "occasionParticipantNoteLabel": "Note (optional)",
+  "occasionParticipantCountsTowardBalanceLabel": "Counts toward their balance",
+  "occasionParticipantCountsTowardBalanceHint": "Condolence money isn't expected to be paid back, so it stays out of the balance by default. Turn this on to count it like any other exchange.",
+  "occasionParticipantSaveAction": "Save participant",
+  "occasionParticipantUpdateAction": "Save changes",
+  "occasionDetailTotalReceived": "Total received",
+  "occasionDetailTotalGiven": "Total given",
+  "occasionDetailNet": "Net",
+  "occasionSettlementSettled": "Settled",
+  "occasionSettlementMoreReceived": "{amount} more received than given",
+  "occasionSettlementMoreGiven": "{amount} more given than received",
+  "occasionParticipantsHeader": "Participants",
+  "occasionParticipantsEmptyTitle": "No participants yet",
+  "occasionParticipantsEmptyMessage": "Add the first person who gave or received money at this occasion.",
+  "occasionAddParticipantAction": "Add participant",
+  "occasionEditParticipantAction": "Edit contribution",
+  "occasionRemoveParticipantAction": "Remove contribution",
+  "occasionContributionBadge": "Occasion",
+  "occasionRemoveParticipantConfirmTitle": "Remove this contribution?",
+  "occasionRemoveParticipantConfirmMessage": "It will also disappear from this person's history and balance. This can't be undone.",
+  "occasionDeleteConfirmTitle": "Delete this occasion?",
+  "occasionDeleteConfirmMessage": "{count, plural, =0{This occasion has no contributions recorded yet. This can't be undone.} =1{This also removes 1 contribution and updates that person's balance. This can't be undone.} other{This also removes {count} contributions and updates the balance of everyone who took part. This can't be undone.}}",
+  "occasionArchiveConfirmTitle": "Archive this occasion?",
+  "occasionArchiveConfirmMessage": "It moves to archived occasions. Its contributions stay in everyone's history and balances, and you can restore it any time.",
+  "occasionRestoreConfirmTitle": "Restore this occasion?",
+  "occasionRestoreConfirmMessage": "It will appear in your occasions list again.",
+  "occasionAttachmentsHeader": "Photos",
+  "occasionAttachPhotoAction": "Attach photo",
+  "occasionAttachFromCameraAction": "Take a photo",
+  "occasionAttachFromGalleryAction": "Choose from gallery",
+  "occasionAttachmentsEmptyTitle": "No photos yet",
+  "occasionAttachmentsEmptyMessage": "Attach a photo of the envelope list, the invitation, or the occasion itself to keep it with this record.",
+  "occasionRemoveAttachmentAction": "Remove photo",
+  "occasionRemoveAttachmentConfirmTitle": "Remove this photo?",
+  "occasionRemoveAttachmentConfirmMessage": "The photo will be deleted from this occasion. This can't be undone.",
+  "occasionCameraPermissionDeniedTitle": "Camera access is turned off",
+  "occasionCameraPermissionDeniedMessage": "Daftary needs your camera to take a photo for this occasion. Open your device settings and allow camera access for Daftary, or choose a photo from your gallery instead.",
+  "occasionPhotoLibraryPermissionDeniedTitle": "Photo access is turned off",
+  "occasionPhotoLibraryPermissionDeniedMessage": "Daftary needs access to your photos to attach one to this occasion. Open your device settings and allow photo access for Daftary, or take a new photo with the camera instead.",
+  "occasionOpenSettingsAction": "Open settings",
+  "@occasionSettlementMoreReceived": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@occasionSettlementMoreGiven": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "@occasionDeleteConfirmMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ocrCaptureTitle": "Scan paper",
+  "@ocrCaptureTitle": {},
+  "ocrCaptureHeadline": "Turn a paper list into entries",
+  "@ocrCaptureHeadline": {},
+  "ocrCaptureMessage": "Photograph a list of names and amounts. Everything is read on this device, and nothing is saved until you review it.",
+  "@ocrCaptureMessage": {},
+  "ocrCaptureTakePhoto": "Take a photo",
+  "@ocrCaptureTakePhoto": {},
+  "ocrCaptureChooseFromGallery": "Choose from gallery",
+  "@ocrCaptureChooseFromGallery": {},
+  "ocrCaptureUnsupportedTitle": "Scanning isn't available on this device",
+  "@ocrCaptureUnsupportedTitle": {},
+  "ocrCaptureUnsupportedMessage": "This device can't run on-device text recognition, so scanning a paper won't work here. You can still add transactions manually.",
+  "@ocrCaptureUnsupportedMessage": {},
+  "ocrCaptureEnterManually": "Enter manually",
+  "@ocrCaptureEnterManually": {},
+  "ocrPrepTitle": "Prepare the image",
+  "@ocrPrepTitle": {},
+  "ocrPrepHint": "Crop to just the list of names and amounts, then even out the lighting for the best reading.",
+  "@ocrPrepHint": {},
+  "ocrPrepCropRotate": "Crop and rotate",
+  "@ocrPrepCropRotate": {},
+  "ocrPrepRecrop": "Redo the crop",
+  "@ocrPrepRecrop": {},
+  "ocrPrepEnhance": "Enhance",
+  "@ocrPrepEnhance": {},
+  "ocrPrepEnhanceAgain": "Enhance again",
+  "@ocrPrepEnhanceAgain": {},
+  "ocrPrepProcess": "Read the paper",
+  "@ocrPrepProcess": {},
+  "ocrPrepProcessingTitle": "Reading your paper",
+  "@ocrPrepProcessingTitle": {},
+  "ocrPrepProcessingMessage": "Text recognition is running on this device. Nothing is uploaded anywhere.",
+  "@ocrPrepProcessingMessage": {},
+  "ocrPrepCancel": "Cancel",
+  "@ocrPrepCancel": {},
+  "ocrPrepInterruptedTitle": "That didn't finish",
+  "@ocrPrepInterruptedTitle": {},
+  "ocrPrepInterruptedMessage": "Reading stopped before it finished, probably because the app was interrupted. Nothing was saved, so you can try again.",
+  "@ocrPrepInterruptedMessage": {},
+  "ocrPrepRetry": "Try again",
+  "@ocrPrepRetry": {},
+  "ocrPrepDefaultDirectionLabel": "Default direction for this list",
+  "@ocrPrepDefaultDirectionLabel": {},
+  "ocrPrepDefaultDirectionHint": "Applied to every entry whose direction can't be read from the paper. You can change any entry while reviewing.",
+  "@ocrPrepDefaultDirectionHint": {},
+  "ocrPrepDirectionReceived": "Money received",
+  "@ocrPrepDirectionReceived": {},
+  "ocrPrepDirectionGiven": "Money given",
+  "@ocrPrepDirectionGiven": {},
+  "ocrFailureNoTextTitle": "No text found",
+  "@ocrFailureNoTextTitle": {},
+  "ocrFailureNoTextMessage": "No readable text was found in this photo. A sharper, better lit, straight-on shot usually fixes it.",
+  "@ocrFailureNoTextMessage": {},
+  "ocrFailureNoCandidatesTitle": "No entries could be made",
+  "@ocrFailureNoCandidatesTitle": {},
+  "ocrFailureNoCandidatesMessage": "Text was found, but no line looked like a name and an amount. Try cropping to just the list, or enter the entries manually.",
+  "@ocrFailureNoCandidatesMessage": {},
+  "ocrFailurePermissionTitle": "Permission needed",
+  "@ocrFailurePermissionTitle": {},
+  "ocrFailurePermissionMessage": "Scanning needs access to your camera or photos to read the paper. Grant access from the app's settings, then try again.",
+  "@ocrFailurePermissionMessage": {},
+  "ocrFailureUnsupportedTitle": "Scanning isn't available on this device",
+  "@ocrFailureUnsupportedTitle": {},
+  "ocrFailureUnsupportedMessage": "This device can't run on-device text recognition. Manual entry works exactly the same way.",
+  "@ocrFailureUnsupportedMessage": {},
+  "ocrFailureGenericTitle": "The scan didn't work",
+  "@ocrFailureGenericTitle": {},
+  "ocrFailureGenericMessage": "Something went wrong while reading the paper. Nothing was saved, so you can try again or enter the entries manually.",
+  "@ocrFailureGenericMessage": {},
+  "ocrFailureRetakePhoto": "Retake the photo",
+  "@ocrFailureRetakePhoto": {},
+  "ocrFailureRecrop": "Adjust the crop and retry",
+  "@ocrFailureRecrop": {},
+  "ocrFailureManualEntry": "Enter manually",
+  "@ocrFailureManualEntry": {},
+  "ocrFailureOpenSettings": "Open settings",
+  "@ocrFailureOpenSettings": {},
+  "ocrConfidenceLow": "Low confidence",
+  "@ocrConfidenceLow": {},
+  "ocrConfidenceMedium": "Medium confidence",
+  "@ocrConfidenceMedium": {},
+  "ocrConfidenceHigh": "High confidence",
+  "@ocrConfidenceHigh": {},
+  "ocrConfidenceInferred": "Inferred, not read",
+  "@ocrConfidenceInferred": {},
+  "ocrReviewTitle": "Review entries",
+  "@ocrReviewTitle": {},
+  "ocrReviewBatchSectionTitle": "Applies to the whole batch",
+  "@ocrReviewBatchSectionTitle": {},
+  "ocrReviewBatchSectionMessage": "These choices apply to every entry that does not have its own. Nothing is saved until you confirm.",
+  "@ocrReviewBatchSectionMessage": {},
+  "ocrReviewBatchDirectionLabel": "Default direction",
+  "@ocrReviewBatchDirectionLabel": {},
+  "ocrReviewDirectionLabel": "Direction",
+  "@ocrReviewDirectionLabel": {},
+  "ocrReviewDirectionReceived": "Received",
+  "@ocrReviewDirectionReceived": {},
+  "ocrReviewDirectionGiven": "Given",
+  "@ocrReviewDirectionGiven": {},
+  "ocrReviewDirectionRequired": "Choose a direction for this entry, or set a default for the batch.",
+  "@ocrReviewDirectionRequired": {},
+  "ocrReviewPersonLabel": "Person",
+  "@ocrReviewPersonLabel": {},
+  "ocrReviewPersonRequired": "Enter the person's name.",
+  "@ocrReviewPersonRequired": {},
+  "ocrReviewDuplicateWarningAction": "Similar names already saved",
+  "@ocrReviewDuplicateWarningAction": {},
+  "ocrReviewAmountLabel": "Amount",
+  "@ocrReviewAmountLabel": {},
+  "ocrReviewAmountRequired": "Enter an amount greater than zero.",
+  "@ocrReviewAmountRequired": {},
+  "ocrReviewAmountInvalid": "Enter a valid amount, for example 150.50",
+  "@ocrReviewAmountInvalid": {},
+  "ocrReviewDateLabel": "Date",
+  "@ocrReviewDateLabel": {},
+  "ocrReviewNotesLabel": "Notes",
+  "@ocrReviewNotesLabel": {},
+  "ocrReviewRawTextAction": "Original text",
+  "@ocrReviewRawTextAction": {},
+  "ocrReviewRawTextLabel": "Read from the page",
+  "@ocrReviewRawTextLabel": {},
+  "ocrReviewEditedBadge": "Edited",
+  "@ocrReviewEditedBadge": {},
+  "ocrReviewDiscardAction": "Discard this entry",
+  "@ocrReviewDiscardAction": {},
+  "ocrReviewIncompleteTitle": "Not ready to save",
+  "@ocrReviewIncompleteTitle": {},
+  "ocrReviewIncompleteBatchMessage": "Some entries are still missing required details. Nothing was saved.",
+  "@ocrReviewIncompleteBatchMessage": {},
+  "ocrReviewConfirmAction": "Confirm and save",
+  "@ocrReviewConfirmAction": {},
+  "ocrReviewConfirmBlockedHint": "Complete or discard the highlighted entries before saving.",
+  "@ocrReviewConfirmBlockedHint": {},
+  "ocrReviewNothingToConfirm": "There is nothing left to save in this scan.",
+  "@ocrReviewNothingToConfirm": {},
+  "ocrReviewCancelAction": "Cancel scan",
+  "@ocrReviewCancelAction": {},
+  "ocrReviewCancelPromptTitle": "Discard your corrections?",
+  "@ocrReviewCancelPromptTitle": {},
+  "ocrReviewCancelPromptMessage": "You have corrected some entries. Cancelling this scan discards that work and saves nothing.",
+  "@ocrReviewCancelPromptMessage": {},
+  "ocrReviewCancelPromptConfirm": "Discard and cancel",
+  "@ocrReviewCancelPromptConfirm": {},
+  "ocrReviewCancelPromptKeep": "Keep reviewing",
+  "@ocrReviewCancelPromptKeep": {},
+  "ocrReviewEmptyTitle": "No entries left",
+  "@ocrReviewEmptyTitle": {},
+  "ocrReviewEmptyMessage": "You discarded every entry from this scan. Cancel the scan, or go back and photograph the page again.",
+  "@ocrReviewEmptyMessage": {},
+  "ocrReviewLoadErrorTitle": "Could not open this scan",
+  "@ocrReviewLoadErrorTitle": {},
+  "ocrReviewLoadErrorMessage": "The scan and its entries could not be loaded. Nothing was saved.",
+  "@ocrReviewLoadErrorMessage": {},
+  "ocrReviewRetryAction": "Try again",
+  "@ocrReviewRetryAction": {},
+  "ocrReviewSaveErrorMessage": "The entries could not be saved. Nothing was recorded, so you can try again safely.",
+  "@ocrReviewSaveErrorMessage": {},
+  "ocrReviewOccasionLabel": "Occasion",
+  "@ocrReviewOccasionLabel": {},
+  "ocrReviewOccasionNone": "No occasion",
+  "@ocrReviewOccasionNone": {},
+  "ocrReviewOccasionClear": "Remove the occasion tag",
+  "@ocrReviewOccasionClear": {},
+  "ocrReviewOccasionPickerTitle": "Tag this batch to an occasion",
+  "@ocrReviewOccasionPickerTitle": {},
+  "ocrReviewOccasionEmpty": "You have no occasions yet. Create one from the Occasions screen first.",
+  "@ocrReviewOccasionEmpty": {},
+  "ocrHistoryTitle": "Scan history",
+  "@ocrHistoryTitle": {},
+  "ocrHistoryEmptyTitle": "No scans yet",
+  "@ocrHistoryEmptyTitle": {},
+  "ocrHistoryEmptyMessage": "Once you scan a paper list, every scan you keep shows up here with its photo and what came of it.",
+  "@ocrHistoryEmptyMessage": {},
+  "ocrHistoryErrorTitle": "Couldn't load your scans",
+  "@ocrHistoryErrorTitle": {},
+  "ocrHistoryErrorMessage": "Something went wrong while reading your scan history. Try again.",
+  "@ocrHistoryErrorMessage": {},
+  "ocrHistoryStatusProcessing": "Processing",
+  "@ocrHistoryStatusProcessing": {},
+  "ocrHistoryStatusNeedsReview": "Waiting for review",
+  "@ocrHistoryStatusNeedsReview": {},
+  "ocrHistoryStatusConfirmed": "Confirmed",
+  "@ocrHistoryStatusConfirmed": {},
+  "ocrHistoryStatusDiscarded": "Produced nothing",
+  "@ocrHistoryStatusDiscarded": {},
+  "ocrHistoryStatusFailed": "Nothing could be read",
+  "@ocrHistoryStatusFailed": {},
+  "ocrHistoryConfirmedEntries": "{count} entries confirmed",
+  "@ocrHistoryConfirmedEntries": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrHistoryDeleteAction": "Delete scan",
+  "@ocrHistoryDeleteAction": {},
+  "ocrHistoryDeleteTitle": "Delete this scan?",
+  "@ocrHistoryDeleteTitle": {},
+  "ocrHistoryDeleteMessage": "This deletes the scan and its photo from your device. The transactions it created are not deleted and stay in your records.",
+  "@ocrHistoryDeleteMessage": {},
+  "ocrHistoryDeleteConfirm": "Delete scan",
+  "@ocrHistoryDeleteConfirm": {},
+  "ocrScanDetailTitle": "Scan details",
+  "@ocrScanDetailTitle": {},
+  "ocrScanDetailImageMissing": "The photo for this scan is no longer on your device.",
+  "@ocrScanDetailImageMissing": {},
+  "ocrScanDetailEntriesTitle": "Entries read from the paper",
+  "@ocrScanDetailEntriesTitle": {},
+  "ocrScanDetailNoEntries": "No entries were read from this scan.",
+  "@ocrScanDetailNoEntries": {},
+  "ocrScanDetailUnknownPerson": "No name read",
+  "@ocrScanDetailUnknownPerson": {},
+  "ocrScanDetailNoAmount": "No amount read",
+  "@ocrScanDetailNoAmount": {},
+  "ocrScanDetailEntryStatusPending": "Not reviewed",
+  "@ocrScanDetailEntryStatusPending": {},
+  "ocrScanDetailEntryStatusConfirmed": "Confirmed",
+  "@ocrScanDetailEntryStatusConfirmed": {},
+  "ocrScanDetailEntryStatusDiscarded": "Discarded",
+  "@ocrScanDetailEntryStatusDiscarded": {},
+  "ocrScanDetailTransactionsTitle": "Transactions created",
+  "@ocrScanDetailTransactionsTitle": {},
+  "ocrScanDetailNoTransactionsMessage": "This scan created no transactions.",
+  "@ocrScanDetailNoTransactionsMessage": {},
+  "ocrScanDetailTransactionsKeptNote": "These are real transactions in your records. Deleting this scan does not delete them.",
+  "@ocrScanDetailTransactionsKeptNote": {},
+  "ocrScanDetailDeleteAction": "Delete scan",
+  "@ocrScanDetailDeleteAction": {},
+  "ocrScanDetailDeleteTitle": "Delete this scan?",
+  "@ocrScanDetailDeleteTitle": {},
+  "ocrScanDetailDeleteMessage": "This deletes the scan and its photo from your device. The {count} transactions it created are not deleted and stay in your records — you just lose the link back to the original photo.",
+  "@ocrScanDetailDeleteMessage": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "ocrScanDetailDeleteConfirm": "Delete scan",
+  "@ocrScanDetailDeleteConfirm": {},
+  "ocrScanDetailDeletedMessage": "Scan deleted. Its transactions were kept.",
+  "@ocrScanDetailDeletedMessage": {},
+  "ocrScanDetailErrorTitle": "Couldn't load this scan",
+  "@ocrScanDetailErrorTitle": {},
+  "ocrScanDetailErrorMessage": "Something went wrong while reading this scan.",
+  "@ocrScanDetailErrorMessage": {},
+  "budgetsTitle": "Budgets",
+  "budgetsOverviewEntrySubtitle": "Plan this month's spending by category",
+  "budgetFormCreateTitle": "New budget",
+  "budgetFormEditTitle": "Edit budget",
+  "budgetFormMonthLabel": "Month",
+  "budgetExpectedIncomeLabel": "Expected income (optional)",
+  "budgetExpectedIncomeHelp": "For reference only — it never changes how spending is tracked.",
+  "budgetAllocationsHeader": "Planned spending by category",
+  "budgetAllocationsEmpty": "No categories yet. Pick an expense category below to start planning.",
+  "budgetAddCategoryHeader": "Add a category",
+  "budgetAllCategoriesAdded": "Every active expense category is already in this budget.",
+  "budgetPlannedAmountLabel": "Planned amount",
+  "budgetRemoveAllocationAction": "Remove from budget",
+  "budgetAmountRequiredError": "Enter a planned amount (0 is allowed)",
+  "budgetAmountInvalidError": "Enter a valid amount",
+  "budgetAmountNegativeError": "The amount can't be negative",
+  "budgetTotalPlannedLabel": "Total planned",
+  "budgetExceedsIncomeWarning": "Planned spending exceeds expected income by {amount}",
+  "@budgetExceedsIncomeWarning": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceedsIncomeSaveNote": "You can still save this budget.",
+  "budgetDeleteAction": "Delete budget",
+  "budgetDeleteConfirmTitle": "Delete this budget?",
+  "budgetDeleteConfirmMessage": "The plan for {month} will be removed. Your recorded expenses are not affected.",
+  "@budgetDeleteConfirmMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetDeletedConfirmation": "Budget deleted",
+  "budgetAlreadyExistsError": "This month already has a budget. Open it to make changes.",
+  "budgetDuplicateCategoryError": "This category is already in the budget.",
+  "budgetNotFoundError": "This budget no longer exists.",
+  "budgetEmptyTitle": "No budget for {month}",
+  "@budgetEmptyTitle": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetEmptyMessage": "Plan how much you intend to spend in each category, then track it against your real expenses.",
+  "budgetCreateAction": "Create budget",
+  "budgetLoadErrorTitle": "Couldn't load this budget",
+  "budgetOverallTitle": "Overall",
+  "budgetPlannedLabel": "Planned",
+  "budgetActualLabel": "Spent",
+  "budgetRemainingLabel": "Remaining",
+  "budgetOverByLabel": "Over by",
+  "budgetSpentOfPlanned": "{actual} of {planned}",
+  "@budgetSpentOfPlanned": {
+    "placeholders": {
+      "actual": {
+        "type": "String"
+      },
+      "planned": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetRemainingAmount": "{amount} left",
+  "@budgetRemainingAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverByAmount": "{amount} over",
+  "@budgetOverByAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetPercentUsed": "{percent}% used",
+  "@budgetPercentUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetPercentNotApplicable": "Nothing planned",
+  "budgetStatusOnTrack": "On track",
+  "budgetStatusNearFull": "Near limit",
+  "budgetStatusOverBudget": "Over budget",
+  "budgetCategoryArchivedTag": "Archived",
+  "budgetCategoryMissingName": "Deleted category",
+  "budgetCategoriesHeader": "Categories",
+  "budgetNoAllocationsMessage": "This budget has no categories yet. Edit it to add planned amounts.",
+  "budgetExpectedIncomeDisplay": "Expected income",
+  "budgetUnbudgetedTitle": "Unbudgeted spending",
+  "budgetUnbudgetedMessage": "Spent this month in categories that aren't in your budget.",
+  "budgetUnbudgetedTotalLabel": "Total unbudgeted",
+  "homeTitle": "Home",
+  "homeFinancialSnapshotTitle": "Financial snapshot",
+  "homeFinanceThisMonthTitle": "This month",
+  "homeFinanceIncome": "Income",
+  "homeFinanceExpenses": "Expenses",
+  "homeFinanceNet": "Net",
+  "homeQuickActionsTitle": "Quick actions",
+  "homeQuickAddExpense": "Add expense",
+  "homeQuickAddIncome": "Add income",
+  "homeQuickAddPerson": "Add person",
+  "homeQuickMoneyReceived": "Money received",
+  "homeQuickMoneyGiven": "Money given",
+  "homeQuickAddOccasion": "Add occasion",
+  "homeQuickScanPaper": "Scan paper",
+  "homeSectionsTitle": "Sections",
+  "homeInsightsTitle": "Insights",
+  "homeInsightsPlaceholder": "Insights will appear here once the AI Assistant is set up.",
+  "homeUpcomingTitle": "Upcoming",
+  "homeUpcomingPlaceholder": "Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.",
+  "homeOverviewLoadError": "Couldn't load your balances.",
+  "homeFinanceLoadError": "Couldn't load this month's income and expenses.",
+  "homeFullErrorMessage": "Your dashboard couldn't be loaded. Please try again.",
+  "homeEmptyTitle": "Welcome to Daftary",
+  "homeEmptyMessage": "Keep track of who owes you, what you owe, and where your money goes each month — all on your device.",
+  "homeEmptyAction": "Add your first person",
+  "reportsTitle": "Reports",
+  "reportsOpenAction": "Reports",
+  "reportsTrendTitle": "Monthly trend",
+  "reportsTrendSubtitle": "Income and expenses over the last {months} months",
+  "@reportsTrendSubtitle": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "reportsBreakdownTitle": "Spending by category",
+  "reportsIncome": "Income",
+  "reportsExpenses": "Expenses",
+  "reportsNet": "Net",
+  "reportsPeriodThisMonth": "This month",
+  "reportsPeriodLastMonth": "Last month",
+  "reportsPeriodLast3Months": "Last 3 months",
+  "reportsPeriodLast6Months": "Last 6 months",
+  "reportsBreakdownEmpty": "No expenses recorded for this period.",
+  "reportsEmptyTitle": "No reports yet",
+  "reportsEmptyMessage": "Record your first income or expense to start seeing trends and category breakdowns.",
+  "reportsEmptyAction": "Add an entry",
+  "reportsLoadError": "Your reports couldn't be loaded. Please try again.",
+  "reportsExportAction": "Export my data",
+  "reportsCategoryShare": "{percent}%",
+  "@reportsCategoryShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "exportTitle": "Export my data",
+  "exportDescription": "Create one CSV file containing a complete copy of your data: people, transactions, income and expense entries, categories, and settings. The file is created on your device and you choose where to send it.",
+  "exportGenerateAction": "Create export file",
+  "exportGenerating": "Preparing your export…",
+  "exportReadyTitle": "Your export is ready",
+  "exportReadyMessage": "{count} records were included.",
+  "@exportReadyMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportShareAction": "Share file",
+  "exportRegenerateAction": "Create a new export",
+  "exportError": "Your export couldn't be created. No partial file was saved. Please try again.",
+  "exportShareError": "The share sheet couldn't be opened. Please try again.",
+  "retry": "Retry",
+  "settingsDataSectionTitle": "Your data",
+  "settingsExportTile": "Export my data",
+  "settingsDangerZoneTitle": "Danger zone",
+  "settingsDeleteDataTile": "Delete my data",
+  "settingsDeleteDataSubtitle": "Permanently erase everything stored in Daftary",
+  "securitySettingsTitle": "Security",
+  "securitySettingsTileSubtitle": "App lock, PIN and screenshot protection",
+  "appLockSettingsSectionTitle": "App lock",
+  "appLockSettingsToggleTitle": "Lock Daftary",
+  "appLockSettingsToggleSubtitle": "Ask for your PIN whenever you open the app",
+  "appLockSettingsBiometricTitle": "Unlock with fingerprint or face",
+  "appLockSettingsBiometricSubtitle": "Your PIN still works too",
+  "appLockSettingsBiometricUnavailable": "Not available on this device. Set up fingerprint or face unlock in your device settings first.",
+  "appLockSettingsChangePinTile": "Change PIN",
+  "appLockSettingsTimeoutTitle": "Lock after leaving the app",
+  "appLockSettingsTimeoutImmediately": "Immediately",
+  "appLockSettingsTimeout30Seconds": "After 30 seconds",
+  "appLockSettingsTimeout1Minute": "After 1 minute",
+  "appLockSettingsTimeout5Minutes": "After 5 minutes",
+  "appLockSettingsScreenshotProtectionTitle": "Screenshot protection",
+  "appLockSettingsScreenshotProtectionStatus": "Always on",
+  "appLockSettingsScreenshotProtectionBody": "Screenshots and screen recordings can't capture your data, and the recent-apps view shows a placeholder instead. Sharing and exporting still work.",
+  "appLockSettingsDisableTitle": "Turn off app lock?",
+  "appLockSettingsDisableMessage": "Daftary will open without a PIN. Your PIN will be deleted, so turning app lock on again means choosing a new one. Screenshot protection stays on.",
+  "appLockSettingsDisableConfirm": "Turn off",
+  "appLockSettingsBiometricReason": "Confirm it's you to turn off app lock",
+  "appLockSettingsReauthTitle": "Enter your PIN",
+  "appLockSettingsReauthMessage": "Confirm it's you to turn off app lock.",
+  "appLockSettingsReauthPinLabel": "Current PIN",
+  "appLockSettingsReauthConfirm": "Confirm",
+  "appLockSettingsReauthIncorrect": "That PIN isn't right. Try again.",
+  "appLockSettingsReauthLockedOut": "Too many wrong attempts. Try again in {duration}.",
+  "@appLockSettingsReauthLockedOut": {
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "0:30"
+      }
+    }
+  },
+  "appLockSettingsReauthFailed": "Couldn't check your PIN. Try again.",
+  "appLockSettingsEnabledMessage": "App lock is on",
+  "appLockSettingsDisabledMessage": "App lock is off",
+  "appLockSettingsPinChangedMessage": "PIN changed",
+  "appLockSettingsSaveFailed": "Couldn't save this change. Try again.",
+  "appLockSettingsLoadFailed": "Couldn't load your security settings.",
+  "deleteDataTitle": "Delete my data",
+  "deleteDataWarningTitle": "This is permanent",
+  "deleteDataWarningMessage": "This will permanently delete all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, and settings from this device — and your cloud backup, if you use one. This cannot be undone. Consider exporting your data first.",
+  "deleteDataExportFirstAction": "Export my data first",
+  "deleteDataConfirmPhrase": "DELETE",
+  "deleteDataConfirmLabel": "Type {phrase} to confirm",
+  "@deleteDataConfirmLabel": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteDataConfirmHint": "{phrase}",
+  "@deleteDataConfirmHint": {
+    "placeholders": {
+      "phrase": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteDataConfirmAction": "Delete everything",
+  "deleteDataCancelAction": "Cancel",
+  "deleteDataInProgress": "Deleting your data…",
+  "deleteDataError": "Your data couldn't be deleted. Nothing was removed — all your data is still intact. Please try again.",
+  "deleteDataCloudUnreachableError": "Your cloud backup couldn't be reached, so nothing was deleted — all your data is still intact. Connect to the internet and try again.",
+  "@deleteDataCloudUnreachableError": {
+    "description": "Shown when 'Delete my data' cannot reach the cloud backup to delete it too; nothing local or remote was removed."
+  },
+  "appLockForgotTitle": "Forgot PIN",
+  "appLockForgotBiometricTitle": "Verify it's you",
+  "appLockForgotBiometricMessage": "Confirm it's you with biometrics, then choose a new PIN. None of your data will be touched.",
+  "appLockForgotBiometricAction": "Verify with biometrics",
+  "appLockForgotBiometricReason": "Verify your identity to set a new Daftary PIN",
+  "appLockForgotBiometricFailed": "Biometric verification didn't succeed. You can try again.",
+  "appLockForgotBiometricRetry": "Try again",
+  "appLockForgotChooseWipeAction": "Erase all data instead",
+  "appLockForgotWipeTitle": "The only way back in",
+  "appLockForgotWipeMessage": "Your PIN can't be reset. Without your PIN or biometrics, the only way to use the app again is to erase all of its data from this device and start fresh. If you linked cloud backup to your email, your backup is kept, and you can restore it afterwards by signing in with that email.",
+  "appLockForgotWipeContinueAction": "Continue to erase data",
+  "appLockForgotBackAction": "Back to lock screen",
+  "appLockWipeTitle": "Erase all data",
+  "appLockWipeWarningTitle": "This is permanent",
+  "appLockWipeWarningMessage": "This will permanently erase all of your people, transactions, occasions, scans, income and expense entries, categories, budgets, settings, and your App Lock PIN from this device. It cannot be undone, and Daftary cannot recover it.",
+  "appLockWipeConfirmAction": "Erase everything",
+  "appLockWipeCancelAction": "Cancel",
+  "appLockWipeInProgress": "Erasing your data…",
+  "appLockWipeError": "Your data couldn't be erased. Nothing was removed — your data and PIN are unchanged. Please try again.",
+  "aiAssistantTitle": "AI Assistant",
+  "aiAssistantHomeEntrySubtitle": "Ask questions about your own money. Off until you set it up.",
+  "aiSettingsTitle": "AI Assistant settings",
+  "aiSettingsIntroTitle": "The assistant is off",
+  "aiSettingsIntroMessage": "To turn it on, choose your AI provider, enter your own API key, and review exactly what will be shared. Daftary never ships with a key of its own.",
+  "aiSettingsProviderSectionTitle": "Provider",
+  "aiSettingsProviderCustom": "Custom provider",
+  "aiSettingsCustomProviderHint": "Any provider with an OpenAI-compatible chat API that supports tool calling.",
+  "aiSettingsCustomBaseUrlLabel": "API base URL (https://…)",
+  "aiSettingsCustomModelLabel": "Model name",
+  "aiSettingsApiKeySectionTitle": "API key",
+  "aiSettingsApiKeyLabel": "Your API key",
+  "aiSettingsApiKeyNote": "Stored only in this device's secure storage and sent only to the provider you chose. It is never shown again after you save it.",
+  "aiSettingsProviderRequired": "Choose a provider",
+  "aiSettingsCustomBaseUrlInvalid": "Enter a full address starting with https://",
+  "aiSettingsCustomModelRequired": "Enter the model name",
+  "aiSettingsApiKeyRequired": "Enter your API key",
+  "aiSettingsApiKeyMalformed": "This doesn't look like a complete API key",
+  "aiSettingsContinueAction": "Continue",
+  "aiSettingsEnabledTitle": "The assistant is on",
+  "aiSettingsEnabledProvider": "Provider: {provider}",
+  "@aiSettingsEnabledProvider": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "aiSettingsApiKeySaved": "API key: saved securely (hidden)",
+  "aiSettingsConsentAcceptedOn": "Data-sharing disclosure accepted on {date}",
+  "@aiSettingsConsentAcceptedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "aiSettingsChangeCredentialsAction": "Change provider or key",
+  "aiSettingsChangeCredentialsTitle": "Change provider or key",
+  "aiSettingsChangeCredentialsMessage": "Enter the new key. The key saved now will be discarded once the new one is saved.",
+  "aiSettingsSaveCredentialsAction": "Save new key",
+  "aiSettingsCancelAction": "Cancel",
+  "aiSettingsDisableAction": "Turn off assistant",
+  "aiSettingsDisableConfirmTitle": "Turn off the assistant?",
+  "aiSettingsDisableConfirmMessage": "Nothing more will be sent to your AI provider. Your saved API key will be deleted from this device, so turning the assistant back on means entering a key and accepting the data-sharing disclosure again. Your conversation history is kept.",
+  "aiSettingsDisableConfirmAction": "Turn off",
+  "aiSettingsEnabledMessage": "AI assistant turned on",
+  "aiSettingsCredentialsUpdatedMessage": "Provider and key updated. The previous key was discarded.",
+  "aiSettingsDisabledMessage": "AI assistant turned off. Your API key was deleted from this device.",
+  "aiSettingsSaveFailed": "Your AI assistant settings couldn't be saved. Nothing was changed. Please try again.",
+  "aiSettingsLoadFailed": "AI assistant settings couldn't be loaded.",
+  "aiSettingsCustomProviderName": "your custom provider ({host})",
+  "@aiSettingsCustomProviderName": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "aiConsentTitle": "Before you turn on the assistant",
+  "aiConsentIntro": "Here is exactly what happens when you ask the assistant a question:",
+  "aiConsentPointMinimal": "Only the small piece of data needed to answer that one question is sent — for example, one category's total for one month. Never a full copy of your records.",
+  "aiConsentPointProviderOnly": "It goes only to {provider}, using your own key. Never to Daftary, and never to anyone else.",
+  "@aiConsentPointProviderOnly": {
+    "placeholders": {
+      "provider": {
+        "type": "String"
+      }
+    }
+  },
+  "aiConsentPointOnDemand": "Nothing is sent until you ask a question.",
+  "aiConsentPointReadOnly": "The assistant can only read and explain your figures. It can never add, change, or delete anything.",
+  "aiConsentPointCost": "Your provider may charge your account for each question.",
+  "aiConsentPointDisable": "You can turn the assistant off at any time. That immediately stops anything more from being sent and deletes your key from this device.",
+  "aiConsentAcceptAction": "I agree, turn it on",
+  "aiConsentDeclineAction": "Not now",
+  "aiChatTitle": "AI Assistant",
+  "aiChatInputHint": "Ask about your spending, budgets, or balances…",
+  "aiChatSendAction": "Send question",
+  "aiChatEmptyTitle": "Ask about your own money",
+  "aiChatEmptyMessage": "For example: \"How much did I spend on food this month?\" Answers come only from your own records in Daftary.",
+  "aiChatClearAction": "Clear conversation",
+  "aiChatClearConfirmTitle": "Clear this conversation?",
+  "aiChatClearConfirmMessage": "All questions and answers will be deleted from this device. Your financial records won't be affected.",
+  "aiChatClearConfirmAction": "Clear",
+  "aiChatClearedMessage": "Conversation cleared",
+  "aiChatClearFailed": "The conversation couldn't be cleared. Please try again.",
+  "aiChatLoadEarlierAction": "Show earlier messages",
+  "aiChatLoadFailed": "Your conversation couldn't be loaded.",
+  "aiChatTypingLabel": "The assistant is preparing an answer",
+  "aiChatYouLabel": "You",
+  "aiChatAssistantLabel": "Assistant",
+  "aiChatMessageFailedLabel": "Not answered",
+  "aiChatInterruptedLabel": "Not answered: the assistant was turned off before a reply arrived",
+  "aiChatDisabledTitle": "The assistant is off",
+  "aiChatDisabledMessage": "Turn it on in the assistant settings to start asking questions about your money.",
+  "aiChatOpenSettingsAction": "Open settings",
+  "aiChatSettingsAction": "Assistant settings",
+  "aiChatReadOnlyNotice": "The assistant can only read and explain your figures. It can't add, change, or delete anything, so nothing was changed. You can do that yourself from the app.",
+  "aiChatNothingChangedLabel": "Nothing in your records was changed",
+  "aiFailureInvalidApiKeyTitle": "API key not accepted",
+  "aiFailureInvalidApiKeyMessage": "Your provider rejected your API key. It may be wrong, expired, or revoked. Update it to keep asking questions.",
+  "aiFailureRateLimitedTitle": "Too many requests",
+  "aiFailureRateLimitedMessage": "Your provider is limiting requests right now. Wait a minute or two, then try again.",
+  "aiFailureNetworkTitle": "No internet connection",
+  "aiFailureNetworkMessage": "The assistant needs an internet connection. Everything else in Daftary keeps working offline.",
+  "aiFailureProviderErrorTitle": "Provider unavailable",
+  "aiFailureProviderErrorMessage": "Your AI provider is having a problem on its side. Please try again in a little while.",
+  "aiFailureUnrecognizedTitle": "Unexpected reply",
+  "aiFailureUnrecognizedMessage": "The assistant's reply couldn't be understood. Please try asking again.",
+  "aiFailureLocalTitle": "Couldn't save",
+  "aiFailureLocalMessage": "Your question couldn't be saved on this device. Please try again.",
+  "aiFailureRetryAction": "Try again",
+  "aiFailureUpdateKeyAction": "Update API key",
+  "aiObservationLabel": "Observation",
+  "aiObservationSemanticLabel": "Observation from the assistant, based on your own records"
 }

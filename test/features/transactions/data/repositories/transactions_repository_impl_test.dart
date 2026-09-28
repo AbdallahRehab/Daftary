@@ -1,5 +1,5 @@
 import 'package:daftary/core/database/app_database.dart'
-    hide isNull, isNotNull, ExchangeRate;
+    hide isNull, isNotNull, ExchangeRate, MoneyTransaction;
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
@@ -884,6 +884,133 @@ void main() {
       expect(batched[personId]!.net, const Money.egp(60000));
       expect(batched['p2']!.isBlocked, isTrue);
       expect(batched['p3']!.status, RelationshipStatus.settled);
+    });
+  });
+
+  group('occasion contributions (008 US1)', () {
+    Future<void> createOccasion(String id, String name) {
+      return db
+          .into(db.occasions)
+          .insert(
+            OccasionsCompanion.insert(
+              id: id,
+              idempotencyKey: 'occ-$id',
+              name: name,
+              date: DateTime(2026, 1, 1).millisecondsSinceEpoch,
+              type: 'wedding',
+              createdAt: DateTime(2026).millisecondsSinceEpoch,
+              updatedAt: DateTime(2026).millisecondsSinceEpoch,
+            ),
+          );
+    }
+
+    setUp(() async {
+      await createOccasion('o1', "Ahmed's wedding");
+      await createOccasion('o2', 'Condolence');
+    });
+
+    Future<MoneyTransaction> contribute({
+      required String key,
+      String occasionId = 'o1',
+      String? personId,
+      int minorUnits = 100000,
+      bool countsTowardBalance = true,
+      DateTime? date,
+    }) async {
+      final result = await repository.addOccasionContribution(
+        idempotencyKey: key,
+        personId: personId ?? 'p1',
+        occasionId: occasionId,
+        amount: Money.egp(minorUnits),
+        direction: TransactionDirection.received,
+        countsTowardBalance: countsTowardBalance,
+        date: date ?? DateTime(2026, 1, 2),
+      );
+      return result.getOrElse((_) => throw StateError('expected Right'));
+    }
+
+    test('persists kind, occasionId and countsTowardBalance', () async {
+      final tx = await contribute(key: 'c1', countsTowardBalance: false);
+
+      expect(tx.kind, TransactionKind.occasionContribution);
+      expect(tx.occasionId, 'o1');
+      expect(tx.countsTowardBalance, isFalse);
+    });
+
+    test('writes a created audit entry, like every other insert', () async {
+      final tx = await contribute(key: 'c1');
+
+      final entries = await (db.select(
+        db.transactionAuditEntries,
+      )..where((e) => e.transactionId.equals(tx.id))).get();
+      expect(entries, hasLength(1));
+      expect(entries.single.changeType, 'created');
+    });
+
+    test('rejects a zero amount, as addTransaction does (FR-005)', () async {
+      final result = await repository.addOccasionContribution(
+        idempotencyKey: 'c1',
+        personId: personId,
+        occasionId: 'o1',
+        amount: const Money.egp(0),
+        direction: TransactionDirection.received,
+        countsTowardBalance: true,
+        date: DateTime(2026, 1, 2),
+      );
+
+      expect(result.isLeft(), isTrue);
+    });
+
+    test('a retried call with the same key creates no second row', () async {
+      final first = await contribute(key: 'c1');
+      final retried = await contribute(key: 'c1', minorUnits: 999999);
+
+      expect(retried.id, first.id);
+      expect(retried.amount, first.amount);
+    });
+
+    test('getContributionsForOccasion returns only that occasion\'s '
+        'non-deleted rows, oldest first', () async {
+      final first = await contribute(key: 'c1', date: DateTime(2026, 1, 1));
+      await contribute(key: 'c2', date: DateTime(2026, 1, 3));
+      await contribute(key: 'c3', occasionId: 'o2');
+      final removed = await contribute(key: 'c4', date: DateTime(2026, 1, 4));
+      await repository.deleteTransaction(removed.id);
+
+      final result = await repository.getContributionsForOccasion('o1');
+
+      final rows = result.getOrElse((_) => throw StateError('x'));
+      expect(rows.map((r) => r.idempotencyKey).toList(), ['c1', 'c2']);
+      expect(rows.first.id, first.id);
+    });
+
+    test('getOccasionNamesForPerson maps occasion ids to names', () async {
+      await contribute(key: 'c1');
+      await contribute(key: 'c2', occasionId: 'o2');
+      await repository.addTransaction(
+        idempotencyKey: 'k1',
+        personId: personId,
+        amount: const Money.egp(1000),
+        direction: TransactionDirection.given,
+        date: DateTime(2026, 1, 1),
+      );
+
+      final result = await repository.getOccasionNamesForPerson(personId);
+
+      expect(result.getOrElse((_) => throw StateError('x')), {
+        'o1': "Ahmed's wedding",
+        'o2': 'Condolence',
+      });
+    });
+
+    test('getOccasionNamesForPerson drops an occasion once its only '
+        'contribution is deleted', () async {
+      final tx = await contribute(key: 'c1');
+      await repository.deleteTransaction(tx.id);
+
+      final result = await repository.getOccasionNamesForPerson(personId);
+
+      expect(result.getOrElse((_) => throw StateError('x')), isEmpty);
     });
   });
 }

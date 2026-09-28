@@ -303,7 +303,7 @@ void main() {
       expect(tx.amountMinorUnits, 25000);
       expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
       expect(await db.select(db.exchangeRates).get(), isEmpty);
-      expect(raw.select('PRAGMA user_version').single.values.single, 9);
+      expect(raw.select('PRAGMA user_version').single.values.single, 10);
     },
   );
 
@@ -345,13 +345,16 @@ void main() {
         "AND name = 'idx_exchange_rates_pair'",
       );
       expect(index.single['sql'] as String, contains('UNIQUE'));
-      expect(raw.select('PRAGMA user_version').single.values.single, 9);
+      expect(raw.select('PRAGMA user_version').single.values.single, 10);
     });
 
-    test('schemaVersion is 9 (018 bumped it to 7; 020 to 8; 021 to 9)', () {
-      final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(db.close);
-      expect(db.schemaVersion, 9);
-    });
+    test(
+      'schemaVersion is 10 (018 bumped it to 7; 020 to 8; 021 to 9; the 008-014 merge to 10)',
+      () {
+        final db = AppDatabase.forTesting(NativeDatabase.memory());
+        addTearDown(db.close);
+        expect(db.schemaVersion, 10);
+      },
+    );
   });
 }

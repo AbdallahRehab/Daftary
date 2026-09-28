@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
-
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
@@ -16,6 +15,7 @@ class PersonDetailState extends Equatable {
     this.person,
     this.balance,
     this.history = const [],
+    this.occasionNames = const {},
     this.primaryCurrency = Currency.egp,
     this.failure,
   });
@@ -26,6 +26,11 @@ class PersonDetailState extends Equatable {
 
   /// Chronological (oldest first) — mirrors `GetPersonHistory` (FR-010).
   final List<MoneyTransaction> history;
+
+  /// Occasion id → occasion name for every occasion-linked row in [history]
+  /// (008). Watched alongside the history so each list tile can label its
+  /// contribution without a lookup of its own.
+  final Map<String, String> occasionNames;
 
   /// The current primary currency (018): history rows in any other
   /// currency show a `CurrencyIndicatorChip` (FR-010).
@@ -39,6 +44,7 @@ class PersonDetailState extends Equatable {
     Person? person,
     PersonBalance? balance,
     List<MoneyTransaction>? history,
+    Map<String, String>? occasionNames,
     Currency? primaryCurrency,
     Failure? failure,
   }) {
@@ -47,6 +53,7 @@ class PersonDetailState extends Equatable {
       person: person ?? this.person,
       balance: balance ?? this.balance,
       history: history ?? this.history,
+      occasionNames: occasionNames ?? this.occasionNames,
       primaryCurrency: primaryCurrency ?? this.primaryCurrency,
       failure: failure,
     );
@@ -58,6 +65,7 @@ class PersonDetailState extends Equatable {
     person,
     balance,
     history,
+    occasionNames,
     primaryCurrency,
     failure,
   ];

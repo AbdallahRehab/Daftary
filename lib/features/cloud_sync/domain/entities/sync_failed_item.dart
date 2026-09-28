@@ -10,6 +10,9 @@ enum SyncItemKind {
   exchangeRate,
   primaryCurrency,
   conflictResolution,
+  occasion,
+  budget,
+  budgetAllocation,
 }
 
 /// Why the cloud refused a record.

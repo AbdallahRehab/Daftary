@@ -65,6 +65,7 @@ void main() {
         WatchPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
         watchPrimary(),
+        transactionsRepository,
       ),
     );
   });

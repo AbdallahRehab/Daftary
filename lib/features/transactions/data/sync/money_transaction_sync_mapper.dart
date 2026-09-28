@@ -11,7 +11,8 @@ class MoneyTransactionSyncMapper extends SyncMapper<MoneyTransaction> {
   const MoneyTransactionSyncMapper();
 
   static const directions = {'given', 'received'};
-  static const kinds = {'initialExchange', 'repayment'};
+  static const kinds = {'initialExchange', 'repayment', 'occasionContribution'};
+  static const sources = {'manual', 'ocr'};
 
   @override
   SyncEntityType get type => SyncEntityType.moneyTransaction;
@@ -27,6 +28,12 @@ class MoneyTransactionSyncMapper extends SyncMapper<MoneyTransaction> {
     'kind': row.kind,
     ...SyncWire.occurrence(row.date),
     'note': row.note,
+    // 022: 008's occasion link and 009's provenance. `ocr_scan_id` points at
+    // a scan that stays on this device — a plain label elsewhere.
+    'occasion_id': row.occasionId,
+    'counts_toward_balance': row.countsTowardBalance,
+    'source': row.source,
+    'ocr_scan_id': row.ocrScanId,
     'edited_at': SyncWire.instantOrNull(row.editedAt),
     'deleted_at': SyncWire.instantOrNull(row.deletedAt),
     'client_created_at': SyncWire.instant(row.createdAt),
@@ -49,6 +56,20 @@ class MoneyTransactionSyncMapper extends SyncMapper<MoneyTransaction> {
     kind: SyncWire.oneOf(json, 'kind', kinds),
     date: SyncWire.parseInstant(json['occurred_at'], 'occurred_at'),
     note: Value(SyncWire.stringOrNull(json, 'note')),
+    occasionId: Value(SyncWire.stringOrNull(json, 'occasion_id')),
+    // A row the server stored before 022 has none of these: it was an
+    // ordinary, counting, hand-typed transaction.
+    countsTowardBalance: Value(
+      json['counts_toward_balance'] == null
+          ? true
+          : SyncWire.boolean(json, 'counts_toward_balance'),
+    ),
+    source: Value(
+      json['source'] == null
+          ? 'manual'
+          : SyncWire.oneOf(json, 'source', sources),
+    ),
+    ocrScanId: Value(SyncWire.stringOrNull(json, 'ocr_scan_id')),
     createdAt: SyncWire.parseFirstInstant(json, const [
       'client_created_at',
       'server_created_at',

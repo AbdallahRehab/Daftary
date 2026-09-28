@@ -84,3 +84,25 @@ Run once per case, scripting the fake `AIService` to return the corresponding ou
 ---
 
 Passing all eleven scenarios is the acceptance bar for this feature per `spec.md`'s Success Criteria — `tasks.md` (Phase 2) breaks each into concrete unit/Cubit/widget/integration tasks.
+
+## Verification results (2026-09-24)
+
+Recorded for tasks.md T082/T083. No live provider and no real keychain were used anywhere.
+
+**Scenarios 1-9 — automated, passing.** `integration_test/ai_assistant_flows_test.dart` (14 tests) ran on the macOS desktop target (`fvm flutter test integration_test/ai_assistant_flows_test.dart -d macos`): real DI, real on-device SQLite and real tools/use cases, with `AIService` swapped for a scripted fake and `SecureCredentialStore` for an in-memory one. Scenario 3 runs once in English and once in Arabic; Scenario 9 runs once per failure case. Scenario 5's savings step is **skipped** because feature 011 (Savings) is not built and `getSavingsGoalStatus` does not exist. The same honest-decline guarantee is checked with `getPersonBalance` for a person who does not exist (`foundData: false`, no figures in the reply). Running the suite also found and fixed a real bug: `ChatPage` read `Localizations` inside `BlocProvider.create`, so the routed chat page threw on open. The widget tests had missed it because they pump `ChatView` directly; `test/widget/ai_chat_page_test.dart` now has a regression test.
+
+**Scenario 10 — Arabic/English parity.**
+- Verified automatically:
+  - Every one of the 88 `ai*` localization keys exists and is non-empty in both `app_en.arb` and `app_ar.arb`, with matching placeholders (`test/features/ai_assistant/presentation/l10n_parity_test.dart`).
+  - The same scripted category-spend question gives the identical `amountMinorUnits`-derived figure in both languages, equal to `GetCategoryBreakdown` (integration Scenario 3, en + ar).
+  - The system prompt tells the model to reply in the question's language (`system_prompt_builder_test.dart`).
+- **Needs manual testing on a device with a real API key:** whether a real model actually replies in the question's language, and gives the same figure for both phrasings. A scripted fake cannot show this.
+
+**Scenario 11 — RTL/LTR and theme.**
+- Verified automatically by widget tests:
+  - Chat bubbles follow reading direction: `ai_chat_widgets_test.dart`, `ai_chat_page_test.dart`.
+  - An Arabic conversation containing a failure banner renders mirrored with no layout exceptions in both light and dark themes (`ai_chat_page_test.dart`).
+  - The settings page in Arabic renders its setup form, custom-provider fields (kept LTR) and enabled summary without overflow in both themes (`ai_settings_page_test.dart`).
+  - Every failure-banner variant renders in both languages and both themes (`ai_chat_widgets_test.dart`).
+  - No hardcoded colors are used in the feature; only `ColorScheme`/`financeColors` tokens.
+- **Needs manual testing on a device:** switching language and theme *live* while a real conversation is open, and a visual check for truncation with long, real model answers on small phones.

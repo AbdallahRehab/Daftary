@@ -30,6 +30,7 @@ class TransactionFormPage extends StatelessWidget {
     this.personId,
     this.editingTransaction,
     this.editingPerson,
+    this.initialDirection,
   });
 
   /// When provided, the form opens pre-bound to this person (skipping the
@@ -40,6 +41,11 @@ class TransactionFormPage extends StatelessWidget {
   /// this transaction (T100 — US6).
   final MoneyTransaction? editingTransaction;
   final Person? editingPerson;
+
+  /// When provided (and not editing), the form opens with this direction
+  /// preselected — e.g. from Home's "Money received"/"Money given" quick
+  /// actions (012 FR-007).
+  final TransactionDirection? initialDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +60,8 @@ class TransactionFormPage extends StatelessWidget {
           // New records default to the primary currency (018 FR-003);
           // edits keep the record's own currency (set by loadForEdit).
           unawaited(cubit.loadDefaultCurrency());
+          final direction = initialDirection;
+          if (direction != null) cubit.directionChanged(direction);
           if (personId != null) {
             unawaited(cubit.initializeWithPerson(personId!));
           }

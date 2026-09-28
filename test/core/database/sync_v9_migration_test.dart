@@ -193,8 +193,8 @@ void main() {
       await db.customSelect('SELECT 1').get();
     });
 
-    test('reaches user_version 9', () {
-      expect(raw.select('PRAGMA user_version').single.values.single, 9);
+    test('reaches the latest user_version (10)', () {
+      expect(raw.select('PRAGMA user_version').single.values.single, 10);
     });
 
     test('every business column of every row is unchanged, except '
@@ -304,7 +304,7 @@ void main() {
     );
     await retry.customSelect('SELECT 1').get();
     await retry.close();
-    expect(raw.select('PRAGMA user_version').single.values.single, 9);
+    expect(raw.select('PRAGMA user_version').single.values.single, 10);
     expect(tablesOf(raw), containsAll(syncTables));
   });
 
@@ -386,8 +386,8 @@ void main() {
     });
     await db.customSelect('SELECT 1').get();
     expect(tablesOf(raw), containsAll(syncTables));
-    expect(raw.select('PRAGMA user_version').single.values.single, 9);
-    expect(db.schemaVersion, 9);
+    expect(raw.select('PRAGMA user_version').single.values.single, 10);
+    expect(db.schemaVersion, 10);
   });
 }
 

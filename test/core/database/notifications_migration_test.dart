@@ -78,11 +78,11 @@ void main() {
   });
 
   test(
-    'schemaVersion is 9 (017 bumped it to 6; 018 to 7; 020 to 8; 021 to 9)',
+    'schemaVersion is 10 (017 bumped it to 6; 018 to 7; 020 to 8; 021 to 9; the 008-014 merge to 10)',
     () {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
-      expect(db.schemaVersion, 9);
+      expect(db.schemaVersion, 10);
     },
   );
 }

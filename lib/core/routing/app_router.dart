@@ -9,6 +9,16 @@ import '../../features/insights_notifications/presentation/pages/notification_se
 import '../../features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../features/onboarding/presentation/cubit/onboarding_state.dart';
 import '../../features/onboarding/presentation/pages/onboarding_page.dart';
+import '../../features/ai_assistant/presentation/pages/ai_settings_page.dart';
+import '../../features/ai_assistant/presentation/pages/chat_page.dart';
+import '../../features/app_lock/presentation/pages/security_settings_page.dart';
+import '../../features/budgets/domain/entities/budget_month.dart';
+import '../../features/budgets/presentation/pages/budget_form_page.dart';
+import '../../features/budgets/presentation/pages/budget_month_page.dart';
+import '../../features/budgets/presentation/pages/budget_trend_page.dart';
+import '../../features/dashboard/presentation/pages/home_page.dart';
+import '../../features/data_privacy/presentation/pages/data_export_page.dart';
+import '../../features/data_privacy/presentation/pages/delete_data_confirmation_page.dart';
 import '../../features/finance/domain/entities/finance_entry_type.dart';
 import '../../features/finance/presentation/pages/category_form_page.dart';
 import '../../features/finance/presentation/pages/category_management_page.dart';
@@ -20,12 +30,23 @@ import '../../features/financial_education/presentation/pages/compound_growth_ca
 import '../../features/financial_education/presentation/pages/content_library_home_page.dart';
 import '../../features/financial_education/presentation/pages/doubling_time_calculator_page.dart';
 import '../../features/financial_education/presentation/pages/savings_rate_calculator_page.dart';
+import '../../features/finance/presentation/pages/reports_page.dart';
+import '../../features/occasions/presentation/pages/archived_occasions_page.dart';
+import '../../features/occasions/presentation/pages/occasion_detail_page.dart';
+import '../../features/occasions/presentation/pages/occasion_form_page.dart';
+import '../../features/occasions/presentation/pages/occasions_list_page.dart';
+import '../../features/occasions/presentation/pages/participant_form_page.dart';
+import '../../features/ocr/presentation/pages/image_prep_page.dart';
+import '../../features/ocr/presentation/pages/scan_capture_page.dart';
+import '../../features/ocr/presentation/pages/scan_detail_page.dart';
+import '../../features/ocr/presentation/pages/scan_history_page.dart';
+import '../../features/ocr/presentation/pages/scan_review_page.dart';
 import '../../features/people/presentation/pages/archived_people_page.dart';
 import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
 import '../../features/people/presentation/pages/person_form_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
-import '../../features/transactions/presentation/pages/overview_page.dart';
+import '../../features/transactions/domain/entities/money_transaction.dart';
 import '../../features/transactions/presentation/pages/person_detail_page.dart';
 import '../../features/transactions/presentation/pages/repayment_form_page.dart';
 import '../../features/transactions/presentation/pages/transaction_edit_page.dart';
@@ -106,6 +127,9 @@ final GoRouter appRouter = GoRouter(
               path: '/transactions/new',
               builder: (context, state) => TransactionFormPage(
                 personId: state.uri.queryParameters['personId'],
+                initialDirection: _transactionDirectionFrom(
+                  state.uri.queryParameters['direction'],
+                ),
               ),
             ),
             GoRoute(
@@ -131,6 +155,10 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/finance',
               builder: (context, state) => const FinanceHistoryPage(),
+            ),
+            GoRoute(
+              path: '/finance/reports',
+              builder: (context, state) => const ReportsPage(),
             ),
             GoRoute(
               path: '/finance/entries/new',
@@ -167,6 +195,137 @@ final GoRouter appRouter = GoRouter(
                 editingCategoryId: state.pathParameters['id']!,
               ),
             ),
+            // Occasions share the People branch for the same reason
+            // finance does (research.md Decision 9): the section is reached
+            // from People and the Overview rather than from a fourth
+            // bottom-nav tab. The static `/occasions/...` paths are
+            // declared before `/occasions/:id` so `new` and `archived` are
+            // never captured as an occasion id.
+            GoRoute(
+              path: '/occasions',
+              builder: (context, state) => const OccasionsListPage(),
+            ),
+            GoRoute(
+              path: '/occasions/new',
+              builder: (context, state) => const OccasionFormPage(),
+            ),
+            GoRoute(
+              path: '/occasions/archived',
+              builder: (context, state) => const ArchivedOccasionsPage(),
+            ),
+            GoRoute(
+              path: '/occasions/:id/edit',
+              builder: (context, state) => OccasionFormPage(
+                editingOccasionId: state.pathParameters['id']!,
+              ),
+            ),
+            GoRoute(
+              path: '/occasions/:id/participants/new',
+              builder: (context, state) =>
+                  ParticipantFormPage(occasionId: state.pathParameters['id']!),
+            ),
+            GoRoute(
+              path: '/occasions/:id/participants/:transactionId/edit',
+              builder: (context, state) => ParticipantFormPage(
+                occasionId: state.pathParameters['id']!,
+                editingTransactionId: state.pathParameters['transactionId']!,
+              ),
+            ),
+            GoRoute(
+              path: '/occasions/:id',
+              builder: (context, state) =>
+                  OccasionDetailPage(occasionId: state.pathParameters['id']!),
+            ),
+            // Budgets live in the People branch for the same reason finance
+            // does (research.md Decision 9): reached from the Overview, not
+            // from a bottom-nav tab of their own. Static `/budgets/...`
+            // paths (e.g. US5's `/budgets/trend`) MUST be declared above
+            // `/budgets/:month` so a literal segment is never captured as a
+            // month.
+            GoRoute(
+              path: '/budgets',
+              redirect: (context, state) => '/budgets/${BudgetMonth.current()}',
+            ),
+            // `?month=YYYY-MM` anchors the trend window's last month to
+            // the month page it was opened from; absent, it ends today.
+            GoRoute(
+              path: '/budgets/trend',
+              builder: (context, state) {
+                final month = state.uri.queryParameters['month'];
+                return BudgetTrendPage(
+                  endMonth: month != null && BudgetMonth.isValid(month)
+                      ? month
+                      : null,
+                );
+              },
+            ),
+            GoRoute(
+              path: '/budgets/:month',
+              builder: (context, state) => BudgetMonthPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
+            // `new` and `edit` open the same form: it switches itself into
+            // edit mode when the month already has a budget, so neither
+            // path can ever produce a second budget for one month.
+            GoRoute(
+              path: '/budgets/:month/new',
+              builder: (context, state) => BudgetFormPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
+            GoRoute(
+              path: '/budgets/:month/edit',
+              builder: (context, state) => BudgetFormPage(
+                month: _budgetMonthFrom(state.pathParameters['month']),
+              ),
+            ),
+            // The scan flow lives in the People branch for the same reason
+            // finance and occasions do (research.md Decision 9): it is
+            // reached from the quick actions and from People, not from a
+            // bottom-nav tab of its own. As with occasions, the static
+            // `/ocr/...` paths are declared before `/ocr/history/:scanId`
+            // so no literal segment is ever captured as a scan id.
+            GoRoute(
+              path: '/ocr/scan',
+              builder: (context, state) => const ScanCapturePage(),
+            ),
+            GoRoute(
+              path: '/ocr/scan/prepare',
+              // The capture step hands the picked image's path along as
+              // `extra` rather than in the URL: it is a private sandbox
+              // path, which has no business being in a shareable location.
+              builder: (context, state) =>
+                  ImagePrepPage(imagePath: state.extra! as String),
+            ),
+            GoRoute(
+              path: '/ocr/scan/review',
+              builder: (context, state) =>
+                  ScanReviewPage(scanId: state.uri.queryParameters['scanId']!),
+            ),
+            GoRoute(
+              path: '/ocr/history',
+              builder: (context, state) => const ScanHistoryPage(),
+            ),
+            GoRoute(
+              path: '/ocr/history/:scanId',
+              builder: (context, state) =>
+                  ScanDetailPage(scanId: state.pathParameters['scanId']!),
+            ),
+            // The AI assistant (014) lives in the People branch for the same
+            // reason finance, occasions and budgets do (research.md
+            // Decision 9): it is reached from Home's section entry points,
+            // not from a bottom-nav tab of its own. Home opens the chat,
+            // which shows its disabled state (linking to settings) until
+            // the assistant is set up (FR-001).
+            GoRoute(
+              path: ChatPage.location,
+              builder: (context, state) => const ChatPage(),
+            ),
+            GoRoute(
+              path: AISettingsPage.location,
+              builder: (context, state) => const AISettingsPage(),
+            ),
           ],
         ),
         StatefulShellBranch(
@@ -174,7 +333,7 @@ final GoRouter appRouter = GoRouter(
           routes: [
             GoRoute(
               path: '/overview',
-              builder: (context, state) => const OverviewPage(),
+              builder: (context, state) => const HomePage(),
             ),
           ],
         ),
@@ -254,6 +413,28 @@ final GoRouter appRouter = GoRouter(
                 articleId: state.pathParameters['articleId']!,
               ),
             ),
+            GoRoute(
+              path: '/settings/export',
+              builder: (context, state) => const DataExportPage(),
+            ),
+            // The AI assistant's setup, also reachable from Settings so it
+            // is found where people look for it; the same page as the
+            // People-branch route the chat links to (014).
+            GoRoute(
+              path: '/settings/ai-assistant',
+              builder: (context, state) => const AISettingsPage(),
+            ),
+            // 015 User Story 6. Only the settings screen is a route: the
+            // lock screen and PIN setup are overlays/pushed pages, never
+            // deep-linkable (research.md Decision 5).
+            GoRoute(
+              path: '/settings/security',
+              builder: (context, state) => const SecuritySettingsPage(),
+            ),
+            GoRoute(
+              path: '/settings/delete-data',
+              builder: (context, state) => const DeleteDataConfirmationPage(),
+            ),
           ],
         ),
       ],
@@ -267,3 +448,19 @@ final GoRouter appRouter = GoRouter(
 /// form, not fail.
 FinanceEntryType _financeEntryTypeFrom(String? value) =>
     value == 'income' ? FinanceEntryType.income : FinanceEntryType.expense;
+
+/// Resolves a `direction` query parameter (e.g. from a Home quick action,
+/// 012) to a preset [TransactionDirection]. Anything unrecognized yields
+/// `null`, leaving the form on its own default.
+TransactionDirection? _transactionDirectionFrom(String? value) =>
+    switch (value) {
+      'given' => TransactionDirection.given,
+      'received' => TransactionDirection.received,
+      _ => null,
+    };
+
+/// Resolves a `:month` path segment to a `'YYYY-MM'` budget month. A
+/// malformed segment falls back to the current month — a bad URL should
+/// open a usable budget screen, not throw inside a month parser.
+String _budgetMonthFrom(String? value) =>
+    value != null && BudgetMonth.isValid(value) ? value : BudgetMonth.current();

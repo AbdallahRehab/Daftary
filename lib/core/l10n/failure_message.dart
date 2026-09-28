@@ -23,6 +23,9 @@ extension FailureMessage on AppLocalizations {
       EmailAuthErrorReason.accountNotFound => syncEmailErrorAccountNotFound,
       EmailAuthErrorReason.rateLimited => syncEmailErrorRateLimited,
     },
+    RatesMissingFailure(:final missingRatesFor) => rateNeededMessage(
+      missingRatesFor.map((c) => c.code).join(', '),
+    ),
     _ => errorUnknown,
   };
 }

@@ -16,5 +16,10 @@ import UserNotifications
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    // 015: in-app screenshot/recording protection plugin (research.md
+    // Decision 1) — not a pub package, so registered by hand.
+    if let registrar = engineBridge.pluginRegistry.registrar(forPlugin: "SecurityPlugin") {
+      SecurityPlugin.register(with: registrar)
+    }
   }
 }

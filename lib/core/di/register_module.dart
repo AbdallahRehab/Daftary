@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,6 +23,8 @@ import '../sync/remote/supabase_initializer.dart';
 import '../sync/sync_bootstrap.dart';
 import '../sync/sync_logger.dart';
 import '../sync/sync_mapper_registry.dart';
+import '../../features/budgets/data/sync/budget_sync_mapper.dart';
+import '../../features/occasions/data/sync/occasion_sync_mapper.dart';
 
 /// Registers third-party/leaf dependencies that aren't themselves annotated
 /// with `@injectable` (research.md Decision 11: the DB file lives in the
@@ -75,7 +78,9 @@ abstract class RegisterModule {
   Connectivity get connectivity => Connectivity();
 
   /// 021: Keychain/Keystore-backed storage for the cloud session
-  /// (constitution XII). `SupabaseClient` itself is registered later, and
+  /// (constitution XII), shared with 014's API key and 015's PIN hash —
+  /// each feature namespaces its own keys and reaches storage only through
+  /// its own data source. `SupabaseClient` itself is registered later, and
   /// only once Supabase is initialized (T061).
   ///
   /// iOS: `first_unlock_this_device` keeps the session out of iCloud/iTunes
@@ -111,6 +116,9 @@ abstract class RegisterModule {
     ExchangeRateSyncMapper exchangeRate,
     PrimaryCurrencySyncMapper primaryCurrency,
     ConflictResolutionSyncMapper conflictResolution,
+    OccasionSyncMapper occasion,
+    BudgetSyncMapper budget,
+    BudgetAllocationSyncMapper budgetAllocation,
   ) => SyncMapperRegistry([
     person,
     moneyTransaction,
@@ -120,5 +128,11 @@ abstract class RegisterModule {
     exchangeRate,
     primaryCurrency,
     conflictResolution,
+    occasion,
+    budget,
+    budgetAllocation,
   ]);
+
+  @lazySingleton
+  ImagePicker get imagePicker => ImagePicker();
 }

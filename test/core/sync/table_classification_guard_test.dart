@@ -17,6 +17,9 @@ TableInfo<Table, Object?> _tableOf(AppDatabase db, SyncEntityType type) =>
       SyncEntityType.exchangeRate => db.exchangeRates,
       SyncEntityType.primaryCurrency => db.primaryCurrencySettings,
       SyncEntityType.conflictResolution => db.conflictResolutions,
+      SyncEntityType.occasion => db.occasions,
+      SyncEntityType.budget => db.budgets,
+      SyncEntityType.budgetAllocation => db.budgetCategoryAllocations,
     };
 
 /// Whether [mapper] maps the rows of [table] (its row type is the table's
@@ -83,6 +86,18 @@ void main() {
         db.conflictResolutions,
         registry.mapperFor(SyncEntityType.conflictResolution),
       ),
+      SyncEntityType.occasion: _mapsRowsOf(
+        db.occasions,
+        registry.mapperFor(SyncEntityType.occasion),
+      ),
+      SyncEntityType.budget: _mapsRowsOf(
+        db.budgets,
+        registry.mapperFor(SyncEntityType.budget),
+      ),
+      SyncEntityType.budgetAllocation: _mapsRowsOf(
+        db.budgetCategoryAllocations,
+        registry.mapperFor(SyncEntityType.budgetAllocation),
+      ),
     };
     expect(checks.keys.toSet(), SyncEntityType.values.toSet());
     for (final MapEntry(key: type, value: maps) in checks.entries) {
@@ -117,12 +132,19 @@ void main() {
     expect(syncedTables().difference(existing), isEmpty);
   });
 
-  test('the local-only list is the device settings and the sync tables', () {
+  test('the local-only list is the device settings, the device-file and AI '
+      'tables, and the sync tables', () {
     expect(localOnlyTables, {
       'app_settings',
       'onboarding_status',
       'notification_preferences',
       'notification_history',
+      'occasion_attachments',
+      'ocr_scans',
+      'candidate_entries',
+      'ai_conversations',
+      'ai_messages',
+      'ai_settings',
       'sync_outbox',
       'sync_record_meta',
       'sync_conflicts',

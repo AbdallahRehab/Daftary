@@ -8,25 +8,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  MoneyTransaction buildTransaction({required TransactionDirection direction}) {
+  MoneyTransaction buildTransaction({
+    required TransactionDirection direction,
+    TransactionKind kind = TransactionKind.initialExchange,
+    String? occasionId,
+  }) {
     return MoneyTransaction(
       id: 't1',
       idempotencyKey: 'k1',
       personId: 'p1',
       amount: const Money.egp(1000),
       direction: direction,
-      kind: TransactionKind.initialExchange,
+      kind: kind,
       date: DateTime(2026, 1, 1),
       createdAt: DateTime(2026, 1, 1),
+      occasionId: occasionId,
     );
   }
 
-  Widget wrap(ThemeData theme, MoneyTransaction transaction) {
+  Widget wrap(
+    ThemeData theme,
+    MoneyTransaction transaction, {
+    String? occasionName,
+  }) {
     return MaterialApp(
       theme: theme,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(body: TransactionListTile(transaction: transaction)),
+      home: Scaffold(
+        body: TransactionListTile(
+          transaction: transaction,
+          occasionName: occasionName,
+        ),
+      ),
     );
   }
 
@@ -62,6 +76,83 @@ void main() {
           );
 
           expect(find.byIcon(Icons.arrow_downward), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'an occasion contribution shows the occasion name and not the '
+        'repayment label (008 US2 Acceptance Scenario 4)',
+        (tester) async {
+          await tester.pumpWidget(
+            wrap(
+              theme.value,
+              buildTransaction(
+                direction: TransactionDirection.received,
+                kind: TransactionKind.occasionContribution,
+                occasionId: 'o1',
+              ),
+              occasionName: "Ahmed's wedding",
+            ),
+          );
+
+          final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+          expect(find.text("Ahmed's wedding"), findsOneWidget);
+          expect(find.text(l10n.repaymentLabel), findsNothing);
+        },
+      );
+
+      testWidgets('a repayment keeps its own label and shows no occasion '
+          'name', (tester) async {
+        await tester.pumpWidget(
+          wrap(
+            theme.value,
+            buildTransaction(
+              direction: TransactionDirection.received,
+              kind: TransactionKind.repayment,
+            ),
+            occasionName: "Ahmed's wedding",
+          ),
+        );
+
+        final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+        expect(find.text(l10n.repaymentLabel), findsOneWidget);
+        expect(find.text("Ahmed's wedding"), findsNothing);
+      });
+
+      testWidgets(
+        'an ordinary transaction never renders an occasion name, even if one '
+        'is supplied',
+        (tester) async {
+          await tester.pumpWidget(
+            wrap(
+              theme.value,
+              buildTransaction(direction: TransactionDirection.given),
+              occasionName: "Ahmed's wedding",
+            ),
+          );
+
+          expect(find.text("Ahmed's wedding"), findsNothing);
+        },
+      );
+
+      testWidgets(
+        'a contribution whose occasion name is unresolved renders no badge '
+        'rather than an empty one',
+        (tester) async {
+          await tester.pumpWidget(
+            wrap(
+              theme.value,
+              buildTransaction(
+                direction: TransactionDirection.received,
+                kind: TransactionKind.occasionContribution,
+                occasionId: 'o1',
+              ),
+            ),
+          );
+
+          final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+          expect(find.text(l10n.directionReceived), findsOneWidget);
+          expect(find.text(''), findsNothing);
         },
       );
     });

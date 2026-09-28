@@ -182,5 +182,8 @@ class SyncBootstrap {
     SyncEntityType.exchangeRate => db.exchangeRates,
     SyncEntityType.primaryCurrency => db.primaryCurrencySettings,
     SyncEntityType.conflictResolution => db.conflictResolutions,
+    SyncEntityType.occasion => db.occasions,
+    SyncEntityType.budget => db.budgets,
+    SyncEntityType.budgetAllocation => db.budgetCategoryAllocations,
   };
 }

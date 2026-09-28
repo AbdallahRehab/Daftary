@@ -51,10 +51,9 @@ class BudgetCategorySnapshot extends Equatable {
 /// Read-only port onto 010 Household Budgets' published repository
 /// contract (specs/010-household-budgets/contracts/budgets_repository.md).
 ///
-/// Declared here rather than importing 010 because 010 is specified but not
-/// yet implemented in code; once it ships, an adapter over its
-/// `BudgetRepository` replaces `UnavailableBudgetInsightsSource` and nothing
-/// in this feature's Domain layer changes.
+/// Declared here rather than importing 010, so this feature's Domain layer
+/// stays independent of it; `BudgetsInsightsSource` is the adapter over
+/// 010's `BudgetsRepository`.
 abstract class BudgetInsightsSource {
   /// Every budgeted category of the current month's budget, or an empty
   /// list when no budget exists for the current month.

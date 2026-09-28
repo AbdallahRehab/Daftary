@@ -9,6 +9,7 @@ import 'package:daftary/features/finance/domain/repositories/finance_repository.
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 /// 021: a stand-in for the database's table-change notifications in tests
@@ -105,6 +106,18 @@ void stubTransactionsWatches(
   when(
     repository.watchOverview,
   ).thenAnswer((_) => changes.signal().reRead(repository.getOverview));
+  // 008: most flows have no occasion contributions, so "no names" is the
+  // default; a test that cares stubs `getOccasionNamesForPerson` after this.
+  when(
+    () => repository.getOccasionNamesForPerson(any()),
+  ).thenAnswer((_) async => const Right({}));
+  when(() => repository.watchOccasionNamesForPerson(any())).thenAnswer(
+    (invocation) => changes.signal().reRead(
+      () => repository.getOccasionNamesForPerson(
+        invocation.positionalArguments.first as String,
+      ),
+    ),
+  );
 }
 
 /// Answers `watchHistory`/`watchSummaryTotals` by re-running the test's

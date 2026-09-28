@@ -30,9 +30,12 @@ class DriftCurrencyUsageChecker implements CurrencyUsageChecker {
             'WHERE currency_code = ?1 AND deleted_at IS NULL) '
             'OR EXISTS (SELECT 1 FROM finance_entries '
             'WHERE currency_code = ?1 AND deleted_at IS NULL) '
+            // 010: an active budget is planned in its currency.
+            'OR EXISTS (SELECT 1 FROM budgets '
+            'WHERE currency_code = ?1 AND deleted_at IS NULL) '
             'AS in_use',
             variables: [Variable.withString(currencyCode)],
-            readsFrom: {_db.moneyTransactions, _db.financeEntries},
+            readsFrom: {_db.moneyTransactions, _db.financeEntries, _db.budgets},
           )
           .getSingle();
       return Right(row.read<int>('in_use') != 0);

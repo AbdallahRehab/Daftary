@@ -12,11 +12,13 @@ import 'package:daftary/core/sync/sync_engine.dart';
 import 'package:daftary/core/sync/sync_entity_type.dart';
 import 'package:daftary/core/sync/sync_logger.dart';
 import 'package:daftary/core/sync/sync_mapper_registry.dart';
+import 'package:daftary/features/budgets/data/sync/budget_sync_mapper.dart';
 import 'package:daftary/features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart';
 import 'package:daftary/features/currency/data/sync/exchange_rate_sync_mapper.dart';
 import 'package:daftary/features/currency/data/sync/primary_currency_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dart';
+import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/money_transaction_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/transaction_audit_sync_mapper.dart';
@@ -38,6 +40,9 @@ SyncMapperRegistry realMapperRegistry() => SyncMapperRegistry(const [
   ExchangeRateSyncMapper(),
   PrimaryCurrencySyncMapper(),
   ConflictResolutionSyncMapper(),
+  OccasionSyncMapper(),
+  BudgetSyncMapper(),
+  BudgetAllocationSyncMapper(),
 ]);
 
 /// The real applier, with the app's mappers and pristine-seed rule.

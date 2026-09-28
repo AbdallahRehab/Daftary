@@ -11,7 +11,11 @@ import 'core/di/injection.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/routing/app_router.dart';
 import 'core/routing/notification_tap_router.dart';
+import 'core/security/app_lifecycle_observer.dart';
+import 'core/security/app_lock_gate.dart';
+import 'core/security/screenshot_protection_service.dart';
 import 'core/sync/sync_scheduler.dart';
+import 'features/app_lock/presentation/pages/lock_screen_page.dart';
 import 'features/insights_notifications/presentation/notification_recompute_trigger.dart';
 import 'features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'features/settings/domain/entities/app_theme_mode.dart';
@@ -27,6 +31,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Registration only — no I/O (research.md Decision 1).
   await configureDependencies();
+  // 015 FR-020/FR-021 (T065): screenshot/recording protection is always on,
+  // independent of whether App Lock is ever enabled, and on before App
+  // Lock's state is read at all — that read is a startup step below. One
+  // non-throwing platform call, so awaiting it costs the splash nothing.
+  await getIt<ScreenshotProtectionService>().enable();
   // Startup I/O (saved language/theme, onboarding gate) runs behind the
   // splash instead of before the first frame (019, FR-011). AppStartupGate
   // mounts the router only once it is ready, so appRouter's redirect still
@@ -125,7 +134,16 @@ class DaftaryApp extends StatelessWidget {
                         selector: (state) => state.glassAppearance,
                         builder: (context, appearance) => AppGlassScope(
                           style: toAppGlassStyle(appearance),
-                          child: AppStartupGate(child: child!),
+                          child: AppStartupGate(
+                            // 015 research.md Decision 5: the single
+                            // app-wide lock gate, above the router's
+                            // Navigator so no route can bypass it.
+                            child: AppLockGate(
+                              observer: getIt<AppLifecycleObserver>(),
+                              lockScreenBuilder: (_) => const LockScreenPage(),
+                              child: child!,
+                            ),
+                          ),
                         ),
                       ),
                 );

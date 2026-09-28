@@ -67,7 +67,7 @@ class _PersonDetailView extends StatelessWidget {
         // can in principle be reached with nothing to pop back to, so the
         // fallback keeps a user from being stranded. When something IS
         // poppable (e.g. reached by tapping a row in `PeopleListPage`/
-        // `OverviewPage`), the default back button still applies so "back"
+        // `HomePage`), the default back button still applies so "back"
         // returns to that originating screen.
         leading: Navigator.canPop(context)
             ? null
@@ -244,6 +244,8 @@ class _PersonDetailView extends StatelessWidget {
                         builder: (context, conflict) => TransactionListTile(
                           transaction: transaction,
                           primaryCurrency: state.primaryCurrency,
+                          occasionName:
+                              state.occasionNames[transaction.occasionId],
                           onTap: () =>
                               _editTransaction(context, transaction, person),
                           onDelete: () =>

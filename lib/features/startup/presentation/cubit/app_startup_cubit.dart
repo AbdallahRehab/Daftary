@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/security/app_lifecycle_observer.dart';
 import '../../../onboarding/presentation/cubit/onboarding_cubit.dart';
 import '../../../settings/presentation/cubit/settings_cubit.dart';
 import 'app_startup_state.dart';
@@ -17,13 +18,18 @@ import 'app_startup_state.dart';
 class AppStartupCubit extends Cubit<AppStartupState> {
   AppStartupCubit(
     this._settings,
-    this._onboarding, {
+    this._onboarding,
+    this._appLock, {
     @ignoreParam Duration timeout = const Duration(seconds: 10),
   }) : _timeout = timeout,
        super(const AppStartupState());
 
   final SettingsCubit _settings;
   final OnboardingCubit _onboarding;
+
+  /// 015: resolves the cold-launch lock before hand-off, so the first routed
+  /// frame is already behind the lock screen when App Lock is enabled.
+  final AppLifecycleObserver _appLock;
 
   /// Budget per `start`/`retry` attempt (FR-015). A constructor parameter
   /// rather than a constant so tests can use a short budget.
@@ -39,6 +45,7 @@ class AppStartupCubit extends Cubit<AppStartupState> {
   /// the same I/O a second time (FR-016).
   Future<void>? _settingsStep;
   Future<void>? _onboardingStep;
+  Future<void>? _appLockStep;
 
   /// Incremented per attempt. A timed-out attempt keeps running in the
   /// background (its steps can't be cancelled), so only the current attempt
@@ -106,6 +113,15 @@ class AppStartupCubit extends Cubit<AppStartupState> {
       StackTrace s,
     ) {
       _onboardingStep = null;
+      Error.throwWithStackTrace(e, s);
+    }));
+    if (!_isCurrent(attemptId)) return;
+
+    await (_appLockStep ??= _appLock.initialize().catchError((
+      Object e,
+      StackTrace s,
+    ) {
+      _appLockStep = null;
       Error.throwWithStackTrace(e, s);
     }));
     if (!_isCurrent(attemptId)) return;

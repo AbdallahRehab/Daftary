@@ -43,7 +43,7 @@ class MainShell extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final destinations = [
       (Icons.people_outline, Icons.people, l10n.peopleListTitle),
-      (Icons.pie_chart_outline, Icons.pie_chart, l10n.overviewTitle),
+      (Icons.pie_chart_outline, Icons.pie_chart, l10n.homeTitle),
       (Icons.settings_outlined, Icons.settings, l10n.settingsTitle),
     ];
 

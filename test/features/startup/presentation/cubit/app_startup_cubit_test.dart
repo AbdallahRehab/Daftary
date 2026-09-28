@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
+import 'package:daftary/core/security/app_lifecycle_observer.dart';
 import 'package:daftary/features/onboarding/presentation/cubit/onboarding_cubit.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
@@ -11,6 +12,8 @@ import 'package:mocktail/mocktail.dart';
 class _MockSettingsCubit extends Mock implements SettingsCubit {}
 
 class _MockOnboardingCubit extends Mock implements OnboardingCubit {}
+
+class _MockAppLifecycleObserver extends Mock implements AppLifecycleObserver {}
 
 const _budget = Duration(milliseconds: 50);
 
@@ -27,16 +30,19 @@ const _ready = AppStartupState(
 void main() {
   late _MockSettingsCubit settings;
   late _MockOnboardingCubit onboarding;
+  late _MockAppLifecycleObserver appLock;
 
   setUp(() {
     settings = _MockSettingsCubit();
     onboarding = _MockOnboardingCubit();
+    appLock = _MockAppLifecycleObserver();
+    when(() => appLock.initialize()).thenAnswer((_) async {});
     when(() => settings.initialize()).thenAnswer((_) async {});
     when(() => onboarding.initialize()).thenAnswer((_) async {});
   });
 
   AppStartupCubit buildCubit() =>
-      AppStartupCubit(settings, onboarding, timeout: _budget);
+      AppStartupCubit(settings, onboarding, appLock, timeout: _budget);
 
   test('initial state is idle with nothing resolved', () {
     expect(buildCubit().state, const AppStartupState());
@@ -299,6 +305,42 @@ void main() {
       await cubit.close();
       await expectLater(whenReady, completes);
       expect(cubit.state.isReady, isFalse);
+    });
+  });
+
+  group('G9 App Lock (015)', () {
+    test('is not ready until the cold-launch lock state is resolved, so the '
+        'router never mounts ahead of the lock screen', () async {
+      final lockResolved = Completer<void>();
+      when(() => appLock.initialize()).thenAnswer((_) => lockResolved.future);
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+
+      unawaited(cubit.start());
+      await Future<void>.delayed(Duration.zero);
+      expect(cubit.state.isReady, isFalse);
+
+      lockResolved.complete();
+      await cubit.whenReady;
+      expect(cubit.state.isReady, isTrue);
+      verify(() => appLock.initialize()).called(1);
+    });
+
+    test('a failed lock read fails startup (fail closed), and retry runs it '
+        'again', () async {
+      var calls = 0;
+      when(() => appLock.initialize()).thenAnswer((_) async {
+        if (calls++ == 0) throw StateError('keychain unavailable');
+      });
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+
+      await cubit.start();
+      expect(cubit.state.isFailed, isTrue);
+
+      await cubit.retry();
+      expect(cubit.state.isReady, isTrue);
+      verify(() => appLock.initialize()).called(2);
     });
   });
 }

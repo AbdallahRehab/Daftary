@@ -64,6 +64,7 @@ void main() {
           WatchPersonHistory(transactions),
           DeleteTransaction(transactions),
           WatchPrimaryCurrency(currency),
+          transactions,
         ),
       )
       ..registerFactory<SyncConflictsCubit>(

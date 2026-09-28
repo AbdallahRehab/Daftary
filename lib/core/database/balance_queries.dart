@@ -11,6 +11,13 @@ import 'app_database.dart';
 /// per currency; converting those into the primary currency is the job of
 /// `CurrencyConverter` in the Domain layer (FR-008/FR-009/FR-017), which
 /// never falls back to a 1:1 rate.
+///
+/// The aggregates additionally skip occasion contributions flagged as
+/// non-counting (008 FR-018): condolence money is a social gesture, not a
+/// reciprocal debt, so recording it must never make someone look like they
+/// owe you. The flag is stored per row, so the predicate is a pure filter —
+/// every other row is summed by the identical 001 formula, which is the
+/// 008 FR-023 no-regression guarantee.
 extension BalanceQueries on AppDatabase {
   /// Net balance for [personId] per currency code, e.g.
   /// `{'EGP': 150000, 'USD': -2000}`. A currency absent from the map has a
@@ -28,6 +35,7 @@ extension BalanceQueries on AppDatabase {
         AS net
       FROM money_transactions
       WHERE person_id = ? AND deleted_at IS NULL
+        AND (kind != 'occasionContribution' OR counts_toward_balance = 1)
       GROUP BY currency_code
       ORDER BY currency_code
       ''',
@@ -56,6 +64,7 @@ extension BalanceQueries on AppDatabase {
         AS net
       FROM money_transactions
       WHERE deleted_at IS NULL
+        AND (kind != 'occasionContribution' OR counts_toward_balance = 1)
       GROUP BY person_id, currency_code
       ORDER BY person_id, currency_code
       ''',

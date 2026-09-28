@@ -329,6 +329,9 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
         SyncEntityType.exchangeRate => SyncItemKind.exchangeRate,
         SyncEntityType.primaryCurrency => SyncItemKind.primaryCurrency,
         SyncEntityType.conflictResolution => SyncItemKind.conflictResolution,
+        SyncEntityType.occasion => SyncItemKind.occasion,
+        SyncEntityType.budget => SyncItemKind.budget,
+        SyncEntityType.budgetAllocation => SyncItemKind.budgetAllocation,
       },
   };
 

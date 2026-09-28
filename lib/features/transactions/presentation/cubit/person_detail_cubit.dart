@@ -11,6 +11,7 @@ import '../../../people/domain/entities/person.dart';
 import '../../../people/domain/usecases/watch_person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
+import '../../domain/repositories/transactions_repository.dart';
 import '../../domain/usecases/delete_transaction.dart';
 import '../../domain/usecases/watch_person_balance.dart';
 import '../../domain/usecases/watch_person_history.dart';
@@ -19,7 +20,8 @@ import 'person_detail_state.dart';
 /// A person's balance + full history together (US2).
 ///
 /// 021: every part of the page is a live subscription — the person, their
-/// balance, their history and the primary currency — so adding, editing or
+/// balance, their history, the occasion names labelling it (008) and the
+/// primary currency — so adding, editing or
 /// deleting a transaction (here, on another screen, or through sync)
 /// updates the page with no refresh (FR-014, FR-031). All subscriptions are
 /// cancelled in [close].
@@ -31,6 +33,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     this._watchPersonHistory,
     this._deleteTransaction,
     this._watchPrimaryCurrency,
+    this._transactionsRepository,
   ) : super(const PersonDetailState());
 
   final WatchPerson _watchPerson;
@@ -38,6 +41,11 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
   final WatchPersonHistory _watchPersonHistory;
   final DeleteTransaction _deleteTransaction;
   final WatchPrimaryCurrency _watchPrimaryCurrency;
+
+  /// Read directly rather than through a use case: occasion names are a
+  /// pure labelling detail of the history already fetched, carrying no
+  /// business rule of their own.
+  final TransactionsRepository _transactionsRepository;
 
   String? _personId;
   final _subscriptions = <StreamSubscription<void>>[];
@@ -47,6 +55,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
   Either<Failure, PersonBalance>? _balance;
   Either<Failure, List<MoneyTransaction>>? _history;
   Either<Failure, PrimaryCurrencySetting>? _primary;
+  Either<Failure, Map<String, String>>? _occasionNames;
 
   /// Subscribes to everything the page shows for [personId], replacing any
   /// earlier subscription. The returned future completes once the first
@@ -58,6 +67,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     _balance = null;
     _history = null;
     _primary = null;
+    _occasionNames = null;
     emit(state.copyWith(status: PersonDetailStatus.loading));
 
     final firstResult = _firstResult = Completer<void>();
@@ -74,6 +84,9 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
       _watchPrimaryCurrency().listen(
         (result) => _update(() => _primary = result),
       ),
+      _transactionsRepository
+          .watchOccasionNamesForPerson(personId)
+          .listen((result) => _update(() => _occasionNames = result)),
     ]);
     return firstResult.future;
   }
@@ -93,10 +106,12 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     final balance = _balance;
     final history = _history;
     final primary = _primary;
+    final occasionNames = _occasionNames;
     if (person == null ||
         balance == null ||
         history == null ||
-        primary == null) {
+        primary == null ||
+        occasionNames == null) {
       return;
     }
 
@@ -122,6 +137,10 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
             (_) => state.primaryCurrency,
             (setting) => setting.currency,
           ),
+          // A missing name is a label, not a balance: the history stays
+          // readable without it, so a failure here degrades to no badge
+          // rather than failing the whole screen.
+          occasionNames: occasionNames.getOrElse((_) => const {}),
         ),
       );
     }

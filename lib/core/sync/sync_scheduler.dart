@@ -60,6 +60,11 @@ class SyncScheduler {
   bool _rerunRequested = false;
   SyncTrigger? _rerunTrigger;
 
+  /// While positive, [runExclusive] holds new cycles off; the first request
+  /// made meanwhile is replayed once afterwards.
+  int _exclusive = 0;
+  SyncTrigger? _heldTrigger;
+
   /// No automatic request runs before this instant (persisted backoff).
   DateTime? _backoffUntil;
   Timer? _backoffTimer;
@@ -114,6 +119,10 @@ class SyncScheduler {
   /// number of requests during a cycle produce one follow-up.
   void request(SyncTrigger trigger) {
     if (!_started || _disposed) return;
+    if (_exclusive > 0) {
+      _heldTrigger ??= trigger;
+      return;
+    }
     if (_running != null) {
       _rerunRequested = true;
       // A manual request keeps its right to skip a backoff delay.
@@ -127,6 +136,31 @@ class SyncScheduler {
 
   /// Completes when the current cycle (and its follow-up) has finished.
   Future<void> get idle => _running ?? Future.value();
+
+  /// Runs [action] with no cycle in flight and none able to start: waits
+  /// for the current cycle to finish first. For a device wipe (013/015),
+  /// which must never interleave with an upload or a download. With
+  /// [resetBackoff], a backoff remembered from before [action] is dropped
+  /// too — after a wipe it belonged to data and a session that are gone.
+  Future<T> runExclusive<T>(
+    Future<T> Function() action, {
+    bool resetBackoff = false,
+  }) async {
+    _exclusive++;
+    try {
+      await idle;
+      final result = await action();
+      if (resetBackoff) _clearBackoff();
+      return result;
+    } finally {
+      _exclusive--;
+      final held = _heldTrigger;
+      if (_exclusive == 0 && held != null) {
+        _heldTrigger = null;
+        request(held);
+      }
+    }
+  }
 
   /// Applies the sync switch (FR-041): persists it, then stops or restarts
   /// the token refresh, so no request leaves the device while it is off.

@@ -56,6 +56,8 @@ const _hardDeleted = {
   SyncEntityType.person,
   SyncEntityType.financeCategory,
   SyncEntityType.exchangeRate,
+  // 022: removed outright in the app (010 research.md Decision 5).
+  SyncEntityType.budgetAllocation,
 };
 
 class DriftSyncApplier implements SyncApplier {
@@ -240,5 +242,8 @@ class DriftSyncApplier implements SyncApplier {
     SyncEntityType.exchangeRate => _db.exchangeRates,
     SyncEntityType.primaryCurrency => _db.primaryCurrencySettings,
     SyncEntityType.conflictResolution => _db.conflictResolutions,
+    SyncEntityType.occasion => _db.occasions,
+    SyncEntityType.budget => _db.budgets,
+    SyncEntityType.budgetAllocation => _db.budgetCategoryAllocations,
   };
 }

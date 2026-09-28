@@ -136,6 +136,7 @@ void main() {
         WatchPersonHistory(transactionsRepository),
         DeleteTransaction(transactionsRepository),
         watchPrimary(),
+        transactionsRepository,
       ),
     );
     getIt.registerFactory<TransactionFormCubit>(
@@ -658,5 +659,45 @@ void main() {
         ).called(1);
       },
     );
+  });
+
+  group('012 - initialDirection preset (Home quick actions)', () {
+    Future<Set<TransactionDirection>> selectedDirection(
+      WidgetTester tester, {
+      TransactionDirection? initialDirection,
+    }) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildLightTheme(),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: TransactionFormPage(initialDirection: initialDirection),
+        ),
+      );
+      await tester.pumpAndSettle();
+      return tester
+          .widget<SegmentedButton<TransactionDirection>>(
+            find.byType(SegmentedButton<TransactionDirection>),
+          )
+          .selected;
+    }
+
+    testWidgets('opens with the requested direction preselected', (
+      tester,
+    ) async {
+      expect(
+        await selectedDirection(
+          tester,
+          initialDirection: TransactionDirection.received,
+        ),
+        {TransactionDirection.received},
+      );
+    });
+
+    testWidgets('keeps the default direction when none is requested', (
+      tester,
+    ) async {
+      expect(await selectedDirection(tester), {TransactionDirection.given});
+    });
   });
 }

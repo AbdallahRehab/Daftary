@@ -632,6 +632,621 @@ class PeopleCompanion extends UpdateCompanion<PeopleData> {
   }
 }
 
+class $OccasionsTable extends Occasions
+    with TableInfo<$OccasionsTable, Occasion> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OccasionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    name,
+    date,
+    type,
+    notes,
+    isArchived,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'occasions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Occasion> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Occasion map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Occasion(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OccasionsTable createAlias(String alias) {
+    return $OccasionsTable(attachedDatabase, alias);
+  }
+}
+
+class Occasion extends DataClass implements Insertable<Occasion> {
+  final String id;
+  final String idempotencyKey;
+  final String name;
+
+  /// Epoch millis, date-only. May be in the future (pre-planned occasions).
+  final int date;
+
+  /// A standard `OccasionType` value or free text, same open-set pattern as
+  /// [People.relationshipTag] (008 research.md Decision 6).
+  final String type;
+  final String? notes;
+  final bool isArchived;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const Occasion({
+    required this.id,
+    required this.idempotencyKey,
+    required this.name,
+    required this.date,
+    required this.type,
+    this.notes,
+    required this.isArchived,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['name'] = Variable<String>(name);
+    map['date'] = Variable<int>(date);
+    map['type'] = Variable<String>(type);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['is_archived'] = Variable<bool>(isArchived);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OccasionsCompanion toCompanion(bool nullToAbsent) {
+    return OccasionsCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      name: Value(name),
+      date: Value(date),
+      type: Value(type),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      isArchived: Value(isArchived),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory Occasion.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Occasion(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      name: serializer.fromJson<String>(json['name']),
+      date: serializer.fromJson<int>(json['date']),
+      type: serializer.fromJson<String>(json['type']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'name': serializer.toJson<String>(name),
+      'date': serializer.toJson<int>(date),
+      'type': serializer.toJson<String>(type),
+      'notes': serializer.toJson<String?>(notes),
+      'isArchived': serializer.toJson<bool>(isArchived),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  Occasion copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? name,
+    int? date,
+    String? type,
+    Value<String?> notes = const Value.absent(),
+    bool? isArchived,
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => Occasion(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    name: name ?? this.name,
+    date: date ?? this.date,
+    type: type ?? this.type,
+    notes: notes.present ? notes.value : this.notes,
+    isArchived: isArchived ?? this.isArchived,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  Occasion copyWithCompanion(OccasionsCompanion data) {
+    return Occasion(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      name: data.name.present ? data.name.value : this.name,
+      date: data.date.present ? data.date.value : this.date,
+      type: data.type.present ? data.type.value : this.type,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Occasion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('name: $name, ')
+          ..write('date: $date, ')
+          ..write('type: $type, ')
+          ..write('notes: $notes, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    name,
+    date,
+    type,
+    notes,
+    isArchived,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Occasion &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.name == this.name &&
+          other.date == this.date &&
+          other.type == this.type &&
+          other.notes == this.notes &&
+          other.isArchived == this.isArchived &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OccasionsCompanion extends UpdateCompanion<Occasion> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> name;
+  final Value<int> date;
+  final Value<String> type;
+  final Value<String?> notes;
+  final Value<bool> isArchived;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OccasionsCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.name = const Value.absent(),
+    this.date = const Value.absent(),
+    this.type = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OccasionsCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String name,
+    required int date,
+    required String type,
+    this.notes = const Value.absent(),
+    this.isArchived = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       name = Value(name),
+       date = Value(date),
+       type = Value(type),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<Occasion> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? name,
+    Expression<int>? date,
+    Expression<String>? type,
+    Expression<String>? notes,
+    Expression<bool>? isArchived,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (name != null) 'name': name,
+      if (date != null) 'date': date,
+      if (type != null) 'type': type,
+      if (notes != null) 'notes': notes,
+      if (isArchived != null) 'is_archived': isArchived,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OccasionsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? name,
+    Value<int>? date,
+    Value<String>? type,
+    Value<String?>? notes,
+    Value<bool>? isArchived,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OccasionsCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      name: name ?? this.name,
+      date: date ?? this.date,
+      type: type ?? this.type,
+      notes: notes ?? this.notes,
+      isArchived: isArchived ?? this.isArchived,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionsCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('name: $name, ')
+          ..write('date: $date, ')
+          ..write('type: $type, ')
+          ..write('notes: $notes, ')
+          ..write('isArchived: $isArchived, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MoneyTransactionsTable extends MoneyTransactions
     with TableInfo<$MoneyTransactionsTable, MoneyTransaction> {
   @override
@@ -734,6 +1349,55 @@ class $MoneyTransactionsTable extends MoneyTransactions
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _countsTowardBalanceMeta =
+      const VerificationMeta('countsTowardBalance');
+  @override
+  late final GeneratedColumn<bool> countsTowardBalance = GeneratedColumn<bool>(
+    'counts_toward_balance',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("counts_toward_balance" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _sourceMeta = const VerificationMeta('source');
+  @override
+  late final GeneratedColumn<String> source = GeneratedColumn<String>(
+    'source',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('manual'),
+  );
+  static const VerificationMeta _ocrScanIdMeta = const VerificationMeta(
+    'ocrScanId',
+  );
+  @override
+  late final GeneratedColumn<String> ocrScanId = GeneratedColumn<String>(
+    'ocr_scan_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -778,6 +1442,10 @@ class $MoneyTransactionsTable extends MoneyTransactions
     kind,
     date,
     note,
+    occasionId,
+    countsTowardBalance,
+    source,
+    ocrScanId,
     createdAt,
     editedAt,
     deletedAt,
@@ -868,6 +1536,33 @@ class $MoneyTransactionsTable extends MoneyTransactions
         note.isAcceptableOrUnknown(data['note']!, _noteMeta),
       );
     }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    }
+    if (data.containsKey('counts_toward_balance')) {
+      context.handle(
+        _countsTowardBalanceMeta,
+        countsTowardBalance.isAcceptableOrUnknown(
+          data['counts_toward_balance']!,
+          _countsTowardBalanceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('source')) {
+      context.handle(
+        _sourceMeta,
+        source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
+      );
+    }
+    if (data.containsKey('ocr_scan_id')) {
+      context.handle(
+        _ocrScanIdMeta,
+        ocrScanId.isAcceptableOrUnknown(data['ocr_scan_id']!, _ocrScanIdMeta),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -933,6 +1628,22 @@ class $MoneyTransactionsTable extends MoneyTransactions
         DriftSqlType.string,
         data['${effectivePrefix}note'],
       ),
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      ),
+      countsTowardBalance: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}counts_toward_balance'],
+      )!,
+      source: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source'],
+      )!,
+      ocrScanId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ocr_scan_id'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
@@ -968,6 +1679,29 @@ class MoneyTransaction extends DataClass
   final String kind;
   final int date;
   final String? note;
+
+  /// The [Occasions] row this contribution was recorded under (008).
+  /// `NULL` for every ordinary transaction — which is every row that
+  /// existed before this feature, so the migration needs no backfill.
+  final String? occasionId;
+
+  /// Whether this row counts toward the person's net balance (008 FR-018).
+  /// `TRUE` for every kind but an occasion contribution recorded as
+  /// non-counting, so the default keeps all pre-existing rows correct.
+  final bool countsTowardBalance;
+
+  /// How this row was created: `'manual'` or `'ocr'` (009 FR-012). The
+  /// default keeps every pre-009 row correct with no backfill — they were
+  /// all typed in by hand.
+  final String source;
+
+  /// The [OcrScans] row this transaction was confirmed from (009).
+  /// `NULL` for every manually entered row. Intentionally *not* declared
+  /// as a `references()` FK: 009 FR-023 lets the user delete a past scan
+  /// while the transactions it produced stay — a real FK would either
+  /// block that delete or cascade it, and both are wrong here
+  /// (data-model.md Relationships).
+  final String? ocrScanId;
   final int createdAt;
   final int? editedAt;
   final int? deletedAt;
@@ -981,6 +1715,10 @@ class MoneyTransaction extends DataClass
     required this.kind,
     required this.date,
     this.note,
+    this.occasionId,
+    required this.countsTowardBalance,
+    required this.source,
+    this.ocrScanId,
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
@@ -998,6 +1736,14 @@ class MoneyTransaction extends DataClass
     map['date'] = Variable<int>(date);
     if (!nullToAbsent || note != null) {
       map['note'] = Variable<String>(note);
+    }
+    if (!nullToAbsent || occasionId != null) {
+      map['occasion_id'] = Variable<String>(occasionId);
+    }
+    map['counts_toward_balance'] = Variable<bool>(countsTowardBalance);
+    map['source'] = Variable<String>(source);
+    if (!nullToAbsent || ocrScanId != null) {
+      map['ocr_scan_id'] = Variable<String>(ocrScanId);
     }
     map['created_at'] = Variable<int>(createdAt);
     if (!nullToAbsent || editedAt != null) {
@@ -1020,6 +1766,14 @@ class MoneyTransaction extends DataClass
       kind: Value(kind),
       date: Value(date),
       note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      occasionId: occasionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occasionId),
+      countsTowardBalance: Value(countsTowardBalance),
+      source: Value(source),
+      ocrScanId: ocrScanId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ocrScanId),
       createdAt: Value(createdAt),
       editedAt: editedAt == null && nullToAbsent
           ? const Value.absent()
@@ -1045,6 +1799,12 @@ class MoneyTransaction extends DataClass
       kind: serializer.fromJson<String>(json['kind']),
       date: serializer.fromJson<int>(json['date']),
       note: serializer.fromJson<String?>(json['note']),
+      occasionId: serializer.fromJson<String?>(json['occasionId']),
+      countsTowardBalance: serializer.fromJson<bool>(
+        json['countsTowardBalance'],
+      ),
+      source: serializer.fromJson<String>(json['source']),
+      ocrScanId: serializer.fromJson<String?>(json['ocrScanId']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
       editedAt: serializer.fromJson<int?>(json['editedAt']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
@@ -1063,6 +1823,10 @@ class MoneyTransaction extends DataClass
       'kind': serializer.toJson<String>(kind),
       'date': serializer.toJson<int>(date),
       'note': serializer.toJson<String?>(note),
+      'occasionId': serializer.toJson<String?>(occasionId),
+      'countsTowardBalance': serializer.toJson<bool>(countsTowardBalance),
+      'source': serializer.toJson<String>(source),
+      'ocrScanId': serializer.toJson<String?>(ocrScanId),
       'createdAt': serializer.toJson<int>(createdAt),
       'editedAt': serializer.toJson<int?>(editedAt),
       'deletedAt': serializer.toJson<int?>(deletedAt),
@@ -1079,6 +1843,10 @@ class MoneyTransaction extends DataClass
     String? kind,
     int? date,
     Value<String?> note = const Value.absent(),
+    Value<String?> occasionId = const Value.absent(),
+    bool? countsTowardBalance,
+    String? source,
+    Value<String?> ocrScanId = const Value.absent(),
     int? createdAt,
     Value<int?> editedAt = const Value.absent(),
     Value<int?> deletedAt = const Value.absent(),
@@ -1092,6 +1860,10 @@ class MoneyTransaction extends DataClass
     kind: kind ?? this.kind,
     date: date ?? this.date,
     note: note.present ? note.value : this.note,
+    occasionId: occasionId.present ? occasionId.value : this.occasionId,
+    countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
+    source: source ?? this.source,
+    ocrScanId: ocrScanId.present ? ocrScanId.value : this.ocrScanId,
     createdAt: createdAt ?? this.createdAt,
     editedAt: editedAt.present ? editedAt.value : this.editedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
@@ -1113,6 +1885,14 @@ class MoneyTransaction extends DataClass
       kind: data.kind.present ? data.kind.value : this.kind,
       date: data.date.present ? data.date.value : this.date,
       note: data.note.present ? data.note.value : this.note,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      countsTowardBalance: data.countsTowardBalance.present
+          ? data.countsTowardBalance.value
+          : this.countsTowardBalance,
+      source: data.source.present ? data.source.value : this.source,
+      ocrScanId: data.ocrScanId.present ? data.ocrScanId.value : this.ocrScanId,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
@@ -1131,6 +1911,10 @@ class MoneyTransaction extends DataClass
           ..write('kind: $kind, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('countsTowardBalance: $countsTowardBalance, ')
+          ..write('source: $source, ')
+          ..write('ocrScanId: $ocrScanId, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt')
@@ -1149,6 +1933,10 @@ class MoneyTransaction extends DataClass
     kind,
     date,
     note,
+    occasionId,
+    countsTowardBalance,
+    source,
+    ocrScanId,
     createdAt,
     editedAt,
     deletedAt,
@@ -1166,6 +1954,10 @@ class MoneyTransaction extends DataClass
           other.kind == this.kind &&
           other.date == this.date &&
           other.note == this.note &&
+          other.occasionId == this.occasionId &&
+          other.countsTowardBalance == this.countsTowardBalance &&
+          other.source == this.source &&
+          other.ocrScanId == this.ocrScanId &&
           other.createdAt == this.createdAt &&
           other.editedAt == this.editedAt &&
           other.deletedAt == this.deletedAt);
@@ -1181,6 +1973,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
   final Value<String> kind;
   final Value<int> date;
   final Value<String?> note;
+  final Value<String?> occasionId;
+  final Value<bool> countsTowardBalance;
+  final Value<String> source;
+  final Value<String?> ocrScanId;
   final Value<int> createdAt;
   final Value<int?> editedAt;
   final Value<int?> deletedAt;
@@ -1195,6 +1991,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     this.kind = const Value.absent(),
     this.date = const Value.absent(),
     this.note = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.countsTowardBalance = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrScanId = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1210,6 +2010,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     required String kind,
     required int date,
     this.note = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.countsTowardBalance = const Value.absent(),
+    this.source = const Value.absent(),
+    this.ocrScanId = const Value.absent(),
     required int createdAt,
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
@@ -1232,6 +2036,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Expression<String>? kind,
     Expression<int>? date,
     Expression<String>? note,
+    Expression<String>? occasionId,
+    Expression<bool>? countsTowardBalance,
+    Expression<String>? source,
+    Expression<String>? ocrScanId,
     Expression<int>? createdAt,
     Expression<int>? editedAt,
     Expression<int>? deletedAt,
@@ -1247,6 +2055,11 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       if (kind != null) 'kind': kind,
       if (date != null) 'date': date,
       if (note != null) 'note': note,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (countsTowardBalance != null)
+        'counts_toward_balance': countsTowardBalance,
+      if (source != null) 'source': source,
+      if (ocrScanId != null) 'ocr_scan_id': ocrScanId,
       if (createdAt != null) 'created_at': createdAt,
       if (editedAt != null) 'edited_at': editedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
@@ -1264,6 +2077,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Value<String>? kind,
     Value<int>? date,
     Value<String?>? note,
+    Value<String?>? occasionId,
+    Value<bool>? countsTowardBalance,
+    Value<String>? source,
+    Value<String?>? ocrScanId,
     Value<int>? createdAt,
     Value<int?>? editedAt,
     Value<int?>? deletedAt,
@@ -1279,6 +2096,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       kind: kind ?? this.kind,
       date: date ?? this.date,
       note: note ?? this.note,
+      occasionId: occasionId ?? this.occasionId,
+      countsTowardBalance: countsTowardBalance ?? this.countsTowardBalance,
+      source: source ?? this.source,
+      ocrScanId: ocrScanId ?? this.ocrScanId,
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
       deletedAt: deletedAt ?? this.deletedAt,
@@ -1316,6 +2137,18 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     if (note.present) {
       map['note'] = Variable<String>(note.value);
     }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (countsTowardBalance.present) {
+      map['counts_toward_balance'] = Variable<bool>(countsTowardBalance.value);
+    }
+    if (source.present) {
+      map['source'] = Variable<String>(source.value);
+    }
+    if (ocrScanId.present) {
+      map['ocr_scan_id'] = Variable<String>(ocrScanId.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
@@ -1343,6 +2176,10 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
           ..write('kind: $kind, ')
           ..write('date: $date, ')
           ..write('note: $note, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('countsTowardBalance: $countsTowardBalance, ')
+          ..write('source: $source, ')
+          ..write('ocrScanId: $ocrScanId, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt, ')
@@ -8345,10 +9182,4729 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
   }
 }
 
+class $OccasionAttachmentsTable extends OccasionAttachments
+    with TableInfo<$OccasionAttachmentsTable, OccasionAttachment> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OccasionAttachmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _filePathMeta = const VerificationMeta(
+    'filePath',
+  );
+  @override
+  late final GeneratedColumn<String> filePath = GeneratedColumn<String>(
+    'file_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    occasionId,
+    filePath,
+    createdAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'occasion_attachments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OccasionAttachment> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_occasionIdMeta);
+    }
+    if (data.containsKey('file_path')) {
+      context.handle(
+        _filePathMeta,
+        filePath.isAcceptableOrUnknown(data['file_path']!, _filePathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_filePathMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OccasionAttachment map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OccasionAttachment(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      )!,
+      filePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}file_path'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OccasionAttachmentsTable createAlias(String alias) {
+    return $OccasionAttachmentsTable(attachedDatabase, alias);
+  }
+}
+
+class OccasionAttachment extends DataClass
+    implements Insertable<OccasionAttachment> {
+  final String id;
+  final String occasionId;
+  final String filePath;
+  final int createdAt;
+  final int? deletedAt;
+  const OccasionAttachment({
+    required this.id,
+    required this.occasionId,
+    required this.filePath,
+    required this.createdAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['occasion_id'] = Variable<String>(occasionId);
+    map['file_path'] = Variable<String>(filePath);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OccasionAttachmentsCompanion toCompanion(bool nullToAbsent) {
+    return OccasionAttachmentsCompanion(
+      id: Value(id),
+      occasionId: Value(occasionId),
+      filePath: Value(filePath),
+      createdAt: Value(createdAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory OccasionAttachment.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OccasionAttachment(
+      id: serializer.fromJson<String>(json['id']),
+      occasionId: serializer.fromJson<String>(json['occasionId']),
+      filePath: serializer.fromJson<String>(json['filePath']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'occasionId': serializer.toJson<String>(occasionId),
+      'filePath': serializer.toJson<String>(filePath),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  OccasionAttachment copyWith({
+    String? id,
+    String? occasionId,
+    String? filePath,
+    int? createdAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => OccasionAttachment(
+    id: id ?? this.id,
+    occasionId: occasionId ?? this.occasionId,
+    filePath: filePath ?? this.filePath,
+    createdAt: createdAt ?? this.createdAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  OccasionAttachment copyWithCompanion(OccasionAttachmentsCompanion data) {
+    return OccasionAttachment(
+      id: data.id.present ? data.id.value : this.id,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      filePath: data.filePath.present ? data.filePath.value : this.filePath,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionAttachment(')
+          ..write('id: $id, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, occasionId, filePath, createdAt, deletedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OccasionAttachment &&
+          other.id == this.id &&
+          other.occasionId == this.occasionId &&
+          other.filePath == this.filePath &&
+          other.createdAt == this.createdAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OccasionAttachmentsCompanion extends UpdateCompanion<OccasionAttachment> {
+  final Value<String> id;
+  final Value<String> occasionId;
+  final Value<String> filePath;
+  final Value<int> createdAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OccasionAttachmentsCompanion({
+    this.id = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.filePath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OccasionAttachmentsCompanion.insert({
+    required String id,
+    required String occasionId,
+    required String filePath,
+    required int createdAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       occasionId = Value(occasionId),
+       filePath = Value(filePath),
+       createdAt = Value(createdAt);
+  static Insertable<OccasionAttachment> custom({
+    Expression<String>? id,
+    Expression<String>? occasionId,
+    Expression<String>? filePath,
+    Expression<int>? createdAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (filePath != null) 'file_path': filePath,
+      if (createdAt != null) 'created_at': createdAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OccasionAttachmentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? occasionId,
+    Value<String>? filePath,
+    Value<int>? createdAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OccasionAttachmentsCompanion(
+      id: id ?? this.id,
+      occasionId: occasionId ?? this.occasionId,
+      filePath: filePath ?? this.filePath,
+      createdAt: createdAt ?? this.createdAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (filePath.present) {
+      map['file_path'] = Variable<String>(filePath.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OccasionAttachmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('filePath: $filePath, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OcrScansTable extends OcrScans with TableInfo<$OcrScansTable, OcrScan> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OcrScansTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sourceImagePathMeta = const VerificationMeta(
+    'sourceImagePath',
+  );
+  @override
+  late final GeneratedColumn<String> sourceImagePath = GeneratedColumn<String>(
+    'source_image_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _cropBoundsMeta = const VerificationMeta(
+    'cropBounds',
+  );
+  @override
+  late final GeneratedColumn<String> cropBounds = GeneratedColumn<String>(
+    'crop_bounds',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rotationDegreesMeta = const VerificationMeta(
+    'rotationDegrees',
+  );
+  @override
+  late final GeneratedColumn<int> rotationDegrees = GeneratedColumn<int>(
+    'rotation_degrees',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _occasionIdMeta = const VerificationMeta(
+    'occasionId',
+  );
+  @override
+  late final GeneratedColumn<String> occasionId = GeneratedColumn<String>(
+    'occasion_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES occasions (id)',
+    ),
+  );
+  static const VerificationMeta _defaultDirectionMeta = const VerificationMeta(
+    'defaultDirection',
+  );
+  @override
+  late final GeneratedColumn<String> defaultDirection = GeneratedColumn<String>(
+    'default_direction',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EGP'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<int> completedAt = GeneratedColumn<int>(
+    'completed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    sourceImagePath,
+    cropBounds,
+    rotationDegrees,
+    status,
+    occasionId,
+    defaultDirection,
+    currencyCode,
+    createdAt,
+    completedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ocr_scans';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<OcrScan> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('source_image_path')) {
+      context.handle(
+        _sourceImagePathMeta,
+        sourceImagePath.isAcceptableOrUnknown(
+          data['source_image_path']!,
+          _sourceImagePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_sourceImagePathMeta);
+    }
+    if (data.containsKey('crop_bounds')) {
+      context.handle(
+        _cropBoundsMeta,
+        cropBounds.isAcceptableOrUnknown(data['crop_bounds']!, _cropBoundsMeta),
+      );
+    }
+    if (data.containsKey('rotation_degrees')) {
+      context.handle(
+        _rotationDegreesMeta,
+        rotationDegrees.isAcceptableOrUnknown(
+          data['rotation_degrees']!,
+          _rotationDegreesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('occasion_id')) {
+      context.handle(
+        _occasionIdMeta,
+        occasionId.isAcceptableOrUnknown(data['occasion_id']!, _occasionIdMeta),
+      );
+    }
+    if (data.containsKey('default_direction')) {
+      context.handle(
+        _defaultDirectionMeta,
+        defaultDirection.isAcceptableOrUnknown(
+          data['default_direction']!,
+          _defaultDirectionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OcrScan map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OcrScan(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      sourceImagePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_image_path'],
+      )!,
+      cropBounds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}crop_bounds'],
+      ),
+      rotationDegrees: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rotation_degrees'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      occasionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}occasion_id'],
+      ),
+      defaultDirection: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_direction'],
+      ),
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}completed_at'],
+      ),
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $OcrScansTable createAlias(String alias) {
+    return $OcrScansTable(attachedDatabase, alias);
+  }
+}
+
+class OcrScan extends DataClass implements Insertable<OcrScan> {
+  final String id;
+
+  /// Regenerated per confirm attempt; the UNIQUE index above is what makes
+  /// a double-tapped confirm a no-op rather than a second batch of
+  /// transactions (009 FR-021).
+  final String idempotencyKey;
+
+  /// Path into the app's own sandboxed storage. Never a remote URL — the
+  /// bytes are never uploaded (009 FR-019/FR-023).
+  final String sourceImagePath;
+  final String? cropBounds;
+  final int rotationDegrees;
+
+  /// `'processing'|'needsReview'|'confirmed'|'discarded'|'failed'`.
+  final String status;
+
+  /// Set when the user tags the whole batch to an occasion at review time
+  /// (009 FR-014), so every entry confirmed afterwards is recorded as that
+  /// occasion's contribution (008).
+  final String? occasionId;
+
+  /// `'given'|'received'`, or `NULL` while the user has not chosen a batch
+  /// default yet (009 FR-005).
+  final String? defaultDirection;
+
+  /// 018: the ISO 4217 code every amount read off this page is recorded in
+  /// — the primary currency when the scan started, so review and confirm
+  /// agree even if the primary currency changes in between.
+  final String currencyCode;
+  final int createdAt;
+  final int? completedAt;
+  final int? deletedAt;
+  const OcrScan({
+    required this.id,
+    required this.idempotencyKey,
+    required this.sourceImagePath,
+    this.cropBounds,
+    required this.rotationDegrees,
+    required this.status,
+    this.occasionId,
+    this.defaultDirection,
+    required this.currencyCode,
+    required this.createdAt,
+    this.completedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['source_image_path'] = Variable<String>(sourceImagePath);
+    if (!nullToAbsent || cropBounds != null) {
+      map['crop_bounds'] = Variable<String>(cropBounds);
+    }
+    map['rotation_degrees'] = Variable<int>(rotationDegrees);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || occasionId != null) {
+      map['occasion_id'] = Variable<String>(occasionId);
+    }
+    if (!nullToAbsent || defaultDirection != null) {
+      map['default_direction'] = Variable<String>(defaultDirection);
+    }
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || completedAt != null) {
+      map['completed_at'] = Variable<int>(completedAt);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  OcrScansCompanion toCompanion(bool nullToAbsent) {
+    return OcrScansCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      sourceImagePath: Value(sourceImagePath),
+      cropBounds: cropBounds == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cropBounds),
+      rotationDegrees: Value(rotationDegrees),
+      status: Value(status),
+      occasionId: occasionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occasionId),
+      defaultDirection: defaultDirection == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultDirection),
+      currencyCode: Value(currencyCode),
+      createdAt: Value(createdAt),
+      completedAt: completedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(completedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory OcrScan.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OcrScan(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      sourceImagePath: serializer.fromJson<String>(json['sourceImagePath']),
+      cropBounds: serializer.fromJson<String?>(json['cropBounds']),
+      rotationDegrees: serializer.fromJson<int>(json['rotationDegrees']),
+      status: serializer.fromJson<String>(json['status']),
+      occasionId: serializer.fromJson<String?>(json['occasionId']),
+      defaultDirection: serializer.fromJson<String?>(json['defaultDirection']),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      completedAt: serializer.fromJson<int?>(json['completedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'sourceImagePath': serializer.toJson<String>(sourceImagePath),
+      'cropBounds': serializer.toJson<String?>(cropBounds),
+      'rotationDegrees': serializer.toJson<int>(rotationDegrees),
+      'status': serializer.toJson<String>(status),
+      'occasionId': serializer.toJson<String?>(occasionId),
+      'defaultDirection': serializer.toJson<String?>(defaultDirection),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'completedAt': serializer.toJson<int?>(completedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  OcrScan copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? sourceImagePath,
+    Value<String?> cropBounds = const Value.absent(),
+    int? rotationDegrees,
+    String? status,
+    Value<String?> occasionId = const Value.absent(),
+    Value<String?> defaultDirection = const Value.absent(),
+    String? currencyCode,
+    int? createdAt,
+    Value<int?> completedAt = const Value.absent(),
+    Value<int?> deletedAt = const Value.absent(),
+  }) => OcrScan(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    sourceImagePath: sourceImagePath ?? this.sourceImagePath,
+    cropBounds: cropBounds.present ? cropBounds.value : this.cropBounds,
+    rotationDegrees: rotationDegrees ?? this.rotationDegrees,
+    status: status ?? this.status,
+    occasionId: occasionId.present ? occasionId.value : this.occasionId,
+    defaultDirection: defaultDirection.present
+        ? defaultDirection.value
+        : this.defaultDirection,
+    currencyCode: currencyCode ?? this.currencyCode,
+    createdAt: createdAt ?? this.createdAt,
+    completedAt: completedAt.present ? completedAt.value : this.completedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  OcrScan copyWithCompanion(OcrScansCompanion data) {
+    return OcrScan(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      sourceImagePath: data.sourceImagePath.present
+          ? data.sourceImagePath.value
+          : this.sourceImagePath,
+      cropBounds: data.cropBounds.present
+          ? data.cropBounds.value
+          : this.cropBounds,
+      rotationDegrees: data.rotationDegrees.present
+          ? data.rotationDegrees.value
+          : this.rotationDegrees,
+      status: data.status.present ? data.status.value : this.status,
+      occasionId: data.occasionId.present
+          ? data.occasionId.value
+          : this.occasionId,
+      defaultDirection: data.defaultDirection.present
+          ? data.defaultDirection.value
+          : this.defaultDirection,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrScan(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('sourceImagePath: $sourceImagePath, ')
+          ..write('cropBounds: $cropBounds, ')
+          ..write('rotationDegrees: $rotationDegrees, ')
+          ..write('status: $status, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('defaultDirection: $defaultDirection, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    sourceImagePath,
+    cropBounds,
+    rotationDegrees,
+    status,
+    occasionId,
+    defaultDirection,
+    currencyCode,
+    createdAt,
+    completedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OcrScan &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.sourceImagePath == this.sourceImagePath &&
+          other.cropBounds == this.cropBounds &&
+          other.rotationDegrees == this.rotationDegrees &&
+          other.status == this.status &&
+          other.occasionId == this.occasionId &&
+          other.defaultDirection == this.defaultDirection &&
+          other.currencyCode == this.currencyCode &&
+          other.createdAt == this.createdAt &&
+          other.completedAt == this.completedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class OcrScansCompanion extends UpdateCompanion<OcrScan> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> sourceImagePath;
+  final Value<String?> cropBounds;
+  final Value<int> rotationDegrees;
+  final Value<String> status;
+  final Value<String?> occasionId;
+  final Value<String?> defaultDirection;
+  final Value<String> currencyCode;
+  final Value<int> createdAt;
+  final Value<int?> completedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const OcrScansCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.sourceImagePath = const Value.absent(),
+    this.cropBounds = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
+    this.status = const Value.absent(),
+    this.occasionId = const Value.absent(),
+    this.defaultDirection = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OcrScansCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String sourceImagePath,
+    this.cropBounds = const Value.absent(),
+    this.rotationDegrees = const Value.absent(),
+    required String status,
+    this.occasionId = const Value.absent(),
+    this.defaultDirection = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    required int createdAt,
+    this.completedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       sourceImagePath = Value(sourceImagePath),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<OcrScan> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? sourceImagePath,
+    Expression<String>? cropBounds,
+    Expression<int>? rotationDegrees,
+    Expression<String>? status,
+    Expression<String>? occasionId,
+    Expression<String>? defaultDirection,
+    Expression<String>? currencyCode,
+    Expression<int>? createdAt,
+    Expression<int>? completedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (sourceImagePath != null) 'source_image_path': sourceImagePath,
+      if (cropBounds != null) 'crop_bounds': cropBounds,
+      if (rotationDegrees != null) 'rotation_degrees': rotationDegrees,
+      if (status != null) 'status': status,
+      if (occasionId != null) 'occasion_id': occasionId,
+      if (defaultDirection != null) 'default_direction': defaultDirection,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (createdAt != null) 'created_at': createdAt,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OcrScansCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? sourceImagePath,
+    Value<String?>? cropBounds,
+    Value<int>? rotationDegrees,
+    Value<String>? status,
+    Value<String?>? occasionId,
+    Value<String?>? defaultDirection,
+    Value<String>? currencyCode,
+    Value<int>? createdAt,
+    Value<int?>? completedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return OcrScansCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      sourceImagePath: sourceImagePath ?? this.sourceImagePath,
+      cropBounds: cropBounds ?? this.cropBounds,
+      rotationDegrees: rotationDegrees ?? this.rotationDegrees,
+      status: status ?? this.status,
+      occasionId: occasionId ?? this.occasionId,
+      defaultDirection: defaultDirection ?? this.defaultDirection,
+      currencyCode: currencyCode ?? this.currencyCode,
+      createdAt: createdAt ?? this.createdAt,
+      completedAt: completedAt ?? this.completedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (sourceImagePath.present) {
+      map['source_image_path'] = Variable<String>(sourceImagePath.value);
+    }
+    if (cropBounds.present) {
+      map['crop_bounds'] = Variable<String>(cropBounds.value);
+    }
+    if (rotationDegrees.present) {
+      map['rotation_degrees'] = Variable<int>(rotationDegrees.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (occasionId.present) {
+      map['occasion_id'] = Variable<String>(occasionId.value);
+    }
+    if (defaultDirection.present) {
+      map['default_direction'] = Variable<String>(defaultDirection.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<int>(completedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OcrScansCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('sourceImagePath: $sourceImagePath, ')
+          ..write('cropBounds: $cropBounds, ')
+          ..write('rotationDegrees: $rotationDegrees, ')
+          ..write('status: $status, ')
+          ..write('occasionId: $occasionId, ')
+          ..write('defaultDirection: $defaultDirection, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CandidateEntriesTable extends CandidateEntries
+    with TableInfo<$CandidateEntriesTable, CandidateEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CandidateEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _scanIdMeta = const VerificationMeta('scanId');
+  @override
+  late final GeneratedColumn<String> scanId = GeneratedColumn<String>(
+    'scan_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ocr_scans (id)',
+    ),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pendingReview'),
+  );
+  static const VerificationMeta _personNameMeta = const VerificationMeta(
+    'personName',
+  );
+  @override
+  late final GeneratedColumn<String> personName = GeneratedColumn<String>(
+    'person_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _personNameConfidenceKindMeta =
+      const VerificationMeta('personNameConfidenceKind');
+  @override
+  late final GeneratedColumn<String> personNameConfidenceKind =
+      GeneratedColumn<String>(
+        'person_name_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _personNameConfidenceLevelMeta =
+      const VerificationMeta('personNameConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> personNameConfidenceLevel =
+      GeneratedColumn<String>(
+        'person_name_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _matchedPersonIdMeta = const VerificationMeta(
+    'matchedPersonId',
+  );
+  @override
+  late final GeneratedColumn<String> matchedPersonId = GeneratedColumn<String>(
+    'matched_person_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES people (id)',
+    ),
+  );
+  static const VerificationMeta _amountMinorUnitsMeta = const VerificationMeta(
+    'amountMinorUnits',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinorUnits = GeneratedColumn<int>(
+    'amount_minor_units',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountConfidenceKindMeta =
+      const VerificationMeta('amountConfidenceKind');
+  @override
+  late final GeneratedColumn<String> amountConfidenceKind =
+      GeneratedColumn<String>(
+        'amount_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _amountConfidenceLevelMeta =
+      const VerificationMeta('amountConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> amountConfidenceLevel =
+      GeneratedColumn<String>(
+        'amount_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _directionConfidenceKindMeta =
+      const VerificationMeta('directionConfidenceKind');
+  @override
+  late final GeneratedColumn<String> directionConfidenceKind =
+      GeneratedColumn<String>(
+        'direction_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _directionConfidenceLevelMeta =
+      const VerificationMeta('directionConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> directionConfidenceLevel =
+      GeneratedColumn<String>(
+        'direction_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<int> date = GeneratedColumn<int>(
+    'date',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _dateConfidenceKindMeta =
+      const VerificationMeta('dateConfidenceKind');
+  @override
+  late final GeneratedColumn<String> dateConfidenceKind =
+      GeneratedColumn<String>(
+        'date_confidence_kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _dateConfidenceLevelMeta =
+      const VerificationMeta('dateConfidenceLevel');
+  @override
+  late final GeneratedColumn<String> dateConfidenceLevel =
+      GeneratedColumn<String>(
+        'date_confidence_level',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawOcrTextMeta = const VerificationMeta(
+    'rawOcrText',
+  );
+  @override
+  late final GeneratedColumn<String> rawOcrText = GeneratedColumn<String>(
+    'raw_ocr_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _editedAtMeta = const VerificationMeta(
+    'editedAt',
+  );
+  @override
+  late final GeneratedColumn<int> editedAt = GeneratedColumn<int>(
+    'edited_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    scanId,
+    status,
+    personName,
+    personNameConfidenceKind,
+    personNameConfidenceLevel,
+    matchedPersonId,
+    amountMinorUnits,
+    amountConfidenceKind,
+    amountConfidenceLevel,
+    direction,
+    directionConfidenceKind,
+    directionConfidenceLevel,
+    date,
+    dateConfidenceKind,
+    dateConfidenceLevel,
+    notes,
+    rawOcrText,
+    createdAt,
+    editedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'candidate_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CandidateEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('scan_id')) {
+      context.handle(
+        _scanIdMeta,
+        scanId.isAcceptableOrUnknown(data['scan_id']!, _scanIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_scanIdMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('person_name')) {
+      context.handle(
+        _personNameMeta,
+        personName.isAcceptableOrUnknown(data['person_name']!, _personNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameMeta);
+    }
+    if (data.containsKey('person_name_confidence_kind')) {
+      context.handle(
+        _personNameConfidenceKindMeta,
+        personNameConfidenceKind.isAcceptableOrUnknown(
+          data['person_name_confidence_kind']!,
+          _personNameConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameConfidenceKindMeta);
+    }
+    if (data.containsKey('person_name_confidence_level')) {
+      context.handle(
+        _personNameConfidenceLevelMeta,
+        personNameConfidenceLevel.isAcceptableOrUnknown(
+          data['person_name_confidence_level']!,
+          _personNameConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_personNameConfidenceLevelMeta);
+    }
+    if (data.containsKey('matched_person_id')) {
+      context.handle(
+        _matchedPersonIdMeta,
+        matchedPersonId.isAcceptableOrUnknown(
+          data['matched_person_id']!,
+          _matchedPersonIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_minor_units')) {
+      context.handle(
+        _amountMinorUnitsMeta,
+        amountMinorUnits.isAcceptableOrUnknown(
+          data['amount_minor_units']!,
+          _amountMinorUnitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_confidence_kind')) {
+      context.handle(
+        _amountConfidenceKindMeta,
+        amountConfidenceKind.isAcceptableOrUnknown(
+          data['amount_confidence_kind']!,
+          _amountConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountConfidenceKindMeta);
+    }
+    if (data.containsKey('amount_confidence_level')) {
+      context.handle(
+        _amountConfidenceLevelMeta,
+        amountConfidenceLevel.isAcceptableOrUnknown(
+          data['amount_confidence_level']!,
+          _amountConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountConfidenceLevelMeta);
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    }
+    if (data.containsKey('direction_confidence_kind')) {
+      context.handle(
+        _directionConfidenceKindMeta,
+        directionConfidenceKind.isAcceptableOrUnknown(
+          data['direction_confidence_kind']!,
+          _directionConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_directionConfidenceKindMeta);
+    }
+    if (data.containsKey('direction_confidence_level')) {
+      context.handle(
+        _directionConfidenceLevelMeta,
+        directionConfidenceLevel.isAcceptableOrUnknown(
+          data['direction_confidence_level']!,
+          _directionConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_directionConfidenceLevelMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    }
+    if (data.containsKey('date_confidence_kind')) {
+      context.handle(
+        _dateConfidenceKindMeta,
+        dateConfidenceKind.isAcceptableOrUnknown(
+          data['date_confidence_kind']!,
+          _dateConfidenceKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_dateConfidenceKindMeta);
+    }
+    if (data.containsKey('date_confidence_level')) {
+      context.handle(
+        _dateConfidenceLevelMeta,
+        dateConfidenceLevel.isAcceptableOrUnknown(
+          data['date_confidence_level']!,
+          _dateConfidenceLevelMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_dateConfidenceLevelMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('raw_ocr_text')) {
+      context.handle(
+        _rawOcrTextMeta,
+        rawOcrText.isAcceptableOrUnknown(
+          data['raw_ocr_text']!,
+          _rawOcrTextMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_rawOcrTextMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('edited_at')) {
+      context.handle(
+        _editedAtMeta,
+        editedAt.isAcceptableOrUnknown(data['edited_at']!, _editedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CandidateEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CandidateEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      scanId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}scan_id'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      personName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name'],
+      )!,
+      personNameConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name_confidence_kind'],
+      )!,
+      personNameConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}person_name_confidence_level'],
+      )!,
+      matchedPersonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}matched_person_id'],
+      ),
+      amountMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor_units'],
+      ),
+      amountConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}amount_confidence_kind'],
+      )!,
+      amountConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}amount_confidence_level'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      ),
+      directionConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction_confidence_kind'],
+      )!,
+      directionConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction_confidence_level'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}date'],
+      ),
+      dateConfidenceKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_confidence_kind'],
+      )!,
+      dateConfidenceLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_confidence_level'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      rawOcrText: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}raw_ocr_text'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      editedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}edited_at'],
+      ),
+    );
+  }
+
+  @override
+  $CandidateEntriesTable createAlias(String alias) {
+    return $CandidateEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CandidateEntry extends DataClass implements Insertable<CandidateEntry> {
+  final String id;
+  final String scanId;
+
+  /// `'pendingReview'|'confirmed'|'discarded'`.
+  final String status;
+  final String personName;
+
+  /// Per-field provenance, stored as a `kind`/`level` pair per field
+  /// (009 data-model.md's `FieldConfidence`): `'read'|'inferred'` and
+  /// `'low'|'medium'|'high'|'none'`. Kept as two columns rather than one
+  /// encoded string so a future query can filter on either half.
+  final String personNameConfidenceKind;
+  final String personNameConfidenceLevel;
+  final String? matchedPersonId;
+  final int? amountMinorUnits;
+  final String amountConfidenceKind;
+  final String amountConfidenceLevel;
+  final String? direction;
+  final String directionConfidenceKind;
+  final String directionConfidenceLevel;
+  final int? date;
+  final String dateConfidenceKind;
+  final String dateConfidenceLevel;
+  final String? notes;
+
+  /// The unedited recognized line this entry was parsed from, so review can
+  /// compare against the page and a past scan stays explainable.
+  final String rawOcrText;
+  final int createdAt;
+  final int? editedAt;
+  const CandidateEntry({
+    required this.id,
+    required this.scanId,
+    required this.status,
+    required this.personName,
+    required this.personNameConfidenceKind,
+    required this.personNameConfidenceLevel,
+    this.matchedPersonId,
+    this.amountMinorUnits,
+    required this.amountConfidenceKind,
+    required this.amountConfidenceLevel,
+    this.direction,
+    required this.directionConfidenceKind,
+    required this.directionConfidenceLevel,
+    this.date,
+    required this.dateConfidenceKind,
+    required this.dateConfidenceLevel,
+    this.notes,
+    required this.rawOcrText,
+    required this.createdAt,
+    this.editedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['scan_id'] = Variable<String>(scanId);
+    map['status'] = Variable<String>(status);
+    map['person_name'] = Variable<String>(personName);
+    map['person_name_confidence_kind'] = Variable<String>(
+      personNameConfidenceKind,
+    );
+    map['person_name_confidence_level'] = Variable<String>(
+      personNameConfidenceLevel,
+    );
+    if (!nullToAbsent || matchedPersonId != null) {
+      map['matched_person_id'] = Variable<String>(matchedPersonId);
+    }
+    if (!nullToAbsent || amountMinorUnits != null) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits);
+    }
+    map['amount_confidence_kind'] = Variable<String>(amountConfidenceKind);
+    map['amount_confidence_level'] = Variable<String>(amountConfidenceLevel);
+    if (!nullToAbsent || direction != null) {
+      map['direction'] = Variable<String>(direction);
+    }
+    map['direction_confidence_kind'] = Variable<String>(
+      directionConfidenceKind,
+    );
+    map['direction_confidence_level'] = Variable<String>(
+      directionConfidenceLevel,
+    );
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<int>(date);
+    }
+    map['date_confidence_kind'] = Variable<String>(dateConfidenceKind);
+    map['date_confidence_level'] = Variable<String>(dateConfidenceLevel);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['raw_ocr_text'] = Variable<String>(rawOcrText);
+    map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || editedAt != null) {
+      map['edited_at'] = Variable<int>(editedAt);
+    }
+    return map;
+  }
+
+  CandidateEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CandidateEntriesCompanion(
+      id: Value(id),
+      scanId: Value(scanId),
+      status: Value(status),
+      personName: Value(personName),
+      personNameConfidenceKind: Value(personNameConfidenceKind),
+      personNameConfidenceLevel: Value(personNameConfidenceLevel),
+      matchedPersonId: matchedPersonId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(matchedPersonId),
+      amountMinorUnits: amountMinorUnits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMinorUnits),
+      amountConfidenceKind: Value(amountConfidenceKind),
+      amountConfidenceLevel: Value(amountConfidenceLevel),
+      direction: direction == null && nullToAbsent
+          ? const Value.absent()
+          : Value(direction),
+      directionConfidenceKind: Value(directionConfidenceKind),
+      directionConfidenceLevel: Value(directionConfidenceLevel),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+      dateConfidenceKind: Value(dateConfidenceKind),
+      dateConfidenceLevel: Value(dateConfidenceLevel),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      rawOcrText: Value(rawOcrText),
+      createdAt: Value(createdAt),
+      editedAt: editedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(editedAt),
+    );
+  }
+
+  factory CandidateEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CandidateEntry(
+      id: serializer.fromJson<String>(json['id']),
+      scanId: serializer.fromJson<String>(json['scanId']),
+      status: serializer.fromJson<String>(json['status']),
+      personName: serializer.fromJson<String>(json['personName']),
+      personNameConfidenceKind: serializer.fromJson<String>(
+        json['personNameConfidenceKind'],
+      ),
+      personNameConfidenceLevel: serializer.fromJson<String>(
+        json['personNameConfidenceLevel'],
+      ),
+      matchedPersonId: serializer.fromJson<String?>(json['matchedPersonId']),
+      amountMinorUnits: serializer.fromJson<int?>(json['amountMinorUnits']),
+      amountConfidenceKind: serializer.fromJson<String>(
+        json['amountConfidenceKind'],
+      ),
+      amountConfidenceLevel: serializer.fromJson<String>(
+        json['amountConfidenceLevel'],
+      ),
+      direction: serializer.fromJson<String?>(json['direction']),
+      directionConfidenceKind: serializer.fromJson<String>(
+        json['directionConfidenceKind'],
+      ),
+      directionConfidenceLevel: serializer.fromJson<String>(
+        json['directionConfidenceLevel'],
+      ),
+      date: serializer.fromJson<int?>(json['date']),
+      dateConfidenceKind: serializer.fromJson<String>(
+        json['dateConfidenceKind'],
+      ),
+      dateConfidenceLevel: serializer.fromJson<String>(
+        json['dateConfidenceLevel'],
+      ),
+      notes: serializer.fromJson<String?>(json['notes']),
+      rawOcrText: serializer.fromJson<String>(json['rawOcrText']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      editedAt: serializer.fromJson<int?>(json['editedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'scanId': serializer.toJson<String>(scanId),
+      'status': serializer.toJson<String>(status),
+      'personName': serializer.toJson<String>(personName),
+      'personNameConfidenceKind': serializer.toJson<String>(
+        personNameConfidenceKind,
+      ),
+      'personNameConfidenceLevel': serializer.toJson<String>(
+        personNameConfidenceLevel,
+      ),
+      'matchedPersonId': serializer.toJson<String?>(matchedPersonId),
+      'amountMinorUnits': serializer.toJson<int?>(amountMinorUnits),
+      'amountConfidenceKind': serializer.toJson<String>(amountConfidenceKind),
+      'amountConfidenceLevel': serializer.toJson<String>(amountConfidenceLevel),
+      'direction': serializer.toJson<String?>(direction),
+      'directionConfidenceKind': serializer.toJson<String>(
+        directionConfidenceKind,
+      ),
+      'directionConfidenceLevel': serializer.toJson<String>(
+        directionConfidenceLevel,
+      ),
+      'date': serializer.toJson<int?>(date),
+      'dateConfidenceKind': serializer.toJson<String>(dateConfidenceKind),
+      'dateConfidenceLevel': serializer.toJson<String>(dateConfidenceLevel),
+      'notes': serializer.toJson<String?>(notes),
+      'rawOcrText': serializer.toJson<String>(rawOcrText),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'editedAt': serializer.toJson<int?>(editedAt),
+    };
+  }
+
+  CandidateEntry copyWith({
+    String? id,
+    String? scanId,
+    String? status,
+    String? personName,
+    String? personNameConfidenceKind,
+    String? personNameConfidenceLevel,
+    Value<String?> matchedPersonId = const Value.absent(),
+    Value<int?> amountMinorUnits = const Value.absent(),
+    String? amountConfidenceKind,
+    String? amountConfidenceLevel,
+    Value<String?> direction = const Value.absent(),
+    String? directionConfidenceKind,
+    String? directionConfidenceLevel,
+    Value<int?> date = const Value.absent(),
+    String? dateConfidenceKind,
+    String? dateConfidenceLevel,
+    Value<String?> notes = const Value.absent(),
+    String? rawOcrText,
+    int? createdAt,
+    Value<int?> editedAt = const Value.absent(),
+  }) => CandidateEntry(
+    id: id ?? this.id,
+    scanId: scanId ?? this.scanId,
+    status: status ?? this.status,
+    personName: personName ?? this.personName,
+    personNameConfidenceKind:
+        personNameConfidenceKind ?? this.personNameConfidenceKind,
+    personNameConfidenceLevel:
+        personNameConfidenceLevel ?? this.personNameConfidenceLevel,
+    matchedPersonId: matchedPersonId.present
+        ? matchedPersonId.value
+        : this.matchedPersonId,
+    amountMinorUnits: amountMinorUnits.present
+        ? amountMinorUnits.value
+        : this.amountMinorUnits,
+    amountConfidenceKind: amountConfidenceKind ?? this.amountConfidenceKind,
+    amountConfidenceLevel: amountConfidenceLevel ?? this.amountConfidenceLevel,
+    direction: direction.present ? direction.value : this.direction,
+    directionConfidenceKind:
+        directionConfidenceKind ?? this.directionConfidenceKind,
+    directionConfidenceLevel:
+        directionConfidenceLevel ?? this.directionConfidenceLevel,
+    date: date.present ? date.value : this.date,
+    dateConfidenceKind: dateConfidenceKind ?? this.dateConfidenceKind,
+    dateConfidenceLevel: dateConfidenceLevel ?? this.dateConfidenceLevel,
+    notes: notes.present ? notes.value : this.notes,
+    rawOcrText: rawOcrText ?? this.rawOcrText,
+    createdAt: createdAt ?? this.createdAt,
+    editedAt: editedAt.present ? editedAt.value : this.editedAt,
+  );
+  CandidateEntry copyWithCompanion(CandidateEntriesCompanion data) {
+    return CandidateEntry(
+      id: data.id.present ? data.id.value : this.id,
+      scanId: data.scanId.present ? data.scanId.value : this.scanId,
+      status: data.status.present ? data.status.value : this.status,
+      personName: data.personName.present
+          ? data.personName.value
+          : this.personName,
+      personNameConfidenceKind: data.personNameConfidenceKind.present
+          ? data.personNameConfidenceKind.value
+          : this.personNameConfidenceKind,
+      personNameConfidenceLevel: data.personNameConfidenceLevel.present
+          ? data.personNameConfidenceLevel.value
+          : this.personNameConfidenceLevel,
+      matchedPersonId: data.matchedPersonId.present
+          ? data.matchedPersonId.value
+          : this.matchedPersonId,
+      amountMinorUnits: data.amountMinorUnits.present
+          ? data.amountMinorUnits.value
+          : this.amountMinorUnits,
+      amountConfidenceKind: data.amountConfidenceKind.present
+          ? data.amountConfidenceKind.value
+          : this.amountConfidenceKind,
+      amountConfidenceLevel: data.amountConfidenceLevel.present
+          ? data.amountConfidenceLevel.value
+          : this.amountConfidenceLevel,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      directionConfidenceKind: data.directionConfidenceKind.present
+          ? data.directionConfidenceKind.value
+          : this.directionConfidenceKind,
+      directionConfidenceLevel: data.directionConfidenceLevel.present
+          ? data.directionConfidenceLevel.value
+          : this.directionConfidenceLevel,
+      date: data.date.present ? data.date.value : this.date,
+      dateConfidenceKind: data.dateConfidenceKind.present
+          ? data.dateConfidenceKind.value
+          : this.dateConfidenceKind,
+      dateConfidenceLevel: data.dateConfidenceLevel.present
+          ? data.dateConfidenceLevel.value
+          : this.dateConfidenceLevel,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      rawOcrText: data.rawOcrText.present
+          ? data.rawOcrText.value
+          : this.rawOcrText,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CandidateEntry(')
+          ..write('id: $id, ')
+          ..write('scanId: $scanId, ')
+          ..write('status: $status, ')
+          ..write('personName: $personName, ')
+          ..write('personNameConfidenceKind: $personNameConfidenceKind, ')
+          ..write('personNameConfidenceLevel: $personNameConfidenceLevel, ')
+          ..write('matchedPersonId: $matchedPersonId, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('amountConfidenceKind: $amountConfidenceKind, ')
+          ..write('amountConfidenceLevel: $amountConfidenceLevel, ')
+          ..write('direction: $direction, ')
+          ..write('directionConfidenceKind: $directionConfidenceKind, ')
+          ..write('directionConfidenceLevel: $directionConfidenceLevel, ')
+          ..write('date: $date, ')
+          ..write('dateConfidenceKind: $dateConfidenceKind, ')
+          ..write('dateConfidenceLevel: $dateConfidenceLevel, ')
+          ..write('notes: $notes, ')
+          ..write('rawOcrText: $rawOcrText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    scanId,
+    status,
+    personName,
+    personNameConfidenceKind,
+    personNameConfidenceLevel,
+    matchedPersonId,
+    amountMinorUnits,
+    amountConfidenceKind,
+    amountConfidenceLevel,
+    direction,
+    directionConfidenceKind,
+    directionConfidenceLevel,
+    date,
+    dateConfidenceKind,
+    dateConfidenceLevel,
+    notes,
+    rawOcrText,
+    createdAt,
+    editedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CandidateEntry &&
+          other.id == this.id &&
+          other.scanId == this.scanId &&
+          other.status == this.status &&
+          other.personName == this.personName &&
+          other.personNameConfidenceKind == this.personNameConfidenceKind &&
+          other.personNameConfidenceLevel == this.personNameConfidenceLevel &&
+          other.matchedPersonId == this.matchedPersonId &&
+          other.amountMinorUnits == this.amountMinorUnits &&
+          other.amountConfidenceKind == this.amountConfidenceKind &&
+          other.amountConfidenceLevel == this.amountConfidenceLevel &&
+          other.direction == this.direction &&
+          other.directionConfidenceKind == this.directionConfidenceKind &&
+          other.directionConfidenceLevel == this.directionConfidenceLevel &&
+          other.date == this.date &&
+          other.dateConfidenceKind == this.dateConfidenceKind &&
+          other.dateConfidenceLevel == this.dateConfidenceLevel &&
+          other.notes == this.notes &&
+          other.rawOcrText == this.rawOcrText &&
+          other.createdAt == this.createdAt &&
+          other.editedAt == this.editedAt);
+}
+
+class CandidateEntriesCompanion extends UpdateCompanion<CandidateEntry> {
+  final Value<String> id;
+  final Value<String> scanId;
+  final Value<String> status;
+  final Value<String> personName;
+  final Value<String> personNameConfidenceKind;
+  final Value<String> personNameConfidenceLevel;
+  final Value<String?> matchedPersonId;
+  final Value<int?> amountMinorUnits;
+  final Value<String> amountConfidenceKind;
+  final Value<String> amountConfidenceLevel;
+  final Value<String?> direction;
+  final Value<String> directionConfidenceKind;
+  final Value<String> directionConfidenceLevel;
+  final Value<int?> date;
+  final Value<String> dateConfidenceKind;
+  final Value<String> dateConfidenceLevel;
+  final Value<String?> notes;
+  final Value<String> rawOcrText;
+  final Value<int> createdAt;
+  final Value<int?> editedAt;
+  final Value<int> rowid;
+  const CandidateEntriesCompanion({
+    this.id = const Value.absent(),
+    this.scanId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.personName = const Value.absent(),
+    this.personNameConfidenceKind = const Value.absent(),
+    this.personNameConfidenceLevel = const Value.absent(),
+    this.matchedPersonId = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    this.amountConfidenceKind = const Value.absent(),
+    this.amountConfidenceLevel = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.directionConfidenceKind = const Value.absent(),
+    this.directionConfidenceLevel = const Value.absent(),
+    this.date = const Value.absent(),
+    this.dateConfidenceKind = const Value.absent(),
+    this.dateConfidenceLevel = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rawOcrText = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CandidateEntriesCompanion.insert({
+    required String id,
+    required String scanId,
+    this.status = const Value.absent(),
+    required String personName,
+    required String personNameConfidenceKind,
+    required String personNameConfidenceLevel,
+    this.matchedPersonId = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    required String amountConfidenceKind,
+    required String amountConfidenceLevel,
+    this.direction = const Value.absent(),
+    required String directionConfidenceKind,
+    required String directionConfidenceLevel,
+    this.date = const Value.absent(),
+    required String dateConfidenceKind,
+    required String dateConfidenceLevel,
+    this.notes = const Value.absent(),
+    required String rawOcrText,
+    required int createdAt,
+    this.editedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       scanId = Value(scanId),
+       personName = Value(personName),
+       personNameConfidenceKind = Value(personNameConfidenceKind),
+       personNameConfidenceLevel = Value(personNameConfidenceLevel),
+       amountConfidenceKind = Value(amountConfidenceKind),
+       amountConfidenceLevel = Value(amountConfidenceLevel),
+       directionConfidenceKind = Value(directionConfidenceKind),
+       directionConfidenceLevel = Value(directionConfidenceLevel),
+       dateConfidenceKind = Value(dateConfidenceKind),
+       dateConfidenceLevel = Value(dateConfidenceLevel),
+       rawOcrText = Value(rawOcrText),
+       createdAt = Value(createdAt);
+  static Insertable<CandidateEntry> custom({
+    Expression<String>? id,
+    Expression<String>? scanId,
+    Expression<String>? status,
+    Expression<String>? personName,
+    Expression<String>? personNameConfidenceKind,
+    Expression<String>? personNameConfidenceLevel,
+    Expression<String>? matchedPersonId,
+    Expression<int>? amountMinorUnits,
+    Expression<String>? amountConfidenceKind,
+    Expression<String>? amountConfidenceLevel,
+    Expression<String>? direction,
+    Expression<String>? directionConfidenceKind,
+    Expression<String>? directionConfidenceLevel,
+    Expression<int>? date,
+    Expression<String>? dateConfidenceKind,
+    Expression<String>? dateConfidenceLevel,
+    Expression<String>? notes,
+    Expression<String>? rawOcrText,
+    Expression<int>? createdAt,
+    Expression<int>? editedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (scanId != null) 'scan_id': scanId,
+      if (status != null) 'status': status,
+      if (personName != null) 'person_name': personName,
+      if (personNameConfidenceKind != null)
+        'person_name_confidence_kind': personNameConfidenceKind,
+      if (personNameConfidenceLevel != null)
+        'person_name_confidence_level': personNameConfidenceLevel,
+      if (matchedPersonId != null) 'matched_person_id': matchedPersonId,
+      if (amountMinorUnits != null) 'amount_minor_units': amountMinorUnits,
+      if (amountConfidenceKind != null)
+        'amount_confidence_kind': amountConfidenceKind,
+      if (amountConfidenceLevel != null)
+        'amount_confidence_level': amountConfidenceLevel,
+      if (direction != null) 'direction': direction,
+      if (directionConfidenceKind != null)
+        'direction_confidence_kind': directionConfidenceKind,
+      if (directionConfidenceLevel != null)
+        'direction_confidence_level': directionConfidenceLevel,
+      if (date != null) 'date': date,
+      if (dateConfidenceKind != null)
+        'date_confidence_kind': dateConfidenceKind,
+      if (dateConfidenceLevel != null)
+        'date_confidence_level': dateConfidenceLevel,
+      if (notes != null) 'notes': notes,
+      if (rawOcrText != null) 'raw_ocr_text': rawOcrText,
+      if (createdAt != null) 'created_at': createdAt,
+      if (editedAt != null) 'edited_at': editedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CandidateEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? scanId,
+    Value<String>? status,
+    Value<String>? personName,
+    Value<String>? personNameConfidenceKind,
+    Value<String>? personNameConfidenceLevel,
+    Value<String?>? matchedPersonId,
+    Value<int?>? amountMinorUnits,
+    Value<String>? amountConfidenceKind,
+    Value<String>? amountConfidenceLevel,
+    Value<String?>? direction,
+    Value<String>? directionConfidenceKind,
+    Value<String>? directionConfidenceLevel,
+    Value<int?>? date,
+    Value<String>? dateConfidenceKind,
+    Value<String>? dateConfidenceLevel,
+    Value<String?>? notes,
+    Value<String>? rawOcrText,
+    Value<int>? createdAt,
+    Value<int?>? editedAt,
+    Value<int>? rowid,
+  }) {
+    return CandidateEntriesCompanion(
+      id: id ?? this.id,
+      scanId: scanId ?? this.scanId,
+      status: status ?? this.status,
+      personName: personName ?? this.personName,
+      personNameConfidenceKind:
+          personNameConfidenceKind ?? this.personNameConfidenceKind,
+      personNameConfidenceLevel:
+          personNameConfidenceLevel ?? this.personNameConfidenceLevel,
+      matchedPersonId: matchedPersonId ?? this.matchedPersonId,
+      amountMinorUnits: amountMinorUnits ?? this.amountMinorUnits,
+      amountConfidenceKind: amountConfidenceKind ?? this.amountConfidenceKind,
+      amountConfidenceLevel:
+          amountConfidenceLevel ?? this.amountConfidenceLevel,
+      direction: direction ?? this.direction,
+      directionConfidenceKind:
+          directionConfidenceKind ?? this.directionConfidenceKind,
+      directionConfidenceLevel:
+          directionConfidenceLevel ?? this.directionConfidenceLevel,
+      date: date ?? this.date,
+      dateConfidenceKind: dateConfidenceKind ?? this.dateConfidenceKind,
+      dateConfidenceLevel: dateConfidenceLevel ?? this.dateConfidenceLevel,
+      notes: notes ?? this.notes,
+      rawOcrText: rawOcrText ?? this.rawOcrText,
+      createdAt: createdAt ?? this.createdAt,
+      editedAt: editedAt ?? this.editedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (scanId.present) {
+      map['scan_id'] = Variable<String>(scanId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (personName.present) {
+      map['person_name'] = Variable<String>(personName.value);
+    }
+    if (personNameConfidenceKind.present) {
+      map['person_name_confidence_kind'] = Variable<String>(
+        personNameConfidenceKind.value,
+      );
+    }
+    if (personNameConfidenceLevel.present) {
+      map['person_name_confidence_level'] = Variable<String>(
+        personNameConfidenceLevel.value,
+      );
+    }
+    if (matchedPersonId.present) {
+      map['matched_person_id'] = Variable<String>(matchedPersonId.value);
+    }
+    if (amountMinorUnits.present) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits.value);
+    }
+    if (amountConfidenceKind.present) {
+      map['amount_confidence_kind'] = Variable<String>(
+        amountConfidenceKind.value,
+      );
+    }
+    if (amountConfidenceLevel.present) {
+      map['amount_confidence_level'] = Variable<String>(
+        amountConfidenceLevel.value,
+      );
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (directionConfidenceKind.present) {
+      map['direction_confidence_kind'] = Variable<String>(
+        directionConfidenceKind.value,
+      );
+    }
+    if (directionConfidenceLevel.present) {
+      map['direction_confidence_level'] = Variable<String>(
+        directionConfidenceLevel.value,
+      );
+    }
+    if (date.present) {
+      map['date'] = Variable<int>(date.value);
+    }
+    if (dateConfidenceKind.present) {
+      map['date_confidence_kind'] = Variable<String>(dateConfidenceKind.value);
+    }
+    if (dateConfidenceLevel.present) {
+      map['date_confidence_level'] = Variable<String>(
+        dateConfidenceLevel.value,
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rawOcrText.present) {
+      map['raw_ocr_text'] = Variable<String>(rawOcrText.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (editedAt.present) {
+      map['edited_at'] = Variable<int>(editedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CandidateEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('scanId: $scanId, ')
+          ..write('status: $status, ')
+          ..write('personName: $personName, ')
+          ..write('personNameConfidenceKind: $personNameConfidenceKind, ')
+          ..write('personNameConfidenceLevel: $personNameConfidenceLevel, ')
+          ..write('matchedPersonId: $matchedPersonId, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('amountConfidenceKind: $amountConfidenceKind, ')
+          ..write('amountConfidenceLevel: $amountConfidenceLevel, ')
+          ..write('direction: $direction, ')
+          ..write('directionConfidenceKind: $directionConfidenceKind, ')
+          ..write('directionConfidenceLevel: $directionConfidenceLevel, ')
+          ..write('date: $date, ')
+          ..write('dateConfidenceKind: $dateConfidenceKind, ')
+          ..write('dateConfidenceLevel: $dateConfidenceLevel, ')
+          ..write('notes: $notes, ')
+          ..write('rawOcrText: $rawOcrText, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('editedAt: $editedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _monthMeta = const VerificationMeta('month');
+  @override
+  late final GeneratedColumn<String> month = GeneratedColumn<String>(
+    'month',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expectedIncomeMinorUnitsMeta =
+      const VerificationMeta('expectedIncomeMinorUnits');
+  @override
+  late final GeneratedColumn<int> expectedIncomeMinorUnits =
+      GeneratedColumn<int>(
+        'expected_income_minor_units',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('EGP'),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    month,
+    expectedIncomeMinorUnits,
+    currencyCode,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budgets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Budget> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('month')) {
+      context.handle(
+        _monthMeta,
+        month.isAcceptableOrUnknown(data['month']!, _monthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_monthMeta);
+    }
+    if (data.containsKey('expected_income_minor_units')) {
+      context.handle(
+        _expectedIncomeMinorUnitsMeta,
+        expectedIncomeMinorUnits.isAcceptableOrUnknown(
+          data['expected_income_minor_units']!,
+          _expectedIncomeMinorUnitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Budget map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Budget(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      month: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}month'],
+      )!,
+      expectedIncomeMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expected_income_minor_units'],
+      ),
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $BudgetsTable createAlias(String alias) {
+    return $BudgetsTable(attachedDatabase, alias);
+  }
+}
+
+class Budget extends DataClass implements Insertable<Budget> {
+  final String id;
+  final String idempotencyKey;
+
+  /// `'YYYY-MM'` — at most one active budget per calendar month.
+  final String month;
+
+  /// Optional reference figure (010 FR-003); never aggregated from income
+  /// entries.
+  final int? expectedIncomeMinorUnits;
+
+  /// 018: the ISO 4217 code every planned figure of this budget (and its
+  /// allocations) is in — the primary currency when the budget was
+  /// created, so switching the primary currency later never reinterprets a
+  /// plan. Actual spend is converted into it at read time.
+  final String currencyCode;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const Budget({
+    required this.id,
+    required this.idempotencyKey,
+    required this.month,
+    this.expectedIncomeMinorUnits,
+    required this.currencyCode,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['month'] = Variable<String>(month);
+    if (!nullToAbsent || expectedIncomeMinorUnits != null) {
+      map['expected_income_minor_units'] = Variable<int>(
+        expectedIncomeMinorUnits,
+      );
+    }
+    map['currency_code'] = Variable<String>(currencyCode);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  BudgetsCompanion toCompanion(bool nullToAbsent) {
+    return BudgetsCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      month: Value(month),
+      expectedIncomeMinorUnits: expectedIncomeMinorUnits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expectedIncomeMinorUnits),
+      currencyCode: Value(currencyCode),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory Budget.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Budget(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      month: serializer.fromJson<String>(json['month']),
+      expectedIncomeMinorUnits: serializer.fromJson<int?>(
+        json['expectedIncomeMinorUnits'],
+      ),
+      currencyCode: serializer.fromJson<String>(json['currencyCode']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'month': serializer.toJson<String>(month),
+      'expectedIncomeMinorUnits': serializer.toJson<int?>(
+        expectedIncomeMinorUnits,
+      ),
+      'currencyCode': serializer.toJson<String>(currencyCode),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  Budget copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? month,
+    Value<int?> expectedIncomeMinorUnits = const Value.absent(),
+    String? currencyCode,
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => Budget(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    month: month ?? this.month,
+    expectedIncomeMinorUnits: expectedIncomeMinorUnits.present
+        ? expectedIncomeMinorUnits.value
+        : this.expectedIncomeMinorUnits,
+    currencyCode: currencyCode ?? this.currencyCode,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  Budget copyWithCompanion(BudgetsCompanion data) {
+    return Budget(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      month: data.month.present ? data.month.value : this.month,
+      expectedIncomeMinorUnits: data.expectedIncomeMinorUnits.present
+          ? data.expectedIncomeMinorUnits.value
+          : this.expectedIncomeMinorUnits,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Budget(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('month: $month, ')
+          ..write('expectedIncomeMinorUnits: $expectedIncomeMinorUnits, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    month,
+    expectedIncomeMinorUnits,
+    currencyCode,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Budget &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.month == this.month &&
+          other.expectedIncomeMinorUnits == this.expectedIncomeMinorUnits &&
+          other.currencyCode == this.currencyCode &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class BudgetsCompanion extends UpdateCompanion<Budget> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> month;
+  final Value<int?> expectedIncomeMinorUnits;
+  final Value<String> currencyCode;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const BudgetsCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.month = const Value.absent(),
+    this.expectedIncomeMinorUnits = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetsCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String month,
+    this.expectedIncomeMinorUnits = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       month = Value(month),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<Budget> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? month,
+    Expression<int>? expectedIncomeMinorUnits,
+    Expression<String>? currencyCode,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (month != null) 'month': month,
+      if (expectedIncomeMinorUnits != null)
+        'expected_income_minor_units': expectedIncomeMinorUnits,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? month,
+    Value<int?>? expectedIncomeMinorUnits,
+    Value<String>? currencyCode,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return BudgetsCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      month: month ?? this.month,
+      expectedIncomeMinorUnits:
+          expectedIncomeMinorUnits ?? this.expectedIncomeMinorUnits,
+      currencyCode: currencyCode ?? this.currencyCode,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (month.present) {
+      map['month'] = Variable<String>(month.value);
+    }
+    if (expectedIncomeMinorUnits.present) {
+      map['expected_income_minor_units'] = Variable<int>(
+        expectedIncomeMinorUnits.value,
+      );
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetsCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('month: $month, ')
+          ..write('expectedIncomeMinorUnits: $expectedIncomeMinorUnits, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BudgetCategoryAllocationsTable extends BudgetCategoryAllocations
+    with TableInfo<$BudgetCategoryAllocationsTable, BudgetCategoryAllocation> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetCategoryAllocationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _idempotencyKeyMeta = const VerificationMeta(
+    'idempotencyKey',
+  );
+  @override
+  late final GeneratedColumn<String> idempotencyKey = GeneratedColumn<String>(
+    'idempotency_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _budgetIdMeta = const VerificationMeta(
+    'budgetId',
+  );
+  @override
+  late final GeneratedColumn<String> budgetId = GeneratedColumn<String>(
+    'budget_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES budgets (id)',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES finance_categories (id)',
+    ),
+  );
+  static const VerificationMeta _plannedAmountMinorUnitsMeta =
+      const VerificationMeta('plannedAmountMinorUnits');
+  @override
+  late final GeneratedColumn<int> plannedAmountMinorUnits =
+      GeneratedColumn<int>(
+        'planned_amount_minor_units',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    idempotencyKey,
+    budgetId,
+    categoryId,
+    plannedAmountMinorUnits,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budget_category_allocations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetCategoryAllocation> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('idempotency_key')) {
+      context.handle(
+        _idempotencyKeyMeta,
+        idempotencyKey.isAcceptableOrUnknown(
+          data['idempotency_key']!,
+          _idempotencyKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_idempotencyKeyMeta);
+    }
+    if (data.containsKey('budget_id')) {
+      context.handle(
+        _budgetIdMeta,
+        budgetId.isAcceptableOrUnknown(data['budget_id']!, _budgetIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_budgetIdMeta);
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('planned_amount_minor_units')) {
+      context.handle(
+        _plannedAmountMinorUnitsMeta,
+        plannedAmountMinorUnits.isAcceptableOrUnknown(
+          data['planned_amount_minor_units']!,
+          _plannedAmountMinorUnitsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_plannedAmountMinorUnitsMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetCategoryAllocation map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetCategoryAllocation(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      idempotencyKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}idempotency_key'],
+      )!,
+      budgetId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}budget_id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      plannedAmountMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}planned_amount_minor_units'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetCategoryAllocationsTable createAlias(String alias) {
+    return $BudgetCategoryAllocationsTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetCategoryAllocation extends DataClass
+    implements Insertable<BudgetCategoryAllocation> {
+  final String id;
+
+  /// What lets a retried "add allocation" return the row it already wrote
+  /// instead of tripping the `(budget_id, category_id)` duplicate guard —
+  /// without it a retry and a genuine duplicate would be indistinguishable.
+  final String idempotencyKey;
+  final String budgetId;
+  final String categoryId;
+
+  /// `>= 0`; zero is a valid plan (010 FR-002).
+  final int plannedAmountMinorUnits;
+  final int createdAt;
+  final int updatedAt;
+  const BudgetCategoryAllocation({
+    required this.id,
+    required this.idempotencyKey,
+    required this.budgetId,
+    required this.categoryId,
+    required this.plannedAmountMinorUnits,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['idempotency_key'] = Variable<String>(idempotencyKey);
+    map['budget_id'] = Variable<String>(budgetId);
+    map['category_id'] = Variable<String>(categoryId);
+    map['planned_amount_minor_units'] = Variable<int>(plannedAmountMinorUnits);
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  BudgetCategoryAllocationsCompanion toCompanion(bool nullToAbsent) {
+    return BudgetCategoryAllocationsCompanion(
+      id: Value(id),
+      idempotencyKey: Value(idempotencyKey),
+      budgetId: Value(budgetId),
+      categoryId: Value(categoryId),
+      plannedAmountMinorUnits: Value(plannedAmountMinorUnits),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory BudgetCategoryAllocation.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetCategoryAllocation(
+      id: serializer.fromJson<String>(json['id']),
+      idempotencyKey: serializer.fromJson<String>(json['idempotencyKey']),
+      budgetId: serializer.fromJson<String>(json['budgetId']),
+      categoryId: serializer.fromJson<String>(json['categoryId']),
+      plannedAmountMinorUnits: serializer.fromJson<int>(
+        json['plannedAmountMinorUnits'],
+      ),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'idempotencyKey': serializer.toJson<String>(idempotencyKey),
+      'budgetId': serializer.toJson<String>(budgetId),
+      'categoryId': serializer.toJson<String>(categoryId),
+      'plannedAmountMinorUnits': serializer.toJson<int>(
+        plannedAmountMinorUnits,
+      ),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  BudgetCategoryAllocation copyWith({
+    String? id,
+    String? idempotencyKey,
+    String? budgetId,
+    String? categoryId,
+    int? plannedAmountMinorUnits,
+    int? createdAt,
+    int? updatedAt,
+  }) => BudgetCategoryAllocation(
+    id: id ?? this.id,
+    idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+    budgetId: budgetId ?? this.budgetId,
+    categoryId: categoryId ?? this.categoryId,
+    plannedAmountMinorUnits:
+        plannedAmountMinorUnits ?? this.plannedAmountMinorUnits,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  BudgetCategoryAllocation copyWithCompanion(
+    BudgetCategoryAllocationsCompanion data,
+  ) {
+    return BudgetCategoryAllocation(
+      id: data.id.present ? data.id.value : this.id,
+      idempotencyKey: data.idempotencyKey.present
+          ? data.idempotencyKey.value
+          : this.idempotencyKey,
+      budgetId: data.budgetId.present ? data.budgetId.value : this.budgetId,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      plannedAmountMinorUnits: data.plannedAmountMinorUnits.present
+          ? data.plannedAmountMinorUnits.value
+          : this.plannedAmountMinorUnits,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetCategoryAllocation(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('plannedAmountMinorUnits: $plannedAmountMinorUnits, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    idempotencyKey,
+    budgetId,
+    categoryId,
+    plannedAmountMinorUnits,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetCategoryAllocation &&
+          other.id == this.id &&
+          other.idempotencyKey == this.idempotencyKey &&
+          other.budgetId == this.budgetId &&
+          other.categoryId == this.categoryId &&
+          other.plannedAmountMinorUnits == this.plannedAmountMinorUnits &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class BudgetCategoryAllocationsCompanion
+    extends UpdateCompanion<BudgetCategoryAllocation> {
+  final Value<String> id;
+  final Value<String> idempotencyKey;
+  final Value<String> budgetId;
+  final Value<String> categoryId;
+  final Value<int> plannedAmountMinorUnits;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const BudgetCategoryAllocationsCompanion({
+    this.id = const Value.absent(),
+    this.idempotencyKey = const Value.absent(),
+    this.budgetId = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.plannedAmountMinorUnits = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BudgetCategoryAllocationsCompanion.insert({
+    required String id,
+    required String idempotencyKey,
+    required String budgetId,
+    required String categoryId,
+    required int plannedAmountMinorUnits,
+    required int createdAt,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       idempotencyKey = Value(idempotencyKey),
+       budgetId = Value(budgetId),
+       categoryId = Value(categoryId),
+       plannedAmountMinorUnits = Value(plannedAmountMinorUnits),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<BudgetCategoryAllocation> custom({
+    Expression<String>? id,
+    Expression<String>? idempotencyKey,
+    Expression<String>? budgetId,
+    Expression<String>? categoryId,
+    Expression<int>? plannedAmountMinorUnits,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (idempotencyKey != null) 'idempotency_key': idempotencyKey,
+      if (budgetId != null) 'budget_id': budgetId,
+      if (categoryId != null) 'category_id': categoryId,
+      if (plannedAmountMinorUnits != null)
+        'planned_amount_minor_units': plannedAmountMinorUnits,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BudgetCategoryAllocationsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? idempotencyKey,
+    Value<String>? budgetId,
+    Value<String>? categoryId,
+    Value<int>? plannedAmountMinorUnits,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return BudgetCategoryAllocationsCompanion(
+      id: id ?? this.id,
+      idempotencyKey: idempotencyKey ?? this.idempotencyKey,
+      budgetId: budgetId ?? this.budgetId,
+      categoryId: categoryId ?? this.categoryId,
+      plannedAmountMinorUnits:
+          plannedAmountMinorUnits ?? this.plannedAmountMinorUnits,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (idempotencyKey.present) {
+      map['idempotency_key'] = Variable<String>(idempotencyKey.value);
+    }
+    if (budgetId.present) {
+      map['budget_id'] = Variable<String>(budgetId.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (plannedAmountMinorUnits.present) {
+      map['planned_amount_minor_units'] = Variable<int>(
+        plannedAmountMinorUnits.value,
+      );
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetCategoryAllocationsCompanion(')
+          ..write('id: $id, ')
+          ..write('idempotencyKey: $idempotencyKey, ')
+          ..write('budgetId: $budgetId, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('plannedAmountMinorUnits: $plannedAmountMinorUnits, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AiConversationsTable extends AiConversations
+    with TableInfo<$AiConversationsTable, AiConversationRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiConversationsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastActivityAtMeta = const VerificationMeta(
+    'lastActivityAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastActivityAt = GeneratedColumn<int>(
+    'last_activity_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, createdAt, lastActivityAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_conversations';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiConversationRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('last_activity_at')) {
+      context.handle(
+        _lastActivityAtMeta,
+        lastActivityAt.isAcceptableOrUnknown(
+          data['last_activity_at']!,
+          _lastActivityAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastActivityAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiConversationRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiConversationRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      lastActivityAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_activity_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AiConversationsTable createAlias(String alias) {
+    return $AiConversationsTable(attachedDatabase, alias);
+  }
+}
+
+class AiConversationRow extends DataClass
+    implements Insertable<AiConversationRow> {
+  final String id;
+  final int createdAt;
+  final int lastActivityAt;
+  const AiConversationRow({
+    required this.id,
+    required this.createdAt,
+    required this.lastActivityAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['created_at'] = Variable<int>(createdAt);
+    map['last_activity_at'] = Variable<int>(lastActivityAt);
+    return map;
+  }
+
+  AiConversationsCompanion toCompanion(bool nullToAbsent) {
+    return AiConversationsCompanion(
+      id: Value(id),
+      createdAt: Value(createdAt),
+      lastActivityAt: Value(lastActivityAt),
+    );
+  }
+
+  factory AiConversationRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiConversationRow(
+      id: serializer.fromJson<String>(json['id']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      lastActivityAt: serializer.fromJson<int>(json['lastActivityAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'lastActivityAt': serializer.toJson<int>(lastActivityAt),
+    };
+  }
+
+  AiConversationRow copyWith({
+    String? id,
+    int? createdAt,
+    int? lastActivityAt,
+  }) => AiConversationRow(
+    id: id ?? this.id,
+    createdAt: createdAt ?? this.createdAt,
+    lastActivityAt: lastActivityAt ?? this.lastActivityAt,
+  );
+  AiConversationRow copyWithCompanion(AiConversationsCompanion data) {
+    return AiConversationRow(
+      id: data.id.present ? data.id.value : this.id,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      lastActivityAt: data.lastActivityAt.present
+          ? data.lastActivityAt.value
+          : this.lastActivityAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiConversationRow(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastActivityAt: $lastActivityAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, createdAt, lastActivityAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiConversationRow &&
+          other.id == this.id &&
+          other.createdAt == this.createdAt &&
+          other.lastActivityAt == this.lastActivityAt);
+}
+
+class AiConversationsCompanion extends UpdateCompanion<AiConversationRow> {
+  final Value<String> id;
+  final Value<int> createdAt;
+  final Value<int> lastActivityAt;
+  final Value<int> rowid;
+  const AiConversationsCompanion({
+    this.id = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.lastActivityAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AiConversationsCompanion.insert({
+    required String id,
+    required int createdAt,
+    required int lastActivityAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       createdAt = Value(createdAt),
+       lastActivityAt = Value(lastActivityAt);
+  static Insertable<AiConversationRow> custom({
+    Expression<String>? id,
+    Expression<int>? createdAt,
+    Expression<int>? lastActivityAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (createdAt != null) 'created_at': createdAt,
+      if (lastActivityAt != null) 'last_activity_at': lastActivityAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AiConversationsCompanion copyWith({
+    Value<String>? id,
+    Value<int>? createdAt,
+    Value<int>? lastActivityAt,
+    Value<int>? rowid,
+  }) {
+    return AiConversationsCompanion(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      lastActivityAt: lastActivityAt ?? this.lastActivityAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (lastActivityAt.present) {
+      map['last_activity_at'] = Variable<int>(lastActivityAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiConversationsCompanion(')
+          ..write('id: $id, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('lastActivityAt: $lastActivityAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AiMessagesTable extends AiMessages
+    with TableInfo<$AiMessagesTable, AiMessageRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiMessagesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _conversationIdMeta = const VerificationMeta(
+    'conversationId',
+  );
+  @override
+  late final GeneratedColumn<String> conversationId = GeneratedColumn<String>(
+    'conversation_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES ai_conversations (id)',
+    ),
+  );
+  static const VerificationMeta _senderMeta = const VerificationMeta('sender');
+  @override
+  late final GeneratedColumn<String> sender = GeneratedColumn<String>(
+    'sender',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _failureReasonMeta = const VerificationMeta(
+    'failureReason',
+  );
+  @override
+  late final GeneratedColumn<String> failureReason = GeneratedColumn<String>(
+    'failure_reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _groundingRefsJsonMeta = const VerificationMeta(
+    'groundingRefsJson',
+  );
+  @override
+  late final GeneratedColumn<String> groundingRefsJson =
+      GeneratedColumn<String>(
+        'grounding_refs_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    conversationId,
+    sender,
+    content,
+    status,
+    failureReason,
+    groundingRefsJson,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_messages';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiMessageRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('conversation_id')) {
+      context.handle(
+        _conversationIdMeta,
+        conversationId.isAcceptableOrUnknown(
+          data['conversation_id']!,
+          _conversationIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_conversationIdMeta);
+    }
+    if (data.containsKey('sender')) {
+      context.handle(
+        _senderMeta,
+        sender.isAcceptableOrUnknown(data['sender']!, _senderMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_contentMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('failure_reason')) {
+      context.handle(
+        _failureReasonMeta,
+        failureReason.isAcceptableOrUnknown(
+          data['failure_reason']!,
+          _failureReasonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('grounding_refs_json')) {
+      context.handle(
+        _groundingRefsJsonMeta,
+        groundingRefsJson.isAcceptableOrUnknown(
+          data['grounding_refs_json']!,
+          _groundingRefsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiMessageRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiMessageRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      conversationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}conversation_id'],
+      )!,
+      sender: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      failureReason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}failure_reason'],
+      ),
+      groundingRefsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}grounding_refs_json'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $AiMessagesTable createAlias(String alias) {
+    return $AiMessagesTable(attachedDatabase, alias);
+  }
+}
+
+class AiMessageRow extends DataClass implements Insertable<AiMessageRow> {
+  final String id;
+  final String conversationId;
+
+  /// `'user'|'assistant'`.
+  final String sender;
+  final String content;
+
+  /// `'sent'|'answered'|'failed'`.
+  final String status;
+
+  /// Set only when [status] is `'failed'`: `'invalidApiKey'|'rateLimited'|
+  /// 'network'|'providerError'|'unrecognizedResponse'`.
+  final String? failureReason;
+
+  /// Which tool/use-case pairs grounded an assistant answer's figures.
+  final String? groundingRefsJson;
+  final int createdAt;
+  const AiMessageRow({
+    required this.id,
+    required this.conversationId,
+    required this.sender,
+    required this.content,
+    required this.status,
+    this.failureReason,
+    this.groundingRefsJson,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['conversation_id'] = Variable<String>(conversationId);
+    map['sender'] = Variable<String>(sender);
+    map['content'] = Variable<String>(content);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || failureReason != null) {
+      map['failure_reason'] = Variable<String>(failureReason);
+    }
+    if (!nullToAbsent || groundingRefsJson != null) {
+      map['grounding_refs_json'] = Variable<String>(groundingRefsJson);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  AiMessagesCompanion toCompanion(bool nullToAbsent) {
+    return AiMessagesCompanion(
+      id: Value(id),
+      conversationId: Value(conversationId),
+      sender: Value(sender),
+      content: Value(content),
+      status: Value(status),
+      failureReason: failureReason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failureReason),
+      groundingRefsJson: groundingRefsJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groundingRefsJson),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory AiMessageRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiMessageRow(
+      id: serializer.fromJson<String>(json['id']),
+      conversationId: serializer.fromJson<String>(json['conversationId']),
+      sender: serializer.fromJson<String>(json['sender']),
+      content: serializer.fromJson<String>(json['content']),
+      status: serializer.fromJson<String>(json['status']),
+      failureReason: serializer.fromJson<String?>(json['failureReason']),
+      groundingRefsJson: serializer.fromJson<String?>(
+        json['groundingRefsJson'],
+      ),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'conversationId': serializer.toJson<String>(conversationId),
+      'sender': serializer.toJson<String>(sender),
+      'content': serializer.toJson<String>(content),
+      'status': serializer.toJson<String>(status),
+      'failureReason': serializer.toJson<String?>(failureReason),
+      'groundingRefsJson': serializer.toJson<String?>(groundingRefsJson),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  AiMessageRow copyWith({
+    String? id,
+    String? conversationId,
+    String? sender,
+    String? content,
+    String? status,
+    Value<String?> failureReason = const Value.absent(),
+    Value<String?> groundingRefsJson = const Value.absent(),
+    int? createdAt,
+  }) => AiMessageRow(
+    id: id ?? this.id,
+    conversationId: conversationId ?? this.conversationId,
+    sender: sender ?? this.sender,
+    content: content ?? this.content,
+    status: status ?? this.status,
+    failureReason: failureReason.present
+        ? failureReason.value
+        : this.failureReason,
+    groundingRefsJson: groundingRefsJson.present
+        ? groundingRefsJson.value
+        : this.groundingRefsJson,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  AiMessageRow copyWithCompanion(AiMessagesCompanion data) {
+    return AiMessageRow(
+      id: data.id.present ? data.id.value : this.id,
+      conversationId: data.conversationId.present
+          ? data.conversationId.value
+          : this.conversationId,
+      sender: data.sender.present ? data.sender.value : this.sender,
+      content: data.content.present ? data.content.value : this.content,
+      status: data.status.present ? data.status.value : this.status,
+      failureReason: data.failureReason.present
+          ? data.failureReason.value
+          : this.failureReason,
+      groundingRefsJson: data.groundingRefsJson.present
+          ? data.groundingRefsJson.value
+          : this.groundingRefsJson,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiMessageRow(')
+          ..write('id: $id, ')
+          ..write('conversationId: $conversationId, ')
+          ..write('sender: $sender, ')
+          ..write('content: $content, ')
+          ..write('status: $status, ')
+          ..write('failureReason: $failureReason, ')
+          ..write('groundingRefsJson: $groundingRefsJson, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    conversationId,
+    sender,
+    content,
+    status,
+    failureReason,
+    groundingRefsJson,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiMessageRow &&
+          other.id == this.id &&
+          other.conversationId == this.conversationId &&
+          other.sender == this.sender &&
+          other.content == this.content &&
+          other.status == this.status &&
+          other.failureReason == this.failureReason &&
+          other.groundingRefsJson == this.groundingRefsJson &&
+          other.createdAt == this.createdAt);
+}
+
+class AiMessagesCompanion extends UpdateCompanion<AiMessageRow> {
+  final Value<String> id;
+  final Value<String> conversationId;
+  final Value<String> sender;
+  final Value<String> content;
+  final Value<String> status;
+  final Value<String?> failureReason;
+  final Value<String?> groundingRefsJson;
+  final Value<int> createdAt;
+  final Value<int> rowid;
+  const AiMessagesCompanion({
+    this.id = const Value.absent(),
+    this.conversationId = const Value.absent(),
+    this.sender = const Value.absent(),
+    this.content = const Value.absent(),
+    this.status = const Value.absent(),
+    this.failureReason = const Value.absent(),
+    this.groundingRefsJson = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AiMessagesCompanion.insert({
+    required String id,
+    required String conversationId,
+    required String sender,
+    required String content,
+    required String status,
+    this.failureReason = const Value.absent(),
+    this.groundingRefsJson = const Value.absent(),
+    required int createdAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       conversationId = Value(conversationId),
+       sender = Value(sender),
+       content = Value(content),
+       status = Value(status),
+       createdAt = Value(createdAt);
+  static Insertable<AiMessageRow> custom({
+    Expression<String>? id,
+    Expression<String>? conversationId,
+    Expression<String>? sender,
+    Expression<String>? content,
+    Expression<String>? status,
+    Expression<String>? failureReason,
+    Expression<String>? groundingRefsJson,
+    Expression<int>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (conversationId != null) 'conversation_id': conversationId,
+      if (sender != null) 'sender': sender,
+      if (content != null) 'content': content,
+      if (status != null) 'status': status,
+      if (failureReason != null) 'failure_reason': failureReason,
+      if (groundingRefsJson != null) 'grounding_refs_json': groundingRefsJson,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AiMessagesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? conversationId,
+    Value<String>? sender,
+    Value<String>? content,
+    Value<String>? status,
+    Value<String?>? failureReason,
+    Value<String?>? groundingRefsJson,
+    Value<int>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return AiMessagesCompanion(
+      id: id ?? this.id,
+      conversationId: conversationId ?? this.conversationId,
+      sender: sender ?? this.sender,
+      content: content ?? this.content,
+      status: status ?? this.status,
+      failureReason: failureReason ?? this.failureReason,
+      groundingRefsJson: groundingRefsJson ?? this.groundingRefsJson,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (conversationId.present) {
+      map['conversation_id'] = Variable<String>(conversationId.value);
+    }
+    if (sender.present) {
+      map['sender'] = Variable<String>(sender.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (failureReason.present) {
+      map['failure_reason'] = Variable<String>(failureReason.value);
+    }
+    if (groundingRefsJson.present) {
+      map['grounding_refs_json'] = Variable<String>(groundingRefsJson.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiMessagesCompanion(')
+          ..write('id: $id, ')
+          ..write('conversationId: $conversationId, ')
+          ..write('sender: $sender, ')
+          ..write('content: $content, ')
+          ..write('status: $status, ')
+          ..write('failureReason: $failureReason, ')
+          ..write('groundingRefsJson: $groundingRefsJson, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AiSettingsTable extends AiSettings
+    with TableInfo<$AiSettingsTable, AiSettingsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AiSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isEnabledMeta = const VerificationMeta(
+    'isEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> isEnabled = GeneratedColumn<bool>(
+    'is_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _providerIdMeta = const VerificationMeta(
+    'providerId',
+  );
+  @override
+  late final GeneratedColumn<String> providerId = GeneratedColumn<String>(
+    'provider_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _hasStoredCredentialMeta =
+      const VerificationMeta('hasStoredCredential');
+  @override
+  late final GeneratedColumn<bool> hasStoredCredential = GeneratedColumn<bool>(
+    'has_stored_credential',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("has_stored_credential" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _consentAcceptedAtMeta = const VerificationMeta(
+    'consentAcceptedAt',
+  );
+  @override
+  late final GeneratedColumn<int> consentAcceptedAt = GeneratedColumn<int>(
+    'consent_accepted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastObservationKeyMeta =
+      const VerificationMeta('lastObservationKey');
+  @override
+  late final GeneratedColumn<String> lastObservationKey =
+      GeneratedColumn<String>(
+        'last_observation_key',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    isEnabled,
+    providerId,
+    hasStoredCredential,
+    consentAcceptedAt,
+    updatedAt,
+    lastObservationKey,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'ai_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AiSettingsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('is_enabled')) {
+      context.handle(
+        _isEnabledMeta,
+        isEnabled.isAcceptableOrUnknown(data['is_enabled']!, _isEnabledMeta),
+      );
+    }
+    if (data.containsKey('provider_id')) {
+      context.handle(
+        _providerIdMeta,
+        providerId.isAcceptableOrUnknown(data['provider_id']!, _providerIdMeta),
+      );
+    }
+    if (data.containsKey('has_stored_credential')) {
+      context.handle(
+        _hasStoredCredentialMeta,
+        hasStoredCredential.isAcceptableOrUnknown(
+          data['has_stored_credential']!,
+          _hasStoredCredentialMeta,
+        ),
+      );
+    }
+    if (data.containsKey('consent_accepted_at')) {
+      context.handle(
+        _consentAcceptedAtMeta,
+        consentAcceptedAt.isAcceptableOrUnknown(
+          data['consent_accepted_at']!,
+          _consentAcceptedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('last_observation_key')) {
+      context.handle(
+        _lastObservationKeyMeta,
+        lastObservationKey.isAcceptableOrUnknown(
+          data['last_observation_key']!,
+          _lastObservationKeyMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AiSettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AiSettingsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      isEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_enabled'],
+      )!,
+      providerId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider_id'],
+      ),
+      hasStoredCredential: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}has_stored_credential'],
+      )!,
+      consentAcceptedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}consent_accepted_at'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      lastObservationKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_observation_key'],
+      ),
+    );
+  }
+
+  @override
+  $AiSettingsTable createAlias(String alias) {
+    return $AiSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class AiSettingsRow extends DataClass implements Insertable<AiSettingsRow> {
+  final String id;
+  final bool isEnabled;
+  final String? providerId;
+  final bool hasStoredCredential;
+  final int? consentAcceptedAt;
+  final int updatedAt;
+
+  /// The `observationKey` of the last proactive observation surfaced in the
+  /// conversation (User Story 7 AC3 / FR-020 no-repeat rule), or `null`
+  /// when none was ever surfaced. Not user data in its own right — only a
+  /// de-duplication marker; written only after the observation was
+  /// successfully narrated and persisted.
+  final String? lastObservationKey;
+  const AiSettingsRow({
+    required this.id,
+    required this.isEnabled,
+    this.providerId,
+    required this.hasStoredCredential,
+    this.consentAcceptedAt,
+    required this.updatedAt,
+    this.lastObservationKey,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['is_enabled'] = Variable<bool>(isEnabled);
+    if (!nullToAbsent || providerId != null) {
+      map['provider_id'] = Variable<String>(providerId);
+    }
+    map['has_stored_credential'] = Variable<bool>(hasStoredCredential);
+    if (!nullToAbsent || consentAcceptedAt != null) {
+      map['consent_accepted_at'] = Variable<int>(consentAcceptedAt);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || lastObservationKey != null) {
+      map['last_observation_key'] = Variable<String>(lastObservationKey);
+    }
+    return map;
+  }
+
+  AiSettingsCompanion toCompanion(bool nullToAbsent) {
+    return AiSettingsCompanion(
+      id: Value(id),
+      isEnabled: Value(isEnabled),
+      providerId: providerId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(providerId),
+      hasStoredCredential: Value(hasStoredCredential),
+      consentAcceptedAt: consentAcceptedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(consentAcceptedAt),
+      updatedAt: Value(updatedAt),
+      lastObservationKey: lastObservationKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastObservationKey),
+    );
+  }
+
+  factory AiSettingsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AiSettingsRow(
+      id: serializer.fromJson<String>(json['id']),
+      isEnabled: serializer.fromJson<bool>(json['isEnabled']),
+      providerId: serializer.fromJson<String?>(json['providerId']),
+      hasStoredCredential: serializer.fromJson<bool>(
+        json['hasStoredCredential'],
+      ),
+      consentAcceptedAt: serializer.fromJson<int?>(json['consentAcceptedAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      lastObservationKey: serializer.fromJson<String?>(
+        json['lastObservationKey'],
+      ),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'isEnabled': serializer.toJson<bool>(isEnabled),
+      'providerId': serializer.toJson<String?>(providerId),
+      'hasStoredCredential': serializer.toJson<bool>(hasStoredCredential),
+      'consentAcceptedAt': serializer.toJson<int?>(consentAcceptedAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'lastObservationKey': serializer.toJson<String?>(lastObservationKey),
+    };
+  }
+
+  AiSettingsRow copyWith({
+    String? id,
+    bool? isEnabled,
+    Value<String?> providerId = const Value.absent(),
+    bool? hasStoredCredential,
+    Value<int?> consentAcceptedAt = const Value.absent(),
+    int? updatedAt,
+    Value<String?> lastObservationKey = const Value.absent(),
+  }) => AiSettingsRow(
+    id: id ?? this.id,
+    isEnabled: isEnabled ?? this.isEnabled,
+    providerId: providerId.present ? providerId.value : this.providerId,
+    hasStoredCredential: hasStoredCredential ?? this.hasStoredCredential,
+    consentAcceptedAt: consentAcceptedAt.present
+        ? consentAcceptedAt.value
+        : this.consentAcceptedAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    lastObservationKey: lastObservationKey.present
+        ? lastObservationKey.value
+        : this.lastObservationKey,
+  );
+  AiSettingsRow copyWithCompanion(AiSettingsCompanion data) {
+    return AiSettingsRow(
+      id: data.id.present ? data.id.value : this.id,
+      isEnabled: data.isEnabled.present ? data.isEnabled.value : this.isEnabled,
+      providerId: data.providerId.present
+          ? data.providerId.value
+          : this.providerId,
+      hasStoredCredential: data.hasStoredCredential.present
+          ? data.hasStoredCredential.value
+          : this.hasStoredCredential,
+      consentAcceptedAt: data.consentAcceptedAt.present
+          ? data.consentAcceptedAt.value
+          : this.consentAcceptedAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      lastObservationKey: data.lastObservationKey.present
+          ? data.lastObservationKey.value
+          : this.lastObservationKey,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiSettingsRow(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('providerId: $providerId, ')
+          ..write('hasStoredCredential: $hasStoredCredential, ')
+          ..write('consentAcceptedAt: $consentAcceptedAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastObservationKey: $lastObservationKey')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    isEnabled,
+    providerId,
+    hasStoredCredential,
+    consentAcceptedAt,
+    updatedAt,
+    lastObservationKey,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AiSettingsRow &&
+          other.id == this.id &&
+          other.isEnabled == this.isEnabled &&
+          other.providerId == this.providerId &&
+          other.hasStoredCredential == this.hasStoredCredential &&
+          other.consentAcceptedAt == this.consentAcceptedAt &&
+          other.updatedAt == this.updatedAt &&
+          other.lastObservationKey == this.lastObservationKey);
+}
+
+class AiSettingsCompanion extends UpdateCompanion<AiSettingsRow> {
+  final Value<String> id;
+  final Value<bool> isEnabled;
+  final Value<String?> providerId;
+  final Value<bool> hasStoredCredential;
+  final Value<int?> consentAcceptedAt;
+  final Value<int> updatedAt;
+  final Value<String?> lastObservationKey;
+  final Value<int> rowid;
+  const AiSettingsCompanion({
+    this.id = const Value.absent(),
+    this.isEnabled = const Value.absent(),
+    this.providerId = const Value.absent(),
+    this.hasStoredCredential = const Value.absent(),
+    this.consentAcceptedAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.lastObservationKey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AiSettingsCompanion.insert({
+    required String id,
+    this.isEnabled = const Value.absent(),
+    this.providerId = const Value.absent(),
+    this.hasStoredCredential = const Value.absent(),
+    this.consentAcceptedAt = const Value.absent(),
+    required int updatedAt,
+    this.lastObservationKey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       updatedAt = Value(updatedAt);
+  static Insertable<AiSettingsRow> custom({
+    Expression<String>? id,
+    Expression<bool>? isEnabled,
+    Expression<String>? providerId,
+    Expression<bool>? hasStoredCredential,
+    Expression<int>? consentAcceptedAt,
+    Expression<int>? updatedAt,
+    Expression<String>? lastObservationKey,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isEnabled != null) 'is_enabled': isEnabled,
+      if (providerId != null) 'provider_id': providerId,
+      if (hasStoredCredential != null)
+        'has_stored_credential': hasStoredCredential,
+      if (consentAcceptedAt != null) 'consent_accepted_at': consentAcceptedAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (lastObservationKey != null)
+        'last_observation_key': lastObservationKey,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AiSettingsCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? isEnabled,
+    Value<String?>? providerId,
+    Value<bool>? hasStoredCredential,
+    Value<int?>? consentAcceptedAt,
+    Value<int>? updatedAt,
+    Value<String?>? lastObservationKey,
+    Value<int>? rowid,
+  }) {
+    return AiSettingsCompanion(
+      id: id ?? this.id,
+      isEnabled: isEnabled ?? this.isEnabled,
+      providerId: providerId ?? this.providerId,
+      hasStoredCredential: hasStoredCredential ?? this.hasStoredCredential,
+      consentAcceptedAt: consentAcceptedAt ?? this.consentAcceptedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastObservationKey: lastObservationKey ?? this.lastObservationKey,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (isEnabled.present) {
+      map['is_enabled'] = Variable<bool>(isEnabled.value);
+    }
+    if (providerId.present) {
+      map['provider_id'] = Variable<String>(providerId.value);
+    }
+    if (hasStoredCredential.present) {
+      map['has_stored_credential'] = Variable<bool>(hasStoredCredential.value);
+    }
+    if (consentAcceptedAt.present) {
+      map['consent_accepted_at'] = Variable<int>(consentAcceptedAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (lastObservationKey.present) {
+      map['last_observation_key'] = Variable<String>(lastObservationKey.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AiSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('providerId: $providerId, ')
+          ..write('hasStoredCredential: $hasStoredCredential, ')
+          ..write('consentAcceptedAt: $consentAcceptedAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('lastObservationKey: $lastObservationKey, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $PeopleTable people = $PeopleTable(this);
+  late final $OccasionsTable occasions = $OccasionsTable(this);
   late final $MoneyTransactionsTable moneyTransactions =
       $MoneyTransactionsTable(this);
   late final $TransactionAuditEntriesTable transactionAuditEntries =
@@ -8374,6 +13930,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ConflictResolutionsTable conflictResolutions =
       $ConflictResolutionsTable(this);
   late final $SyncStateTable syncState = $SyncStateTable(this);
+  late final $OccasionAttachmentsTable occasionAttachments =
+      $OccasionAttachmentsTable(this);
+  late final $OcrScansTable ocrScans = $OcrScansTable(this);
+  late final $CandidateEntriesTable candidateEntries = $CandidateEntriesTable(
+    this,
+  );
+  late final $BudgetsTable budgets = $BudgetsTable(this);
+  late final $BudgetCategoryAllocationsTable budgetCategoryAllocations =
+      $BudgetCategoryAllocationsTable(this);
+  late final $AiConversationsTable aiConversations = $AiConversationsTable(
+    this,
+  );
+  late final $AiMessagesTable aiMessages = $AiMessagesTable(this);
+  late final $AiSettingsTable aiSettings = $AiSettingsTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -8389,6 +13959,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Index idxTransactionsDate = Index(
     'idx_transactions_date',
     'CREATE INDEX idx_transactions_date ON money_transactions (date, deleted_at)',
+  );
+  late final Index idxTransactionsOccasionId = Index(
+    'idx_transactions_occasion_id',
+    'CREATE INDEX idx_transactions_occasion_id ON money_transactions (occasion_id, deleted_at)',
+  );
+  late final Index idxTransactionsOcrScanId = Index(
+    'idx_transactions_ocr_scan_id',
+    'CREATE INDEX idx_transactions_ocr_scan_id ON money_transactions (ocr_scan_id, deleted_at)',
   );
   late final Index idxAuditTransactionId = Index(
     'idx_audit_transaction_id',
@@ -8430,12 +14008,65 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_conflicts_open',
     'CREATE UNIQUE INDEX idx_conflicts_open ON sync_conflicts (entity_type, entity_id) WHERE resolved_at IS NULL',
   );
+  late final Index idxOccasionsIdempotencyKey = Index(
+    'idx_occasions_idempotency_key',
+    'CREATE UNIQUE INDEX idx_occasions_idempotency_key ON occasions (idempotency_key)',
+  );
+  late final Index idxOccasionsDate = Index(
+    'idx_occasions_date',
+    'CREATE INDEX idx_occasions_date ON occasions (date, deleted_at)',
+  );
+  late final Index idxOccasionsType = Index(
+    'idx_occasions_type',
+    'CREATE INDEX idx_occasions_type ON occasions (type)',
+  );
+  late final Index idxOccasionAttachmentsOccasionId = Index(
+    'idx_occasion_attachments_occasion_id',
+    'CREATE INDEX idx_occasion_attachments_occasion_id ON occasion_attachments (occasion_id, deleted_at)',
+  );
+  late final Index idxOcrScansIdempotencyKey = Index(
+    'idx_ocr_scans_idempotency_key',
+    'CREATE UNIQUE INDEX idx_ocr_scans_idempotency_key ON ocr_scans (idempotency_key)',
+  );
+  late final Index idxOcrScansStatus = Index(
+    'idx_ocr_scans_status',
+    'CREATE INDEX idx_ocr_scans_status ON ocr_scans (status, deleted_at)',
+  );
+  late final Index idxCandidateEntriesScanId = Index(
+    'idx_candidate_entries_scan_id',
+    'CREATE INDEX idx_candidate_entries_scan_id ON candidate_entries (scan_id)',
+  );
+  late final Index idxBudgetsIdempotencyKey = Index(
+    'idx_budgets_idempotency_key',
+    'CREATE UNIQUE INDEX idx_budgets_idempotency_key ON budgets (idempotency_key)',
+  );
+  late final Index idxBudgetsMonth = Index(
+    'idx_budgets_month',
+    'CREATE UNIQUE INDEX idx_budgets_month ON budgets (month) WHERE deleted_at IS NULL',
+  );
+  late final Index idxBudgetAllocationsBudgetCategory = Index(
+    'idx_budget_allocations_budget_category',
+    'CREATE UNIQUE INDEX idx_budget_allocations_budget_category ON budget_category_allocations (budget_id, category_id)',
+  );
+  late final Index idxBudgetAllocationsIdempotencyKey = Index(
+    'idx_budget_allocations_idempotency_key',
+    'CREATE UNIQUE INDEX idx_budget_allocations_idempotency_key ON budget_category_allocations (idempotency_key)',
+  );
+  late final Index idxBudgetAllocationsBudgetId = Index(
+    'idx_budget_allocations_budget_id',
+    'CREATE INDEX idx_budget_allocations_budget_id ON budget_category_allocations (budget_id)',
+  );
+  late final Index idxAiMessagesConversationCreated = Index(
+    'idx_ai_messages_conversation_created',
+    'CREATE INDEX idx_ai_messages_conversation_created ON ai_messages (conversation_id, created_at)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     people,
+    occasions,
     moneyTransactions,
     transactionAuditEntries,
     appSettings,
@@ -8451,10 +14082,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncConflicts,
     conflictResolutions,
     syncState,
+    occasionAttachments,
+    ocrScans,
+    candidateEntries,
+    budgets,
+    budgetCategoryAllocations,
+    aiConversations,
+    aiMessages,
+    aiSettings,
     idxPeopleNormalizedName,
     idxPeopleArchived,
     idxTransactionsPersonId,
     idxTransactionsDate,
+    idxTransactionsOccasionId,
+    idxTransactionsOcrScanId,
     idxAuditTransactionId,
     idxFinanceCategoriesNormalizedName,
     idxFinanceEntriesCategoryId,
@@ -8465,6 +14106,19 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     idxOutboxEntity,
     idxMetaState,
     idxConflictsOpen,
+    idxOccasionsIdempotencyKey,
+    idxOccasionsDate,
+    idxOccasionsType,
+    idxOccasionAttachmentsOccasionId,
+    idxOcrScansIdempotencyKey,
+    idxOcrScansStatus,
+    idxCandidateEntriesScanId,
+    idxBudgetsIdempotencyKey,
+    idxBudgetsMonth,
+    idxBudgetAllocationsBudgetCategory,
+    idxBudgetAllocationsIdempotencyKey,
+    idxBudgetAllocationsBudgetId,
+    idxAiMessagesConversationCreated,
   ];
 }
 
@@ -8516,6 +14170,26 @@ final class $$PeopleTableReferences
 
     final cache = $_typedResult.readTableOrNull(
       _moneyTransactionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$CandidateEntriesTable, List<CandidateEntry>>
+  _candidateEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.candidateEntries,
+    aliasName: 'people__id__candidate_entries__matched_person_id',
+  );
+
+  $$CandidateEntriesTableProcessedTableManager get candidateEntriesRefs {
+    final manager =
+        $$CandidateEntriesTableTableManager($_db, $_db.candidateEntries).filter(
+          (f) => f.matchedPersonId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _candidateEntriesRefsTable($_db),
     );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
@@ -8598,6 +14272,31 @@ class $$PeopleTableFilterComposer
           }) => $$MoneyTransactionsTableFilterComposer(
             $db: $db,
             $table: $db.moneyTransactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> candidateEntriesRefs(
+    Expression<bool> Function($$CandidateEntriesTableFilterComposer f) f,
+  ) {
+    final $$CandidateEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.matchedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -8742,6 +14441,31 @@ class $$PeopleTableAnnotationComposer
         );
     return f(composer);
   }
+
+  Expression<T> candidateEntriesRefs<T extends Object>(
+    Expression<T> Function($$CandidateEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$CandidateEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.matchedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$PeopleTableTableManager
@@ -8757,7 +14481,10 @@ class $$PeopleTableTableManager
           $$PeopleTableUpdateCompanionBuilder,
           (PeopleData, $$PeopleTableReferences),
           PeopleData,
-          PrefetchHooks Function({bool moneyTransactionsRefs})
+          PrefetchHooks Function({
+            bool moneyTransactionsRefs,
+            bool candidateEntriesRefs,
+          })
         > {
   $$PeopleTableTableManager(_$AppDatabase db, $PeopleTable table)
     : super(
@@ -8830,37 +14557,63 @@ class $$PeopleTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({moneyTransactionsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (moneyTransactionsRefs) db.moneyTransactions,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (moneyTransactionsRefs)
-                    await $_getPrefetchedData<
-                      PeopleData,
-                      $PeopleTable,
-                      MoneyTransaction
-                    >(
-                      currentTable: table,
-                      referencedTable: $$PeopleTableReferences
-                          ._moneyTransactionsRefsTable(db),
-                      managerFromTypedResult: (p0) => $$PeopleTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).moneyTransactionsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.personId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({moneyTransactionsRefs = false, candidateEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (moneyTransactionsRefs) db.moneyTransactions,
+                    if (candidateEntriesRefs) db.candidateEntries,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (moneyTransactionsRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          MoneyTransaction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._moneyTransactionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).moneyTransactionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.personId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (candidateEntriesRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          CandidateEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._candidateEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).candidateEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.matchedPersonId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -8877,7 +14630,619 @@ typedef $$PeopleTableProcessedTableManager =
       $$PeopleTableUpdateCompanionBuilder,
       (PeopleData, $$PeopleTableReferences),
       PeopleData,
-      PrefetchHooks Function({bool moneyTransactionsRefs})
+      PrefetchHooks Function({
+        bool moneyTransactionsRefs,
+        bool candidateEntriesRefs,
+      })
+    >;
+typedef $$OccasionsTableCreateCompanionBuilder =
+    OccasionsCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String name,
+      required int date,
+      required String type,
+      Value<String?> notes,
+      Value<bool> isArchived,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OccasionsTableUpdateCompanionBuilder =
+    OccasionsCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> name,
+      Value<int> date,
+      Value<String> type,
+      Value<String?> notes,
+      Value<bool> isArchived,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OccasionsTableReferences
+    extends BaseReferences<_$AppDatabase, $OccasionsTable, Occasion> {
+  $$OccasionsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$MoneyTransactionsTable, List<MoneyTransaction>>
+  _moneyTransactionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.moneyTransactions,
+        aliasName: 'occasions__id__money_transactions__occasion_id',
+      );
+
+  $$MoneyTransactionsTableProcessedTableManager get moneyTransactionsRefs {
+    final manager = $$MoneyTransactionsTableTableManager(
+      $_db,
+      $_db.moneyTransactions,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _moneyTransactionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $OccasionAttachmentsTable,
+    List<OccasionAttachment>
+  >
+  _occasionAttachmentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.occasionAttachments,
+        aliasName: 'occasions__id__occasion_attachments__occasion_id',
+      );
+
+  $$OccasionAttachmentsTableProcessedTableManager get occasionAttachmentsRefs {
+    final manager = $$OccasionAttachmentsTableTableManager(
+      $_db,
+      $_db.occasionAttachments,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _occasionAttachmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$OcrScansTable, List<OcrScan>> _ocrScansRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.ocrScans,
+    aliasName: 'occasions__id__ocr_scans__occasion_id',
+  );
+
+  $$OcrScansTableProcessedTableManager get ocrScansRefs {
+    final manager = $$OcrScansTableTableManager(
+      $_db,
+      $_db.ocrScans,
+    ).filter((f) => f.occasionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_ocrScansRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$OccasionsTableFilterComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> moneyTransactionsRefs(
+    Expression<bool> Function($$MoneyTransactionsTableFilterComposer f) f,
+  ) {
+    final $$MoneyTransactionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.moneyTransactions,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MoneyTransactionsTableFilterComposer(
+            $db: $db,
+            $table: $db.moneyTransactions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> occasionAttachmentsRefs(
+    Expression<bool> Function($$OccasionAttachmentsTableFilterComposer f) f,
+  ) {
+    final $$OccasionAttachmentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.occasionAttachments,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionAttachmentsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasionAttachments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> ocrScansRefs(
+    Expression<bool> Function($$OcrScansTableFilterComposer f) f,
+  ) {
+    final $$OcrScansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableFilterComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OccasionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$OccasionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OccasionsTable> {
+  $$OccasionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> moneyTransactionsRefs<T extends Object>(
+    Expression<T> Function($$MoneyTransactionsTableAnnotationComposer a) f,
+  ) {
+    final $$MoneyTransactionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.moneyTransactions,
+          getReferencedColumn: (t) => t.occasionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$MoneyTransactionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.moneyTransactions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> occasionAttachmentsRefs<T extends Object>(
+    Expression<T> Function($$OccasionAttachmentsTableAnnotationComposer a) f,
+  ) {
+    final $$OccasionAttachmentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.occasionAttachments,
+          getReferencedColumn: (t) => t.occasionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$OccasionAttachmentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.occasionAttachments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> ocrScansRefs<T extends Object>(
+    Expression<T> Function($$OcrScansTableAnnotationComposer a) f,
+  ) {
+    final $$OcrScansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.occasionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OccasionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OccasionsTable,
+          Occasion,
+          $$OccasionsTableFilterComposer,
+          $$OccasionsTableOrderingComposer,
+          $$OccasionsTableAnnotationComposer,
+          $$OccasionsTableCreateCompanionBuilder,
+          $$OccasionsTableUpdateCompanionBuilder,
+          (Occasion, $$OccasionsTableReferences),
+          Occasion,
+          PrefetchHooks Function({
+            bool moneyTransactionsRefs,
+            bool occasionAttachmentsRefs,
+            bool ocrScansRefs,
+          })
+        > {
+  $$OccasionsTableTableManager(_$AppDatabase db, $OccasionsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OccasionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OccasionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OccasionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int> date = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionsCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                name: name,
+                date: date,
+                type: type,
+                notes: notes,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String name,
+                required int date,
+                required String type,
+                Value<String?> notes = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionsCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                name: name,
+                date: date,
+                type: type,
+                notes: notes,
+                isArchived: isArchived,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OccasionsTable, Occasion>(table),
+                  $$OccasionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                moneyTransactionsRefs = false,
+                occasionAttachmentsRefs = false,
+                ocrScansRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (moneyTransactionsRefs) db.moneyTransactions,
+                    if (occasionAttachmentsRefs) db.occasionAttachments,
+                    if (ocrScansRefs) db.ocrScans,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (moneyTransactionsRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          MoneyTransaction
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._moneyTransactionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).moneyTransactionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (occasionAttachmentsRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          OccasionAttachment
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._occasionAttachmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).occasionAttachmentsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (ocrScansRefs)
+                        await $_getPrefetchedData<
+                          Occasion,
+                          $OccasionsTable,
+                          OcrScan
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OccasionsTableReferences
+                              ._ocrScansRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OccasionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).ocrScansRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.occasionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$OccasionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OccasionsTable,
+      Occasion,
+      $$OccasionsTableFilterComposer,
+      $$OccasionsTableOrderingComposer,
+      $$OccasionsTableAnnotationComposer,
+      $$OccasionsTableCreateCompanionBuilder,
+      $$OccasionsTableUpdateCompanionBuilder,
+      (Occasion, $$OccasionsTableReferences),
+      Occasion,
+      PrefetchHooks Function({
+        bool moneyTransactionsRefs,
+        bool occasionAttachmentsRefs,
+        bool ocrScansRefs,
+      })
     >;
 typedef $$MoneyTransactionsTableCreateCompanionBuilder =
     MoneyTransactionsCompanion Function({
@@ -8890,6 +15255,10 @@ typedef $$MoneyTransactionsTableCreateCompanionBuilder =
       required String kind,
       required int date,
       Value<String?> note,
+      Value<String?> occasionId,
+      Value<bool> countsTowardBalance,
+      Value<String> source,
+      Value<String?> ocrScanId,
       required int createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -8906,6 +15275,10 @@ typedef $$MoneyTransactionsTableUpdateCompanionBuilder =
       Value<String> kind,
       Value<int> date,
       Value<String?> note,
+      Value<String?> occasionId,
+      Value<bool> countsTowardBalance,
+      Value<String> source,
+      Value<String?> ocrScanId,
       Value<int> createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
@@ -8936,6 +15309,23 @@ final class $$MoneyTransactionsTableReferences
       $_db.people,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_personIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) => db.occasions
+      .createAlias('money_transactions__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager? get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id');
+    if ($_column == null) return null;
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -9018,6 +15408,21 @@ class $$MoneyTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ocrScanId => $composableBuilder(
+    column: $table.ocrScanId,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnFilters(column),
@@ -9047,6 +15452,29 @@ class $$MoneyTransactionsTableFilterComposer
           }) => $$PeopleTableFilterComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9132,6 +15560,21 @@ class $$MoneyTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get source => $composableBuilder(
+    column: $table.source,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ocrScanId => $composableBuilder(
+    column: $table.ocrScanId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -9161,6 +15604,29 @@ class $$MoneyTransactionsTableOrderingComposer
           }) => $$PeopleTableOrderingComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9210,6 +15676,17 @@ class $$MoneyTransactionsTableAnnotationComposer
   GeneratedColumn<String> get note =>
       $composableBuilder(column: $table.note, builder: (column) => column);
 
+  GeneratedColumn<bool> get countsTowardBalance => $composableBuilder(
+    column: $table.countsTowardBalance,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get source =>
+      $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<String> get ocrScanId =>
+      $composableBuilder(column: $table.ocrScanId, builder: (column) => column);
+
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
@@ -9233,6 +15710,29 @@ class $$MoneyTransactionsTableAnnotationComposer
           }) => $$PeopleTableAnnotationComposer(
             $db: $db,
             $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -9285,6 +15785,7 @@ class $$MoneyTransactionsTableTableManager
           MoneyTransaction,
           PrefetchHooks Function({
             bool personId,
+            bool occasionId,
             bool transactionAuditEntriesRefs,
           })
         > {
@@ -9315,6 +15816,10 @@ class $$MoneyTransactionsTableTableManager
                 Value<String> kind = const Value.absent(),
                 Value<int> date = const Value.absent(),
                 Value<String?> note = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<bool> countsTowardBalance = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> ocrScanId = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -9329,6 +15834,10 @@ class $$MoneyTransactionsTableTableManager
                 kind: kind,
                 date: date,
                 note: note,
+                occasionId: occasionId,
+                countsTowardBalance: countsTowardBalance,
+                source: source,
+                ocrScanId: ocrScanId,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -9345,6 +15854,10 @@ class $$MoneyTransactionsTableTableManager
                 required String kind,
                 required int date,
                 Value<String?> note = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<bool> countsTowardBalance = const Value.absent(),
+                Value<String> source = const Value.absent(),
+                Value<String?> ocrScanId = const Value.absent(),
                 required int createdAt,
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
@@ -9359,6 +15872,10 @@ class $$MoneyTransactionsTableTableManager
                 kind: kind,
                 date: date,
                 note: note,
+                occasionId: occasionId,
+                countsTowardBalance: countsTowardBalance,
+                source: source,
+                ocrScanId: ocrScanId,
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
@@ -9373,7 +15890,11 @@ class $$MoneyTransactionsTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({personId = false, transactionAuditEntriesRefs = false}) {
+              ({
+                personId = false,
+                occasionId = false,
+                transactionAuditEntriesRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -9406,6 +15927,21 @@ class $$MoneyTransactionsTableTableManager
                                     referencedColumn:
                                         $$MoneyTransactionsTableReferences
                                             ._personIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (occasionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.occasionId,
+                                    referencedTable:
+                                        $$MoneyTransactionsTableReferences
+                                            ._occasionIdTable(db),
+                                    referencedColumn:
+                                        $$MoneyTransactionsTableReferences
+                                            ._occasionIdTable(db)
                                             .id,
                                   )
                                   as T;
@@ -9456,7 +15992,11 @@ typedef $$MoneyTransactionsTableProcessedTableManager =
       $$MoneyTransactionsTableUpdateCompanionBuilder,
       (MoneyTransaction, $$MoneyTransactionsTableReferences),
       MoneyTransaction,
-      PrefetchHooks Function({bool personId, bool transactionAuditEntriesRefs})
+      PrefetchHooks Function({
+        bool personId,
+        bool occasionId,
+        bool transactionAuditEntriesRefs,
+      })
     >;
 typedef $$TransactionAuditEntriesTableCreateCompanionBuilder =
     TransactionAuditEntriesCompanion Function({
@@ -10306,6 +16846,32 @@ final class $$FinanceCategoriesTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $BudgetCategoryAllocationsTable,
+    List<BudgetCategoryAllocation>
+  >
+  _budgetCategoryAllocationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.budgetCategoryAllocations,
+        aliasName:
+            'finance_categories__id__budget_category_allocations__category_id',
+      );
+
+  $$BudgetCategoryAllocationsTableProcessedTableManager
+  get budgetCategoryAllocationsRefs {
+    final manager = $$BudgetCategoryAllocationsTableTableManager(
+      $_db,
+      $_db.budgetCategoryAllocations,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetCategoryAllocationsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$FinanceCategoriesTableFilterComposer
@@ -10384,6 +16950,33 @@ class $$FinanceCategoriesTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> budgetCategoryAllocationsRefs(
+    Expression<bool> Function($$BudgetCategoryAllocationsTableFilterComposer f)
+    f,
+  ) {
+    final $$BudgetCategoryAllocationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetCategoryAllocations,
+          getReferencedColumn: (t) => t.categoryId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetCategoryAllocationsTableFilterComposer(
+                $db: $db,
+                $table: $db.budgetCategoryAllocations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -10507,6 +17100,33 @@ class $$FinanceCategoriesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> budgetCategoryAllocationsRefs<T extends Object>(
+    Expression<T> Function($$BudgetCategoryAllocationsTableAnnotationComposer a)
+    f,
+  ) {
+    final $$BudgetCategoryAllocationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetCategoryAllocations,
+          getReferencedColumn: (t) => t.categoryId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetCategoryAllocationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetCategoryAllocations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$FinanceCategoriesTableTableManager
@@ -10522,7 +17142,10 @@ class $$FinanceCategoriesTableTableManager
           $$FinanceCategoriesTableUpdateCompanionBuilder,
           (FinanceCategory, $$FinanceCategoriesTableReferences),
           FinanceCategory,
-          PrefetchHooks Function({bool financeEntriesRefs})
+          PrefetchHooks Function({
+            bool financeEntriesRefs,
+            bool budgetCategoryAllocationsRefs,
+          })
         > {
   $$FinanceCategoriesTableTableManager(
     _$AppDatabase db,
@@ -10596,38 +17219,67 @@ class $$FinanceCategoriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({financeEntriesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (financeEntriesRefs) db.financeEntries,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (financeEntriesRefs)
-                    await $_getPrefetchedData<
-                      FinanceCategory,
-                      $FinanceCategoriesTable,
-                      FinanceEntry
-                    >(
-                      currentTable: table,
-                      referencedTable: $$FinanceCategoriesTableReferences
-                          ._financeEntriesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$FinanceCategoriesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).financeEntriesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.categoryId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({
+                financeEntriesRefs = false,
+                budgetCategoryAllocationsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (financeEntriesRefs) db.financeEntries,
+                    if (budgetCategoryAllocationsRefs)
+                      db.budgetCategoryAllocations,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (financeEntriesRefs)
+                        await $_getPrefetchedData<
+                          FinanceCategory,
+                          $FinanceCategoriesTable,
+                          FinanceEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinanceCategoriesTableReferences
+                              ._financeEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinanceCategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).financeEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (budgetCategoryAllocationsRefs)
+                        await $_getPrefetchedData<
+                          FinanceCategory,
+                          $FinanceCategoriesTable,
+                          BudgetCategoryAllocation
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinanceCategoriesTableReferences
+                              ._budgetCategoryAllocationsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinanceCategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetCategoryAllocationsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.categoryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -10644,7 +17296,10 @@ typedef $$FinanceCategoriesTableProcessedTableManager =
       $$FinanceCategoriesTableUpdateCompanionBuilder,
       (FinanceCategory, $$FinanceCategoriesTableReferences),
       FinanceCategory,
-      PrefetchHooks Function({bool financeEntriesRefs})
+      PrefetchHooks Function({
+        bool financeEntriesRefs,
+        bool budgetCategoryAllocationsRefs,
+      })
     >;
 typedef $$FinanceEntriesTableCreateCompanionBuilder =
     FinanceEntriesCompanion Function({
@@ -13533,12 +20188,3398 @@ typedef $$SyncStateTableProcessedTableManager =
       SyncStateRow,
       PrefetchHooks Function()
     >;
+typedef $$OccasionAttachmentsTableCreateCompanionBuilder =
+    OccasionAttachmentsCompanion Function({
+      required String id,
+      required String occasionId,
+      required String filePath,
+      required int createdAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OccasionAttachmentsTableUpdateCompanionBuilder =
+    OccasionAttachmentsCompanion Function({
+      Value<String> id,
+      Value<String> occasionId,
+      Value<String> filePath,
+      Value<int> createdAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OccasionAttachmentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $OccasionAttachmentsTable,
+          OccasionAttachment
+        > {
+  $$OccasionAttachmentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) => db.occasions
+      .createAlias('occasion_attachments__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id')!;
+
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$OccasionAttachmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get filePath => $composableBuilder(
+    column: $table.filePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OccasionAttachmentsTable> {
+  $$OccasionAttachmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get filePath =>
+      $composableBuilder(column: $table.filePath, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OccasionAttachmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OccasionAttachmentsTable,
+          OccasionAttachment,
+          $$OccasionAttachmentsTableFilterComposer,
+          $$OccasionAttachmentsTableOrderingComposer,
+          $$OccasionAttachmentsTableAnnotationComposer,
+          $$OccasionAttachmentsTableCreateCompanionBuilder,
+          $$OccasionAttachmentsTableUpdateCompanionBuilder,
+          (OccasionAttachment, $$OccasionAttachmentsTableReferences),
+          OccasionAttachment,
+          PrefetchHooks Function({bool occasionId})
+        > {
+  $$OccasionAttachmentsTableTableManager(
+    _$AppDatabase db,
+    $OccasionAttachmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OccasionAttachmentsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OccasionAttachmentsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$OccasionAttachmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> occasionId = const Value.absent(),
+                Value<String> filePath = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionAttachmentsCompanion(
+                id: id,
+                occasionId: occasionId,
+                filePath: filePath,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String occasionId,
+                required String filePath,
+                required int createdAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OccasionAttachmentsCompanion.insert(
+                id: id,
+                occasionId: occasionId,
+                filePath: filePath,
+                createdAt: createdAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OccasionAttachmentsTable, OccasionAttachment>(
+                    table,
+                  ),
+                  $$OccasionAttachmentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({occasionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (occasionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.occasionId,
+                                referencedTable:
+                                    $$OccasionAttachmentsTableReferences
+                                        ._occasionIdTable(db),
+                                referencedColumn:
+                                    $$OccasionAttachmentsTableReferences
+                                        ._occasionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$OccasionAttachmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OccasionAttachmentsTable,
+      OccasionAttachment,
+      $$OccasionAttachmentsTableFilterComposer,
+      $$OccasionAttachmentsTableOrderingComposer,
+      $$OccasionAttachmentsTableAnnotationComposer,
+      $$OccasionAttachmentsTableCreateCompanionBuilder,
+      $$OccasionAttachmentsTableUpdateCompanionBuilder,
+      (OccasionAttachment, $$OccasionAttachmentsTableReferences),
+      OccasionAttachment,
+      PrefetchHooks Function({bool occasionId})
+    >;
+typedef $$OcrScansTableCreateCompanionBuilder =
+    OcrScansCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String sourceImagePath,
+      Value<String?> cropBounds,
+      Value<int> rotationDegrees,
+      required String status,
+      Value<String?> occasionId,
+      Value<String?> defaultDirection,
+      Value<String> currencyCode,
+      required int createdAt,
+      Value<int?> completedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$OcrScansTableUpdateCompanionBuilder =
+    OcrScansCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> sourceImagePath,
+      Value<String?> cropBounds,
+      Value<int> rotationDegrees,
+      Value<String> status,
+      Value<String?> occasionId,
+      Value<String?> defaultDirection,
+      Value<String> currencyCode,
+      Value<int> createdAt,
+      Value<int?> completedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$OcrScansTableReferences
+    extends BaseReferences<_$AppDatabase, $OcrScansTable, OcrScan> {
+  $$OcrScansTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $OccasionsTable _occasionIdTable(_$AppDatabase db) =>
+      db.occasions.createAlias('ocr_scans__occasion_id__occasions__id');
+
+  $$OccasionsTableProcessedTableManager? get occasionId {
+    final $_column = $_itemColumn<String>('occasion_id');
+    if ($_column == null) return null;
+    final manager = $$OccasionsTableTableManager(
+      $_db,
+      $_db.occasions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_occasionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$CandidateEntriesTable, List<CandidateEntry>>
+  _candidateEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.candidateEntries,
+    aliasName: 'ocr_scans__id__candidate_entries__scan_id',
+  );
+
+  $$CandidateEntriesTableProcessedTableManager get candidateEntriesRefs {
+    final manager = $$CandidateEntriesTableTableManager(
+      $_db,
+      $_db.candidateEntries,
+    ).filter((f) => f.scanId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _candidateEntriesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$OcrScansTableFilterComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OccasionsTableFilterComposer get occasionId {
+    final $$OccasionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableFilterComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> candidateEntriesRefs(
+    Expression<bool> Function($$CandidateEntriesTableFilterComposer f) f,
+  ) {
+    final $$CandidateEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.scanId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OcrScansTableOrderingComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OccasionsTableOrderingComposer get occasionId {
+    final $$OccasionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$OcrScansTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OcrScansTable> {
+  $$OcrScansTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get sourceImagePath => $composableBuilder(
+    column: $table.sourceImagePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cropBounds => $composableBuilder(
+    column: $table.cropBounds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get rotationDegrees => $composableBuilder(
+    column: $table.rotationDegrees,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get defaultDirection => $composableBuilder(
+    column: $table.defaultDirection,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$OccasionsTableAnnotationComposer get occasionId {
+    final $$OccasionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.occasionId,
+      referencedTable: $db.occasions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OccasionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.occasions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> candidateEntriesRefs<T extends Object>(
+    Expression<T> Function($$CandidateEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$CandidateEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.candidateEntries,
+      getReferencedColumn: (t) => t.scanId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CandidateEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.candidateEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$OcrScansTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $OcrScansTable,
+          OcrScan,
+          $$OcrScansTableFilterComposer,
+          $$OcrScansTableOrderingComposer,
+          $$OcrScansTableAnnotationComposer,
+          $$OcrScansTableCreateCompanionBuilder,
+          $$OcrScansTableUpdateCompanionBuilder,
+          (OcrScan, $$OcrScansTableReferences),
+          OcrScan,
+          PrefetchHooks Function({bool occasionId, bool candidateEntriesRefs})
+        > {
+  $$OcrScansTableTableManager(_$AppDatabase db, $OcrScansTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OcrScansTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OcrScansTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OcrScansTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> sourceImagePath = const Value.absent(),
+                Value<String?> cropBounds = const Value.absent(),
+                Value<int> rotationDegrees = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> occasionId = const Value.absent(),
+                Value<String?> defaultDirection = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> completedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OcrScansCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                sourceImagePath: sourceImagePath,
+                cropBounds: cropBounds,
+                rotationDegrees: rotationDegrees,
+                status: status,
+                occasionId: occasionId,
+                defaultDirection: defaultDirection,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String sourceImagePath,
+                Value<String?> cropBounds = const Value.absent(),
+                Value<int> rotationDegrees = const Value.absent(),
+                required String status,
+                Value<String?> occasionId = const Value.absent(),
+                Value<String?> defaultDirection = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                required int createdAt,
+                Value<int?> completedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => OcrScansCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                sourceImagePath: sourceImagePath,
+                cropBounds: cropBounds,
+                rotationDegrees: rotationDegrees,
+                status: status,
+                occasionId: occasionId,
+                defaultDirection: defaultDirection,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                completedAt: completedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$OcrScansTable, OcrScan>(table),
+                  $$OcrScansTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({occasionId = false, candidateEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (candidateEntriesRefs) db.candidateEntries,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (occasionId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.occasionId,
+                                    referencedTable: $$OcrScansTableReferences
+                                        ._occasionIdTable(db),
+                                    referencedColumn: $$OcrScansTableReferences
+                                        ._occasionIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (candidateEntriesRefs)
+                        await $_getPrefetchedData<
+                          OcrScan,
+                          $OcrScansTable,
+                          CandidateEntry
+                        >(
+                          currentTable: table,
+                          referencedTable: $$OcrScansTableReferences
+                              ._candidateEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$OcrScansTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).candidateEntriesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.scanId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$OcrScansTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $OcrScansTable,
+      OcrScan,
+      $$OcrScansTableFilterComposer,
+      $$OcrScansTableOrderingComposer,
+      $$OcrScansTableAnnotationComposer,
+      $$OcrScansTableCreateCompanionBuilder,
+      $$OcrScansTableUpdateCompanionBuilder,
+      (OcrScan, $$OcrScansTableReferences),
+      OcrScan,
+      PrefetchHooks Function({bool occasionId, bool candidateEntriesRefs})
+    >;
+typedef $$CandidateEntriesTableCreateCompanionBuilder =
+    CandidateEntriesCompanion Function({
+      required String id,
+      required String scanId,
+      Value<String> status,
+      required String personName,
+      required String personNameConfidenceKind,
+      required String personNameConfidenceLevel,
+      Value<String?> matchedPersonId,
+      Value<int?> amountMinorUnits,
+      required String amountConfidenceKind,
+      required String amountConfidenceLevel,
+      Value<String?> direction,
+      required String directionConfidenceKind,
+      required String directionConfidenceLevel,
+      Value<int?> date,
+      required String dateConfidenceKind,
+      required String dateConfidenceLevel,
+      Value<String?> notes,
+      required String rawOcrText,
+      required int createdAt,
+      Value<int?> editedAt,
+      Value<int> rowid,
+    });
+typedef $$CandidateEntriesTableUpdateCompanionBuilder =
+    CandidateEntriesCompanion Function({
+      Value<String> id,
+      Value<String> scanId,
+      Value<String> status,
+      Value<String> personName,
+      Value<String> personNameConfidenceKind,
+      Value<String> personNameConfidenceLevel,
+      Value<String?> matchedPersonId,
+      Value<int?> amountMinorUnits,
+      Value<String> amountConfidenceKind,
+      Value<String> amountConfidenceLevel,
+      Value<String?> direction,
+      Value<String> directionConfidenceKind,
+      Value<String> directionConfidenceLevel,
+      Value<int?> date,
+      Value<String> dateConfidenceKind,
+      Value<String> dateConfidenceLevel,
+      Value<String?> notes,
+      Value<String> rawOcrText,
+      Value<int> createdAt,
+      Value<int?> editedAt,
+      Value<int> rowid,
+    });
+
+final class $$CandidateEntriesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $CandidateEntriesTable, CandidateEntry> {
+  $$CandidateEntriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $OcrScansTable _scanIdTable(_$AppDatabase db) =>
+      db.ocrScans.createAlias('candidate_entries__scan_id__ocr_scans__id');
+
+  $$OcrScansTableProcessedTableManager get scanId {
+    final $_column = $_itemColumn<String>('scan_id')!;
+
+    final manager = $$OcrScansTableTableManager(
+      $_db,
+      $_db.ocrScans,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_scanIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PeopleTable _matchedPersonIdTable(_$AppDatabase db) =>
+      db.people.createAlias('candidate_entries__matched_person_id__people__id');
+
+  $$PeopleTableProcessedTableManager? get matchedPersonId {
+    final $_column = $_itemColumn<String>('matched_person_id');
+    if ($_column == null) return null;
+    final manager = $$PeopleTableTableManager(
+      $_db,
+      $_db.people,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_matchedPersonIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$CandidateEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$OcrScansTableFilterComposer get scanId {
+    final $$OcrScansTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableFilterComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableFilterComposer get matchedPersonId {
+    final $$PeopleTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableFilterComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get editedAt => $composableBuilder(
+    column: $table.editedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$OcrScansTableOrderingComposer get scanId {
+    final $$OcrScansTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableOrderingComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableOrderingComposer get matchedPersonId {
+    final $$PeopleTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableOrderingComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CandidateEntriesTable> {
+  $$CandidateEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get personName => $composableBuilder(
+    column: $table.personName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get personNameConfidenceKind => $composableBuilder(
+    column: $table.personNameConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get personNameConfidenceLevel => $composableBuilder(
+    column: $table.personNameConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get amountConfidenceKind => $composableBuilder(
+    column: $table.amountConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get amountConfidenceLevel => $composableBuilder(
+    column: $table.amountConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<String> get directionConfidenceKind => $composableBuilder(
+    column: $table.directionConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get directionConfidenceLevel => $composableBuilder(
+    column: $table.directionConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get dateConfidenceKind => $composableBuilder(
+    column: $table.dateConfidenceKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get dateConfidenceLevel => $composableBuilder(
+    column: $table.dateConfidenceLevel,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get rawOcrText => $composableBuilder(
+    column: $table.rawOcrText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get editedAt =>
+      $composableBuilder(column: $table.editedAt, builder: (column) => column);
+
+  $$OcrScansTableAnnotationComposer get scanId {
+    final $$OcrScansTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.scanId,
+      referencedTable: $db.ocrScans,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$OcrScansTableAnnotationComposer(
+            $db: $db,
+            $table: $db.ocrScans,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableAnnotationComposer get matchedPersonId {
+    final $$PeopleTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.matchedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableAnnotationComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CandidateEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CandidateEntriesTable,
+          CandidateEntry,
+          $$CandidateEntriesTableFilterComposer,
+          $$CandidateEntriesTableOrderingComposer,
+          $$CandidateEntriesTableAnnotationComposer,
+          $$CandidateEntriesTableCreateCompanionBuilder,
+          $$CandidateEntriesTableUpdateCompanionBuilder,
+          (CandidateEntry, $$CandidateEntriesTableReferences),
+          CandidateEntry,
+          PrefetchHooks Function({bool scanId, bool matchedPersonId})
+        > {
+  $$CandidateEntriesTableTableManager(
+    _$AppDatabase db,
+    $CandidateEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CandidateEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CandidateEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CandidateEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> scanId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String> personName = const Value.absent(),
+                Value<String> personNameConfidenceKind = const Value.absent(),
+                Value<String> personNameConfidenceLevel = const Value.absent(),
+                Value<String?> matchedPersonId = const Value.absent(),
+                Value<int?> amountMinorUnits = const Value.absent(),
+                Value<String> amountConfidenceKind = const Value.absent(),
+                Value<String> amountConfidenceLevel = const Value.absent(),
+                Value<String?> direction = const Value.absent(),
+                Value<String> directionConfidenceKind = const Value.absent(),
+                Value<String> directionConfidenceLevel = const Value.absent(),
+                Value<int?> date = const Value.absent(),
+                Value<String> dateConfidenceKind = const Value.absent(),
+                Value<String> dateConfidenceLevel = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String> rawOcrText = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int?> editedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CandidateEntriesCompanion(
+                id: id,
+                scanId: scanId,
+                status: status,
+                personName: personName,
+                personNameConfidenceKind: personNameConfidenceKind,
+                personNameConfidenceLevel: personNameConfidenceLevel,
+                matchedPersonId: matchedPersonId,
+                amountMinorUnits: amountMinorUnits,
+                amountConfidenceKind: amountConfidenceKind,
+                amountConfidenceLevel: amountConfidenceLevel,
+                direction: direction,
+                directionConfidenceKind: directionConfidenceKind,
+                directionConfidenceLevel: directionConfidenceLevel,
+                date: date,
+                dateConfidenceKind: dateConfidenceKind,
+                dateConfidenceLevel: dateConfidenceLevel,
+                notes: notes,
+                rawOcrText: rawOcrText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String scanId,
+                Value<String> status = const Value.absent(),
+                required String personName,
+                required String personNameConfidenceKind,
+                required String personNameConfidenceLevel,
+                Value<String?> matchedPersonId = const Value.absent(),
+                Value<int?> amountMinorUnits = const Value.absent(),
+                required String amountConfidenceKind,
+                required String amountConfidenceLevel,
+                Value<String?> direction = const Value.absent(),
+                required String directionConfidenceKind,
+                required String directionConfidenceLevel,
+                Value<int?> date = const Value.absent(),
+                required String dateConfidenceKind,
+                required String dateConfidenceLevel,
+                Value<String?> notes = const Value.absent(),
+                required String rawOcrText,
+                required int createdAt,
+                Value<int?> editedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CandidateEntriesCompanion.insert(
+                id: id,
+                scanId: scanId,
+                status: status,
+                personName: personName,
+                personNameConfidenceKind: personNameConfidenceKind,
+                personNameConfidenceLevel: personNameConfidenceLevel,
+                matchedPersonId: matchedPersonId,
+                amountMinorUnits: amountMinorUnits,
+                amountConfidenceKind: amountConfidenceKind,
+                amountConfidenceLevel: amountConfidenceLevel,
+                direction: direction,
+                directionConfidenceKind: directionConfidenceKind,
+                directionConfidenceLevel: directionConfidenceLevel,
+                date: date,
+                dateConfidenceKind: dateConfidenceKind,
+                dateConfidenceLevel: dateConfidenceLevel,
+                notes: notes,
+                rawOcrText: rawOcrText,
+                createdAt: createdAt,
+                editedAt: editedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CandidateEntriesTable, CandidateEntry>(table),
+                  $$CandidateEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({scanId = false, matchedPersonId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (scanId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.scanId,
+                                referencedTable:
+                                    $$CandidateEntriesTableReferences
+                                        ._scanIdTable(db),
+                                referencedColumn:
+                                    $$CandidateEntriesTableReferences
+                                        ._scanIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (matchedPersonId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.matchedPersonId,
+                                referencedTable:
+                                    $$CandidateEntriesTableReferences
+                                        ._matchedPersonIdTable(db),
+                                referencedColumn:
+                                    $$CandidateEntriesTableReferences
+                                        ._matchedPersonIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$CandidateEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CandidateEntriesTable,
+      CandidateEntry,
+      $$CandidateEntriesTableFilterComposer,
+      $$CandidateEntriesTableOrderingComposer,
+      $$CandidateEntriesTableAnnotationComposer,
+      $$CandidateEntriesTableCreateCompanionBuilder,
+      $$CandidateEntriesTableUpdateCompanionBuilder,
+      (CandidateEntry, $$CandidateEntriesTableReferences),
+      CandidateEntry,
+      PrefetchHooks Function({bool scanId, bool matchedPersonId})
+    >;
+typedef $$BudgetsTableCreateCompanionBuilder =
+    BudgetsCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String month,
+      Value<int?> expectedIncomeMinorUnits,
+      Value<String> currencyCode,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$BudgetsTableUpdateCompanionBuilder =
+    BudgetsCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> month,
+      Value<int?> expectedIncomeMinorUnits,
+      Value<String> currencyCode,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$BudgetsTableReferences
+    extends BaseReferences<_$AppDatabase, $BudgetsTable, Budget> {
+  $$BudgetsTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<
+    $BudgetCategoryAllocationsTable,
+    List<BudgetCategoryAllocation>
+  >
+  _budgetCategoryAllocationsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.budgetCategoryAllocations,
+        aliasName: 'budgets__id__budget_category_allocations__budget_id',
+      );
+
+  $$BudgetCategoryAllocationsTableProcessedTableManager
+  get budgetCategoryAllocationsRefs {
+    final manager = $$BudgetCategoryAllocationsTableTableManager(
+      $_db,
+      $_db.budgetCategoryAllocations,
+    ).filter((f) => f.budgetId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetCategoryAllocationsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$BudgetsTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetsTable> {
+  $$BudgetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expectedIncomeMinorUnits => $composableBuilder(
+    column: $table.expectedIncomeMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> budgetCategoryAllocationsRefs(
+    Expression<bool> Function($$BudgetCategoryAllocationsTableFilterComposer f)
+    f,
+  ) {
+    final $$BudgetCategoryAllocationsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetCategoryAllocations,
+          getReferencedColumn: (t) => t.budgetId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetCategoryAllocationsTableFilterComposer(
+                $db: $db,
+                $table: $db.budgetCategoryAllocations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$BudgetsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetsTable> {
+  $$BudgetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get month => $composableBuilder(
+    column: $table.month,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get expectedIncomeMinorUnits => $composableBuilder(
+    column: $table.expectedIncomeMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BudgetsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetsTable> {
+  $$BudgetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get month =>
+      $composableBuilder(column: $table.month, builder: (column) => column);
+
+  GeneratedColumn<int> get expectedIncomeMinorUnits => $composableBuilder(
+    column: $table.expectedIncomeMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  Expression<T> budgetCategoryAllocationsRefs<T extends Object>(
+    Expression<T> Function($$BudgetCategoryAllocationsTableAnnotationComposer a)
+    f,
+  ) {
+    final $$BudgetCategoryAllocationsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.budgetCategoryAllocations,
+          getReferencedColumn: (t) => t.budgetId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BudgetCategoryAllocationsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.budgetCategoryAllocations,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$BudgetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetsTable,
+          Budget,
+          $$BudgetsTableFilterComposer,
+          $$BudgetsTableOrderingComposer,
+          $$BudgetsTableAnnotationComposer,
+          $$BudgetsTableCreateCompanionBuilder,
+          $$BudgetsTableUpdateCompanionBuilder,
+          (Budget, $$BudgetsTableReferences),
+          Budget,
+          PrefetchHooks Function({bool budgetCategoryAllocationsRefs})
+        > {
+  $$BudgetsTableTableManager(_$AppDatabase db, $BudgetsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> month = const Value.absent(),
+                Value<int?> expectedIncomeMinorUnits = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                month: month,
+                expectedIncomeMinorUnits: expectedIncomeMinorUnits,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String month,
+                Value<int?> expectedIncomeMinorUnits = const Value.absent(),
+                Value<String> currencyCode = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetsCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                month: month,
+                expectedIncomeMinorUnits: expectedIncomeMinorUnits,
+                currencyCode: currencyCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BudgetsTable, Budget>(table),
+                  $$BudgetsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({budgetCategoryAllocationsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (budgetCategoryAllocationsRefs) db.budgetCategoryAllocations,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (budgetCategoryAllocationsRefs)
+                    await $_getPrefetchedData<
+                      Budget,
+                      $BudgetsTable,
+                      BudgetCategoryAllocation
+                    >(
+                      currentTable: table,
+                      referencedTable: $$BudgetsTableReferences
+                          ._budgetCategoryAllocationsRefsTable(db),
+                      managerFromTypedResult: (p0) => $$BudgetsTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).budgetCategoryAllocationsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.budgetId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$BudgetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetsTable,
+      Budget,
+      $$BudgetsTableFilterComposer,
+      $$BudgetsTableOrderingComposer,
+      $$BudgetsTableAnnotationComposer,
+      $$BudgetsTableCreateCompanionBuilder,
+      $$BudgetsTableUpdateCompanionBuilder,
+      (Budget, $$BudgetsTableReferences),
+      Budget,
+      PrefetchHooks Function({bool budgetCategoryAllocationsRefs})
+    >;
+typedef $$BudgetCategoryAllocationsTableCreateCompanionBuilder =
+    BudgetCategoryAllocationsCompanion Function({
+      required String id,
+      required String idempotencyKey,
+      required String budgetId,
+      required String categoryId,
+      required int plannedAmountMinorUnits,
+      required int createdAt,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$BudgetCategoryAllocationsTableUpdateCompanionBuilder =
+    BudgetCategoryAllocationsCompanion Function({
+      Value<String> id,
+      Value<String> idempotencyKey,
+      Value<String> budgetId,
+      Value<String> categoryId,
+      Value<int> plannedAmountMinorUnits,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$BudgetCategoryAllocationsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $BudgetCategoryAllocationsTable,
+          BudgetCategoryAllocation
+        > {
+  $$BudgetCategoryAllocationsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $BudgetsTable _budgetIdTable(_$AppDatabase db) => db.budgets
+      .createAlias('budget_category_allocations__budget_id__budgets__id');
+
+  $$BudgetsTableProcessedTableManager get budgetId {
+    final $_column = $_itemColumn<String>('budget_id')!;
+
+    final manager = $$BudgetsTableTableManager(
+      $_db,
+      $_db.budgets,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_budgetIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $FinanceCategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.financeCategories.createAlias(
+        'budget_category_allocations__category_id__finance_categories__id',
+      );
+
+  $$FinanceCategoriesTableProcessedTableManager get categoryId {
+    final $_column = $_itemColumn<String>('category_id')!;
+
+    final manager = $$FinanceCategoriesTableTableManager(
+      $_db,
+      $_db.financeCategories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$BudgetCategoryAllocationsTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetCategoryAllocationsTable> {
+  $$BudgetCategoryAllocationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get plannedAmountMinorUnits => $composableBuilder(
+    column: $table.plannedAmountMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$BudgetsTableFilterComposer get budgetId {
+    final $$BudgetsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableFilterComposer(
+            $db: $db,
+            $table: $db.budgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinanceCategoriesTableFilterComposer get categoryId {
+    final $$FinanceCategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.financeCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceCategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.financeCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetCategoryAllocationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetCategoryAllocationsTable> {
+  $$BudgetCategoryAllocationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get plannedAmountMinorUnits => $composableBuilder(
+    column: $table.plannedAmountMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$BudgetsTableOrderingComposer get budgetId {
+    final $$BudgetsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableOrderingComposer(
+            $db: $db,
+            $table: $db.budgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinanceCategoriesTableOrderingComposer get categoryId {
+    final $$FinanceCategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.financeCategories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceCategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.financeCategories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetCategoryAllocationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetCategoryAllocationsTable> {
+  $$BudgetCategoryAllocationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get idempotencyKey => $composableBuilder(
+    column: $table.idempotencyKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get plannedAmountMinorUnits => $composableBuilder(
+    column: $table.plannedAmountMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$BudgetsTableAnnotationComposer get budgetId {
+    final $$BudgetsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.budgetId,
+      referencedTable: $db.budgets,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$FinanceCategoriesTableAnnotationComposer get categoryId {
+    final $$FinanceCategoriesTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.categoryId,
+          referencedTable: $db.financeCategories,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinanceCategoriesTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financeCategories,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$BudgetCategoryAllocationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetCategoryAllocationsTable,
+          BudgetCategoryAllocation,
+          $$BudgetCategoryAllocationsTableFilterComposer,
+          $$BudgetCategoryAllocationsTableOrderingComposer,
+          $$BudgetCategoryAllocationsTableAnnotationComposer,
+          $$BudgetCategoryAllocationsTableCreateCompanionBuilder,
+          $$BudgetCategoryAllocationsTableUpdateCompanionBuilder,
+          (
+            BudgetCategoryAllocation,
+            $$BudgetCategoryAllocationsTableReferences,
+          ),
+          BudgetCategoryAllocation,
+          PrefetchHooks Function({bool budgetId, bool categoryId})
+        > {
+  $$BudgetCategoryAllocationsTableTableManager(
+    _$AppDatabase db,
+    $BudgetCategoryAllocationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetCategoryAllocationsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$BudgetCategoryAllocationsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$BudgetCategoryAllocationsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> idempotencyKey = const Value.absent(),
+                Value<String> budgetId = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<int> plannedAmountMinorUnits = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetCategoryAllocationsCompanion(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                budgetId: budgetId,
+                categoryId: categoryId,
+                plannedAmountMinorUnits: plannedAmountMinorUnits,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String idempotencyKey,
+                required String budgetId,
+                required String categoryId,
+                required int plannedAmountMinorUnits,
+                required int createdAt,
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => BudgetCategoryAllocationsCompanion.insert(
+                id: id,
+                idempotencyKey: idempotencyKey,
+                budgetId: budgetId,
+                categoryId: categoryId,
+                plannedAmountMinorUnits: plannedAmountMinorUnits,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $BudgetCategoryAllocationsTable,
+                    BudgetCategoryAllocation
+                  >(table),
+                  $$BudgetCategoryAllocationsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({budgetId = false, categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (budgetId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.budgetId,
+                                referencedTable:
+                                    $$BudgetCategoryAllocationsTableReferences
+                                        ._budgetIdTable(db),
+                                referencedColumn:
+                                    $$BudgetCategoryAllocationsTableReferences
+                                        ._budgetIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (categoryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.categoryId,
+                                referencedTable:
+                                    $$BudgetCategoryAllocationsTableReferences
+                                        ._categoryIdTable(db),
+                                referencedColumn:
+                                    $$BudgetCategoryAllocationsTableReferences
+                                        ._categoryIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$BudgetCategoryAllocationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetCategoryAllocationsTable,
+      BudgetCategoryAllocation,
+      $$BudgetCategoryAllocationsTableFilterComposer,
+      $$BudgetCategoryAllocationsTableOrderingComposer,
+      $$BudgetCategoryAllocationsTableAnnotationComposer,
+      $$BudgetCategoryAllocationsTableCreateCompanionBuilder,
+      $$BudgetCategoryAllocationsTableUpdateCompanionBuilder,
+      (BudgetCategoryAllocation, $$BudgetCategoryAllocationsTableReferences),
+      BudgetCategoryAllocation,
+      PrefetchHooks Function({bool budgetId, bool categoryId})
+    >;
+typedef $$AiConversationsTableCreateCompanionBuilder =
+    AiConversationsCompanion Function({
+      required String id,
+      required int createdAt,
+      required int lastActivityAt,
+      Value<int> rowid,
+    });
+typedef $$AiConversationsTableUpdateCompanionBuilder =
+    AiConversationsCompanion Function({
+      Value<String> id,
+      Value<int> createdAt,
+      Value<int> lastActivityAt,
+      Value<int> rowid,
+    });
+
+final class $$AiConversationsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $AiConversationsTable,
+          AiConversationRow
+        > {
+  $$AiConversationsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$AiMessagesTable, List<AiMessageRow>>
+  _aiMessagesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.aiMessages,
+    aliasName: 'ai_conversations__id__ai_messages__conversation_id',
+  );
+
+  $$AiMessagesTableProcessedTableManager get aiMessagesRefs {
+    final manager = $$AiMessagesTableTableManager(
+      $_db,
+      $_db.aiMessages,
+    ).filter((f) => f.conversationId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_aiMessagesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$AiConversationsTableFilterComposer
+    extends Composer<_$AppDatabase, $AiConversationsTable> {
+  $$AiConversationsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastActivityAt => $composableBuilder(
+    column: $table.lastActivityAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> aiMessagesRefs(
+    Expression<bool> Function($$AiMessagesTableFilterComposer f) f,
+  ) {
+    final $$AiMessagesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiMessages,
+      getReferencedColumn: (t) => t.conversationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiMessagesTableFilterComposer(
+            $db: $db,
+            $table: $db.aiMessages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AiConversationsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiConversationsTable> {
+  $$AiConversationsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastActivityAt => $composableBuilder(
+    column: $table.lastActivityAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AiConversationsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiConversationsTable> {
+  $$AiConversationsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get lastActivityAt => $composableBuilder(
+    column: $table.lastActivityAt,
+    builder: (column) => column,
+  );
+
+  Expression<T> aiMessagesRefs<T extends Object>(
+    Expression<T> Function($$AiMessagesTableAnnotationComposer a) f,
+  ) {
+    final $$AiMessagesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.aiMessages,
+      getReferencedColumn: (t) => t.conversationId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiMessagesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiMessages,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$AiConversationsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiConversationsTable,
+          AiConversationRow,
+          $$AiConversationsTableFilterComposer,
+          $$AiConversationsTableOrderingComposer,
+          $$AiConversationsTableAnnotationComposer,
+          $$AiConversationsTableCreateCompanionBuilder,
+          $$AiConversationsTableUpdateCompanionBuilder,
+          (AiConversationRow, $$AiConversationsTableReferences),
+          AiConversationRow,
+          PrefetchHooks Function({bool aiMessagesRefs})
+        > {
+  $$AiConversationsTableTableManager(
+    _$AppDatabase db,
+    $AiConversationsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiConversationsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiConversationsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AiConversationsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> lastActivityAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AiConversationsCompanion(
+                id: id,
+                createdAt: createdAt,
+                lastActivityAt: lastActivityAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required int createdAt,
+                required int lastActivityAt,
+                Value<int> rowid = const Value.absent(),
+              }) => AiConversationsCompanion.insert(
+                id: id,
+                createdAt: createdAt,
+                lastActivityAt: lastActivityAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AiConversationsTable, AiConversationRow>(table),
+                  $$AiConversationsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({aiMessagesRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (aiMessagesRefs) db.aiMessages],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (aiMessagesRefs)
+                    await $_getPrefetchedData<
+                      AiConversationRow,
+                      $AiConversationsTable,
+                      AiMessageRow
+                    >(
+                      currentTable: table,
+                      referencedTable: $$AiConversationsTableReferences
+                          ._aiMessagesRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$AiConversationsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).aiMessagesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.conversationId == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AiConversationsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiConversationsTable,
+      AiConversationRow,
+      $$AiConversationsTableFilterComposer,
+      $$AiConversationsTableOrderingComposer,
+      $$AiConversationsTableAnnotationComposer,
+      $$AiConversationsTableCreateCompanionBuilder,
+      $$AiConversationsTableUpdateCompanionBuilder,
+      (AiConversationRow, $$AiConversationsTableReferences),
+      AiConversationRow,
+      PrefetchHooks Function({bool aiMessagesRefs})
+    >;
+typedef $$AiMessagesTableCreateCompanionBuilder =
+    AiMessagesCompanion Function({
+      required String id,
+      required String conversationId,
+      required String sender,
+      required String content,
+      required String status,
+      Value<String?> failureReason,
+      Value<String?> groundingRefsJson,
+      required int createdAt,
+      Value<int> rowid,
+    });
+typedef $$AiMessagesTableUpdateCompanionBuilder =
+    AiMessagesCompanion Function({
+      Value<String> id,
+      Value<String> conversationId,
+      Value<String> sender,
+      Value<String> content,
+      Value<String> status,
+      Value<String?> failureReason,
+      Value<String?> groundingRefsJson,
+      Value<int> createdAt,
+      Value<int> rowid,
+    });
+
+final class $$AiMessagesTableReferences
+    extends BaseReferences<_$AppDatabase, $AiMessagesTable, AiMessageRow> {
+  $$AiMessagesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $AiConversationsTable _conversationIdTable(_$AppDatabase db) => db
+      .aiConversations
+      .createAlias('ai_messages__conversation_id__ai_conversations__id');
+
+  $$AiConversationsTableProcessedTableManager get conversationId {
+    final $_column = $_itemColumn<String>('conversation_id')!;
+
+    final manager = $$AiConversationsTableTableManager(
+      $_db,
+      $_db.aiConversations,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_conversationIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$AiMessagesTableFilterComposer
+    extends Composer<_$AppDatabase, $AiMessagesTable> {
+  $$AiMessagesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get failureReason => $composableBuilder(
+    column: $table.failureReason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get groundingRefsJson => $composableBuilder(
+    column: $table.groundingRefsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$AiConversationsTableFilterComposer get conversationId {
+    final $$AiConversationsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.conversationId,
+      referencedTable: $db.aiConversations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiConversationsTableFilterComposer(
+            $db: $db,
+            $table: $db.aiConversations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiMessagesTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiMessagesTable> {
+  $$AiMessagesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sender => $composableBuilder(
+    column: $table.sender,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get failureReason => $composableBuilder(
+    column: $table.failureReason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get groundingRefsJson => $composableBuilder(
+    column: $table.groundingRefsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$AiConversationsTableOrderingComposer get conversationId {
+    final $$AiConversationsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.conversationId,
+      referencedTable: $db.aiConversations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiConversationsTableOrderingComposer(
+            $db: $db,
+            $table: $db.aiConversations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiMessagesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiMessagesTable> {
+  $$AiMessagesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get sender =>
+      $composableBuilder(column: $table.sender, builder: (column) => column);
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get failureReason => $composableBuilder(
+    column: $table.failureReason,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get groundingRefsJson => $composableBuilder(
+    column: $table.groundingRefsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$AiConversationsTableAnnotationComposer get conversationId {
+    final $$AiConversationsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.conversationId,
+      referencedTable: $db.aiConversations,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AiConversationsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.aiConversations,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$AiMessagesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiMessagesTable,
+          AiMessageRow,
+          $$AiMessagesTableFilterComposer,
+          $$AiMessagesTableOrderingComposer,
+          $$AiMessagesTableAnnotationComposer,
+          $$AiMessagesTableCreateCompanionBuilder,
+          $$AiMessagesTableUpdateCompanionBuilder,
+          (AiMessageRow, $$AiMessagesTableReferences),
+          AiMessageRow,
+          PrefetchHooks Function({bool conversationId})
+        > {
+  $$AiMessagesTableTableManager(_$AppDatabase db, $AiMessagesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiMessagesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiMessagesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AiMessagesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> conversationId = const Value.absent(),
+                Value<String> sender = const Value.absent(),
+                Value<String> content = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> failureReason = const Value.absent(),
+                Value<String?> groundingRefsJson = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AiMessagesCompanion(
+                id: id,
+                conversationId: conversationId,
+                sender: sender,
+                content: content,
+                status: status,
+                failureReason: failureReason,
+                groundingRefsJson: groundingRefsJson,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String conversationId,
+                required String sender,
+                required String content,
+                required String status,
+                Value<String?> failureReason = const Value.absent(),
+                Value<String?> groundingRefsJson = const Value.absent(),
+                required int createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => AiMessagesCompanion.insert(
+                id: id,
+                conversationId: conversationId,
+                sender: sender,
+                content: content,
+                status: status,
+                failureReason: failureReason,
+                groundingRefsJson: groundingRefsJson,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AiMessagesTable, AiMessageRow>(table),
+                  $$AiMessagesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({conversationId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (conversationId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.conversationId,
+                                referencedTable: $$AiMessagesTableReferences
+                                    ._conversationIdTable(db),
+                                referencedColumn: $$AiMessagesTableReferences
+                                    ._conversationIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$AiMessagesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiMessagesTable,
+      AiMessageRow,
+      $$AiMessagesTableFilterComposer,
+      $$AiMessagesTableOrderingComposer,
+      $$AiMessagesTableAnnotationComposer,
+      $$AiMessagesTableCreateCompanionBuilder,
+      $$AiMessagesTableUpdateCompanionBuilder,
+      (AiMessageRow, $$AiMessagesTableReferences),
+      AiMessageRow,
+      PrefetchHooks Function({bool conversationId})
+    >;
+typedef $$AiSettingsTableCreateCompanionBuilder =
+    AiSettingsCompanion Function({
+      required String id,
+      Value<bool> isEnabled,
+      Value<String?> providerId,
+      Value<bool> hasStoredCredential,
+      Value<int?> consentAcceptedAt,
+      required int updatedAt,
+      Value<String?> lastObservationKey,
+      Value<int> rowid,
+    });
+typedef $$AiSettingsTableUpdateCompanionBuilder =
+    AiSettingsCompanion Function({
+      Value<String> id,
+      Value<bool> isEnabled,
+      Value<String?> providerId,
+      Value<bool> hasStoredCredential,
+      Value<int?> consentAcceptedAt,
+      Value<int> updatedAt,
+      Value<String?> lastObservationKey,
+      Value<int> rowid,
+    });
+
+class $$AiSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $AiSettingsTable> {
+  $$AiSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get providerId => $composableBuilder(
+    column: $table.providerId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get hasStoredCredential => $composableBuilder(
+    column: $table.hasStoredCredential,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get consentAcceptedAt => $composableBuilder(
+    column: $table.consentAcceptedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastObservationKey => $composableBuilder(
+    column: $table.lastObservationKey,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AiSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AiSettingsTable> {
+  $$AiSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get providerId => $composableBuilder(
+    column: $table.providerId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get hasStoredCredential => $composableBuilder(
+    column: $table.hasStoredCredential,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get consentAcceptedAt => $composableBuilder(
+    column: $table.consentAcceptedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastObservationKey => $composableBuilder(
+    column: $table.lastObservationKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AiSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AiSettingsTable> {
+  $$AiSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get isEnabled =>
+      $composableBuilder(column: $table.isEnabled, builder: (column) => column);
+
+  GeneratedColumn<String> get providerId => $composableBuilder(
+    column: $table.providerId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get hasStoredCredential => $composableBuilder(
+    column: $table.hasStoredCredential,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get consentAcceptedAt => $composableBuilder(
+    column: $table.consentAcceptedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get lastObservationKey => $composableBuilder(
+    column: $table.lastObservationKey,
+    builder: (column) => column,
+  );
+}
+
+class $$AiSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AiSettingsTable,
+          AiSettingsRow,
+          $$AiSettingsTableFilterComposer,
+          $$AiSettingsTableOrderingComposer,
+          $$AiSettingsTableAnnotationComposer,
+          $$AiSettingsTableCreateCompanionBuilder,
+          $$AiSettingsTableUpdateCompanionBuilder,
+          (
+            AiSettingsRow,
+            BaseReferences<_$AppDatabase, $AiSettingsTable, AiSettingsRow>,
+          ),
+          AiSettingsRow,
+          PrefetchHooks Function()
+        > {
+  $$AiSettingsTableTableManager(_$AppDatabase db, $AiSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AiSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AiSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AiSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> isEnabled = const Value.absent(),
+                Value<String?> providerId = const Value.absent(),
+                Value<bool> hasStoredCredential = const Value.absent(),
+                Value<int?> consentAcceptedAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<String?> lastObservationKey = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AiSettingsCompanion(
+                id: id,
+                isEnabled: isEnabled,
+                providerId: providerId,
+                hasStoredCredential: hasStoredCredential,
+                consentAcceptedAt: consentAcceptedAt,
+                updatedAt: updatedAt,
+                lastObservationKey: lastObservationKey,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> isEnabled = const Value.absent(),
+                Value<String?> providerId = const Value.absent(),
+                Value<bool> hasStoredCredential = const Value.absent(),
+                Value<int?> consentAcceptedAt = const Value.absent(),
+                required int updatedAt,
+                Value<String?> lastObservationKey = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AiSettingsCompanion.insert(
+                id: id,
+                isEnabled: isEnabled,
+                providerId: providerId,
+                hasStoredCredential: hasStoredCredential,
+                consentAcceptedAt: consentAcceptedAt,
+                updatedAt: updatedAt,
+                lastObservationKey: lastObservationKey,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AiSettingsTable, AiSettingsRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $AiSettingsTable,
+                    AiSettingsRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AiSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AiSettingsTable,
+      AiSettingsRow,
+      $$AiSettingsTableFilterComposer,
+      $$AiSettingsTableOrderingComposer,
+      $$AiSettingsTableAnnotationComposer,
+      $$AiSettingsTableCreateCompanionBuilder,
+      $$AiSettingsTableUpdateCompanionBuilder,
+      (
+        AiSettingsRow,
+        BaseReferences<_$AppDatabase, $AiSettingsTable, AiSettingsRow>,
+      ),
+      AiSettingsRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$PeopleTableTableManager get people =>
       $$PeopleTableTableManager(_db, _db.people);
+  $$OccasionsTableTableManager get occasions =>
+      $$OccasionsTableTableManager(_db, _db.occasions);
   $$MoneyTransactionsTableTableManager get moneyTransactions =>
       $$MoneyTransactionsTableTableManager(_db, _db.moneyTransactions);
   $$TransactionAuditEntriesTableTableManager get transactionAuditEntries =>
@@ -13578,4 +23619,23 @@ class $AppDatabaseManager {
       $$ConflictResolutionsTableTableManager(_db, _db.conflictResolutions);
   $$SyncStateTableTableManager get syncState =>
       $$SyncStateTableTableManager(_db, _db.syncState);
+  $$OccasionAttachmentsTableTableManager get occasionAttachments =>
+      $$OccasionAttachmentsTableTableManager(_db, _db.occasionAttachments);
+  $$OcrScansTableTableManager get ocrScans =>
+      $$OcrScansTableTableManager(_db, _db.ocrScans);
+  $$CandidateEntriesTableTableManager get candidateEntries =>
+      $$CandidateEntriesTableTableManager(_db, _db.candidateEntries);
+  $$BudgetsTableTableManager get budgets =>
+      $$BudgetsTableTableManager(_db, _db.budgets);
+  $$BudgetCategoryAllocationsTableTableManager get budgetCategoryAllocations =>
+      $$BudgetCategoryAllocationsTableTableManager(
+        _db,
+        _db.budgetCategoryAllocations,
+      );
+  $$AiConversationsTableTableManager get aiConversations =>
+      $$AiConversationsTableTableManager(_db, _db.aiConversations);
+  $$AiMessagesTableTableManager get aiMessages =>
+      $$AiMessagesTableTableManager(_db, _db.aiMessages);
+  $$AiSettingsTableTableManager get aiSettings =>
+      $$AiSettingsTableTableManager(_db, _db.aiSettings);
 }

@@ -11,16 +11,20 @@ enum SyncEntityType {
   financeEntry('finance_entry', 1),
   exchangeRate('exchange_rate', 3),
   primaryCurrency('primary_currency', 3),
-  conflictResolution('conflict_resolution', 2);
+  conflictResolution('conflict_resolution', 2),
+  // 022: the features merged from the 008-015 line.
+  occasion('occasion', 0),
+  budget('budget', 0),
+  budgetAllocation('budget_allocation', 1);
 
   const SyncEntityType(this.wire, this.rank);
 
   /// The `entity_type` value used on the wire and in the local sync tables.
   final String wire;
 
-  /// The outbox `depends_on_rank`: 0 = person or category, 1 = transaction
-  /// or entry, 2 = audit or conflict resolution, 3 = rate or primary
-  /// currency.
+  /// The outbox `depends_on_rank`: 0 = person, category, occasion or
+  /// budget, 1 = transaction, entry or budget allocation, 2 = audit or
+  /// conflict resolution, 3 = rate or primary currency.
   final int rank;
 
   /// Parses a [wire] value. Throws [ArgumentError] on an unknown value, so a
@@ -47,6 +51,17 @@ const Set<String> localOnlyTables = {
   'onboarding_status',
   'notification_preferences',
   'notification_history',
+  // Device files that are never uploaded: occasion photos (008 FR-017) and
+  // scanned pages with their review state (009 FR-019). A transaction keeps
+  // its `ocr_scan_id` as a plain, unresolved reference on other devices.
+  'occasion_attachments',
+  'ocr_scans',
+  'candidate_entries',
+  // The AI assistant (014): its provider, consent and conversation belong
+  // to the device whose secure storage holds the API key.
+  'ai_conversations',
+  'ai_messages',
+  'ai_settings',
   // The sync machinery itself (sync_tables.dart).
   'sync_outbox',
   'sync_record_meta',

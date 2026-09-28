@@ -6,6 +6,27 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <!-- 021 Offline-First Cloud Sync: upload/download to Supabase. -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 008 FR-017 (attaching a photo to an occasion) and 009 FR-016
+         (photographing a paper list to scan). Both are requested
+         contextually the first time the user taps "attach photo", never at
+         app startup (constitution Engineering Standards). `android:maxSdkVersion`
+         is not set on CAMERA because capture is offered on every supported
+         API level; READ_MEDIA_IMAGES is the API 33+ replacement for the
+         legacy READ_EXTERNAL_STORAGE gallery permission. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <!-- 015 App Lock (FR-005): biometric unlock via `local_auth`. Normal
+         (install-time) permissions — the OS biometric prompt itself is only
+         ever shown after the user opts in from Security settings.
+         USE_FINGERPRINT covers API 23-27 devices that predate USE_BIOMETRIC. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission
+        android:name="android.permission.USE_FINGERPRINT"
+        android:maxSdkVersion="27"/>
     <application
         android:label="@string/app_name"
         android:name="${applicationName}"
@@ -44,6 +65,13 @@
                 <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+        <!-- 009 FR-002: `image_cropper`'s crop/rotate screen. The plugin
+             launches this activity itself, so it must be declared here or
+             the crop step crashes at runtime on Android. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

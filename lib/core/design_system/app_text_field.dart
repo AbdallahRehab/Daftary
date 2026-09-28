@@ -17,6 +17,8 @@ class AppTextField extends StatelessWidget {
     this.suffixIcon,
     this.textDirection,
     this.maxLength,
+    this.obscureText = false,
+    this.enabled,
   });
 
   final String label;
@@ -34,6 +36,12 @@ class AppTextField extends StatelessWidget {
   /// list row or headline can lay out. The counter only appears once the
   /// text is within 20% of the limit, so everyday typing stays uncluttered.
   final int? maxLength;
+
+  /// Masks the input (e.g. a secret such as an API key). Also turns off
+  /// autocorrect and suggestions, so the value is never learned by the
+  /// keyboard.
+  final bool obscureText;
+  final bool? enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +64,10 @@ class AppTextField extends StatelessWidget {
             }) => maxLength != null && currentLength >= maxLength * 0.8
                 ? Text('$currentLength/$maxLength')
                 : null,
+      obscureText: obscureText,
+      autocorrect: !obscureText,
+      enableSuggestions: !obscureText,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,

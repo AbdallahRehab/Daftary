@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../money/currency.dart';
+
 /// Base type for every predictable, typed failure surfaced by a repository
 /// or use case. Never thrown — always returned via `Either<Failure, T>`.
 abstract class Failure extends Equatable {
@@ -108,4 +110,21 @@ class EmailAuthFailure extends Failure {
 
   @override
   List<Object?> get props => [message, reason];
+}
+
+/// 018 FR-009: a figure that needs an exchange rate the user has not set
+/// yet. Returned by aggregates that cannot show a partial total — the UI
+/// names [missingRatesFor] and offers to set a rate, and never falls back
+/// to a 1:1 conversion.
+class RatesMissingFailure extends Failure {
+  RatesMissingFailure(this.missingRatesFor)
+    : super(
+        'Exchange rate needed for '
+        '${missingRatesFor.map((c) => c.code).join(', ')}',
+      );
+
+  final List<Currency> missingRatesFor;
+
+  @override
+  List<Object?> get props => [message, missingRatesFor];
 }

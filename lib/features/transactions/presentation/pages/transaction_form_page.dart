@@ -73,8 +73,34 @@ class TransactionFormPage extends StatelessWidget {
   }
 }
 
-class _TransactionFormView extends StatelessWidget {
+class _TransactionFormView extends StatefulWidget {
   const _TransactionFormView();
+
+  @override
+  State<_TransactionFormView> createState() => _TransactionFormViewState();
+}
+
+class _TransactionFormViewState extends State<_TransactionFormView> {
+  // Seeded once from the cubit so edit mode opens prefilled with the
+  // record's amount and note; afterwards the fields own their text and
+  // report changes through `onChanged`.
+  late final TextEditingController _amountController;
+  late final TextEditingController _noteController;
+
+  @override
+  void initState() {
+    super.initState();
+    final state = context.read<TransactionFormCubit>().state;
+    _amountController = TextEditingController(text: state.amountInput);
+    _noteController = TextEditingController(text: state.note ?? '');
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +221,7 @@ class _TransactionFormView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.amountLabel,
+                  controller: _amountController,
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
@@ -221,6 +248,7 @@ class _TransactionFormView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   label: l10n.noteLabel,
+                  controller: _noteController,
                   maxLength: 500,
                   maxLines: 3,
                   onChanged: cubit.noteChanged,

@@ -8,6 +8,7 @@ import '../../../finance/presentation/widgets/category_display_name.dart';
 import '../../../finance/presentation/widgets/category_icon_registry.dart';
 import '../../domain/entities/budget_category_line.dart';
 import 'budget_progress_bar.dart';
+import 'budget_rate_needed_badge.dart';
 import 'over_budget_warning_badge.dart';
 
 /// One budgeted category on the month screen (FR-005/FR-008): its name and
@@ -18,6 +19,11 @@ import 'over_budget_warning_badge.dart';
 /// remaining (US2 scenario 5) — the same layout, never a blank row. A
 /// zero-planned category shows "Nothing planned" instead of a percentage,
 /// since a percentage of zero is undefined.
+///
+/// 018 FR-009: a [BudgetCategoryLine.isBlocked] line keeps its name and
+/// planned amount, and swaps everything derived from the unknown actual
+/// for a [BudgetRateNeededBadge], an empty track and a line naming the
+/// currencies that need a rate — never a guessed figure.
 class BudgetCategoryProgressRow extends StatelessWidget {
   const BudgetCategoryProgressRow({required this.line, super.key, this.onTap});
 
@@ -33,7 +39,8 @@ class BudgetCategoryProgressRow extends StatelessWidget {
     );
     final status = line.status;
     final percentage = line.percentageUsed;
-    final isOver = line.remainingMinorUnits < 0;
+    final remaining = line.remaining;
+    final actual = line.actualAmount;
     final muted = AppTypography.bodyMuted.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
@@ -89,7 +96,13 @@ class BudgetCategoryProgressRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                OverBudgetWarningBadge(status: status, dense: true),
+                if (status == null)
+                  BudgetRateNeededBadge(
+                    key: ValueKey('budgetLineRateNeeded-${line.allocationId}'),
+                    dense: true,
+                  )
+                else
+                  OverBudgetWarningBadge(status: status, dense: true),
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -99,41 +112,62 @@ class BudgetCategoryProgressRow extends StatelessWidget {
               status: status,
             ),
             const SizedBox(height: AppSpacing.xs + 2),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    l10n.budgetSpentOfPlanned(
-                      formatter.formatWithSymbol(line.actualAmount),
-                      formatter.formatWithSymbol(line.plannedAmount),
+            if (actual == null || remaining == null || status == null) ...[
+              Text(
+                l10n.budgetPlannedAmount(
+                  formatter.formatWithSymbol(line.plannedAmount),
+                ),
+                style: muted,
+              ),
+              const SizedBox(height: AppSpacing.xs / 2),
+              Text(
+                l10n.budgetLineNeedsRate(
+                  line.missingRatesFor.map((c) => c.code).join(', '),
+                ),
+                style: AppTypography.label.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ] else ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.budgetSpentOfPlanned(
+                        formatter.formatWithSymbol(actual),
+                        formatter.formatWithSymbol(line.plannedAmount),
+                      ),
+                      style: muted,
                     ),
+                  ),
+                  Text(
+                    percentage == null
+                        ? l10n.budgetPercentNotApplicable
+                        : l10n.budgetPercentUsed(
+                            budgetPercentLabel(percentage),
+                          ),
                     style: muted,
                   ),
-                ),
-                Text(
-                  percentage == null
-                      ? l10n.budgetPercentNotApplicable
-                      : l10n.budgetPercentUsed(budgetPercentLabel(percentage)),
-                  style: muted,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs / 2),
-            Text(
-              isOver
-                  ? l10n.budgetOverByAmount(
-                      formatter.formatWithSymbol(line.remaining.abs()),
-                    )
-                  : l10n.budgetRemainingAmount(
-                      formatter.formatWithSymbol(line.remaining),
-                    ),
-              style: AppTypography.label.copyWith(
-                color: isOver
-                    ? OverBudgetWarningBadge.colorFor(context, status)
-                    : theme.colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
+                ],
               ),
-            ),
+              const SizedBox(height: AppSpacing.xs / 2),
+              Text(
+                remaining.isNegative
+                    ? l10n.budgetOverByAmount(
+                        formatter.formatWithSymbol(remaining.abs()),
+                      )
+                    : l10n.budgetRemainingAmount(
+                        formatter.formatWithSymbol(remaining),
+                      ),
+                style: AppTypography.label.copyWith(
+                  color: remaining.isNegative
+                      ? OverBudgetWarningBadge.colorFor(context, status)
+                      : theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ],
         ),
       ),

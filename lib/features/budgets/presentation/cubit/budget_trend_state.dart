@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failure.dart';
+import '../../../../core/money/currency.dart';
 import '../../../finance/domain/entities/category.dart';
 import '../../domain/entities/budget_trend_point.dart';
 
@@ -20,7 +21,7 @@ class BudgetTrendState extends Equatable {
 
   final BudgetTrendStatus status;
 
-  /// Oldest month first, exactly as `GetBudgetTrend` returns them — every
+  /// Oldest month first, exactly as `WatchBudgetTrend` emits them — every
   /// month in the window, budgeted or not.
   final List<BudgetTrendPoint> points;
 
@@ -48,6 +49,11 @@ class BudgetTrendState extends Equatable {
   /// Whether the chart has something meaningful to show.
   bool get showsChart =>
       status == BudgetTrendStatus.success && points.hasEnoughHistory;
+
+  /// 018 FR-009: the currencies a month in the window needs a rate for —
+  /// what the screen's `RateNeededBanner` names. Empty until loaded.
+  List<Currency> get missingRatesFor =>
+      status == BudgetTrendStatus.success ? points.missingRatesFor : const [];
 
   Category? get selectedCategory {
     final id = selectedCategoryId;

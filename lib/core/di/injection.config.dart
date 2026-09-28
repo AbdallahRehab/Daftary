@@ -150,6 +150,10 @@ import '../../features/budgets/domain/usecases/get_most_recent_budget_before.dar
     as _i654;
 import '../../features/budgets/domain/usecases/remove_budget_category_allocation.dart'
     as _i317;
+import '../../features/budgets/domain/usecases/watch_budget_for_month.dart'
+    as _i1021;
+import '../../features/budgets/domain/usecases/watch_budget_trend.dart'
+    as _i621;
 import '../../features/budgets/presentation/cubit/budget_form_cubit.dart'
     as _i720;
 import '../../features/budgets/presentation/cubit/budget_month_cubit.dart'
@@ -469,8 +473,8 @@ import '../../features/ocr/domain/usecases/tag_batch_to_occasion.dart' as _i237;
 import '../../features/ocr/presentation/cubit/image_prep_cubit.dart' as _i427;
 import '../../features/ocr/presentation/cubit/scan_capture_cubit.dart' as _i354;
 import '../../features/ocr/presentation/cubit/scan_detail_cubit.dart' as _i919;
-import '../../features/ocr/presentation/cubit/scan_history_cubit.dart' as _i622;
-import '../../features/ocr/presentation/cubit/scan_review_cubit.dart' as _i621;
+import '../../features/ocr/presentation/cubit/scan_history_cubit.dart' as _i624;
+import '../../features/ocr/presentation/cubit/scan_review_cubit.dart' as _i622;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -1104,15 +1108,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1028.WatchPrimaryCurrency>(
       () => _i1028.WatchPrimaryCurrency(gh<_i87.CurrencyRepository>()),
     );
-    gh.lazySingleton<_i855.BudgetsRepository>(
-      () => _i249.BudgetsRepositoryImpl(
-        gh<_i757.BudgetsDao>(),
-        gh<_i137.FinanceRepository>(),
-        gh<_i228.CategoryRepository>(),
-        gh<_i602.GetConversionContext>(),
-        gh<_i966.CurrencyConverter>(),
-      ),
-    );
     gh.factory<_i801.SetPrimaryCurrency>(
       () => _i801.SetPrimaryCurrency(
         gh<_i87.CurrencyRepository>(),
@@ -1208,36 +1203,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i338.NotificationsDao>(),
       ),
     );
-    gh.factory<_i552.AddBudgetCategoryAllocation>(
-      () => _i552.AddBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i809.CopyBudgetToMonth>(
-      () => _i809.CopyBudgetToMonth(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i254.CreateBudget>(
-      () => _i254.CreateBudget(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i150.DeleteBudget>(
-      () => _i150.DeleteBudget(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i755.EditBudget>(
-      () => _i755.EditBudget(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i934.EditBudgetCategoryAllocation>(
-      () => _i934.EditBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i587.GetBudgetForMonth>(
-      () => _i587.GetBudgetForMonth(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i438.GetBudgetTrend>(
-      () => _i438.GetBudgetTrend(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i654.GetMostRecentBudgetBefore>(
-      () => _i654.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
-    );
-    gh.factory<_i317.RemoveBudgetCategoryAllocation>(
-      () => _i317.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
-    );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i957.TransactionsRepository>()),
     );
@@ -1312,9 +1277,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i558.FlutterSecureStorage>(),
       ),
     );
-    gh.lazySingleton<_i423.BudgetInsightsSource>(
-      () => _i582.BudgetsInsightsSource(gh<_i855.BudgetsRepository>()),
-    );
     gh.factory<_i24.CreateCategory>(
       () => _i24.CreateCategory(gh<_i228.CategoryRepository>()),
     );
@@ -1333,10 +1295,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i520.WatchCategories>(
       () => _i520.WatchCategories(gh<_i228.CategoryRepository>()),
     );
-    gh.factory<_i28.CopyBudgetCubit>(
-      () => _i28.CopyBudgetCubit(
-        gh<_i654.GetMostRecentBudgetBefore>(),
-        gh<_i809.CopyBudgetToMonth>(),
+    gh.lazySingleton<_i855.BudgetsRepository>(
+      () => _i249.BudgetsRepositoryImpl(
+        gh<_i757.BudgetsDao>(),
+        gh<_i982.AppDatabase>(),
+        gh<_i137.FinanceRepository>(),
+        gh<_i228.CategoryRepository>(),
+        gh<_i602.GetConversionContext>(),
+        gh<_i966.CurrencyConverter>(),
       ),
     );
     gh.factory<_i917.GetCategorySpendTool>(
@@ -1401,22 +1367,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
       ),
     );
-    gh.lazySingleton<_i553.NotificationEngine>(
-      () => _i553.NotificationEngineImpl(
-        gh<_i162.NotificationPreferenceRepository>(),
-        gh<_i13.NotificationHistoryRepository>(),
-        gh<_i423.BudgetInsightsSource>(),
-        gh<_i842.SavingsInsightsSource>(),
-        gh<_i983.EvaluateBudgetNotifications>(),
-        gh<_i371.EvaluateSavingsGoalNotifications>(),
-        gh<_i104.NotificationComposer>(),
-        gh<_i721.NotificationPhrasingService>(),
-        gh<_i209.NotificationScheduler>(),
-        gh<_i956.AppClock>(),
-        gh<_i1003.NotificationLanguageProvider>(),
-        gh<_i220.NotificationLastRunStore>(),
-      ),
-    );
     gh.factory<_i742.AISettingsCubit>(
       () => _i742.AISettingsCubit(
         gh<_i359.GetAIAssistantSettings>(),
@@ -1442,9 +1392,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i769.FindPossibleDuplicatePerson>(),
       ),
     );
-    gh.factory<_i1031.BudgetMonthCubit>(
-      () => _i1031.BudgetMonthCubit(gh<_i587.GetBudgetForMonth>()),
-    );
     gh.factory<_i109.CategoryManagementCubit>(
       () => _i109.CategoryManagementCubit(
         gh<_i520.WatchCategories>(),
@@ -1466,13 +1413,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i65.GetProactiveObservationTool>(),
         gh<_i775.SystemPromptBuilder>(),
         gh<_i1038.AIPeriodResolver>(),
-      ),
-    );
-    gh.lazySingleton<_i548.NotificationRecomputeTrigger>(
-      () => _i548.NotificationRecomputeTrigger(
-        gh<_i553.NotificationEngine>(),
-        gh<_i220.NotificationLastRunStore>(),
-        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i398.ExchangeRateListCubit>(
@@ -1506,12 +1446,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i957.TransactionsRepository>(),
       ),
     );
-    gh.factory<_i59.GetBudgetStatusTool>(
-      () => _i59.GetBudgetStatusTool(
-        gh<_i587.GetBudgetForMonth>(),
-        gh<_i1038.AIPeriodResolver>(),
-      ),
-    );
     gh.factory<_i224.ArchivePerson>(
       () => _i224.ArchivePerson(gh<_i646.PeopleRepository>()),
     );
@@ -1535,20 +1469,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i462.WatchPerson>(
       () => _i462.WatchPerson(gh<_i646.PeopleRepository>()),
-    );
-    gh.factory<_i720.BudgetFormCubit>(
-      () => _i720.BudgetFormCubit(
-        gh<_i587.GetBudgetForMonth>(),
-        gh<_i254.CreateBudget>(),
-        gh<_i755.EditBudget>(),
-        gh<_i150.DeleteBudget>(),
-        gh<_i552.AddBudgetCategoryAllocation>(),
-        gh<_i934.EditBudgetCategoryAllocation>(),
-        gh<_i317.RemoveBudgetCategoryAllocation>(),
-        gh<_i1.GetCategories>(),
-        gh<_i999.EgpFormatter>(),
-        gh<_i903.GetPrimaryCurrency>(),
-      ),
     );
     gh.factory<_i496.ExportUserData>(
       () => _i496.ExportUserData(
@@ -1625,6 +1545,42 @@ extension GetItInjectableX on _i174.GetIt {
         personId,
       ),
     );
+    gh.factory<_i552.AddBudgetCategoryAllocation>(
+      () => _i552.AddBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i809.CopyBudgetToMonth>(
+      () => _i809.CopyBudgetToMonth(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i254.CreateBudget>(
+      () => _i254.CreateBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i150.DeleteBudget>(
+      () => _i150.DeleteBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i755.EditBudget>(
+      () => _i755.EditBudget(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i934.EditBudgetCategoryAllocation>(
+      () => _i934.EditBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i587.GetBudgetForMonth>(
+      () => _i587.GetBudgetForMonth(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i438.GetBudgetTrend>(
+      () => _i438.GetBudgetTrend(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i654.GetMostRecentBudgetBefore>(
+      () => _i654.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i317.RemoveBudgetCategoryAllocation>(
+      () => _i317.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i1021.WatchBudgetForMonth>(
+      () => _i1021.WatchBudgetForMonth(gh<_i855.BudgetsRepository>()),
+    );
+    gh.factory<_i621.WatchBudgetTrend>(
+      () => _i621.WatchBudgetTrend(gh<_i855.BudgetsRepository>()),
+    );
     gh.factory<_i329.ReportsCubit>(
       () => _i329.ReportsCubit(
         gh<_i323.GetSpendingTrend>(),
@@ -1635,24 +1591,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i14.GetOwedOverviewTool>(
       () => _i14.GetOwedOverviewTool(gh<_i943.GetOverview>()),
     );
-    gh.factory<_i179.BudgetTrendCubit>(
-      () => _i179.BudgetTrendCubit(
-        gh<_i438.GetBudgetTrend>(),
-        gh<_i1.GetCategories>(),
-      ),
-    );
     gh.factory<_i273.SyncConflictsCubit>(
       () => _i273.SyncConflictsCubit(
         gh<_i1039.WatchSyncConflicts>(),
         gh<_i1030.ResolveSyncConflict>(),
       ),
     );
-    gh.factory<_i480.HandleNotificationTap>(
-      () => _i480.HandleNotificationTap(
-        gh<_i423.BudgetInsightsSource>(),
-        gh<_i842.SavingsInsightsSource>(),
-        gh<_i956.AppClock>(),
-      ),
+    gh.factory<_i1031.BudgetMonthCubit>(
+      () => _i1031.BudgetMonthCubit(gh<_i1021.WatchBudgetForMonth>()),
     );
     gh.lazySingleton<_i578.OcrRepository>(
       () => _i457.OcrRepositoryImpl(
@@ -1665,16 +1611,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
-    gh.lazySingleton<_i172.NotificationTapRouter>(
-      () => _i172.NotificationTapRouter(
-        gh<_i209.NotificationScheduler>(),
-        gh<_i480.HandleNotificationTap>(),
-      ),
+    gh.lazySingleton<_i423.BudgetInsightsSource>(
+      () => _i582.BudgetsInsightsSource(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i1033.CategoryFormCubit>(
       () => _i1033.CategoryFormCubit(
         gh<_i24.CreateCategory>(),
         gh<_i611.EditCategory>(),
+      ),
+    );
+    gh.factory<_i179.BudgetTrendCubit>(
+      () => _i179.BudgetTrendCubit(
+        gh<_i621.WatchBudgetTrend>(),
+        gh<_i520.WatchCategories>(),
       ),
     );
     gh.factory<_i505.FinanceEntryFormCubit>(
@@ -1734,6 +1683,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i237.TagBatchToOccasion>(
       () => _i237.TagBatchToOccasion(gh<_i578.OcrRepository>()),
+    );
+    gh.factory<_i28.CopyBudgetCubit>(
+      () => _i28.CopyBudgetCubit(
+        gh<_i654.GetMostRecentBudgetBefore>(),
+        gh<_i809.CopyBudgetToMonth>(),
+      ),
     );
     gh.factory<_i1005.EmailLinkCubit>(
       () => _i1005.EmailLinkCubit(
@@ -1798,8 +1753,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i154.RestoreOccasion>(
       () => _i154.RestoreOccasion(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i621.ScanReviewCubit>(
-      () => _i621.ScanReviewCubit(
+    gh.factory<_i622.ScanReviewCubit>(
+      () => _i622.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
         gh<_i303.GetCandidateEntries>(),
         gh<_i506.EditCandidateEntry>(),
@@ -1818,6 +1773,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i49.RestorePerson>(),
       ),
     );
+    gh.lazySingleton<_i553.NotificationEngine>(
+      () => _i553.NotificationEngineImpl(
+        gh<_i162.NotificationPreferenceRepository>(),
+        gh<_i13.NotificationHistoryRepository>(),
+        gh<_i423.BudgetInsightsSource>(),
+        gh<_i842.SavingsInsightsSource>(),
+        gh<_i983.EvaluateBudgetNotifications>(),
+        gh<_i371.EvaluateSavingsGoalNotifications>(),
+        gh<_i104.NotificationComposer>(),
+        gh<_i721.NotificationPhrasingService>(),
+        gh<_i209.NotificationScheduler>(),
+        gh<_i956.AppClock>(),
+        gh<_i1003.NotificationLanguageProvider>(),
+        gh<_i220.NotificationLastRunStore>(),
+      ),
+    );
     gh.factory<_i668.PersonFormCubit>(
       () => _i668.PersonFormCubit(
         gh<_i646.PeopleRepository>(),
@@ -1825,6 +1796,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i101.EditPerson>(),
         gh<_i224.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
+      ),
+    );
+    gh.lazySingleton<_i548.NotificationRecomputeTrigger>(
+      () => _i548.NotificationRecomputeTrigger(
+        gh<_i553.NotificationEngine>(),
+        gh<_i220.NotificationLastRunStore>(),
+        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i53.OccasionDetailCubit>(
@@ -1843,17 +1821,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i666.GetOccasionTotalsTool(
         gh<_i432.GetOccasionDetail>(),
         gh<_i958.GetOccasionsList>(),
-      ),
-    );
-    gh.factory<_i332.AIToolRegistry>(
-      () => _i332.AIToolRegistry(
-        gh<_i917.GetCategorySpendTool>(),
-        gh<_i1050.GetTopSpendingCategoryTool>(),
-        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
-        gh<_i1049.GetPersonBalanceTool>(),
-        gh<_i14.GetOwedOverviewTool>(),
-        gh<_i59.GetBudgetStatusTool>(),
-        gh<_i666.GetOccasionTotalsTool>(),
       ),
     );
     gh.factory<_i39.NotificationSettingsCubit>(
@@ -1879,6 +1846,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i957.TransactionsRepository>(),
       ),
     );
+    gh.factory<_i59.GetBudgetStatusTool>(
+      () => _i59.GetBudgetStatusTool(
+        gh<_i587.GetBudgetForMonth>(),
+        gh<_i1038.AIPeriodResolver>(),
+      ),
+    );
     gh.factory<_i324.SyncSettingsCubit>(
       () => _i324.SyncSettingsCubit(
         gh<_i178.WatchSyncStatus>(),
@@ -1888,8 +1861,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i259.RetryFailedSync>(),
       ),
     );
-    gh.factory<_i622.ScanHistoryCubit>(
-      () => _i622.ScanHistoryCubit(
+    gh.factory<_i720.BudgetFormCubit>(
+      () => _i720.BudgetFormCubit(
+        gh<_i587.GetBudgetForMonth>(),
+        gh<_i254.CreateBudget>(),
+        gh<_i755.EditBudget>(),
+        gh<_i150.DeleteBudget>(),
+        gh<_i552.AddBudgetCategoryAllocation>(),
+        gh<_i934.EditBudgetCategoryAllocation>(),
+        gh<_i317.RemoveBudgetCategoryAllocation>(),
+        gh<_i1.GetCategories>(),
+        gh<_i999.EgpFormatter>(),
+        gh<_i903.GetPrimaryCurrency>(),
+      ),
+    );
+    gh.factory<_i624.ScanHistoryCubit>(
+      () => _i624.ScanHistoryCubit(
         gh<_i331.GetScanHistory>(),
         gh<_i413.DeleteScan>(),
       ),
@@ -1922,6 +1909,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i413.DeleteScan>(),
       ),
     );
+    gh.factory<_i480.HandleNotificationTap>(
+      () => _i480.HandleNotificationTap(
+        gh<_i423.BudgetInsightsSource>(),
+        gh<_i842.SavingsInsightsSource>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.lazySingleton<_i172.NotificationTapRouter>(
+      () => _i172.NotificationTapRouter(
+        gh<_i209.NotificationScheduler>(),
+        gh<_i480.HandleNotificationTap>(),
+      ),
+    );
     gh.factory<_i427.ImagePrepCubit>(
       () => _i427.ImagePrepCubit(
         gh<_i235.ImagePreparationService>(),
@@ -1946,6 +1946,17 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i194.OccasionsListCubit>(
       () => _i194.OccasionsListCubit(gh<_i958.GetOccasionsList>()),
+    );
+    gh.factory<_i332.AIToolRegistry>(
+      () => _i332.AIToolRegistry(
+        gh<_i917.GetCategorySpendTool>(),
+        gh<_i1050.GetTopSpendingCategoryTool>(),
+        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i1049.GetPersonBalanceTool>(),
+        gh<_i14.GetOwedOverviewTool>(),
+        gh<_i59.GetBudgetStatusTool>(),
+        gh<_i666.GetOccasionTotalsTool>(),
+      ),
     );
     gh.factory<_i636.AskFinancialQuestion>(
       () => _i636.AskFinancialQuestion(

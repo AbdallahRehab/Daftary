@@ -4412,6 +4412,30 @@ abstract class AppLocalizations {
   /// **'Total unbudgeted'**
   String get budgetUnbudgetedTotalLabel;
 
+  /// 018: pill shown on a budget row, the overall card or a trend month whose spent figure needs an exchange rate that has not been set.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate needed'**
+  String get budgetRateNeededBadge;
+
+  /// 018: a blocked budget row shows only its planned amount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} planned'**
+  String budgetPlannedAmount(String amount);
+
+  /// 018: replaces 'left'/'over' on a budget row whose spending is in a currency without a rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending needs an exchange rate for {currencies}'**
+  String budgetLineNeedsRate(String currencies);
+
+  /// 018: replaces the overall percentage when any budgeted category's spending needs a missing rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent and remaining need an exchange rate for {currencies}'**
+  String budgetOverallNeedsRate(String currencies);
+
   /// No description provided for @homeTitle.
   ///
   /// In en, this message translates to:

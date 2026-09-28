@@ -5,25 +5,34 @@ import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/budgets/domain/entities/budget.dart';
 import 'package:daftary/features/budgets/domain/entities/budget_category_line.dart';
 import 'package:daftary/features/budgets/domain/entities/budget_summary.dart';
-import 'package:daftary/features/budgets/domain/usecases/get_budget_for_month.dart';
+import 'package:daftary/features/budgets/domain/repositories/budgets_repository.dart';
+import 'package:daftary/features/budgets/domain/usecases/watch_budget_for_month.dart';
 import 'package:daftary/features/budgets/presentation/cubit/budget_month_cubit.dart';
 import 'package:daftary/features/budgets/presentation/cubit/budget_month_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetBudgetForMonth extends Mock implements GetBudgetForMonth {}
+import '../../../../helpers/watch_stubs.dart';
+import '../../helpers/budget_watch_stubs.dart';
 
-/// T030 — `BudgetMonthCubit`: loads and exposes `BudgetMonthDetail`,
-/// refreshes correctly, and reports the FR-018 empty state (not an error)
-/// when the month has no budget.
+class MockBudgetsRepository extends Mock implements BudgetsRepository {}
+
+/// T030 — `BudgetMonthCubit`: subscribes to and exposes `BudgetMonthDetail`,
+/// and reports the FR-018 empty state (not an error) when the month has no
+/// budget.
+///
+/// 021: the subscription is live — a change elsewhere re-emits with no
+/// reload, a month switch replaces it, and [BudgetMonthCubit.close]
+/// cancels it.
 void main() {
-  late MockGetBudgetForMonth getBudgetForMonth;
+  late MockBudgetsRepository repository;
+  late FakeTableChanges changes;
 
   const month = '2026-09';
   final now = DateTime(2026, 9, 1);
 
-  BudgetMonthDetail detailWithActual(int actual) => BudgetMonthDetail(
+  BudgetMonthDetail detailWithActual(int? actual) => BudgetMonthDetail(
     month: month,
     budget: Budget(
       id: 'b1',
@@ -49,16 +58,26 @@ void main() {
   );
 
   setUp(() {
-    getBudgetForMonth = MockGetBudgetForMonth();
+    repository = MockBudgetsRepository();
+    changes = FakeTableChanges();
+    stubBudgetsWatches(repository, changes);
   });
 
+  tearDown(() => changes.close());
+
+  BudgetMonthCubit buildCubit() =>
+      BudgetMonthCubit(WatchBudgetForMonth(repository));
+
+  /// Lets a notified re-read deliver.
+  Future<void> flush() => Future<void>.delayed(Duration.zero);
+
   blocTest<BudgetMonthCubit, BudgetMonthState>(
-    'load emits loading then success with the month detail',
+    'subscribe emits loading then success with the month detail',
     setUp: () => when(
-      () => getBudgetForMonth(month),
+      () => repository.getBudgetForMonth(month),
     ).thenAnswer((_) async => Right(detailWithActual(350000))),
-    build: () => BudgetMonthCubit(getBudgetForMonth),
-    act: (cubit) => cubit.load(month),
+    build: buildCubit,
+    act: (cubit) => cubit.subscribe(month),
     expect: () => [
       const BudgetMonthState(month: month),
       BudgetMonthState(
@@ -78,10 +97,10 @@ void main() {
   blocTest<BudgetMonthCubit, BudgetMonthState>(
     'a month with no budget is the FR-018 empty state, not a failure',
     setUp: () => when(
-      () => getBudgetForMonth(month),
+      () => repository.getBudgetForMonth(month),
     ).thenAnswer((_) async => const Right(BudgetMonthDetail.empty(month))),
-    build: () => BudgetMonthCubit(getBudgetForMonth),
-    act: (cubit) => cubit.load(month),
+    build: buildCubit,
+    act: (cubit) => cubit.subscribe(month),
     skip: 1,
     expect: () => [
       isA<BudgetMonthState>()
@@ -94,10 +113,10 @@ void main() {
   blocTest<BudgetMonthCubit, BudgetMonthState>(
     'a read failure is exposed as failure',
     setUp: () => when(
-      () => getBudgetForMonth(month),
+      () => repository.getBudgetForMonth(month),
     ).thenAnswer((_) async => const Left(CacheFailure('boom'))),
-    build: () => BudgetMonthCubit(getBudgetForMonth),
-    act: (cubit) => cubit.load(month),
+    build: buildCubit,
+    act: (cubit) => cubit.subscribe(month),
     skip: 1,
     expect: () => [
       const BudgetMonthState(
@@ -108,35 +127,62 @@ void main() {
     ],
   );
 
-  test('reload re-reads live figures after an expense changed elsewhere '
-      '(US2 scenario 4)', () async {
+  test('an expense recorded elsewhere updates the open month with no '
+      'reload (021 FR-031, US2 scenario 4)', () async {
     var actual = 350000;
     when(
-      () => getBudgetForMonth(month),
+      () => repository.getBudgetForMonth(month),
     ).thenAnswer((_) async => Right(detailWithActual(actual)));
-    final cubit = BudgetMonthCubit(getBudgetForMonth);
-    await cubit.load(month);
+    final cubit = buildCubit();
+    await cubit.subscribe(month);
     expect(cubit.state.detail!.summary!.totalActualMinorUnits, 350000);
 
     actual = 400000; // the 3,500 expense was edited to 4,000 in 007
-    await cubit.reload();
+    changes.notify();
+    await flush();
 
     expect(cubit.state.status, BudgetMonthStatus.success);
     expect(cubit.state.detail!.summary!.totalActualMinorUnits, 400000);
-    verify(() => getBudgetForMonth(month)).called(2);
+    verify(() => repository.getBudgetForMonth(month)).called(2);
     await cubit.close();
   });
 
-  test('reload keeps the current detail on screen while in flight', () async {
+  test('a rate set elsewhere unblocks a line on the open month', () async {
+    int? actual; // spend in a currency with no rate yet
     when(
-      () => getBudgetForMonth(month),
+      () => repository.getBudgetForMonth(month),
+    ).thenAnswer((_) async => Right(detailWithActual(actual)));
+    final cubit = buildCubit();
+    await cubit.subscribe(month);
+    final summary = cubit.state.detail!.summary!;
+    expect(summary.isActualBlocked, isTrue);
+    expect(summary.totalActualMinorUnits, isNull);
+    // Planned amounts are never blocked.
+    expect(summary.totalPlannedMinorUnits, 600000);
+
+    actual = 250000; // the rate was set in settings
+    changes.notify();
+    await flush();
+
+    expect(cubit.state.detail!.summary!.isActualBlocked, isFalse);
+    expect(cubit.state.detail!.summary!.totalActualMinorUnits, 250000);
+    await cubit.close();
+  });
+
+  test('resubscribe keeps the current detail on screen while in '
+      'flight', () async {
+    when(
+      () => repository.getBudgetForMonth(month),
     ).thenAnswer((_) async => Right(detailWithActual(1)));
-    final cubit = BudgetMonthCubit(getBudgetForMonth);
-    await cubit.load(month);
+    final cubit = buildCubit();
+    await cubit.subscribe(month);
 
     final gate = Completer<Either<Failure, BudgetMonthDetail>>();
-    when(() => getBudgetForMonth(month)).thenAnswer((_) => gate.future);
-    final pending = cubit.reload();
+    when(
+      () => repository.getBudgetForMonth(month),
+    ).thenAnswer((_) => gate.future);
+    final pending = cubit.resubscribe();
+    expect(cubit.state.isLoading, isTrue);
     expect(cubit.state.detail, isNotNull);
     gate.complete(Right(detailWithActual(2)));
     await pending;
@@ -144,22 +190,38 @@ void main() {
     await cubit.close();
   });
 
-  test('monthChanged loads the new month and ignores a stale answer for '
-      'the old one', () async {
+  test('monthChanged subscribes to the new month; the old one never '
+      'delivers again', () async {
     final slow = Completer<Either<Failure, BudgetMonthDetail>>();
-    when(() => getBudgetForMonth(month)).thenAnswer((_) => slow.future);
     when(
-      () => getBudgetForMonth('2026-10'),
+      () => repository.getBudgetForMonth(month),
+    ).thenAnswer((_) => slow.future);
+    when(
+      () => repository.getBudgetForMonth('2026-10'),
     ).thenAnswer((_) async => const Right(BudgetMonthDetail.empty('2026-10')));
 
-    final cubit = BudgetMonthCubit(getBudgetForMonth);
-    final first = cubit.load(month);
+    final cubit = buildCubit();
+    final first = cubit.subscribe(month);
     await cubit.monthChanged('2026-10');
     slow.complete(Right(detailWithActual(5)));
     await first;
+    await flush();
 
     expect(cubit.state.month, '2026-10');
     expect(cubit.state.isEmpty, isTrue);
     await cubit.close();
+  });
+
+  test('close cancels the subscription', () async {
+    when(
+      () => repository.getBudgetForMonth(month),
+    ).thenAnswer((_) async => Right(detailWithActual(1)));
+    final cubit = buildCubit();
+    await cubit.subscribe(month);
+    await cubit.close();
+
+    changes.notify();
+    await flush();
+    verify(() => repository.getBudgetForMonth(month)).called(1);
   });
 }

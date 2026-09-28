@@ -150,7 +150,7 @@ void main() {
         summary.totalRemainingMinorUnits,
       );
       expect(result.data['overallPercentUsed'], summary.overallPercentageUsed);
-      expect(result.data['overallState'], summary.overallStatus.name);
+      expect(result.data['overallState'], summary.overallStatus!.name);
       expect(result.data['isOverBudget'], summary.isOverBudgetOverall);
       expect(result.data['unbudgetedSpending'], [
         {'category': 'Gifts', 'amountMinorUnits': 12345},
@@ -207,6 +207,86 @@ void main() {
         await tool({AIToolArgs.month: '2026-08'}),
         const Left<Failure, Never>(CacheFailure('db')),
       );
+    });
+
+    test('018: a line blocked on a missing rate reports its plan and the '
+        'missing rates, never a figure; the actual-side totals are '
+        'omitted', () async {
+      final blocked = BudgetMonthDetail(
+        month: '2026-08',
+        budget: detail.budget,
+        summary: const BudgetSummary(
+          budgetId: 'b1',
+          categoryBreakdown: [
+            BudgetCategoryLine(
+              allocationId: 'a1',
+              categoryId: 'c1',
+              categoryName: 'Food',
+              categoryIcon: 'food',
+              plannedAmountMinorUnits: 300000,
+              actualAmountMinorUnits: null,
+              missingRatesFor: [Currency.usd],
+            ),
+            transport,
+          ],
+          unbudgetedSpending: [
+            UnbudgetedCategorySpend(
+              categoryId: 'c3',
+              categoryName: 'Gifts',
+              categoryIcon: 'gift',
+              amountMinorUnits: null,
+              missingRatesFor: [Currency.eur],
+            ),
+          ],
+        ),
+      );
+      when(
+        () => getBudgetForMonth('2026-08'),
+      ).thenAnswer((_) async => Right(blocked));
+
+      final result = (await tool({
+        AIToolArgs.month: '2026-08',
+      })).getOrElse((f) => fail('$f'));
+
+      expect(result.foundData, isTrue);
+      expect(result.data['categories'], [
+        {
+          'category': 'Food',
+          'plannedMinorUnits': 300000,
+          AIToolDataKeys.reason: AIToolNoDataReasons.exchangeRateMissing,
+          AIToolDataKeys.missingRatesFor: ['USD'],
+        },
+        {
+          'category': 'Transport',
+          'plannedMinorUnits': 90000,
+          'actualMinorUnits': 30000,
+          'remainingMinorUnits': 60000,
+          'percentUsed': transport.percentageUsed,
+          'state': 'onTrack',
+        },
+      ]);
+      expect(result.data['totalPlannedMinorUnits'], 390000);
+      for (final key in [
+        'totalActualMinorUnits',
+        'totalRemainingMinorUnits',
+        'overallPercentUsed',
+        'overallState',
+        'isOverBudget',
+      ]) {
+        expect(result.data.containsKey(key), isFalse, reason: key);
+      }
+      expect(result.data['unbudgetedSpending'], [
+        {
+          'category': 'Gifts',
+          AIToolDataKeys.reason: AIToolNoDataReasons.exchangeRateMissing,
+          AIToolDataKeys.missingRatesFor: ['EUR'],
+        },
+      ]);
+      expect(
+        result.data[AIToolDataKeys.reason],
+        AIToolNoDataReasons.exchangeRateMissing,
+      );
+      expect(result.data[AIToolDataKeys.missingRatesFor], ['USD', 'EUR']);
     });
   });
 

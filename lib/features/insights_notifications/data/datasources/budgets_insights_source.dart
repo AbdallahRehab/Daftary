@@ -22,34 +22,37 @@ class BudgetsInsightsSource implements BudgetInsightsSource {
   currentMonthCategories() async {
     final month = BudgetMonth.current();
     final result = await _budgets.getBudgetForMonth(month);
-    return switch (result) {
-      // 018: a month whose spend needs a missing exchange rate has no known
-      // actuals, so there is nothing to warn about yet — never a warning
-      // from a partial figure.
-      Left(value: RatesMissingFailure()) => const Right([]),
-      Left(:final value) => Left(value),
-      Right(:final value) => Right([
+    return result.map(
+      (detail) => [
         for (final line
-            in value.summary?.categoryBreakdown ??
+            in detail.summary?.categoryBreakdown ??
                 const <budgets.BudgetCategoryLine>[])
-          BudgetCategorySnapshot(
-            categoryId: line.categoryId,
-            categoryName: line.categoryName,
-            month: month,
-            plannedMinorUnits: line.plannedAmountMinorUnits,
-            actualMinorUnits: line.actualAmountMinorUnits,
-            percentageUsed: line.percentageUsed,
-            status: switch (line.status) {
-              budgets.BudgetCategoryStatus.onTrack =>
-                BudgetCategoryStatus.onTrack,
-              budgets.BudgetCategoryStatus.nearFull =>
-                BudgetCategoryStatus.nearFull,
-              budgets.BudgetCategoryStatus.overBudget =>
-                BudgetCategoryStatus.overBudget,
-            },
-          ),
-      ]),
-    };
+          // 018 FR-009: a line whose spend needs a missing exchange rate has
+          // no known actual or status, so it is left out — never a warning
+          // from a partial figure. Its band stays as last recorded, and it
+          // is evaluated normally once the rate is set.
+          if ((line.actualAmountMinorUnits, line.status) case (
+            final actual?,
+            final status?,
+          ))
+            BudgetCategorySnapshot(
+              categoryId: line.categoryId,
+              categoryName: line.categoryName,
+              month: month,
+              plannedMinorUnits: line.plannedAmountMinorUnits,
+              actualMinorUnits: actual,
+              percentageUsed: line.percentageUsed,
+              status: switch (status) {
+                budgets.BudgetCategoryStatus.onTrack =>
+                  BudgetCategoryStatus.onTrack,
+                budgets.BudgetCategoryStatus.nearFull =>
+                  BudgetCategoryStatus.nearFull,
+                budgets.BudgetCategoryStatus.overBudget =>
+                  BudgetCategoryStatus.overBudget,
+              },
+            ),
+      ],
+    );
   }
 
   @override
@@ -57,10 +60,9 @@ class BudgetsInsightsSource implements BudgetInsightsSource {
     if (!BudgetMonth.isValid(month)) return false;
     final result = await _budgets.getBudgetForMonth(month);
     return result.match(
-      // Unknowable spend still leaves the plan itself readable, but the
-      // repository answers the month as a whole; treat it as present so a
-      // tap is never dismissed as stale on a rate problem.
-      (failure) => failure is RatesMissingFailure,
+      // 018: a missing rate blocks only a line's figures, never the plan,
+      // so the allocation is still found below.
+      (_) => false,
       (detail) =>
           detail.summary?.categoryBreakdown.any(
             (line) => line.categoryId == categoryId,

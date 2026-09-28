@@ -8,6 +8,9 @@ import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -157,8 +160,8 @@ class _BudgetFormViewState extends State<BudgetFormView> {
           previous.allocations != current.allocations,
       builder: (context, state) {
         final cubit = context.read<BudgetFormCubit>();
-        return Scaffold(
-          appBar: AppBar(
+        return AppScaffold(
+          appBar: AppTopBar(
             title: Text(
               state.isEditMode
                   ? l10n.budgetFormEditTitle
@@ -216,7 +219,7 @@ class _FormBody extends StatelessWidget {
     final available = state.availableCategories;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

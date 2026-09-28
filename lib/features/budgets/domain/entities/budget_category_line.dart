@@ -55,6 +55,12 @@ double? budgetPercentageUsed({
 /// [percentageUsed] and [status] are getters over the two stored inputs
 /// rather than fields, so a line can never carry a status that contradicts
 /// its own numbers.
+///
+/// 018 FR-009: a line whose spend includes a currency with no exchange rate
+/// [isBlocked] — its actual is unknown ([actualAmountMinorUnits] is `null`),
+/// and so are everything derived from it (remaining, percentage, status).
+/// Its planned amount is the budget's own figure and always shows. Only
+/// that line is blocked: every other line keeps its figures.
 class BudgetCategoryLine extends Equatable {
   const BudgetCategoryLine({
     required this.allocationId,
@@ -66,6 +72,7 @@ class BudgetCategoryLine extends Equatable {
     this.isCategoryArchived = false,
     this.isCategoryMissing = false,
     this.currency = Currency.egp,
+    this.missingRatesFor = const [],
   });
 
   /// The underlying `BudgetCategoryAllocation.id` — what an edit/remove of
@@ -94,32 +101,59 @@ class BudgetCategoryLine extends Equatable {
   final int plannedAmountMinorUnits;
 
   /// Sum of this category's non-deleted expense entries dated within the
-  /// budget's month, as computed by 007 (FR-005/FR-016).
-  final int actualAmountMinorUnits;
+  /// budget's month, as computed by 007 (FR-005/FR-016), converted into
+  /// [currency]. `null` when that needs a missing exchange rate (018
+  /// FR-009) — never a partial or 1:1-converted figure.
+  final int? actualAmountMinorUnits;
 
   /// 018: the budget's currency; [actualAmountMinorUnits] is already
   /// converted into it.
   final Currency currency;
 
-  /// `planned − actual`; negative once over budget.
-  int get remainingMinorUnits =>
-      plannedAmountMinorUnits - actualAmountMinorUnits;
+  /// 018 FR-009: the currencies this line's spend needs a rate for; empty
+  /// unless [isBlocked].
+  final List<Currency> missingRatesFor;
 
-  double? get percentageUsed => budgetPercentageUsed(
-    plannedMinorUnits: plannedAmountMinorUnits,
-    actualMinorUnits: actualAmountMinorUnits,
-  );
+  /// The actual spend is unknowable until a rate is set (018 FR-009).
+  bool get isBlocked => actualAmountMinorUnits == null;
 
-  BudgetCategoryStatus get status => budgetStatusFor(
-    plannedMinorUnits: plannedAmountMinorUnits,
-    actualMinorUnits: actualAmountMinorUnits,
-  );
+  /// `planned − actual`; negative once over budget. `null` when
+  /// [isBlocked].
+  int? get remainingMinorUnits => switch (actualAmountMinorUnits) {
+    final actual? => plannedAmountMinorUnits - actual,
+    null => null,
+  };
+
+  /// `null` when nothing was planned ("n/a") — and when [isBlocked], which
+  /// callers check first.
+  double? get percentageUsed => switch (actualAmountMinorUnits) {
+    final actual? => budgetPercentageUsed(
+      plannedMinorUnits: plannedAmountMinorUnits,
+      actualMinorUnits: actual,
+    ),
+    null => null,
+  };
+
+  /// `null` when [isBlocked]: an unknown actual is neither on track nor
+  /// over.
+  BudgetCategoryStatus? get status => switch (actualAmountMinorUnits) {
+    final actual? => budgetStatusFor(
+      plannedMinorUnits: plannedAmountMinorUnits,
+      actualMinorUnits: actual,
+    ),
+    null => null,
+  };
 
   Money get plannedAmount =>
       Money.fromMinorUnits(plannedAmountMinorUnits, currency);
-  Money get actualAmount =>
-      Money.fromMinorUnits(actualAmountMinorUnits, currency);
-  Money get remaining => Money.fromMinorUnits(remainingMinorUnits, currency);
+  Money? get actualAmount => switch (actualAmountMinorUnits) {
+    final actual? => Money.fromMinorUnits(actual, currency),
+    null => null,
+  };
+  Money? get remaining => switch (remainingMinorUnits) {
+    final remaining? => Money.fromMinorUnits(remaining, currency),
+    null => null,
+  };
 
   @override
   List<Object?> get props => [
@@ -132,5 +166,12 @@ class BudgetCategoryLine extends Equatable {
     plannedAmountMinorUnits,
     actualAmountMinorUnits,
     currency,
+    missingRatesFor,
   ];
 }
+
+/// Every currency in [lists], once each, in first-seen order — how a
+/// summary or trend names the rates its blocked parts need (018 FR-009).
+List<Currency> unionOfMissingRates(Iterable<List<Currency>> lists) => [
+  ...{for (final list in lists) ...list},
+];

@@ -26,6 +26,12 @@ import 'budget_month_format.dart';
 /// The bar geometry is the only place figures become `double`s; every
 /// number shown as text (tooltip, accessibility label) is formatted from
 /// the exact minor-unit integers (FR-015).
+///
+/// 018 FR-009: a figure that needs a missing exchange rate (`null` on its
+/// [BudgetTrendPoint]) gets no bar — a gap, never a guessed height — and
+/// its month is marked with a rate-needed glyph under the label; tooltip
+/// and accessibility text say "Rate needed" in its place. The screen names
+/// the currencies in its `RateNeededBanner`.
 class BudgetTrendChart extends StatelessWidget {
   const BudgetTrendChart({
     required this.points,
@@ -64,28 +70,44 @@ class BudgetTrendChart extends StatelessWidget {
 
     var maxMinor = 0;
     for (final point in points) {
-      if (point.plannedMinorUnits > maxMinor) {
-        maxMinor = point.plannedMinorUnits;
-      }
-      if (point.actualMinorUnits > maxMinor) {
-        maxMinor = point.actualMinorUnits;
+      for (final figure in [point.plannedMinorUnits, point.actualMinorUnits]) {
+        if (figure != null && figure > maxMinor) maxMinor = figure;
       }
     }
     final maxY = maxMinor == 0 ? 1.0 : _toMajor(maxMinor) * 1.15;
 
-    BarChartRodData plannedRod(BudgetTrendPoint point) => BarChartRodData(
-      toY: _toMajor(point.plannedMinorUnits),
-      width: _rodWidth,
-      color: plannedFill,
-      borderSide: BorderSide(color: plannedColor, width: 1.5),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
-    );
-    BarChartRodData actualRod(BudgetTrendPoint point) => BarChartRodData(
-      toY: _toMajor(point.actualMinorUnits),
-      width: _rodWidth,
-      color: _isOverPlan(point) ? overPlanColor : actualColor,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
-    );
+    // An unknown figure keeps its slot (so tooltips stay aligned) but draws
+    // nothing.
+    BarChartRodData gapRod() =>
+        BarChartRodData(toY: 0, width: _rodWidth, color: Colors.transparent);
+    BarChartRodData plannedRod(BudgetTrendPoint point) =>
+        switch (point.plannedMinorUnits) {
+          final planned? => BarChartRodData(
+            toY: _toMajor(planned),
+            width: _rodWidth,
+            color: plannedFill,
+            borderSide: BorderSide(color: plannedColor, width: 1.5),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+          ),
+          null => gapRod(),
+        };
+    BarChartRodData actualRod(BudgetTrendPoint point) =>
+        switch (point.actualMinorUnits) {
+          final actual? => BarChartRodData(
+            toY: _toMajor(actual),
+            width: _rodWidth,
+            color: point.isOverPlan ? overPlanColor : actualColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+          ),
+          null => gapRod(),
+        };
+    String figure(BudgetTrendPoint point, int? minorUnits) =>
+        switch (minorUnits) {
+          final value? => egp.formatWithSymbol(
+            Money.fromMinorUnits(value, point.currency),
+          ),
+          null => l10n.budgetRateNeededBadge,
+        };
 
     final groups = [
       for (var i = 0; i < ordered.length; i++)
@@ -123,13 +145,9 @@ class BudgetTrendChart extends StatelessWidget {
         l10n.budgetTrendMonthSummary(
           BudgetMonthFormat.medium(context, point.month),
           point.hasBudget
-              ? egp.formatWithSymbol(
-                  Money.fromMinorUnits(point.plannedMinorUnits, point.currency),
-                )
+              ? figure(point, point.plannedMinorUnits)
               : l10n.budgetTrendNoBudget,
-          egp.formatWithSymbol(
-            Money.fromMinorUnits(point.actualMinorUnits, point.currency),
-          ),
+          figure(point, point.actualMinorUnits),
         ),
     ].join('\n');
 
@@ -142,7 +160,8 @@ class BudgetTrendChart extends StatelessWidget {
           plannedFill: plannedFill,
           actualColor: actualColor,
           overPlanColor: overPlanColor,
-          showOverPlan: points.any(_isOverPlan),
+          showOverPlan: points.any((point) => point.isOverPlan),
+          showRateNeeded: points.any((point) => point.isBlocked),
         ),
         const SizedBox(height: AppSpacing.md),
         Semantics(
@@ -190,7 +209,8 @@ class BudgetTrendChart extends StatelessWidget {
                               point.month,
                             ),
                             hasBudget: point.hasBudget,
-                            isOverPlan: _isOverPlan(point),
+                            isOverPlan: point.isOverPlan,
+                            isBlocked: point.isBlocked,
                             overPlanColor: overPlanColor,
                           ),
                         );
@@ -212,19 +232,9 @@ class BudgetTrendChart extends StatelessWidget {
                       );
                       final value = isPlanned
                           ? (point.hasBudget
-                                ? egp.formatWithSymbol(
-                                    Money.fromMinorUnits(
-                                      point.plannedMinorUnits,
-                                      point.currency,
-                                    ),
-                                  )
+                                ? figure(point, point.plannedMinorUnits)
                                 : l10n.budgetTrendNoBudget)
-                          : egp.formatWithSymbol(
-                              Money.fromMinorUnits(
-                                point.actualMinorUnits,
-                                point.currency,
-                              ),
-                            );
+                          : figure(point, point.actualMinorUnits);
                       final kind = isPlanned
                           ? l10n.budgetTrendPlanned
                           : l10n.budgetTrendActual;
@@ -234,7 +244,7 @@ class BudgetTrendChart extends StatelessWidget {
                         textDirection: Directionality.of(context),
                         children: [
                           TextSpan(text: '$kind: $value', style: style),
-                          if (!isPlanned && _isOverPlan(point))
+                          if (!isPlanned && point.isOverPlan)
                             TextSpan(
                               text: '\n${l10n.budgetTrendOverPlan}',
                               style: style,
@@ -255,9 +265,6 @@ class BudgetTrendChart extends StatelessWidget {
   /// Chart geometry only — never used for any displayed figure.
   static double _toMajor(int minorUnits) =>
       minorUnits / Money.minorUnitsPerMajorUnit;
-
-  static bool _isOverPlan(BudgetTrendPoint point) =>
-      point.hasBudget && point.actualMinorUnits > point.plannedMinorUnits;
 }
 
 class _MonthLabel extends StatelessWidget {
@@ -266,12 +273,16 @@ class _MonthLabel extends StatelessWidget {
     super.key,
     required this.hasBudget,
     required this.isOverPlan,
+    required this.isBlocked,
     required this.overPlanColor,
   });
 
   final String label;
   final bool hasBudget;
   final bool isOverPlan;
+
+  /// A figure of this month needs a missing rate (018 FR-009).
+  final bool isBlocked;
   final Color overPlanColor;
 
   @override
@@ -291,7 +302,14 @@ class _MonthLabel extends StatelessWidget {
           ),
         ),
         if (isOverPlan)
-          Icon(Icons.warning_amber_rounded, size: 14, color: overPlanColor),
+          Icon(Icons.warning_amber_rounded, size: 14, color: overPlanColor)
+        else if (isBlocked)
+          Icon(
+            Icons.currency_exchange,
+            key: const ValueKey('budgetTrendRateNeededGlyph'),
+            size: 14,
+            color: colorScheme.onSurfaceVariant,
+          ),
       ],
     );
   }
@@ -304,6 +322,7 @@ class _Legend extends StatelessWidget {
     required this.actualColor,
     required this.overPlanColor,
     required this.showOverPlan,
+    required this.showRateNeeded,
   });
 
   final Color plannedColor;
@@ -311,6 +330,7 @@ class _Legend extends StatelessWidget {
   final Color actualColor;
   final Color overPlanColor;
   final bool showOverPlan;
+  final bool showRateNeeded;
 
   @override
   Widget build(BuildContext context) {
@@ -334,6 +354,15 @@ class _Legend extends StatelessWidget {
               Icons.warning_amber_rounded,
               size: 16,
               color: overPlanColor,
+            ),
+          ),
+        if (showRateNeeded)
+          _LegendItem(
+            label: l10n.budgetRateNeededBadge,
+            swatch: Icon(
+              Icons.currency_exchange,
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
       ],

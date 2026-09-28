@@ -5,14 +5,22 @@ import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../../core/money/money.dart';
+import '../../domain/entities/budget_category_line.dart';
 import '../../domain/entities/budget_summary.dart';
 import 'budget_progress_bar.dart';
+import 'budget_rate_needed_badge.dart';
 import 'over_budget_warning_badge.dart';
 
 /// The budget's overall figures (FR-006): total planned, spent, remaining
 /// (or over by), percentage used, and the overall warning badge (FR-009),
 /// plus the optional expected-income reference and its non-blocking
 /// "planned exceeds income" hint (FR-003/FR-004).
+///
+/// 018 FR-009: when any budgeted line is blocked on a missing exchange
+/// rate ([BudgetSummary.isActualBlocked]) the planned total still shows,
+/// but spent and remaining read "—", the badge becomes a
+/// [BudgetRateNeededBadge] and the percentage line names the currencies
+/// that need a rate — a total that left a line out would be wrong.
 class BudgetOverallSummaryCard extends StatelessWidget {
   const BudgetOverallSummaryCard({
     required this.summary,
@@ -21,6 +29,9 @@ class BudgetOverallSummaryCard extends StatelessWidget {
   });
 
   final BudgetSummary summary;
+
+  /// What an unknown figure reads as — never a guessed number.
+  static const String _unknown = '—';
 
   /// The budget's optional reference income; `null` hides the income row.
   final Money? expectedIncome;
@@ -34,8 +45,9 @@ class BudgetOverallSummaryCard extends StatelessWidget {
     );
     final status = summary.overallStatus;
     final percentage = summary.overallPercentageUsed;
-    final isOver = summary.isOverBudgetOverall;
-    final statusColor = OverBudgetWarningBadge.colorFor(context, status);
+    final isOver = summary.isOverBudgetOverall ?? false;
+    final totalActual = summary.totalActual;
+    final totalRemaining = summary.totalRemaining;
     final muted = AppTypography.bodyMuted.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
@@ -60,7 +72,12 @@ class BudgetOverallSummaryCard extends StatelessWidget {
                   style: AppTypography.title,
                 ),
               ),
-              OverBudgetWarningBadge(status: status),
+              if (status == null)
+                const BudgetRateNeededBadge(
+                  key: ValueKey('budgetOverallRateNeeded'),
+                )
+              else
+                OverBudgetWarningBadge(status: status),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -76,7 +93,9 @@ class BudgetOverallSummaryCard extends StatelessWidget {
               Expanded(
                 child: _Figure(
                   label: l10n.budgetActualLabel,
-                  value: formatter.formatWithSymbol(summary.totalActual),
+                  value: totalActual == null
+                      ? _unknown
+                      : formatter.formatWithSymbol(totalActual),
                 ),
               ),
               Expanded(
@@ -84,10 +103,12 @@ class BudgetOverallSummaryCard extends StatelessWidget {
                   label: isOver
                       ? l10n.budgetOverByLabel
                       : l10n.budgetRemainingLabel,
-                  value: formatter.formatWithSymbol(
-                    summary.totalRemaining.abs(),
-                  ),
-                  valueColor: isOver ? statusColor : null,
+                  value: totalRemaining == null
+                      ? _unknown
+                      : formatter.formatWithSymbol(totalRemaining.abs()),
+                  valueColor: isOver && status != null
+                      ? OverBudgetWarningBadge.colorFor(context, status)
+                      : null,
                 ),
               ),
             ],
@@ -101,7 +122,14 @@ class BudgetOverallSummaryCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs + 2),
           Text(
-            percentage == null
+            summary.isActualBlocked
+                ? l10n.budgetOverallNeedsRate(
+                    unionOfMissingRates([
+                      for (final line in summary.categoryBreakdown)
+                        line.missingRatesFor,
+                    ]).map((c) => c.code).join(', '),
+                  )
+                : percentage == null
                 ? l10n.budgetPercentNotApplicable
                 : l10n.budgetPercentUsed(budgetPercentLabel(percentage)),
             style: muted,

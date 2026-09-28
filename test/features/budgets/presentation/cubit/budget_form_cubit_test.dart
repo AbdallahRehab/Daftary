@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
+import 'package:daftary/core/money/currency.dart';
 import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/features/budgets/domain/entities/budget.dart';
 import 'package:daftary/features/budgets/domain/entities/budget_category_allocation.dart';
@@ -211,6 +212,46 @@ void main() {
       expect(cubit.state.allocations.single.plannedMinorUnits, 700000);
       // Rent is already on the budget, so the picker no longer offers it.
       expect(cubit.state.availableCategories, [groceries, fuel]);
+      await cubit.close();
+    });
+
+    test('018: a month whose spend needs a missing rate still opens for '
+        'editing — the form uses planned amounts only', () async {
+      when(() => getBudgetForMonth(month)).thenAnswer(
+        (_) async => Right(
+          BudgetMonthDetail(
+            month: month,
+            budget: Budget(
+              id: budget.id,
+              idempotencyKey: 'k',
+              month: month,
+              createdAt: now,
+              updatedAt: now,
+            ),
+            summary: const BudgetSummary(
+              budgetId: 'b1',
+              categoryBreakdown: [
+                BudgetCategoryLine(
+                  allocationId: 'a1',
+                  categoryId: 'seed_rent',
+                  categoryName: 'Rent',
+                  categoryIcon: 'rent',
+                  plannedAmountMinorUnits: 700000,
+                  actualAmountMinorUnits: null,
+                  missingRatesFor: [Currency.usd],
+                ),
+              ],
+              unbudgetedSpending: [],
+            ),
+          ),
+        ),
+      );
+
+      final cubit = buildCubit();
+      await cubit.initialize(month);
+
+      expect(cubit.state.status, BudgetFormStatus.editing);
+      expect(cubit.state.allocations.single.plannedMinorUnits, 700000);
       await cubit.close();
     });
   });

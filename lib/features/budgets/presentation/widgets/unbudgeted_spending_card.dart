@@ -13,10 +13,17 @@ import '../../domain/entities/budget_summary.dart';
 /// Spending this month in categories the budget does not cover (FR-007) —
 /// listed on its own, never folded into a budgeted line and never dropped,
 /// so every expense in the month is accounted for somewhere (SC-005).
+///
+/// 018 FR-009: an item whose spend needs a missing exchange rate is still
+/// listed, with its amount shown as "—" beside a rate-needed icon, and the
+/// total reads "—" too — it would otherwise leave that item out.
 class UnbudgetedSpendingCard extends StatelessWidget {
   const UnbudgetedSpendingCard({required this.items, super.key});
 
   final List<UnbudgetedCategorySpend> items;
+
+  /// What an unknown amount reads as — never a guessed number.
+  static const String _unknown = '—';
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +32,12 @@ class UnbudgetedSpendingCard extends StatelessWidget {
     final formatter = EgpFormatter(
       locale: Localizations.localeOf(context).languageCode,
     );
-    final total = Money.fromMinorUnits(
-      items.fold(0, (sum, item) => sum + item.amountMinorUnits),
-      items.firstOrNull?.currency ?? Currency.egp,
-    );
+    final total = items.any((item) => item.isBlocked)
+        ? null
+        : Money.fromMinorUnits(
+            items.fold(0, (sum, item) => sum + item.amountMinorUnits!),
+            items.firstOrNull?.currency ?? Currency.egp,
+          );
     final muted = AppTypography.bodyMuted.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
     );
@@ -82,12 +91,38 @@ class UnbudgetedSpendingCard extends StatelessWidget {
                       style: AppTypography.body,
                     ),
                   ),
-                  Text(
-                    formatter.formatWithSymbol(item.amount),
-                    style: AppTypography.body.copyWith(
-                      fontWeight: FontWeight.w600,
+                  if (item.amount case final amount?)
+                    Text(
+                      formatter.formatWithSymbol(amount),
+                      style: AppTypography.body.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  else
+                    Semantics(
+                      key: ValueKey(
+                        'budgetUnbudgetedRateNeeded-${item.categoryId}',
+                      ),
+                      label: l10n.budgetRateNeededBadge,
+                      excludeSemantics: true,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.currency_exchange,
+                            size: 16,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            _unknown,
+                            style: AppTypography.body.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -101,7 +136,7 @@ class UnbudgetedSpendingCard extends StatelessWidget {
                 child: Text(l10n.budgetUnbudgetedTotalLabel, style: muted),
               ),
               Text(
-                formatter.formatWithSymbol(total),
+                total == null ? _unknown : formatter.formatWithSymbol(total),
                 style: AppTypography.body.copyWith(fontWeight: FontWeight.w700),
               ),
             ],

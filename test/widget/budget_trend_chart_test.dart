@@ -1,5 +1,6 @@
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/currency.dart';
 import 'package:daftary/features/budgets/domain/entities/budget_trend_point.dart';
 import 'package:daftary/features/budgets/presentation/widgets/budget_trend_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -171,5 +172,39 @@ void main() {
     // The over-plan month's actual bar uses the theme's negative token.
     final over = chartData(tester).barGroups[2];
     expect(over.barRods[1].color, context.financeColors.negative);
+  });
+
+  testWidgets('018: a figure blocked on a missing rate is a gap, and its '
+      'month is marked', (tester) async {
+    const blocked = [
+      BudgetTrendPoint(
+        month: '2026-07',
+        plannedMinorUnits: 3000000,
+        actualMinorUnits: 2800000,
+        hasBudget: true,
+      ),
+      BudgetTrendPoint(
+        month: '2026-08',
+        plannedMinorUnits: 3000000,
+        actualMinorUnits: null,
+        hasBudget: true,
+        missingRatesFor: [Currency.usd],
+      ),
+    ];
+    await tester.pumpWidget(wrap(locale: const Locale('en'), data: blocked));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final groups = chartData(tester).barGroups;
+    expect(groups[1].barRods[0].toY, 30000.0);
+    expect(groups[1].barRods[1].toY, 0);
+    expect(groups[1].barRods[1].color, Colors.transparent);
+    expect(
+      find.byKey(const ValueKey('budgetTrendRateNeededGlyph')),
+      findsOneWidget,
+    );
+    // Legend explains the mark; never read as over plan.
+    expect(find.text('Rate needed'), findsOneWidget);
+    expect(find.text('Over plan'), findsNothing);
   });
 }

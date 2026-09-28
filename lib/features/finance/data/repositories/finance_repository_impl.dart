@@ -238,6 +238,32 @@ class FinanceRepositoryImpl implements FinanceRepository {
   ) => _dao.entriesChanged().reRead(() => getSummaryTotals(period));
 
   @override
+  Stream<Either<Failure, List<FinancePeriodTotals>>>
+  watchSummaryTotalsForPeriods(List<DateRange> periods) =>
+      _dao.entriesChanged().reRead(() async {
+        final results = await Future.wait(periods.map(getSummaryTotals));
+        final totals = <FinancePeriodTotals>[];
+        for (final result in results) {
+          final failure = result.getLeft().toNullable();
+          if (failure != null) return Left(failure);
+          totals.add(result.toNullable()!);
+        }
+        return Right(totals);
+      });
+
+  @override
+  Stream<Either<Failure, List<CategoryCurrencyTotals>>> watchCategoryTotals(
+    DateRange period, {
+    FinanceEntryType? type,
+  }) => _dao.categoryTotalsChanged().reRead(
+    () => getCategoryTotals(period, type: type),
+  );
+
+  @override
+  Stream<Either<Failure, bool>> watchHasAnyEntry() =>
+      _dao.entriesChanged().reRead(hasAnyEntry);
+
+  @override
   Future<Either<Failure, bool>> hasAnyEntry() async {
     try {
       return Right(await _dao.hasAnyEntry());

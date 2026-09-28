@@ -35,12 +35,27 @@ class GetSpendingTrend {
     final periods = lastCalendarMonths(monthsBack, reference ?? DateTime.now());
     final results = await Future.wait(periods.map(_getFinanceSummary.call));
 
+    final summaries = <FinanceSummary>[];
+    for (final result in results) {
+      final failure = result.getLeft().toNullable();
+      if (failure != null) return Left(failure);
+      summaries.add(result.toNullable()!);
+    }
+    return trendFrom(periods, summaries);
+  }
+
+  /// One point per month from [summaries] (one per [periods] entry, same
+  /// order) — the pure step `WatchSpendingTrend` (021) reuses. Any blocked
+  /// month fails the whole trend as [RatesMissingFailure] naming every
+  /// missing currency (018 FR-009).
+  static Either<Failure, List<SpendingTrendPoint>> trendFrom(
+    List<DateRange> periods,
+    List<FinanceSummary> summaries,
+  ) {
     final points = <SpendingTrendPoint>[];
     final missing = <Currency>{};
-    for (var i = 0; i < results.length; i++) {
-      final failure = results[i].getLeft().toNullable();
-      if (failure != null) return Left(failure);
-      final summary = results[i].toNullable()!;
+    for (var i = 0; i < summaries.length; i++) {
+      final summary = summaries[i];
       if (summary.isBlocked) {
         missing.addAll(summary.missingRatesFor);
         continue;

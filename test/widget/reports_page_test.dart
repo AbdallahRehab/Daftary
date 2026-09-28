@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
+import 'package:daftary/core/design_system/glass/app_glass_scope.dart';
+import 'package:daftary/core/design_system/glass/app_glass_style.dart';
+import 'package:daftary/features/currency/presentation/pages/currency_settings_page.dart';
 import 'package:daftary/features/currency/presentation/widgets/rate_needed_banner.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/design_system/app_empty_view.dart';
@@ -18,7 +23,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:liquid_glass_widgets/liquid_glass_widgets.dart';
 import 'package:mocktail/mocktail.dart';
+
+import '../core/design_system/glass/glass_test_harness.dart';
 
 class MockReportsCubit extends MockCubit<ReportsState>
     implements ReportsCubit {}
@@ -92,7 +100,8 @@ void main() {
 
   setUp(() {
     cubit = MockReportsCubit();
-    when(() => cubit.load()).thenAnswer((_) async {});
+    when(() => cubit.subscribe()).thenAnswer((_) async {});
+    when(() => cubit.resubscribe()).thenAnswer((_) async {});
     when(() => cubit.retryBreakdown()).thenAnswer((_) async {});
     when(() => cubit.changeBreakdownPeriod(any())).thenAnswer((_) async {});
   });
@@ -103,11 +112,17 @@ void main() {
     Locale locale = const Locale('en'),
     ThemeData? theme,
     Size size = const Size(800, 2400),
+    Stream<ReportsState>? stream,
+    AppGlassStyle? glass,
   }) async {
     tester.view.physicalSize = size;
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    when(() => cubit.state).thenReturn(state);
+    if (stream != null) {
+      whenListen(cubit, stream, initialState: state);
+    } else {
+      when(() => cubit.state).thenReturn(state);
+    }
 
     final router = GoRouter(
       routes: [
@@ -126,6 +141,10 @@ void main() {
           path: '/finance/entries/new',
           builder: (_, _) => const Scaffold(body: Text('new-entry')),
         ),
+        GoRoute(
+          path: CurrencyRoutes.rates,
+          builder: (_, _) => const Scaffold(body: Text('rates-destination')),
+        ),
       ],
     );
     addTearDown(router.dispose);
@@ -137,6 +156,10 @@ void main() {
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         routerConfig: router,
+        // As production: the scope sits above the router's navigator.
+        builder: glass == null
+            ? null
+            : (context, child) => AppGlassScope(style: glass, child: child!),
       ),
     );
     await tester.pumpAndSettle();
@@ -221,7 +244,7 @@ void main() {
       expect(find.text('disk read failed'), findsNothing);
 
       await tester.tap(find.text(en.retry));
-      verify(() => cubit.load()).called(1);
+      verify(() => cubit.resubscribe()).called(1);
     });
 
     testWidgets('an inline breakdown failure keeps the trend and retries only '
@@ -235,7 +258,7 @@ void main() {
       expect(find.text(en.reportsLoadError), findsOneWidget);
       await tester.tap(find.text(en.retry));
       verify(() => cubit.retryBreakdown()).called(1);
-      verifyNever(() => cubit.load());
+      verifyNever(() => cubit.resubscribe());
     });
 
     testWidgets('a period with no expenses says so instead of an empty gap', (
@@ -506,5 +529,137 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+  });
+
+  group('live (021 FR-031)', () {
+    testWidgets('a change elsewhere updates the open Reports screen with no '
+        'reload', (tester) async {
+      final states = StreamController<ReportsState>();
+      addTearDown(states.close);
+      await pump(tester, success, stream: states.stream);
+      expect(
+        find.byKey(
+          const ValueKey('${CategoryBreakdownChart.rowKeyPrefix}seed_rent'),
+        ),
+        findsNothing,
+      );
+
+      // What the cubit emits after an entry is recorded elsewhere.
+      states.add(
+        success.copyWith(
+          breakdown: const CategoryBreakdown(
+            items: [
+              ...breakdown,
+              CategoryBreakdownItem(
+                categoryId: 'seed_rent',
+                categoryName: 'Rent',
+                icon: 'rent',
+                total: Money.egp(50000),
+                shareOfPeriod: 0.33,
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          const ValueKey('${CategoryBreakdownChart.rowKeyPrefix}seed_rent'),
+        ),
+        findsOneWidget,
+      );
+      verifyNever(() => cubit.subscribe());
+      verifyNever(() => cubit.resubscribe());
+    });
+
+    testWidgets('pull to refresh resubscribes', (tester) async {
+      // Short enough to scroll, so the list accepts the pull.
+      await pump(tester, success, size: const Size(800, 600));
+
+      await tester.fling(
+        find.text(en.reportsTrendTitle),
+        const Offset(0, 400),
+        1000,
+      );
+      await tester.pumpAndSettle();
+
+      verify(() => cubit.resubscribe()).called(1);
+    });
+
+    testWidgets('setting a missing rate from the banner leaves the update '
+        'to the subscription — no reload on return', (tester) async {
+      await pump(
+        tester,
+        ReportsState(
+          status: ReportsStatus.failure,
+          failure: RatesMissingFailure(const [Currency.usd]),
+        ),
+      );
+
+      await tester.tap(find.byKey(const Key('rate_needed_set_rate')));
+      await tester.pumpAndSettle();
+      expect(find.text('rates-destination'), findsOneWidget);
+      GoRouter.of(tester.element(find.text('rates-destination'))).pop();
+      await tester.pumpAndSettle();
+
+      verifyNever(() => cubit.resubscribe());
+      verifyNever(() => cubit.retryBreakdown());
+    });
+  });
+
+  group('Liquid Glass (020)', () {
+    Rect appBarRect(WidgetTester tester) => tester.getRect(find.byType(AppBar));
+
+    testWidgets('ON: the app bar is glass and the report starts below it', (
+      tester,
+    ) async {
+      await pump(tester, success, glass: onStyle);
+
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.byType(GlassContainer),
+        ),
+        findsOneWidget,
+      );
+      // The body runs beneath the bar, so the list's own padding keeps the
+      // first card clear of it.
+      final firstCard = tester.getRect(find.byType(MonthlyTrendChart));
+      expect(firstCard.top, greaterThan(appBarRect(tester).bottom));
+      expect(
+        tester.getTopLeft(find.text(en.reportsTrendTitle)).dy,
+        greaterThanOrEqualTo(appBarRect(tester).bottom + AppSpacing.md),
+      );
+    });
+
+    testWidgets('ON: the rate-needed banner is not hidden under the bar', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        ReportsState(
+          status: ReportsStatus.failure,
+          failure: RatesMissingFailure(const [Currency.usd]),
+        ),
+        glass: onStyle,
+      );
+
+      expect(
+        tester.getRect(find.byKey(RateNeededBanner.rootKey)).top,
+        greaterThanOrEqualTo(appBarRect(tester).bottom + AppSpacing.md),
+      );
+    });
+
+    testWidgets('OFF: no glass, and the layout matches the plain app bar', (
+      tester,
+    ) async {
+      await pump(tester, success, glass: AppGlassStyle.off);
+      final off = tester.getTopLeft(find.text(en.reportsTrendTitle));
+      expect(find.byType(GlassContainer), findsNothing);
+
+      await pump(tester, success);
+      expect(tester.getTopLeft(find.text(en.reportsTrendTitle)), off);
+    });
   });
 }

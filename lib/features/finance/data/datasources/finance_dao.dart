@@ -100,6 +100,12 @@ class FinanceDao {
   /// `finance_categories`.
   Stream<void> categoriesChanged() => _db.changesOf({_db.financeCategories});
 
+  /// 021: fires now and after every burst of writes to either table a
+  /// category breakdown reads — the entries it sums and the categories that
+  /// name and label its rows.
+  Stream<void> categoryTotalsChanged() =>
+      _db.changesOf({_db.financeEntries, _db.financeCategories});
+
   // ---------------------------------------------------------------- entries
 
   /// Inserts [companion]; if a row with the same `idempotency_key` already

@@ -136,5 +136,48 @@ void main() {
       expect(scaffoldOf(tester).extendBodyBehindAppBar, isTrue);
       expect(scaffoldOf(tester).extendBody, isFalse);
     });
+
+    // Inside the glass shell a page's body runs behind the bottom bar, which
+    // arrives as bottom `padding` with no matching `viewPadding`. The FAB
+    // must still clear the bar, or taps on it land on the bar.
+    for (final (name, style) in [('ON', onStyle), ('OFF', AppGlassStyle.off)]) {
+      testWidgets('a FAB clears a bottom bar reported as padding ($name)', (
+        tester,
+      ) async {
+        const barHeight = 110.0;
+        await tester.pumpWidget(
+          glassApp(
+            style: style,
+            home: Builder(
+              builder: (context) => MediaQuery(
+                data: MediaQuery.of(context).copyWith(
+                  padding: const EdgeInsets.only(bottom: barHeight),
+                  viewPadding: EdgeInsets.zero,
+                ),
+                child: AppScaffold(
+                  body: const SizedBox.expand(),
+                  floatingActionButton: FloatingActionButton(
+                    onPressed: () {},
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final screenHeight =
+            tester.view.physicalSize.height / tester.view.devicePixelRatio;
+        final fabBottom = tester
+            .getBottomLeft(find.byType(FloatingActionButton))
+            .dy;
+        if (style.enabled) {
+          expect(fabBottom, lessThanOrEqualTo(screenHeight - barHeight));
+        } else {
+          // OFF is untouched: plain Scaffold placement.
+          expect(fabBottom, screenHeight - kFloatingActionButtonMargin);
+        }
+      });
+    }
   });
 }

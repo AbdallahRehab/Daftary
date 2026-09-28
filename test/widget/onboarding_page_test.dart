@@ -206,4 +206,39 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+
+  testWidgets('a live language switch re-renders the visible screen\'s copy', (
+    tester,
+  ) async {
+    // Same router and page instance throughout, so only the locale changes
+    // (a new router would rebuild the page from scratch and hide the bug).
+    final router = _buildTestRouter();
+    final locale = ValueNotifier(const Locale('en'));
+    addTearDown(locale.dispose);
+    await tester.pumpWidget(
+      BlocProvider<OnboardingCubit>.value(
+        value: cubit,
+        child: ValueListenableBuilder<Locale>(
+          valueListenable: locale,
+          builder: (context, value, _) => MaterialApp.router(
+            routerConfig: router,
+            theme: buildLightTheme(),
+            locale: value,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final en = await AppLocalizations.delegate.load(const Locale('en'));
+    final ar = await AppLocalizations.delegate.load(const Locale('ar'));
+    expect(find.text(en.onboardingUnderstandingMoneyTitle), findsOneWidget);
+
+    locale.value = const Locale('ar');
+    await tester.pumpAndSettle();
+
+    expect(find.text(ar.onboardingUnderstandingMoneyTitle), findsOneWidget);
+    expect(find.text(en.onboardingUnderstandingMoneyTitle), findsNothing);
+  });
 }

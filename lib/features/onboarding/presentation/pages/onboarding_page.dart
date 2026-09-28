@@ -73,12 +73,20 @@ class OnboardingPageState extends State<OnboardingPage> {
                     itemCount: OnboardingTopic.values.length,
                     onPageChanged: (index) =>
                         setState(() => currentStep = index),
-                    itemBuilder: (context, index) {
-                      final topic = OnboardingTopic.values[index];
-                      return OnboardingScreenView(
-                        content: onboardingContentFor(context, topic),
-                      );
-                    },
+                    // The copy is resolved in each page's own `Builder`, so
+                    // that element depends on the localizations and a live
+                    // language switch re-renders the visible page. Resolved
+                    // from the item builder's context, the pages kept the
+                    // old language until they were rebuilt for another
+                    // reason.
+                    itemBuilder: (context, index) => Builder(
+                      builder: (context) => OnboardingScreenView(
+                        content: onboardingContentFor(
+                          context,
+                          OnboardingTopic.values[index],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Padding(

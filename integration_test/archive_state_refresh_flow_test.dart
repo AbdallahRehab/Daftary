@@ -76,7 +76,15 @@ void main() {
       matching: find.byType(TextField),
     );
     await tester.enterText(nameField, name);
-    await tester.tap(find.widgetWithText(AppButton, l10n.commonSave));
+    // On a device the real on-screen keyboard is up after typing and covers
+    // Save, so a tap would land on the keyboard area instead. Dismiss it and
+    // scroll Save into view first.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    final save = find.widgetWithText(AppButton, l10n.commonSave);
+    await tester.ensureVisible(save);
+    await tester.pumpAndSettle();
+    await tester.tap(save);
     await tester.pumpAndSettle();
     await tester.pageBack();
     await tester.pumpAndSettle();

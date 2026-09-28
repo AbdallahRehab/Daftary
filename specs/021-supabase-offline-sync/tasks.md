@@ -444,12 +444,12 @@ Each task is followed by indented lines:
     - Rows left `in_flight` stay `in_flight` until T056's `resetInFlight`.
   - Validate: the test passes.
 
-- [ ] T043 [US1] Run the offline regression over all 11 existing integration flows
+- [X] T043 [US1] Run the offline regression over all 11 existing integration flows
   - Deps: T041, T042
   - Files: none (verification only). The flows are in `integration_test/`: `money_relationships_flows_test.dart`, `finance_flows_test.dart`, `currency_flows_test.dart`, `archive_state_refresh_flow_test.dart` and the other 7.
   - Done when: every flow passes on a device in airplane mode, and the results match the T001 baseline.
   - Validate: `flutter test integration_test/`.
-  - Status (2026-09-27, iPhone 17 Pro simulator, no `--dart-define`): **run, not all passing** — 5/11 flows pass; the other 6 fail with the identical failing tests and exceptions at pre-021 commit `fbce88f`, so they are pre-existing and not caused by 021. Left open until those flows are fixed. Details in checklists/baseline.md.
+  - Status (2026-09-28, iPhone 17 Pro simulator, no `--dart-define`): **11/11 flows pass**. The 6 flows that failed on 2026-09-27 (identically at pre-021 `fbce88f`) were fixed: four test-harness bugs and two app bugs outside 021 (a FAB hidden under the glass bottom bar, and onboarding copy that ignored a live language switch). Details in checklists/baseline.md.
 
 **Checkpoint**: US1 is shippable on its own. The app behaves exactly as before, screens are reactive, and every change is durably queued, although nothing uploads yet.
 

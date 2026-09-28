@@ -65,13 +65,15 @@ void main() {
 
   /// Taps the category chip labelled [label].
   ///
-  /// `ensureVisible` first: the picker's chips run past the fold, and
-  /// `tester.tap` on an off-screen widget only warns — it does not fail — so
-  /// a missed tap would otherwise surface much later as a confusing
-  /// "choose a category" error.
+  /// Scrolled to the middle of the form first: the picker's chips run past
+  /// the fold, and `tester.tap` on an off-screen widget only warns — it does
+  /// not fail — so a missed tap would otherwise surface much later as a
+  /// confusing "choose a category" error. Not `tester.ensureVisible`: that
+  /// scrolls the least it can, which can leave the chip at the top edge,
+  /// under the app bar the form's body extends behind.
   Future<void> selectCategory(WidgetTester tester, String label) async {
     final chip = find.widgetWithText(ChoiceChip, label);
-    await tester.ensureVisible(chip);
+    await Scrollable.ensureVisible(tester.element(chip), alignment: 0.5);
     await tester.pumpAndSettle();
     await tester.tap(chip);
     await tester.pumpAndSettle();

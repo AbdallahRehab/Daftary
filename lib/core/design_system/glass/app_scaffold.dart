@@ -37,7 +37,7 @@ class AppScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final glassOn = AppGlassScope.enabledOf(context);
-    return Scaffold(
+    final scaffold = Scaffold(
       appBar: appBar,
       body: body,
       floatingActionButton: floatingActionButton,
@@ -51,6 +51,23 @@ class AppScaffold extends StatelessWidget {
       extendBodyBehindAppBar: glassOn
           ? appBar != null || extendBodyBehindAppBar
           : extendBodyBehindAppBar,
+    );
+    if (!glassOn || floatingActionButton == null) return scaffold;
+    // ON, inside the shell: the shell's body extends behind its glass bottom
+    // bar and reports the bar's height as bottom `padding`, but not as
+    // `viewPadding` (Scaffold only re-adds `padding`). A floating FAB is
+    // placed from `viewPadding`, so it would sit under the bar, where taps
+    // reach the bar instead. Raising `viewPadding` to `padding` restores the
+    // usual `viewPadding >= padding` and puts the FAB just above the bar,
+    // where it is with glass OFF.
+    final padding = MediaQuery.paddingOf(context).bottom;
+    final viewPadding = MediaQuery.viewPaddingOf(context);
+    if (viewPadding.bottom >= padding) return scaffold;
+    return MediaQuery(
+      data: MediaQuery.of(
+        context,
+      ).copyWith(viewPadding: viewPadding.copyWith(bottom: padding)),
+      child: scaffold,
     );
   }
 }

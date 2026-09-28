@@ -45,6 +45,11 @@ void main() {
   /// unaffected, so calling this simulates a real app restart: the new
   /// "session" only knows what was actually persisted.
   Future<void> bootApp(WidgetTester tester, {bool freshInstall = false}) async {
+    // Tear down the previous "session"'s widget tree first. Pumping the same
+    // `const DaftaryApp()` again would otherwise reuse its elements, so local
+    // widget state (e.g. OnboardingPage's current step) would survive the
+    // simulated restart.
+    await tester.pumpWidget(const SizedBox.shrink());
     await getIt.reset();
     await configureDependencies();
     if (freshInstall) {
@@ -60,8 +65,11 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  // Resolved from the router's `Navigator`, which sits below the
+  // `Localizations` widget that `MaterialApp.router` inserts. `DaftaryApp`'s
+  // own element is above it, so `AppLocalizations.of` returns null there.
   Future<AppLocalizations> l10nOf(WidgetTester tester) async =>
-      AppLocalizations.of(tester.element(find.byType(DaftaryApp)))!;
+      AppLocalizations.of(tester.element(find.byType(Navigator).first))!;
 
   testWidgets(
     'a fresh install shows OnboardingPage before the main app is reachable '

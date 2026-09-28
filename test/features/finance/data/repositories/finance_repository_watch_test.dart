@@ -9,15 +9,19 @@ import 'package:daftary/features/finance/data/repositories/category_repository_i
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
+import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.dart';
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_category_breakdown.dart';
 import 'package:daftary/features/finance/domain/usecases/watch_finance_summary.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_spending_trend.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../helpers/stream_recorder.dart';
 import '../../../../helpers/test_daos.dart';
 
-/// 021 T031: finance history, totals and categories are live.
+/// 021 T031: finance history, totals and categories are live — and so
+/// is everything the Reports screen reads (FR-031).
 void main() {
   late AppDatabase db;
   late FinanceRepositoryImpl finance;
@@ -155,5 +159,150 @@ void main() {
     await summary.waitFor(
       (r) => rightOf(r).totalExpense == const Money.egp(6000),
     );
+  });
+  group('Reports reads (013, 021 FR-031)', () {
+    final january = DateRange(
+      start: DateTime(2026, 1, 1),
+      end: DateTime(2026, 1, 31),
+    );
+    final february = DateRange(
+      start: DateTime(2026, 2, 1),
+      end: DateTime(2026, 2, 28),
+    );
+
+    WatchSpendingTrend watchTrend() => WatchSpendingTrend(
+      finance,
+      WatchConversionContext(currency),
+      GetFinanceSummary(
+        finance,
+        GetConversionContext(currency),
+        const CurrencyConverterImpl(),
+      ),
+    );
+
+    WatchCategoryBreakdown watchBreakdown() => WatchCategoryBreakdown(
+      finance,
+      WatchConversionContext(currency),
+      GetCategoryBreakdown(
+        finance,
+        GetConversionContext(currency),
+        const CurrencyConverterImpl(),
+      ),
+    );
+
+    test('summary totals for several periods re-emit together, in order, '
+        'after an entry write', () async {
+      final totals = StreamRecorder(
+        finance.watchSummaryTotalsForPeriods([january, february]),
+      );
+      addTearDown(totals.cancel);
+      await totals.waitFor((r) => rightOf(r).every((t) => t.expense.isEmpty));
+
+      await spend(2500, 'k1');
+
+      final both = rightOf(
+        await totals.waitFor((r) => rightOf(r).first.expense.isNotEmpty),
+      );
+      expect(both.first.expense, [const Money.egp(2500)]);
+      expect(both.last.expense, isEmpty);
+    });
+
+    test('category totals re-emit after an entry write and after a category '
+        'rename', () async {
+      final rows = StreamRecorder(
+        finance.watchCategoryTotals(january, type: FinanceEntryType.expense),
+      );
+      addTearDown(rows.cancel);
+      await rows.waitFor((r) => rightOf(r).isEmpty);
+
+      await spend(2500, 'k1');
+      await rows.waitFor(
+        (r) => rightOf(r).any((c) => c.categoryId == groceries),
+      );
+
+      await categories.editCategory(
+        categoryId: groceries,
+        name: 'Supermarket',
+        icon: 'groceries',
+      );
+      await rows.waitFor(
+        (r) => rightOf(r).any((c) => c.categoryName == 'Supermarket'),
+      );
+    });
+
+    test('hasAnyEntry re-emits once the first entry is recorded', () async {
+      final any = StreamRecorder(finance.watchHasAnyEntry());
+      addTearDown(any.cancel);
+      await any.waitFor((r) => !rightOf(r));
+
+      await spend(100, 'k1');
+
+      await any.waitFor(rightOf);
+    });
+
+    test('WatchSpendingTrend re-emits when an entry lands in the window and '
+        'when a rate changes', () async {
+      final reference = DateTime(2026, 2, 10);
+      final trend = StreamRecorder(
+        watchTrend()(monthsBack: 2, reference: reference),
+      );
+      addTearDown(trend.cancel);
+      await trend.waitFor(
+        (r) => rightOf(r).every((p) => p.totalExpenseMinorUnits == 0),
+      );
+
+      await spend(2500, 'k1');
+      await trend.waitFor(
+        (r) => rightOf(r).first.totalExpenseMinorUnits == 2500,
+      );
+
+      // A USD expense blocks the trend until its rate exists …
+      await spend(100, 'k2', currency: Currency.usd);
+      await trend.waitFor((r) => r.isLeft());
+      await currency.setExchangeRate(
+        currencyCode: 'USD',
+        relativeToCurrencyCode: 'EGP',
+        rate: 50,
+      );
+      await trend.waitFor(
+        (r) => r.isRight() && rightOf(r).first.totalExpenseMinorUnits == 7500,
+      );
+
+      // … and a changed rate re-converts it.
+      await currency.setExchangeRate(
+        currencyCode: 'USD',
+        relativeToCurrencyCode: 'EGP',
+        rate: 60,
+      );
+      await trend.waitFor(
+        (r) => r.isRight() && rightOf(r).first.totalExpenseMinorUnits == 8500,
+      );
+    });
+
+    test('WatchCategoryBreakdown re-emits when a rate changes', () async {
+      await currency.setExchangeRate(
+        currencyCode: 'USD',
+        relativeToCurrencyCode: 'EGP',
+        rate: 50,
+      );
+      await spend(100, 'k1', currency: Currency.usd);
+      final breakdown = StreamRecorder(
+        watchBreakdown()(january, type: FinanceEntryType.expense),
+      );
+      addTearDown(breakdown.cancel);
+      await breakdown.waitFor(
+        (r) => rightOf(r).items.single.total == const Money.egp(5000),
+      );
+
+      await currency.setExchangeRate(
+        currencyCode: 'USD',
+        relativeToCurrencyCode: 'EGP',
+        rate: 60,
+      );
+
+      await breakdown.waitFor(
+        (r) => rightOf(r).items.single.total == const Money.egp(6000),
+      );
+    });
   });
 }

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/error/failure.dart';
@@ -20,7 +23,9 @@ import '../widgets/monthly_trend_chart.dart';
 
 /// The Reports screen (013 US1): the recent-months income/expense trend and
 /// an expense breakdown for a selectable period, both read from 007's
-/// existing aggregation (FR-001–FR-003).
+/// existing aggregation (FR-001–FR-003). Live (021 FR-031): a change made
+/// anywhere — including setting a missing rate from a banner here — shows
+/// with no reload.
 class ReportsPage extends StatelessWidget {
   const ReportsPage({super.key});
 
@@ -30,7 +35,7 @@ class ReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ReportsCubit>()..load(),
+      create: (_) => getIt<ReportsCubit>()..subscribe(),
       child: const ReportsView(),
     );
   }
@@ -44,8 +49,8 @@ class ReportsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: Text(l10n.reportsTitle),
         actions: [
           IconButton(
@@ -65,16 +70,16 @@ class ReportsView extends StatelessWidget {
               // FR-005 — never a blank or stuck screen.
               // 018 FR-009: a trend month that needs a missing rate names
               // the currency and offers the rate screen, not a bare retry.
+              // The subscription clears the banner once the rate is set.
               final failure = state.failure;
               if (failure is RatesMissingFailure) {
                 return Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  padding:
+                      const EdgeInsets.all(AppSpacing.md) +
+                      AppGlassInsets.of(context),
                   child: RateNeededBanner(
                     missingRatesFor: failure.missingRatesFor,
-                    onSetRate: () async {
-                      await context.push<void>(CurrencyRoutes.rates);
-                      if (!cubit.isClosed) await cubit.load();
-                    },
+                    onSetRate: () => context.push<void>(CurrencyRoutes.rates),
                   ),
                 );
               }
@@ -83,7 +88,7 @@ class ReportsView extends StatelessWidget {
                 title: l10n.commonError,
                 message: l10n.reportsLoadError,
                 actionLabel: l10n.retry,
-                onAction: cubit.load,
+                onAction: cubit.resubscribe,
               );
             case ReportsStatus.empty:
               // FR-004 — nothing recorded anywhere yet; the only useful next
@@ -93,16 +98,17 @@ class ReportsView extends StatelessWidget {
                 title: l10n.reportsEmptyTitle,
                 message: l10n.reportsEmptyMessage,
                 actionLabel: l10n.reportsEmptyAction,
-                onAction: () async {
-                  await context.push<void>('/finance/entries/new?type=expense');
-                  if (!cubit.isClosed) await cubit.load();
-                },
+                // The subscription picks the new entry up on return.
+                onAction: () =>
+                    context.push<void>('/finance/entries/new?type=expense'),
               );
             case ReportsStatus.success:
               return RefreshIndicator(
-                onRefresh: cubit.load,
+                onRefresh: cubit.resubscribe,
                 child: ListView(
-                  padding: const EdgeInsets.all(AppSpacing.md),
+                  padding:
+                      const EdgeInsets.all(AppSpacing.md) +
+                      AppGlassInsets.of(context),
                   children: [
                     _TrendCard(trend: state.trend),
                     const SizedBox(height: AppSpacing.md),
@@ -302,10 +308,7 @@ class _BreakdownCard extends StatelessWidget {
             ReportsBreakdownStatus.success when state.breakdown.isBlocked =>
               RateNeededBanner(
                 missingRatesFor: state.breakdown.missingRatesFor,
-                onSetRate: () async {
-                  await context.push<void>(CurrencyRoutes.rates);
-                  if (!cubit.isClosed) await cubit.retryBreakdown();
-                },
+                onSetRate: () => context.push<void>(CurrencyRoutes.rates),
               ),
             ReportsBreakdownStatus.success => CategoryBreakdownChart(
               items: state.breakdown.items,

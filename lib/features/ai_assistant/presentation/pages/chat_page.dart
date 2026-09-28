@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -66,8 +69,8 @@ class ChatView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: Text(l10n.aiChatTitle),
         actions: [
           BlocBuilder<ChatCubit, ChatState>(
@@ -208,7 +211,13 @@ class _MessageList extends StatelessWidget {
     ];
     return ListView.builder(
       reverse: true,
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      // Under glass the body starts behind the app bar, so the oldest end
+      // of the conversation takes the top inset. The bottom one belongs to
+      // the composer below (its SafeArea), which keeps the newest bubble
+      // and the composer above the bottom bar or the keyboard.
+      padding:
+          const EdgeInsets.symmetric(vertical: AppSpacing.sm) +
+          AppGlassInsets.of(context).copyWith(bottom: 0),
       itemCount: items.length,
       itemBuilder: (_, index) => items[index],
     );
@@ -328,7 +337,9 @@ class _DisabledView extends StatelessWidget {
     final interrupted = interruptedQuestion;
     if (interrupted == null) return disabled;
     return ListView(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      padding:
+          const EdgeInsets.symmetric(vertical: AppSpacing.md) +
+          AppGlassInsets.of(context),
       children: [
         ChatBubble(text: interrupted, isFromUser: true, isInterrupted: true),
         const SizedBox(height: AppSpacing.lg),

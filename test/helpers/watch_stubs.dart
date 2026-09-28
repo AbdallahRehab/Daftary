@@ -4,6 +4,7 @@ import 'package:daftary/core/database/watch_tables.dart';
 import 'package:daftary/features/currency/domain/repositories/currency_repository.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
+import 'package:daftary/features/finance/domain/entities/finance_summary.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
 import 'package:daftary/features/finance/domain/repositories/finance_repository.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
@@ -120,8 +121,9 @@ void stubTransactionsWatches(
   );
 }
 
-/// Answers `watchHistory`/`watchSummaryTotals` by re-running the test's
-/// `getHistory`/`getSummaryTotals` stubs.
+/// Answers the finance `watch*` methods by re-running the test's matching
+/// `get*` stubs (`getHistory`, `getSummaryTotals`, `getCategoryTotals`,
+/// `hasAnyEntry`).
 void stubFinanceWatches(
   FinanceRepository repository,
   FakeTableChanges changes,
@@ -147,6 +149,35 @@ void stubFinanceWatches(
       ),
     ),
   );
+  registerFallbackValue(<DateRange>[]);
+  when(() => repository.watchSummaryTotalsForPeriods(any())).thenAnswer((
+    invocation,
+  ) {
+    final periods = invocation.positionalArguments.first as List<DateRange>;
+    return changes.signal().reRead(() async {
+      final totals = <FinancePeriodTotals>[];
+      for (final period in periods) {
+        final result = await repository.getSummaryTotals(period);
+        final failure = result.getLeft().toNullable();
+        if (failure != null) return Left(failure);
+        totals.add(result.toNullable()!);
+      }
+      return Right(totals);
+    });
+  });
+  when(
+    () => repository.watchCategoryTotals(any(), type: any(named: 'type')),
+  ).thenAnswer(
+    (invocation) => changes.signal().reRead(
+      () => repository.getCategoryTotals(
+        invocation.positionalArguments.first as DateRange,
+        type: invocation.namedArguments[#type] as FinanceEntryType?,
+      ),
+    ),
+  );
+  when(
+    repository.watchHasAnyEntry,
+  ).thenAnswer((_) => changes.signal().reRead(repository.hasAnyEntry));
 }
 
 /// Answers `watchCategories` by re-running the test's `getCategories`

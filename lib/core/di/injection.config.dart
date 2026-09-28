@@ -299,10 +299,14 @@ import '../../features/finance/domain/usecases/restore_finance_entry.dart'
 import '../../features/finance/domain/usecases/seed_default_categories.dart'
     as _i717;
 import '../../features/finance/domain/usecases/watch_categories.dart' as _i520;
+import '../../features/finance/domain/usecases/watch_category_breakdown.dart'
+    as _i74;
 import '../../features/finance/domain/usecases/watch_finance_history.dart'
     as _i542;
 import '../../features/finance/domain/usecases/watch_finance_summary.dart'
     as _i240;
+import '../../features/finance/domain/usecases/watch_spending_trend.dart'
+    as _i508;
 import '../../features/finance/presentation/cubit/category_form_cubit.dart'
     as _i1033;
 import '../../features/finance/presentation/cubit/category_management_cubit.dart'
@@ -1200,6 +1204,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i844.GetFinanceSummary>(),
       ),
     );
+    gh.factory<_i508.WatchSpendingTrend>(
+      () => _i508.WatchSpendingTrend(
+        gh<_i137.FinanceRepository>(),
+        gh<_i132.WatchConversionContext>(),
+        gh<_i844.GetFinanceSummary>(),
+      ),
+    );
     gh.lazySingleton<_i13.NotificationHistoryRepository>(
       () =>
           _i551.NotificationHistoryRepositoryImpl(gh<_i338.NotificationsDao>()),
@@ -1335,6 +1346,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i542.WatchFinanceHistory>(
       () => _i542.WatchFinanceHistory(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i74.WatchCategoryBreakdown>(
+      () => _i74.WatchCategoryBreakdown(
+        gh<_i137.FinanceRepository>(),
+        gh<_i132.WatchConversionContext>(),
+        gh<_i854.GetCategoryBreakdown>(),
+      ),
     );
     gh.factory<_i1061.PrimaryCurrencyCubit>(
       () => _i1061.PrimaryCurrencyCubit(
@@ -1599,13 +1617,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i621.WatchBudgetTrend>(
       () => _i621.WatchBudgetTrend(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i329.ReportsCubit>(
-      () => _i329.ReportsCubit(
-        gh<_i323.GetSpendingTrend>(),
-        gh<_i854.GetCategoryBreakdown>(),
-        gh<_i137.FinanceRepository>(),
-      ),
-    );
     gh.factory<_i14.GetOwedOverviewTool>(
       () => _i14.GetOwedOverviewTool(gh<_i943.GetOverview>()),
     );
@@ -1696,6 +1707,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i130.WatchScanHistory>(
       () => _i130.WatchScanHistory(gh<_i578.OcrRepository>()),
+    );
+    gh.factory<_i329.ReportsCubit>(
+      () => _i329.ReportsCubit(
+        gh<_i508.WatchSpendingTrend>(),
+        gh<_i74.WatchCategoryBreakdown>(),
+        gh<_i137.FinanceRepository>(),
+      ),
     );
     gh.factory<_i28.CopyBudgetCubit>(
       () => _i28.CopyBudgetCubit(

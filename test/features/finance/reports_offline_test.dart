@@ -1,17 +1,21 @@
 import 'dart:io';
 
 import 'package:daftary/core/database/app_database.dart';
+import 'package:daftary/core/date/app_clock.dart';
+import 'package:daftary/features/currency/data/repositories/currency_repository_impl.dart';
+import 'package:daftary/features/currency/domain/usecases/get_conversion_context.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_conversion_context.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.dart';
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
-import 'package:daftary/features/finance/domain/usecases/get_spending_trend.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_category_breakdown.dart';
+import 'package:daftary/features/finance/domain/usecases/watch_spending_trend.dart';
 import 'package:daftary/features/finance/presentation/cubit/reports_cubit.dart';
 import 'package:daftary/features/finance/presentation/cubit/reports_state.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../../helpers/test_daos.dart';
-import '../transactions/helpers/currency_test_doubles.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
 import 'package:daftary/core/money/money.dart';
 
@@ -36,6 +40,7 @@ void main() {
   const reportsSources = [
     'lib/features/finance/domain/entities/spending_trend_point.dart',
     'lib/features/finance/domain/usecases/get_spending_trend.dart',
+    'lib/features/finance/domain/usecases/watch_spending_trend.dart',
     'lib/features/finance/presentation/cubit/reports_cubit.dart',
     'lib/features/finance/presentation/cubit/reports_state.dart',
     'lib/features/finance/presentation/pages/reports_page.dart',
@@ -43,6 +48,7 @@ void main() {
     'lib/features/finance/presentation/widgets/category_breakdown_chart.dart',
     // The 007 read path Reports composes.
     'lib/features/finance/domain/usecases/get_category_breakdown.dart',
+    'lib/features/finance/domain/usecases/watch_category_breakdown.dart',
     'lib/features/finance/domain/repositories/finance_repository.dart',
     'lib/features/finance/data/repositories/finance_repository_impl.dart',
     'lib/features/finance/data/datasources/finance_dao.dart',
@@ -79,24 +85,34 @@ void main() {
         date: DateTime.now(),
       );
 
+      final currency = CurrencyRepositoryImpl(
+        testCurrencyDao(db),
+        const SystemAppClock(),
+      );
       final cubit = ReportsCubit(
-        GetSpendingTrend(
+        WatchSpendingTrend(
+          repository,
+          WatchConversionContext(currency),
           GetFinanceSummary(
             repository,
-            getConversionContextWith(),
+            GetConversionContext(currency),
             const CurrencyConverterImpl(),
           ),
         ),
-        GetCategoryBreakdown(
+        WatchCategoryBreakdown(
           repository,
-          getConversionContextWith(),
-          const CurrencyConverterImpl(),
+          WatchConversionContext(currency),
+          GetCategoryBreakdown(
+            repository,
+            GetConversionContext(currency),
+            const CurrencyConverterImpl(),
+          ),
         ),
         repository,
       );
       addTearDown(cubit.close);
 
-      await cubit.load();
+      await cubit.subscribe();
       expect(cubit.state.status, ReportsStatus.success);
       for (final period in ReportsPeriod.values) {
         await cubit.changeBreakdownPeriod(period);

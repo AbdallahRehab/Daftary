@@ -96,6 +96,23 @@ abstract class FinanceRepository {
     DateRange period,
   );
 
+  /// 021: [getSummaryTotals] for each of [periods], in order, re-read
+  /// together whenever entries change (FR-031) — one watch for a whole
+  /// trend window, so its months always come from the same read. Any one
+  /// period failing fails the emission.
+  Stream<Either<Failure, List<FinancePeriodTotals>>>
+  watchSummaryTotalsForPeriods(List<DateRange> periods);
+
+  /// 021: [getCategoryTotals], re-read whenever entries or categories
+  /// change (FR-031) — a renamed or re-iconed category relabels its row.
+  Stream<Either<Failure, List<CategoryCurrencyTotals>>> watchCategoryTotals(
+    DateRange period, {
+    FinanceEntryType? type,
+  });
+
+  /// 021: [hasAnyEntry], re-read whenever entries change (FR-031).
+  Stream<Either<Failure, bool>> watchHasAnyEntry();
+
   /// FR-017: whether any entry exists at all, including soft-deleted ones —
   /// what separates the true first-use empty state from "your filter
   /// matched nothing" (FR-018).

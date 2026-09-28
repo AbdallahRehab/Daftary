@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/error/failure.dart';
@@ -63,56 +66,64 @@ class _DeleteDataConfirmationViewState
         return PopScope(
           // Leaving mid-wipe would not stop it, only hide its outcome.
           canPop: !isBusy,
-          child: Scaffold(
-            appBar: AppBar(title: Text(l10n.deleteDataTitle)),
+          child: AppScaffold(
+            appBar: AppTopBar(title: Text(l10n.deleteDataTitle)),
+            // Under glass the body starts behind the app bar: the list takes
+            // the top inset (read below the scaffold, via Builder), SafeArea
+            // the rest (as with glass OFF, where the top padding is zero).
             body: SafeArea(
-              child: ListView(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                children: [
-                  const _PermanentWarning(),
-                  const SizedBox(height: AppSpacing.xs),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: TextButton.icon(
-                      onPressed: isBusy
-                          ? null
-                          : () => context.push('/settings/export'),
-                      icon: const Icon(Icons.ios_share_outlined),
-                      label: Text(l10n.deleteDataExportFirstAction),
+              top: false,
+              child: Builder(
+                builder: (context) => ListView(
+                  padding:
+                      const EdgeInsets.all(AppSpacing.md) +
+                      AppGlassInsets.of(context),
+                  children: [
+                    const _PermanentWarning(),
+                    const SizedBox(height: AppSpacing.xs),
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: TextButton.icon(
+                        onPressed: isBusy
+                            ? null
+                            : () => context.push('/settings/export'),
+                        icon: const Icon(Icons.ios_share_outlined),
+                        label: Text(l10n.deleteDataExportFirstAction),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TypedConfirmationField(
-                    expectedPhrase: state.input.expectedPhrase,
-                    onChanged: cubit.updateTypedPhrase,
-                  ),
-                  if (state.hasFailed) ...[
                     const SizedBox(height: AppSpacing.md),
-                    _FailureNotice(
-                      // 021: the cloud copy could not be reached, so the
-                      // whole deletion stopped before touching anything.
-                      message: switch (state.failure) {
-                        NetworkFailure() || TimeoutFailure() =>
-                          l10n.deleteDataCloudUnreachableError,
-                        _ => l10n.deleteDataError,
-                      },
+                    TypedConfirmationField(
+                      expectedPhrase: state.input.expectedPhrase,
+                      onChanged: cubit.updateTypedPhrase,
+                    ),
+                    if (state.hasFailed) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      _FailureNotice(
+                        // 021: the cloud copy could not be reached, so the
+                        // whole deletion stopped before touching anything.
+                        message: switch (state.failure) {
+                          NetworkFailure() || TimeoutFailure() =>
+                            l10n.deleteDataCloudUnreachableError,
+                          _ => l10n.deleteDataError,
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    _DestructiveButton(
+                      label: state.hasFailed
+                          ? l10n.retry
+                          : l10n.deleteDataConfirmAction,
+                      inProgressLabel: l10n.deleteDataInProgress,
+                      isInProgress: isBusy,
+                      onPressed: state.canConfirm ? cubit.confirmDelete : null,
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    AppSecondaryButton(
+                      label: l10n.deleteDataCancelAction,
+                      onPressed: isBusy ? null : () => _leave(context),
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  _DestructiveButton(
-                    label: state.hasFailed
-                        ? l10n.retry
-                        : l10n.deleteDataConfirmAction,
-                    inProgressLabel: l10n.deleteDataInProgress,
-                    isInProgress: isBusy,
-                    onPressed: state.canConfirm ? cubit.confirmDelete : null,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  AppSecondaryButton(
-                    label: l10n.deleteDataCancelAction,
-                    onPressed: isBusy ? null : () => _leave(context),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

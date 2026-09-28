@@ -77,8 +77,18 @@ abstract class RegisterModule {
   /// 021: Keychain/Keystore-backed storage for the cloud session
   /// (constitution XII). `SupabaseClient` itself is registered later, and
   /// only once Supabase is initialized (T061).
+  ///
+  /// iOS: `first_unlock_this_device` keeps the session out of iCloud/iTunes
+  /// backups and device-to-device transfers, while still readable by
+  /// background work after the first unlock. The plugin finds items written
+  /// under the previous (default) accessibility and rewrites them with this
+  /// one on the next write, so existing sessions carry over.
   @lazySingleton
-  FlutterSecureStorage get secureStorage => const FlutterSecureStorage();
+  FlutterSecureStorage get secureStorage => const FlutterSecureStorage(
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
+  );
 
   /// 021: the cloud client (T061). Resolve it only after
   /// `SupabaseInitializer.ensureInitialized()` has returned true — before

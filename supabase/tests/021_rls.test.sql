@@ -166,8 +166,9 @@ select results_eq($$with u as (update public.devices set app_version = 'x' where
   array[0::bigint], 'devices: B update affects 0 rows');
 select results_eq($$with u as (update public.sync_operations set result = 'rejected' where owner_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' returning 1) select count(*) from u$$,
   array[0::bigint], 'sync_operations: B update affects 0 rows');
-select results_eq($$with u as (update public.sync_owner_state set last_revision = 0 where owner_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa' returning 1) select count(*) from u$$,
-  array[0::bigint], 'sync_owner_state: B update affects 0 rows');
+-- 021e: sync_owner_state is read-only for clients (next_revision() owns it).
+select throws_ok($$update public.sync_owner_state set last_revision = 0 where owner_id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'$$,
+  '42501', null, 'sync_owner_state: B update denied');
 
 -- ---------------------------------------------------------------------------
 -- Guarantee 7: sync_push / sync_pull as B never touch or return A's rows.

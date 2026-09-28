@@ -90,6 +90,7 @@ void main() {
       ),
       peopleRepository,
       getPrimaryCurrencyReturning(),
+      db,
     );
   }
 

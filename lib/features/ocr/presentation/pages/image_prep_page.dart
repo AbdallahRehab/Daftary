@@ -5,6 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -69,8 +72,8 @@ class _ImagePrepViewState extends State<_ImagePrepView>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.ocrPrepTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.ocrPrepTitle)),
       body: BlocConsumer<ImagePrepCubit, ImagePrepState>(
         listenWhen: (previous, current) => current.isReadyForReview,
         listener: (context, state) {
@@ -121,7 +124,7 @@ class _PrepBody extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

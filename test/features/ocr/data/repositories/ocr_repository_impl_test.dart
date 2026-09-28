@@ -19,6 +19,7 @@ import 'package:daftary/features/transactions/domain/entities/money_transaction.
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
+import '../../../../helpers/stream_recorder.dart';
 import '../../../../helpers/test_daos.dart';
 import '../../../transactions/helpers/currency_test_doubles.dart';
 import 'package:daftary/features/currency/domain/services/currency_converter.dart';
@@ -93,6 +94,7 @@ void main() {
       occasionsRepository,
       peopleRepository,
       getPrimaryCurrencyReturning(),
+      db,
     );
 
     tempDir = await Directory.systemTemp.createTemp('ocr_repo_test');
@@ -569,6 +571,46 @@ void main() {
       expect(File(imagePath).existsSync(), isFalse);
       final gone = await repository.getScan(scanId);
       expect(gone.getLeft().toNullable(), isA<NotFoundFailure>());
+    });
+  });
+
+  group('live history and detail (021 FR-031)', () {
+    test(
+      'watchScanHistory follows a scan started and deleted elsewhere',
+      () async {
+        final history = StreamRecorder(repository.watchScanHistory());
+        addTearDown(history.cancel);
+        await history.waitFor((r) => rightOf(r).isEmpty);
+
+        final scanId = await startAndExtract();
+        await history.waitFor(
+          (r) =>
+              rightOf(r).map((s) => s.id).toList().contains(scanId) &&
+              rightOf(r).single.status == ScanStatus.needsReview,
+        );
+
+        await repository.deleteScan(scanId);
+        await history.waitForNext((r) => rightOf(r).isEmpty);
+      },
+    );
+
+    test('watchScanDetail drops a produced transaction deleted from its '
+        'person\'s screen', () async {
+      final scanId = await startAndExtract();
+      await repository.confirmScanBatch(
+        idempotencyKey: 'batch-1',
+        scanId: scanId,
+      );
+      final detail = StreamRecorder(repository.watchScanDetail(scanId));
+      addTearDown(detail.cancel);
+      final first = rightOf(
+        await detail.waitFor((r) => rightOf(r).transactions.length == 2),
+      );
+
+      await transactionsRepository.deleteTransaction(
+        first.transactions.first.id,
+      );
+      await detail.waitFor((r) => rightOf(r).transactions.length == 1);
     });
   });
 }

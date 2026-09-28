@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../../../currency/domain/entities/conversion_result.dart';
@@ -355,6 +356,31 @@ class OccasionsRepositoryImpl implements OccasionsRepository {
       return Left(CacheFailure('Failed to load occasions: $e'));
     }
   }
+
+  /// Every table an [OccasionDetail] is read from: the occasion, its
+  /// photos, its contributions and the people behind them (names and
+  /// overall statuses), and the conversion inputs of the totals (018).
+  Set<db.TableInfo<db.Table, Object?>> get _detailTables => {
+    _db.occasions,
+    _db.occasionAttachments,
+    _db.moneyTransactions,
+    _db.people,
+    _db.exchangeRates,
+    _db.primaryCurrencySettings,
+  };
+
+  @override
+  Stream<Either<Failure, OccasionDetail>> watchOccasionDetail(
+    String occasionId,
+  ) => _db.watchEither(_detailTables, () => getOccasionDetail(occasionId));
+
+  @override
+  Stream<Either<Failure, List<Occasion>>> watchOccasionsList({
+    OccasionFilter? filter,
+    bool includeArchived = false,
+  }) => _db.watchEither({
+    _db.occasions,
+  }, () => getOccasionsList(filter: filter, includeArchived: includeArchived));
 
   @override
   Future<Either<Failure, OccasionAttachment>> addOccasionAttachment({

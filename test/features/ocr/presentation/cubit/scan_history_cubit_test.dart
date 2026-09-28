@@ -2,20 +2,22 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan.dart';
 import 'package:daftary/features/ocr/domain/usecases/delete_scan.dart';
-import 'package:daftary/features/ocr/domain/usecases/get_scan_history.dart';
+import 'package:daftary/features/ocr/domain/usecases/watch_scan_history.dart';
 import 'package:daftary/features/ocr/presentation/cubit/scan_history_cubit.dart';
 import 'package:daftary/features/ocr/presentation/cubit/scan_history_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetScanHistory extends Mock implements GetScanHistory {}
+import '../../../../helpers/watch_stubs.dart';
+import '../../helpers/ocr_watch_stubs.dart';
 
 class MockDeleteScan extends Mock implements DeleteScan {}
 
 /// T062/T066 — scan history (User Story 5, FR-018, FR-023).
 void main() {
-  late MockGetScanHistory getScanHistory;
+  late MockOcrRepository repository;
+  late FakeTableChanges changes;
   late MockDeleteScan deleteScan;
 
   OcrScan scan(String id, DateTime createdAt, {ScanStatus? status}) => OcrScan(
@@ -32,20 +34,27 @@ void main() {
   final oldest = scan('s1', DateTime(2026, 1, 5), status: ScanStatus.discarded);
 
   setUp(() {
-    getScanHistory = MockGetScanHistory();
+    repository = MockOcrRepository();
+    changes = FakeTableChanges();
+    stubOcrWatches(repository, changes);
     deleteScan = MockDeleteScan();
   });
+
+  tearDown(() => changes.close());
+
+  ScanHistoryCubit build() =>
+      ScanHistoryCubit(WatchScanHistory(repository), deleteScan);
 
   blocTest<ScanHistoryCubit, ScanHistoryState>(
     'loads scans in the order the repository returned them — newest first, '
     'never re-sorted here (FR-018)',
     build: () {
       when(
-        () => getScanHistory(),
+        repository.getScanHistory,
       ).thenAnswer((_) async => Right([newest, middle, oldest]));
-      return ScanHistoryCubit(getScanHistory, deleteScan);
+      return build();
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.scans.map((s) => s.id), ['s3', 's2', 's1']);
       expect(cubit.state.status, ScanHistoryStatus.success);
@@ -57,10 +66,10 @@ void main() {
   blocTest<ScanHistoryCubit, ScanHistoryState>(
     'an empty history is a success state, not a permanent spinner',
     build: () {
-      when(() => getScanHistory()).thenAnswer((_) async => const Right([]));
-      return ScanHistoryCubit(getScanHistory, deleteScan);
+      when(repository.getScanHistory).thenAnswer((_) async => const Right([]));
+      return build();
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.isEmpty, isTrue);
       expect(cubit.state.isLoading, isFalse);
@@ -72,12 +81,12 @@ void main() {
     'a read failure surfaces as a failure state carrying the Failure, never '
     'as an empty history',
     build: () {
-      when(() => getScanHistory()).thenAnswer(
+      when(repository.getScanHistory).thenAnswer(
         (_) async => const Left(CacheFailure('scan history unreadable')),
       );
-      return ScanHistoryCubit(getScanHistory, deleteScan);
+      return build();
     },
-    act: (cubit) => cubit.load(),
+    act: (cubit) => cubit.subscribe(),
     verify: (cubit) {
       expect(cubit.state.hasFailed, isTrue);
       expect(
@@ -89,49 +98,85 @@ void main() {
   );
 
   blocTest<ScanHistoryCubit, ScanHistoryState>(
-    'deleting a scan re-reads the list rather than trusting a local removal',
+    'deleting a scan lets the live list drop it rather than trusting a '
+    'local removal (021 FR-031)',
     build: () {
-      var call = 0;
-      when(() => getScanHistory()).thenAnswer((_) async {
-        call++;
-        return call == 1
-            ? Right([newest, middle, oldest])
-            : Right([newest, oldest]);
+      var deleted = false;
+      when(repository.getScanHistory).thenAnswer(
+        (_) async =>
+            deleted ? Right([newest, oldest]) : Right([newest, middle, oldest]),
+      );
+      when(() => deleteScan('s2')).thenAnswer((_) async {
+        // The cascade writes `ocr_scans`; only the notification follows.
+        deleted = true;
+        changes.notify();
+        return const Right(unit);
       });
-      when(() => deleteScan('s2')).thenAnswer((_) async => const Right(unit));
-      return ScanHistoryCubit(getScanHistory, deleteScan);
+      return build();
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.deleteScan('s2');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       verify(() => deleteScan('s2')).called(1);
-      verify(() => getScanHistory()).called(2);
+      verify(repository.getScanHistory).called(2);
       expect(cubit.state.scans.map((s) => s.id), ['s3', 's1']);
       expect(cubit.state.status, ScanHistoryStatus.success);
     },
   );
 
   blocTest<ScanHistoryCubit, ScanHistoryState>(
-    'a failed delete reports the failure and does not reload',
+    'a failed delete reports the failure and does not re-read',
     build: () {
       when(
-        () => getScanHistory(),
+        repository.getScanHistory,
       ).thenAnswer((_) async => Right([newest, middle]));
       when(
         () => deleteScan('s2'),
       ).thenAnswer((_) async => const Left(CacheFailure('delete failed')));
-      return ScanHistoryCubit(getScanHistory, deleteScan);
+      return build();
     },
     act: (cubit) async {
-      await cubit.load();
+      await cubit.subscribe();
       await cubit.deleteScan('s2');
     },
     verify: (cubit) {
       expect(cubit.state.hasFailed, isTrue);
       expect(cubit.state.failure, const CacheFailure('delete failed'));
-      verify(() => getScanHistory()).called(1);
+      verify(repository.getScanHistory).called(1);
     },
   );
+
+  test('a scan finished or deleted on another screen updates the open '
+      'history with no reload (021 FR-031)', () async {
+    var scans = [newest];
+    when(repository.getScanHistory).thenAnswer((_) async => Right(scans));
+    final cubit = build();
+    addTearDown(cubit.close);
+    await cubit.subscribe();
+    expect(cubit.state.scans.map((s) => s.id), ['s3']);
+
+    scans = [newest, middle];
+    changes.notify();
+    await pumpEventQueue();
+    expect(cubit.state.scans.map((s) => s.id), ['s3', 's2']);
+
+    scans = [middle];
+    changes.notify();
+    await pumpEventQueue();
+    expect(cubit.state.scans.map((s) => s.id), ['s2']);
+  });
+
+  test('close cancels the subscription', () async {
+    when(repository.getScanHistory).thenAnswer((_) async => Right([newest]));
+    final cubit = build();
+    await cubit.subscribe();
+    await cubit.close();
+
+    changes.notify();
+    await pumpEventQueue();
+    verify(repository.getScanHistory).called(1);
+  });
 }

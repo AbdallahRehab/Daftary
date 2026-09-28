@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../../../currency/domain/usecases/get_primary_currency.dart';
@@ -45,9 +46,13 @@ class OcrRepositoryImpl implements OcrRepository {
     this._occasionsRepository,
     this._peopleRepository,
     this._getPrimaryCurrency,
+    this._db,
   );
 
   final OcrDao _dao;
+
+  /// 021: the source of the table-change signal behind the `watch*` reads.
+  final db.AppDatabase _db;
 
   /// 018: a new scan records its amounts in the primary currency.
   final GetPrimaryCurrency _getPrimaryCurrency;
@@ -564,6 +569,18 @@ class OcrRepositoryImpl implements OcrRepository {
       return Left(CacheFailure('Failed to load the scan: $e'));
     }
   }
+
+  @override
+  Stream<Either<Failure, List<OcrScan>>> watchScanHistory() =>
+      _db.watchEither({_db.ocrScans}, getScanHistory);
+
+  @override
+  Stream<Either<Failure, OcrScanDetail>> watchScanDetail(String scanId) =>
+      _db.watchEither({
+        _db.ocrScans,
+        _db.candidateEntries,
+        _db.moneyTransactions,
+      }, () => getScanDetail(scanId));
 
   @override
   Future<Either<Failure, Unit>> deleteScan(String scanId) async {

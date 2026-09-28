@@ -1,11 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -17,13 +19,17 @@ import '../widgets/occasion_type_chip.dart';
 
 /// The occasions section's home: every active occasion, most recent first,
 /// narrowable by name, type and date range (FR-015).
+///
+/// 021: live — returning from a create, edit or detail screen needs no
+/// reload, and a change applied by sync shows while the page is open
+/// (FR-031).
 class OccasionsListPage extends StatelessWidget {
   const OccasionsListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<OccasionsListCubit>()..load(),
+      create: (_) => getIt<OccasionsListCubit>()..subscribe(),
       child: const _OccasionsListView(),
     );
   }
@@ -37,25 +43,19 @@ class _OccasionsListView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<OccasionsListCubit>();
 
-    return Scaffold(
-      appBar: AppBar(
+    return AppScaffold(
+      appBar: AppTopBar(
         title: Text(l10n.occasionsTitle),
         actions: [
           IconButton(
             tooltip: l10n.occasionArchivedAction,
             icon: const Icon(Icons.archive_outlined),
-            onPressed: () async {
-              await context.push('/occasions/archived');
-              if (context.mounted) unawaited(cubit.load());
-            },
+            onPressed: () => context.push('/occasions/archived'),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          await context.push('/occasions/new');
-          if (context.mounted) unawaited(cubit.load());
-        },
+      floatingActionButton: AppFab.extended(
+        onPressed: () => context.push('/occasions/new'),
         icon: const Icon(Icons.add),
         label: Text(l10n.occasionAddAction),
       ),
@@ -74,10 +74,7 @@ class _OccasionsListView extends StatelessWidget {
               title: l10n.occasionsEmptyTitle,
               message: l10n.occasionsEmptyMessage,
               actionLabel: l10n.occasionAddFirstAction,
-              onAction: () async {
-                await context.push('/occasions/new');
-                if (context.mounted) unawaited(cubit.load());
-              },
+              onAction: () => context.push('/occasions/new'),
             );
           }
 
@@ -94,20 +91,25 @@ class _OccasionsListView extends StatelessWidget {
                         onAction: cubit.clearFilters,
                       )
                     : RefreshIndicator(
-                        onRefresh: cubit.load,
+                        onRefresh: cubit.resubscribe,
                         // `builder`, never a Column of every row: the
                         // stated ceiling is ~2,000 occasions, and only the
                         // visible handful should ever be built.
                         child: ListView.builder(
+                          // Clears the FAB so the last occasion is never
+                          // hidden underneath it; under glass the filters
+                          // above took the top inset, the list takes the
+                          // bottom one.
+                          padding:
+                              const EdgeInsets.only(bottom: 88) +
+                              AppGlassInsets.of(context).copyWith(top: 0),
                           itemCount: state.occasions.length,
                           itemBuilder: (context, index) {
                             final occasion = state.occasions[index];
                             return OccasionListTile(
                               occasion: occasion,
-                              onTap: () async {
-                                await context.push('/occasions/${occasion.id}');
-                                if (context.mounted) unawaited(cubit.load());
-                              },
+                              onTap: () =>
+                                  context.push('/occasions/${occasion.id}'),
                             );
                           },
                         ),
@@ -132,12 +134,16 @@ class _Filters extends StatelessWidget {
     final cubit = context.read<OccasionsListCubit>();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.md,
-        AppSpacing.sm,
-        AppSpacing.md,
-        0,
-      ),
+      // Under glass the body starts behind the app bar, so the filters take
+      // the top inset (read below the scaffold).
+      padding:
+          const EdgeInsets.fromLTRB(
+            AppSpacing.md,
+            AppSpacing.sm,
+            AppSpacing.md,
+            0,
+          ) +
+          AppGlassInsets.of(context).copyWith(bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

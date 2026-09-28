@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -44,8 +47,8 @@ class _ScanCaptureView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.ocrCaptureTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.ocrCaptureTitle)),
       body: BlocConsumer<ScanCaptureCubit, ScanCaptureState>(
         listenWhen: (previous, current) => current.isPicked,
         listener: (context, state) {
@@ -101,7 +104,7 @@ class _CaptureChoices extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: const EdgeInsets.all(AppSpacing.lg) + AppGlassInsets.of(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -157,7 +160,8 @@ class _UnsupportedDeviceView extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding:
+            const EdgeInsets.all(AppSpacing.xl) + AppGlassInsets.of(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

@@ -8,6 +8,9 @@ import '../../../../core/design_system/currency_picker.dart';
 import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -137,106 +140,112 @@ class _ParticipantFormViewState extends State<_ParticipantFormView> {
       },
       builder: (context, state) {
         final cubit = context.read<ParticipantFormCubit>();
-        return Scaffold(
-          appBar: AppBar(
+        return AppScaffold(
+          appBar: AppTopBar(
             title: Text(
               state.isEditMode
                   ? l10n.occasionParticipantFormEditTitle
                   : l10n.occasionParticipantFormAddTitle,
             ),
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            children: [
-              PersonPickerField(
-                query: state.personQuery,
-                results: state.personSearchResults,
-                selectedPerson: state.selectedPerson,
-                onQueryChanged: cubit.onPersonQueryChanged,
-                onPersonSelected: cubit.selectExistingPerson,
-                onCreateNew: cubit.createNewPerson,
-                errorText: state.personSelectionRequired
-                    ? l10n.occasionParticipantPersonLabel
-                    : null,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                label: l10n.occasionParticipantAmountLabel,
-                controller: _amountController,
-                onChanged: cubit.amountChanged,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+          // Builder: the glass insets are read below the scaffold, where
+          // they include the bars the body extends behind.
+          body: Builder(
+            builder: (context) => ListView(
+              padding:
+                  const EdgeInsets.all(AppSpacing.md) +
+                  AppGlassInsets.of(context),
+              children: [
+                PersonPickerField(
+                  query: state.personQuery,
+                  results: state.personSearchResults,
+                  selectedPerson: state.selectedPerson,
+                  onQueryChanged: cubit.onPersonQueryChanged,
+                  onPersonSelected: cubit.selectExistingPerson,
+                  onCreateNew: cubit.createNewPerson,
+                  errorText: state.personSelectionRequired
+                      ? l10n.occasionParticipantPersonLabel
+                      : null,
                 ),
-                // Left as the ambient direction on purpose: the field
-                // accepts Arabic-Indic and Western digits alike (FR-022).
-                errorText: state.amountInvalid
-                    ? l10n.occasionParticipantAmountInvalidError
-                    : null,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              CurrencyPicker(
-                // Keyed by value: the underlying form field only reads its
-                // initial value once, so a late-arriving primary-currency
-                // default must rebuild it.
-                key: ValueKey(state.currency),
-                value: state.currency,
-                onChanged: cubit.currencyChanged,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              SegmentedButton<TransactionDirection>(
-                segments: [
-                  ButtonSegment(
-                    value: TransactionDirection.received,
-                    label: Text(l10n.occasionParticipantDirectionReceived),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: l10n.occasionParticipantAmountLabel,
+                  controller: _amountController,
+                  onChanged: cubit.amountChanged,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
                   ),
-                  ButtonSegment(
-                    value: TransactionDirection.given,
-                    label: Text(l10n.occasionParticipantDirectionGiven),
+                  // Left as the ambient direction on purpose: the field
+                  // accepts Arabic-Indic and Western digits alike (FR-022).
+                  errorText: state.amountInvalid
+                      ? l10n.occasionParticipantAmountInvalidError
+                      : null,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                CurrencyPicker(
+                  // Keyed by value: the underlying form field only reads its
+                  // initial value once, so a late-arriving primary-currency
+                  // default must rebuild it.
+                  key: ValueKey(state.currency),
+                  value: state.currency,
+                  onChanged: cubit.currencyChanged,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                SegmentedButton<TransactionDirection>(
+                  segments: [
+                    ButtonSegment(
+                      value: TransactionDirection.received,
+                      label: Text(l10n.occasionParticipantDirectionReceived),
+                    ),
+                    ButtonSegment(
+                      value: TransactionDirection.given,
+                      label: Text(l10n.occasionParticipantDirectionGiven),
+                    ),
+                  ],
+                  selected: {state.direction},
+                  onSelectionChanged: (selected) =>
+                      cubit.directionChanged(selected.first),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppDateField(
+                  label: l10n.occasionDateLabel,
+                  date: state.date,
+                  onDateChanged: cubit.dateChanged,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: l10n.occasionParticipantNoteLabel,
+                  controller: _noteController,
+                  onChanged: cubit.noteChanged,
+                  maxLines: 2,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: state.countsTowardBalance,
+                  onChanged: cubit.countsTowardBalanceChanged,
+                  title: Text(
+                    l10n.occasionParticipantCountsTowardBalanceLabel,
+                    style: AppTypography.body,
                   ),
-                ],
-                selected: {state.direction},
-                onSelectionChanged: (selected) =>
-                    cubit.directionChanged(selected.first),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppDateField(
-                label: l10n.occasionDateLabel,
-                date: state.date,
-                onDateChanged: cubit.dateChanged,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                label: l10n.occasionParticipantNoteLabel,
-                controller: _noteController,
-                onChanged: cubit.noteChanged,
-                maxLines: 2,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                value: state.countsTowardBalance,
-                onChanged: cubit.countsTowardBalanceChanged,
-                title: Text(
-                  l10n.occasionParticipantCountsTowardBalanceLabel,
-                  style: AppTypography.body,
+                  // Always visible, not only for condolences: the toggle's
+                  // default is the surprising part, and a user who finds it
+                  // already off deserves to read why without hunting.
+                  subtitle: Text(
+                    l10n.occasionParticipantCountsTowardBalanceHint,
+                    style: AppTypography.bodyMuted,
+                  ),
                 ),
-                // Always visible, not only for condolences: the toggle's
-                // default is the surprising part, and a user who finds it
-                // already off deserves to read why without hunting.
-                subtitle: Text(
-                  l10n.occasionParticipantCountsTowardBalanceHint,
-                  style: AppTypography.bodyMuted,
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: state.isEditMode
+                      ? l10n.occasionParticipantUpdateAction
+                      : l10n.occasionParticipantSaveAction,
+                  isLoading: state.isSubmitting,
+                  onPressed: cubit.submit,
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: state.isEditMode
-                    ? l10n.occasionParticipantUpdateAction
-                    : l10n.occasionParticipantSaveAction,
-                isLoading: state.isSubmitting,
-                onPressed: cubit.submit,
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

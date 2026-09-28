@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_card.dart';
+import '../../../../core/design_system/glass/app_modal_sheet.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -109,7 +110,7 @@ class _OccasionTagPickerState extends State<OccasionTagPicker> {
 
   Future<void> _openPicker(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return showModalBottomSheet<void>(
+    return showAppModalSheet<void>(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) => SafeArea(

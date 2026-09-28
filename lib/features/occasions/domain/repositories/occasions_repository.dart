@@ -118,6 +118,24 @@ abstract class OccasionsRepository {
     bool includeArchived = false,
   });
 
+  /// 021: [getOccasionDetail], re-read whenever the occasion, its
+  /// attachments, its contributions, the people they belong to, or the
+  /// conversion inputs of its totals (exchange rates, the primary currency)
+  /// change — locally or through sync (FR-031). Emits only when the result
+  /// changes.
+  Stream<Either<Failure, OccasionDetail>> watchOccasionDetail(
+    String occasionId,
+  );
+
+  /// 021: [getOccasionsList], re-read whenever occasions change — a create,
+  /// edit, archive, restore or delete made on any screen, or applied by
+  /// sync, reaches the list with no reload (FR-031). Emits only when the
+  /// result changes.
+  Stream<Either<Failure, List<Occasion>>> watchOccasionsList({
+    OccasionFilter? filter,
+    bool includeArchived = false,
+  });
+
   /// Records a photo the presentation layer already captured via
   /// `AttachmentPickerService` and which that service already copied into
   /// the app's private storage (FR-017). This method persists the reference

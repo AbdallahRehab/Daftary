@@ -6,6 +6,9 @@ import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -79,8 +82,8 @@ class _ScanReviewView extends StatelessWidget {
           onPopInvokedWithResult: (didPop, _) {
             if (!didPop) cubit.cancel();
           },
-          child: Scaffold(
-            appBar: AppBar(
+          child: AppScaffold(
+            appBar: AppTopBar(
               title: Text(l10n.ocrReviewTitle),
               leading: IconButton(
                 icon: const Icon(Icons.close),
@@ -88,7 +91,12 @@ class _ScanReviewView extends StatelessWidget {
                 onPressed: state.isSubmitting ? null : cubit.cancel,
               ),
             ),
+            // Only the side insets: the scaffold already keeps the body
+            // clear of the bars with glass OFF, and under glass the list
+            // below scrolls beneath them with their insets as padding.
             body: SafeArea(
+              top: false,
+              bottom: false,
               child: _Body(state: state, cubit: cubit),
             ),
             bottomNavigationBar: _ConfirmBar(state: state, cubit: cubit),
@@ -156,7 +164,7 @@ class _Body extends StatelessWidget {
     final entries = state.orderedEntries;
 
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       children: [
         _BatchControls(state: state, cubit: cubit),
         if (state.failure != null) ...[
@@ -322,43 +330,49 @@ class _ConfirmBar extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (!state.canConfirm && !state.isSubmitting)
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: Text(
-                  state.activeEntries.isEmpty
-                      ? l10n.ocrReviewNothingToConfirm
-                      : l10n.ocrReviewConfirmBlockedHint,
-                  style: AppTypography.bodyMuted.copyWith(
-                    color: colorScheme.onSurfaceVariant,
+    // Opaque: under glass the body scrolls beneath this bar (padded clear
+    // of it), and its buttons must never sit over the entries. With glass
+    // OFF this is the scaffold's own background, so nothing changes.
+    return ColoredBox(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (!state.canConfirm && !state.isSubmitting)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Text(
+                    state.activeEntries.isEmpty
+                        ? l10n.ocrReviewNothingToConfirm
+                        : l10n.ocrReviewConfirmBlockedHint,
+                    style: AppTypography.bodyMuted.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
+              AppButton(
+                label: l10n.ocrReviewConfirmAction,
+                icon: Icons.check,
+                isLoading: state.isSubmitting,
+                // Null the moment anything is incomplete or a save is in
+                // flight — the cubit refuses a second call too, but the
+                // button should never look tappable while it would be
+                // ignored (FR-021).
+                onPressed: state.canConfirm ? cubit.confirm : null,
               ),
-            AppButton(
-              label: l10n.ocrReviewConfirmAction,
-              icon: Icons.check,
-              isLoading: state.isSubmitting,
-              // Null the moment anything is incomplete or a save is in
-              // flight — the cubit refuses a second call too, but the
-              // button should never look tappable while it would be
-              // ignored (FR-021).
-              onPressed: state.canConfirm ? cubit.confirm : null,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            AppSecondaryButton(
-              label: l10n.ocrReviewCancelAction,
-              onPressed: state.isSubmitting ? null : cubit.cancel,
-            ),
-          ],
+              const SizedBox(height: AppSpacing.sm),
+              AppSecondaryButton(
+                label: l10n.ocrReviewCancelAction,
+                onPressed: state.isSubmitting ? null : cubit.cancel,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -46,6 +46,14 @@ abstract final class AIBudgetDataKeys {
 ///
 /// `month` defaults to the current calendar month. `foundData: false` when
 /// the month has no budget (010's own empty state).
+///
+/// 018 FR-009: a figure 010 reports as unknown (it needs a missing exchange
+/// rate) is left out — never estimated. A blocked line keeps its planned
+/// amount and carries `reason`/`missingRatesFor` instead of its actual,
+/// remaining, percentage and state; a blocked unbudgeted item likewise
+/// instead of its amount; and when any actual-side total is unknown, those
+/// totals are omitted and the result carries `reason`/`missingRatesFor`
+/// naming every currency the month needs.
 @injectable
 class GetBudgetStatusTool extends AITool {
   const GetBudgetStatusTool(this._getBudgetForMonth, this._periods);
@@ -78,21 +86,6 @@ class GetBudgetStatusTool extends AITool {
     }
 
     final detail = await _getBudgetForMonth(month);
-    // 018: a month whose spend needs a missing exchange rate has no known
-    // actuals — a no-data answer naming the rates, not a tool failure.
-    if (detail.getLeft().toNullable() case final RatesMissingFailure failure) {
-      return Right(
-        ToolResult(
-          toolName: name,
-          sourceUseCase: sourceUseCase,
-          foundData: false,
-          data: {
-            AIToolArgs.month: month,
-            ...aiRatesMissingData(failure.missingRatesFor),
-          },
-        ),
-      );
-    }
     return detail.map((d) {
       final summary = d.summary;
       if (!d.hasBudget || summary == null) {
@@ -117,20 +110,27 @@ class GetBudgetStatusTool extends AITool {
           ],
           AIBudgetDataKeys.totalPlannedMinorUnits:
               summary.totalPlannedMinorUnits,
-          AIBudgetDataKeys.totalActualMinorUnits: summary.totalActualMinorUnits,
-          AIBudgetDataKeys.totalRemainingMinorUnits:
-              summary.totalRemainingMinorUnits,
-          AIBudgetDataKeys.overallPercentUsed: summary.overallPercentageUsed,
-          AIBudgetDataKeys.overallState: summary.overallStatus.name,
-          AIBudgetDataKeys.isOverBudget: summary.isOverBudgetOverall,
+          if (!summary.isActualBlocked) ...{
+            AIBudgetDataKeys.totalActualMinorUnits:
+                summary.totalActualMinorUnits,
+            AIBudgetDataKeys.totalRemainingMinorUnits:
+                summary.totalRemainingMinorUnits,
+            AIBudgetDataKeys.overallPercentUsed: summary.overallPercentageUsed,
+            AIBudgetDataKeys.overallState: summary.overallStatus?.name,
+            AIBudgetDataKeys.isOverBudget: summary.isOverBudgetOverall,
+          },
           AIBudgetDataKeys.unbudgetedSpending: [
             for (final item in summary.unbudgetedSpending)
               {
                 AIBudgetDataKeys.category: item.categoryName,
-                AIBudgetDataKeys.amountMinorUnits: item.amountMinorUnits,
+                if (item.amountMinorUnits case final amount?)
+                  AIBudgetDataKeys.amountMinorUnits: amount
+                else
+                  ...aiRatesMissingData(item.missingRatesFor),
               },
           ],
           ...aiToolMoneyUnits(summary.currency),
+          if (summary.isBlocked) ...aiRatesMissingData(summary.missingRatesFor),
         },
       );
     });
@@ -139,9 +139,13 @@ class GetBudgetStatusTool extends AITool {
   static Map<String, Object?> _line(BudgetCategoryLine line) => {
     AIBudgetDataKeys.category: line.categoryName,
     AIBudgetDataKeys.plannedMinorUnits: line.plannedAmountMinorUnits,
-    AIBudgetDataKeys.actualMinorUnits: line.actualAmountMinorUnits,
-    AIBudgetDataKeys.remainingMinorUnits: line.remainingMinorUnits,
-    AIBudgetDataKeys.percentUsed: line.percentageUsed,
-    AIBudgetDataKeys.state: line.status.name,
+    if (line.isBlocked)
+      ...aiRatesMissingData(line.missingRatesFor)
+    else ...{
+      AIBudgetDataKeys.actualMinorUnits: line.actualAmountMinorUnits,
+      AIBudgetDataKeys.remainingMinorUnits: line.remainingMinorUnits,
+      AIBudgetDataKeys.percentUsed: line.percentageUsed,
+      AIBudgetDataKeys.state: line.status?.name,
+    },
   };
 }

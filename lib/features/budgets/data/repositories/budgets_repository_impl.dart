@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/database/app_database.dart' as db;
+import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../../../currency/domain/entities/conversion_context.dart';
@@ -34,12 +35,17 @@ import '../models/budget_mapper.dart';
 ///
 /// 018: a budget is planned in one currency — the primary currency when it
 /// was created — and 007's per-currency spend is converted into it here
-/// through [CurrencyConverter]. A month whose spend includes a currency with
-/// no rate returns [RatesMissingFailure] rather than a partial actual.
+/// through [CurrencyConverter]. Spend that needs a missing rate never fails
+/// the month: it blocks exactly the figures that depend on it (018 FR-009 —
+/// see `BudgetSummary` and `BudgetTrendPoint` for the rules).
+///
+/// 021: the `watch*` reads re-run their `get*` on every write to a table
+/// the figures depend on ([_monthTables]), locally or through sync.
 @LazySingleton(as: BudgetsRepository)
 class BudgetsRepositoryImpl implements BudgetsRepository {
   BudgetsRepositoryImpl(
     this._dao,
+    this._db,
     this._financeRepository,
     this._categoryRepository,
     this._getConversionContext,
@@ -47,6 +53,7 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
   );
 
   final BudgetsDao _dao;
+  final db.AppDatabase _db;
   final FinanceRepository _financeRepository;
   final CategoryRepository _categoryRepository;
   final GetConversionContext _getConversionContext;
@@ -381,20 +388,24 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
           _toLine(
             allocation,
             categoriesById[allocation.categoryId],
-            spend[allocation.categoryId]?.amount.minorUnits ?? 0,
+            spend[allocation.categoryId],
             currency,
           ),
       ];
       final unbudgeted = [
-        // Largest first, as 007 orders its breakdown.
+        // Largest first, as 007 orders its breakdown; blocked ones last.
         for (final item in spend.values)
-          if (!allocatedIds.contains(item.categoryId) && item.amount.isPositive)
+          // A blocked item always has real spend behind it — it is listed
+          // with its amount unknown rather than dropped (FR-007).
+          if (!allocatedIds.contains(item.categoryId) &&
+              (item.amount?.isPositive ?? true))
             UnbudgetedCategorySpend(
               categoryId: item.categoryId,
               categoryName: item.categoryName,
               categoryIcon: item.icon,
-              amountMinorUnits: item.amount.minorUnits,
+              amountMinorUnits: item.amount?.minorUnits,
               currency: currency,
+              missingRatesFor: item.missingRatesFor,
             ),
       ];
 
@@ -414,6 +425,11 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
       return Left(CacheFailure('Failed to load budget: $e'));
     }
   }
+
+  @override
+  Stream<Either<Failure, BudgetMonthDetail>> watchBudgetForMonth(
+    String month,
+  ) => _db.watchEither(_monthTables, () => getBudgetForMonth(month));
 
   @override
   Future<Either<Failure, Budget?>> getMostRecentBudgetBefore(
@@ -479,14 +495,13 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
         }
         final spend = spendResult.toNullable()!;
         final budget = budgetByMonth[month];
-        final monthAllocations = [
+        final planned = <String, _Converted>{
           if (budget != null)
             for (final allocation
                 in allocationsByBudget[budget.id] ??
                     const <db.BudgetCategoryAllocation>[])
-              (
-                categoryId: allocation.categoryId,
-                planned: _convert(
+              allocation.categoryId: _Converted.of(
+                _convert(
                   Money.fromMinorUnits(
                     allocation.plannedAmountMinorUnits,
                     _currencyOfRow(budget),
@@ -494,18 +509,6 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
                   context,
                 ),
               ),
-        ];
-        final missing = [
-          for (final a in monthAllocations)
-            if (a.planned case ConversionRateUnavailable(:final missingRateFor))
-              missingRateFor,
-        ];
-        if (missing.isNotEmpty) {
-          return Left(RatesMissingFailure(missing.toSet().toList()));
-        }
-        final planned = {
-          for (final a in monthAllocations)
-            a.categoryId: (a.planned as ConversionConverted).value.minorUnits,
         };
         points.add(
           categoryId == null
@@ -526,7 +529,35 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
     }
   }
 
+  @override
+  Stream<Either<Failure, List<BudgetTrendPoint>>> watchBudgetTrend({
+    String? categoryId,
+    int monthsBack = 6,
+    String? endMonth,
+  }) => _db.watchEither(
+    _monthTables,
+    () => getBudgetTrend(
+      categoryId: categoryId,
+      monthsBack: monthsBack,
+      endMonth: endMonth,
+    ),
+  );
+
   // --------------------------------------------------------------- helpers
+
+  /// 021: every table a month's figures are read from — this feature's own
+  /// two, 007's entries and categories (read through its repositories, but
+  /// still what the figures depend on), and 018's rates and primary
+  /// currency, since spend is converted. A write to any of them, local or
+  /// applied by sync, re-reads the open budget screens (FR-031).
+  Set<db.TableInfo<db.Table, Object?>> get _monthTables => {
+    _db.budgets,
+    _db.budgetCategoryAllocations,
+    _db.financeEntries,
+    _db.financeCategories,
+    _db.exchangeRates,
+    _db.primaryCurrencySettings,
+  };
 
   /// For a budgeted month, "actual" is the budgeted categories' spend —
   /// exactly `BudgetSummary.totalActualMinorUnits`, so the trend bar and
@@ -534,29 +565,34 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
   /// there are no budgeted categories, so the month's whole expense total
   /// is shown instead: the only meaningful "spending with no plan" figure
   /// (data-model.md BudgetTrendPoint).
+  ///
+  /// 018: either total is unknown (`null`) if any figure it sums is.
   BudgetTrendPoint _overallPoint(
     String month,
     bool hasBudget,
-    Map<String, int> plannedByCategory,
+    Map<String, _Converted> plannedByCategory,
     Map<String, _CategorySpend> spend,
     Currency currency,
   ) {
-    final planned = plannedByCategory.values.fold<int>(0, (sum, a) => sum + a);
-    final actual = hasBudget
-        ? plannedByCategory.keys.fold<int>(
-            0,
-            (sum, id) => sum + (spend[id]?.amount.minorUnits ?? 0),
-          )
-        : spend.values.fold<int>(
-            0,
-            (sum, item) => sum + item.amount.minorUnits,
-          );
+    final planned = _Converted.sum(plannedByCategory.values);
+    final actual = _Converted.sum(
+      hasBudget
+          ? [
+              for (final id in plannedByCategory.keys)
+                if (spend[id] case final item?) item.converted,
+            ]
+          : [for (final item in spend.values) item.converted],
+    );
     return BudgetTrendPoint(
       month: month,
-      plannedMinorUnits: planned,
-      actualMinorUnits: actual,
+      plannedMinorUnits: planned.minorUnits,
+      actualMinorUnits: actual.minorUnits,
       hasBudget: hasBudget,
       currency: currency,
+      missingRatesFor: unionOfMissingRates([
+        planned.missingRatesFor,
+        actual.missingRatesFor,
+      ]),
     );
   }
 
@@ -564,16 +600,22 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
     String month,
     bool hasBudget,
     String categoryId,
-    Map<String, int> plannedByCategory,
+    Map<String, _Converted> plannedByCategory,
     Map<String, _CategorySpend> spend,
     Currency currency,
   ) {
+    final planned = plannedByCategory[categoryId] ?? _Converted.zero;
+    final actual = spend[categoryId]?.converted ?? _Converted.zero;
     return BudgetTrendPoint(
       month: month,
-      plannedMinorUnits: plannedByCategory[categoryId] ?? 0,
-      actualMinorUnits: spend[categoryId]?.amount.minorUnits ?? 0,
+      plannedMinorUnits: planned.minorUnits,
+      actualMinorUnits: actual.minorUnits,
       hasBudget: hasBudget,
       currency: currency,
+      missingRatesFor: unionOfMissingRates([
+        planned.missingRatesFor,
+        actual.missingRatesFor,
+      ]),
     );
   }
 
@@ -581,9 +623,12 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
   /// `getCategoryTotals` (research.md Decision 2's zero-change default) —
   /// one SQL aggregate for the whole month rather than a query per
   /// budgeted category — converted into [currency] (018). Keyed by category
-  /// id, largest first. Any category whose spend needs a missing rate fails
-  /// the whole month with [RatesMissingFailure]: a budget line must never
-  /// show a partial actual (018 FR-009).
+  /// id, largest first.
+  ///
+  /// A category whose spend needs a missing rate is kept with an unknown
+  /// amount and the currencies it needs (sorted last), rather than failing
+  /// the month: only the figures that depend on it are blocked (018
+  /// FR-009), never a partial actual.
   Future<Either<Failure, Map<String, _CategorySpend>>> _monthSpendByCategory(
     String month,
     Currency currency, {
@@ -603,26 +648,34 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
       BudgetMonth.toDateRange(month),
       type: FinanceEntryType.expense,
     );
-    return result.flatMap((rows) {
-      final missing = <Currency>{};
-      final spend = <_CategorySpend>[];
-      for (final row in rows) {
-        switch (_converter.sumToTargetCurrency(
-          amounts: row.totals,
-          targetCurrency: currency,
-          rates: rates.rates,
-        )) {
-          case SumTotal(:final value):
-            spend.add(_CategorySpend(row, value));
-          case SumBlocked(:final missingRatesFor):
-            missing.addAll(missingRatesFor);
-        }
-      }
-      if (missing.isNotEmpty) {
-        return Left(RatesMissingFailure(missing.toList()));
-      }
-      spend.sort((a, b) => b.amount.minorUnits.compareTo(a.amount.minorUnits));
-      return Right({for (final item in spend) item.categoryId: item});
+    return result.map((rows) {
+      final spend = [
+        for (final row in rows)
+          _CategorySpend(row, switch (_converter.sumToTargetCurrency(
+            amounts: row.totals,
+            targetCurrency: currency,
+            rates: rates.rates,
+          )) {
+            SumTotal(:final value) => _Converted(value.minorUnits),
+            SumBlocked(:final missingRatesFor) => _Converted.blocked(
+              missingRatesFor,
+            ),
+          }, currency),
+      ];
+      // Stable: equal totals keep 007's order, and blocked rows sort after
+      // every known one.
+      final ordered = spend.indexed.toList()
+        ..sort((a, b) {
+          final aTotal = a.$2.converted.minorUnits;
+          final bTotal = b.$2.converted.minorUnits;
+          if (aTotal != null && bTotal != null && aTotal != bTotal) {
+            return bTotal.compareTo(aTotal);
+          }
+          if (aTotal == null && bTotal != null) return 1;
+          if (aTotal != null && bTotal == null) return -1;
+          return a.$1.compareTo(b.$1);
+        });
+      return {for (final (_, item) in ordered) item.categoryId: item};
     });
   }
 
@@ -646,7 +699,7 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
   BudgetCategoryLine _toLine(
     db.BudgetCategoryAllocation allocation,
     Category? category,
-    int actualMinorUnits,
+    _CategorySpend? spend,
     Currency currency,
   ) {
     return BudgetCategoryLine(
@@ -657,7 +710,9 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
       isCategoryArchived: category?.isArchived ?? false,
       isCategoryMissing: category == null,
       plannedAmountMinorUnits: allocation.plannedAmountMinorUnits,
-      actualAmountMinorUnits: actualMinorUnits,
+      // No spend row at all means nothing was spent: a known zero.
+      actualAmountMinorUnits: spend == null ? 0 : spend.amount?.minorUnits,
+      missingRatesFor: spend?.missingRatesFor ?? const [],
       currency: currency,
     );
   }
@@ -757,10 +812,10 @@ class _MonthTaken implements Exception {
   final BudgetAlreadyExistsForMonthFailure failure;
 }
 
-/// One category's expense spend for a month, already converted into the
-/// requested currency (018).
+/// One category's expense spend for a month, converted into the requested
+/// currency (018) — or blocked, when that needs a missing rate.
 class _CategorySpend {
-  _CategorySpend(CategoryCurrencyTotals row, this.amount)
+  _CategorySpend(CategoryCurrencyTotals row, this.converted, this._currency)
     : categoryId = row.categoryId,
       categoryName = row.categoryName,
       icon = row.icon;
@@ -768,5 +823,49 @@ class _CategorySpend {
   final String categoryId;
   final String categoryName;
   final String icon;
-  final Money amount;
+  final _Converted converted;
+  final Currency _currency;
+
+  /// `null` when blocked.
+  Money? get amount => switch (converted.minorUnits) {
+    final minorUnits? => Money.fromMinorUnits(minorUnits, _currency),
+    null => null,
+  };
+
+  List<Currency> get missingRatesFor => converted.missingRatesFor;
+}
+
+/// One converted figure in exact minor units, or — when converting it
+/// needs a missing rate — `null` with the currencies it needs (018
+/// FR-009).
+class _Converted {
+  const _Converted(int this.minorUnits) : missingRatesFor = const [];
+
+  const _Converted.blocked(this.missingRatesFor) : minorUnits = null;
+
+  factory _Converted.of(ConversionResult result) => switch (result) {
+    ConversionConverted(:final value) => _Converted(value.minorUnits),
+    ConversionRateUnavailable(:final missingRateFor) => _Converted.blocked([
+      missingRateFor,
+    ]),
+  };
+
+  static const zero = _Converted(0);
+
+  /// The exact sum of [figures], or blocked — naming every currency any of
+  /// them needs — if any one is: never a partial sum.
+  static _Converted sum(Iterable<_Converted> figures) {
+    final missing = unionOfMissingRates([
+      for (final figure in figures) figure.missingRatesFor,
+    ]);
+    if (missing.isNotEmpty || figures.any((f) => f.minorUnits == null)) {
+      return _Converted.blocked(missing);
+    }
+    return _Converted(
+      figures.fold<int>(0, (sum, figure) => sum + figure.minorUnits!),
+    );
+  }
+
+  final int? minorUnits;
+  final List<Currency> missingRatesFor;
 }

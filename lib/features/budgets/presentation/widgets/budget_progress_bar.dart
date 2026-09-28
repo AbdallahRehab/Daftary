@@ -16,6 +16,9 @@ int budgetPercentLabel(double percentage) => percentage.floor();
 ///
 /// Decorative for screen readers — the same information is always given as
 /// text beside it.
+///
+/// 018 FR-009: with an unknown actual ([actualMinorUnits] `null`) it shows
+/// an empty neutral track — never a guessed fill.
 class BudgetProgressBar extends StatelessWidget {
   const BudgetProgressBar({
     required this.plannedMinorUnits,
@@ -26,17 +29,25 @@ class BudgetProgressBar extends StatelessWidget {
   });
 
   final int plannedMinorUnits;
-  final int actualMinorUnits;
-  final BudgetCategoryStatus status;
+
+  /// `null` when blocked on a missing exchange rate.
+  final int? actualMinorUnits;
+
+  /// `null` exactly when [actualMinorUnits] is.
+  final BudgetCategoryStatus? status;
   final double height;
 
   @override
   Widget build(BuildContext context) {
+    final actual = actualMinorUnits;
+    final status = this.status;
     final double fraction;
-    if (plannedMinorUnits <= 0) {
-      fraction = actualMinorUnits > 0 ? 1 : 0;
+    if (actual == null || status == null) {
+      fraction = 0;
+    } else if (plannedMinorUnits <= 0) {
+      fraction = actual > 0 ? 1 : 0;
     } else {
-      fraction = (actualMinorUnits / plannedMinorUnits).clamp(0, 1).toDouble();
+      fraction = (actual / plannedMinorUnits).clamp(0, 1).toDouble();
     }
     return ExcludeSemantics(
       child: ClipRRect(
@@ -44,7 +55,9 @@ class BudgetProgressBar extends StatelessWidget {
         child: LinearProgressIndicator(
           value: fraction,
           minHeight: height,
-          color: OverBudgetWarningBadge.colorFor(context, status),
+          color: status == null
+              ? Theme.of(context).colorScheme.onSurfaceVariant
+              : OverBudgetWarningBadge.colorFor(context, status),
           backgroundColor: Theme.of(
             context,
           ).colorScheme.surfaceContainerHighest,

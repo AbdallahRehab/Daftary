@@ -2464,6 +2464,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetUnbudgetedTotalLabel => 'Total unbudgeted';
 
   @override
+  String get budgetRateNeededBadge => 'Rate needed';
+
+  @override
+  String budgetPlannedAmount(String amount) {
+    return '$amount planned';
+  }
+
+  @override
+  String budgetLineNeedsRate(String currencies) {
+    return 'Spending needs an exchange rate for $currencies';
+  }
+
+  @override
+  String budgetOverallNeedsRate(String currencies) {
+    return 'Spent and remaining need an exchange rate for $currencies';
+  }
+
+  @override
   String get homeTitle => 'Home';
 
   @override

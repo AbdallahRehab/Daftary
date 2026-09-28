@@ -22,8 +22,9 @@ class BudgetMonthState extends Equatable {
   /// together so the overall card and the rows beneath it can never be a
   /// moment apart and disagree (FR-006).
   ///
-  /// Kept through a refresh (rather than cleared) so pull-to-refresh never
-  /// blanks the screen; cleared when the month itself changes.
+  /// Kept through a resubscribe or a failed live re-read (rather than
+  /// cleared) so the screen never blanks; cleared when the month itself
+  /// changes.
   final BudgetMonthDetail? detail;
   final Failure? failure;
 

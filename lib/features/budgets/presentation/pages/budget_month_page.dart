@@ -5,9 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
+import '../../../transactions/presentation/widgets/balance_amount_text.dart';
 import '../../domain/entities/budget_failures.dart';
 import '../../domain/entities/budget_summary.dart';
 import '../cubit/budget_month_cubit.dart';
@@ -28,6 +33,14 @@ import '../widgets/unbudgeted_spending_card.dart';
 /// A [MonthNavigator] moves between months (US4), the app bar links to the
 /// trend view (US5), and the empty state offers copy-forward from the most
 /// recent earlier budget when one exists (US4).
+///
+/// 021: live — the cubit subscribes to the month, so returning from the
+/// form, copying a budget forward, or an expense or rate changed anywhere
+/// (or by sync) shows up with no reload (FR-031).
+///
+/// 018 FR-009: when any figure needs a missing exchange rate, a
+/// `RateNeededBanner` at the top names every such currency and links to
+/// rate settings; the blocked rows and totals mark themselves.
 class BudgetMonthPage extends StatelessWidget {
   const BudgetMonthPage({required this.month, super.key});
 
@@ -37,7 +50,7 @@ class BudgetMonthPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<BudgetMonthCubit>()..load(month),
+      create: (_) => getIt<BudgetMonthCubit>()..subscribe(month),
       child: const BudgetMonthView(),
     );
   }
@@ -45,23 +58,16 @@ class BudgetMonthPage extends StatelessWidget {
 
 /// The page's widget tree without its `getIt`-resolved cubit, so widget
 /// tests can drive it with a cubit over mocked use cases.
-class BudgetMonthView extends StatefulWidget {
+class BudgetMonthView extends StatelessWidget {
   const BudgetMonthView({super.key});
 
-  @override
-  State<BudgetMonthView> createState() => _BudgetMonthViewState();
-}
-
-class _BudgetMonthViewState extends State<BudgetMonthView> {
-  /// Opens the create/edit form and re-reads the month on return — the
-  /// form may have created, edited or deleted the budget.
-  Future<void> _openForm(String month, {required bool editing}) async {
-    final cubit = context.read<BudgetMonthCubit>();
-    await context.push('/budgets/$month/${editing ? 'edit' : 'new'}');
-    if (mounted) unawaited(cubit.reload());
+  /// Opens the create/edit form. Nothing to re-read on return: whatever the
+  /// form saved or deleted reaches the live subscription on its own.
+  void _openForm(BuildContext context, String month, {required bool editing}) {
+    unawaited(context.push('/budgets/$month/${editing ? 'edit' : 'new'}'));
   }
 
-  List<Widget> _appBarActions(BudgetMonthState state) {
+  List<Widget> _appBarActions(BuildContext context, BudgetMonthState state) {
     final l10n = AppLocalizations.of(context)!;
     return [
       IconButton(
@@ -74,7 +80,7 @@ class _BudgetMonthViewState extends State<BudgetMonthView> {
         IconButton(
           tooltip: l10n.budgetFormEditTitle,
           icon: const Icon(Icons.edit_outlined),
-          onPressed: () => _openForm(state.month, editing: true),
+          onPressed: () => _openForm(context, state.month, editing: true),
         ),
     ];
   }
@@ -85,21 +91,27 @@ class _BudgetMonthViewState extends State<BudgetMonthView> {
     return BlocBuilder<BudgetMonthCubit, BudgetMonthState>(
       builder: (context, state) {
         final cubit = context.read<BudgetMonthCubit>();
-        return Scaffold(
-          appBar: AppBar(
+        return AppScaffold(
+          appBar: AppTopBar(
             title: Text(l10n.budgetsTitle),
-            actions: _appBarActions(state),
+            actions: _appBarActions(context, state),
           ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (state.month.isNotEmpty)
-                MonthNavigator(
-                  month: state.month,
-                  onChanged: cubit.monthChanged,
-                ),
-              Expanded(child: _buildContent(context, state, cubit)),
-            ],
+          body: Builder(
+            // Under glass the body starts behind the app bar: the month
+            // navigator takes the top inset (read below the scaffold, via
+            // Builder), the scrollables below it the bottom one.
+            builder: (context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: AppGlassInsets.of(context).top),
+                if (state.month.isNotEmpty)
+                  MonthNavigator(
+                    month: state.month,
+                    onChanged: cubit.monthChanged,
+                  ),
+                Expanded(child: _buildContent(context, state, cubit)),
+              ],
+            ),
           ),
         );
       },
@@ -123,26 +135,27 @@ class _BudgetMonthViewState extends State<BudgetMonthView> {
         title: l10n.budgetLoadErrorTitle,
         message: budgetFailureMessage(l10n, state.failure!),
         actionLabel: l10n.commonRetry,
-        onAction: cubit.reload,
+        onAction: cubit.resubscribe,
       );
     }
+    final bottomInset = AppGlassInsets.of(context).copyWith(top: 0);
     if (detail == null || !detail.hasBudget) {
       return RefreshIndicator(
-        onRefresh: cubit.reload,
+        onRefresh: cubit.resubscribe,
         child: LayoutBuilder(
           builder: (context, constraints) => SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
+            padding: bottomInset,
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: _EmptyBudgetState(
                 month: state.month,
-                onCreate: () => _openForm(state.month, editing: false),
+                onCreate: () => _openForm(context, state.month, editing: false),
                 copyAction: _CopyForwardAction(
                   // Keyed by month so navigating rebuilds the cubit for
                   // the new target instead of reusing a stale source.
                   key: ValueKey('budgetCopyForward-${state.month}'),
                   month: state.month,
-                  onCopied: cubit.reload,
                 ),
               ),
             ),
@@ -152,19 +165,27 @@ class _BudgetMonthViewState extends State<BudgetMonthView> {
     }
 
     return RefreshIndicator(
-      onRefresh: cubit.reload,
+      onRefresh: cubit.resubscribe,
       child: _BudgetDetailList(
         detail: detail,
-        onEdit: () => _openForm(state.month, editing: true),
+        bottomInset: bottomInset,
+        onEdit: () => _openForm(context, state.month, editing: true),
       ),
     );
   }
 }
 
 class _BudgetDetailList extends StatelessWidget {
-  const _BudgetDetailList({required this.detail, required this.onEdit});
+  const _BudgetDetailList({
+    required this.detail,
+    required this.bottomInset,
+    required this.onEdit,
+  });
 
   final BudgetMonthDetail detail;
+
+  /// Glass chrome's bottom inset (zero with glass OFF).
+  final EdgeInsets bottomInset;
   final VoidCallback onEdit;
 
   @override
@@ -181,8 +202,17 @@ class _BudgetDetailList extends StatelessWidget {
         AppSpacing.sm,
         AppSpacing.md,
         AppSpacing.xxl,
-      ),
+      ).add(bottomInset),
       children: [
+        // 018 FR-009: one banner naming every currency the month needs,
+        // with the way to fix it; the blocked rows mark themselves.
+        if (summary.isBlocked) ...[
+          RateNeededBanner(
+            missingRatesFor: summary.missingRatesFor,
+            onSetRate: () => openExchangeRateSettings(context),
+          ),
+          const SizedBox(height: AppSpacing.md),
+        ],
         BudgetOverallSummaryCard(
           summary: summary,
           expectedIncome: detail.budget!.expectedIncome,
@@ -295,15 +325,13 @@ class _EmptyBudgetState extends StatelessWidget {
 /// US4's copy-forward offer: resolves the most recent earlier budget and,
 /// when there is one, offers to copy it into [month]. Renders nothing when
 /// there is no source (US4 scenario 3) — "create" remains the only path.
+///
+/// 021: a successful copy needs no follow-up read — the new budget reaches
+/// the page through its live subscription.
 class _CopyForwardAction extends StatelessWidget {
-  const _CopyForwardAction({
-    required this.month,
-    required this.onCopied,
-    super.key,
-  });
+  const _CopyForwardAction({required this.month, super.key});
 
   final String month;
-  final Future<void> Function() onCopied;
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +352,6 @@ class _CopyForwardAction extends StatelessWidget {
                 ),
               ),
             );
-            unawaited(onCopied());
           } else if (state.status == CopyBudgetStatus.copyFailure) {
             messenger.showSnackBar(
               SnackBar(
@@ -335,10 +362,6 @@ class _CopyForwardAction extends StatelessWidget {
                 ),
               ),
             );
-            // The month may have gained a budget elsewhere; show it.
-            if (state.failure is BudgetAlreadyExistsForMonthFailure) {
-              unawaited(onCopied());
-            }
           }
         },
         builder: (context, state) {

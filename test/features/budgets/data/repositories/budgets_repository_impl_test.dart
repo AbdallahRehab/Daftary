@@ -280,7 +280,7 @@ void main() {
       final budget = await h.createBudget('2026-03');
       await h.allocate(budget.id, groceries, 1000);
 
-      Future<(int, int)> read() async {
+      Future<(int?, int?)> read() async {
         final summary = (await h.repository.getBudgetForMonth(
           '2026-03',
         )).toNullable()!.summary!;

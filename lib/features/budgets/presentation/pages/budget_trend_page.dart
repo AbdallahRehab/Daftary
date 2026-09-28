@@ -3,10 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../finance/presentation/widgets/category_display_name.dart';
+import '../../../transactions/presentation/widgets/balance_amount_text.dart';
 import '../cubit/budget_trend_cubit.dart';
 import '../cubit/budget_trend_state.dart';
 import '../widgets/budget_trend_chart.dart';
@@ -17,6 +22,13 @@ import '../widgets/budget_trend_chart.dart';
 /// With fewer than two budgeted months in the window it shows the
 /// "not enough history yet" state instead of a chart — a single bar group
 /// would read as a trend when it is not one.
+///
+/// 021: live — budgets, expenses, categories and rates changed anywhere
+/// (or by sync) redraw the chart with no reload (FR-031).
+///
+/// 018 FR-009: a month whose figure needs a missing exchange rate is shown
+/// as a gap in the chart, marked under its label, and a `RateNeededBanner`
+/// above the chart names every currency the window needs.
 class BudgetTrendPage extends StatelessWidget {
   const BudgetTrendPage({this.endMonth, super.key});
 
@@ -27,7 +39,7 @@ class BudgetTrendPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<BudgetTrendCubit>()..load(endMonth: endMonth),
+      create: (_) => getIt<BudgetTrendCubit>()..subscribe(endMonth: endMonth),
       child: const _BudgetTrendView(),
     );
   }
@@ -39,15 +51,24 @@ class _BudgetTrendView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.budgetTrendTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.budgetTrendTitle)),
       body: BlocBuilder<BudgetTrendCubit, BudgetTrendState>(
         builder: (context, state) {
           return ListView(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding:
+                const EdgeInsets.all(AppSpacing.md) +
+                AppGlassInsets.of(context),
             children: [
               if (state.categories.isNotEmpty) ...[
                 _CategorySelector(state: state),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              if (state.missingRatesFor.isNotEmpty) ...[
+                RateNeededBanner(
+                  missingRatesFor: state.missingRatesFor,
+                  onSetRate: () => openExchangeRateSettings(context),
+                ),
                 const SizedBox(height: AppSpacing.md),
               ],
               _Body(state: state),
@@ -114,8 +135,7 @@ class _Body extends StatelessWidget {
         title: l10n.commonError,
         message: state.failure?.message ?? l10n.commonError,
         actionLabel: l10n.commonRetry,
-        onAction: () =>
-            context.read<BudgetTrendCubit>().load(endMonth: state.endMonth),
+        onAction: context.read<BudgetTrendCubit>().resubscribe,
       );
     }
 

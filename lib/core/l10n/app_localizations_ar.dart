@@ -2451,6 +2451,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String get budgetUnbudgetedTotalLabel => 'إجمالي خارج الميزانية';
 
   @override
+  String get budgetRateNeededBadge => 'يلزم سعر صرف';
+
+  @override
+  String budgetPlannedAmount(String amount) {
+    return 'المخطط $amount';
+  }
+
+  @override
+  String budgetLineNeedsRate(String currencies) {
+    return 'يلزم سعر صرف لـ $currencies لمعرفة الإنفاق';
+  }
+
+  @override
+  String budgetOverallNeedsRate(String currencies) {
+    return 'يلزم سعر صرف لـ $currencies لمعرفة المصروف والمتبقي';
+  }
+
+  @override
   String get homeTitle => 'الرئيسية';
 
   @override

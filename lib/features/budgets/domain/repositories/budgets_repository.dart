@@ -94,7 +94,17 @@ abstract class BudgetsRepository {
   ///
   /// Returns `BudgetMonthDetail.empty` (not a Failure) when [month] has no
   /// budget, so the caller can render the FR-018 empty state.
+  ///
+  /// 018 FR-009: spend that needs a missing exchange rate is never a
+  /// failure — it blocks only the lines, items and totals that depend on it
+  /// (see `BudgetSummary`); planned amounts always come back.
   Future<Either<Failure, BudgetMonthDetail>> getBudgetForMonth(String month);
+
+  /// 021: the live [getBudgetForMonth] (FR-031) — emits now, then again
+  /// whenever the budget, its allocations, the month's expense entries,
+  /// categories, exchange rates or the primary currency change (locally or
+  /// through sync). Equal re-reads are not re-emitted.
+  Stream<Either<Failure, BudgetMonthDetail>> watchBudgetForMonth(String month);
 
   /// The most recent month strictly before [month] that has an active
   /// budget, or `null` when there is none — the copy-forward source the
@@ -107,7 +117,19 @@ abstract class BudgetsRepository {
   /// Months with no budget are included as zero-planned points with
   /// `hasBudget: false`; the caller applies the "at least 2 budgeted
   /// months" check via `BudgetTrendHistory.hasEnoughHistory`.
+  ///
+  /// 018 FR-009: a figure that needs a missing exchange rate comes back as
+  /// `null` on its own point (see `BudgetTrendPoint`) — the trend as a
+  /// whole never fails for it.
   Future<Either<Failure, List<BudgetTrendPoint>>> getBudgetTrend({
+    String? categoryId,
+    int monthsBack = 6,
+    String? endMonth,
+  });
+
+  /// 021: the live [getBudgetTrend] (FR-031), re-read on the same changes
+  /// as [watchBudgetForMonth].
+  Stream<Either<Failure, List<BudgetTrendPoint>>> watchBudgetTrend({
     String? categoryId,
     int monthsBack = 6,
     String? endMonth,

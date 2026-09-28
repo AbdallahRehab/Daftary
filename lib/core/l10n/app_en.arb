@@ -1515,6 +1515,37 @@
   "budgetUnbudgetedTitle": "Unbudgeted spending",
   "budgetUnbudgetedMessage": "Spent this month in categories that aren't in your budget.",
   "budgetUnbudgetedTotalLabel": "Total unbudgeted",
+  "budgetRateNeededBadge": "Rate needed",
+  "@budgetRateNeededBadge": {
+    "description": "018: pill shown on a budget row, the overall card or a trend month whose spent figure needs an exchange rate that has not been set."
+  },
+  "budgetPlannedAmount": "{amount} planned",
+  "@budgetPlannedAmount": {
+    "description": "018: a blocked budget row shows only its planned amount.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetLineNeedsRate": "Spending needs an exchange rate for {currencies}",
+  "@budgetLineNeedsRate": {
+    "description": "018: replaces 'left'/'over' on a budget row whose spending is in a currency without a rate.",
+    "placeholders": {
+      "currencies": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetOverallNeedsRate": "Spent and remaining need an exchange rate for {currencies}",
+  "@budgetOverallNeedsRate": {
+    "description": "018: replaces the overall percentage when any budgeted category's spending needs a missing rate.",
+    "placeholders": {
+      "currencies": {
+        "type": "String"
+      }
+    }
+  },
   "homeTitle": "Home",
   "homeFinancialSnapshotTitle": "Financial snapshot",
   "homeFinanceThisMonthTitle": "This month",

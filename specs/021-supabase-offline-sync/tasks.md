@@ -946,8 +946,8 @@ Each task is followed by indented lines:
     - Quickstart scenarios 1–10 pass on a device or simulator.
   - Validate: results are recorded.
 
-- [ ] T089 Run the security review
-  - **Status (2026-09-27)**: Done: secret grep is clean (the only hit is a fake token in sync_log_scrub_test); only config/supabase.example.json is tracked; `supabase db lint` and the local advisors are clean; RLS review done: no delete policy or delete grant, append-only tables have no update grant, all functions are SECURITY INVOKER, and anon is revoked. Found and fixed: the revision counter could be lowered (b45189c). Still to do: the remote-project Security Advisor (after T050) and a `/security-review` run.
+- [X] T089 Run the security review
+  - **Status (2026-09-28)**: Done. The remote advisors show only the intended warnings (lint 0012 for anonymous users, and `next_revision` being SECURITY DEFINER and executable by authenticated). A code-level security review of the branch found no CRITICAL issues. Its findings were fixed and deployed: live auth now uses 10-minute codes and secure password change, with confirmations already on (c00a738); size limits, a definer-only revision counter and device-only keychain storage (9922fb3, migration 021e pushed). Deferred: CAPTCHA, which needs a client widget package.
   - Deps: T086
   - Done when:
     - `git grep -nE "service_role|sb_secret_|eyJhbGci"` finds nothing.

@@ -118,6 +118,10 @@ class _AttachmentThumbnail extends StatelessWidget {
     if (confirmed) onRemove!();
   }
 
+  /// Deliberately a plain black [Scaffold] and [AppBar], not the glass
+  /// `AppScaffold` (020): an immersive photo viewer frames the photo on
+  /// black in both themes, so there is no app content for a glass bar to
+  /// float over, and a tinted bar would only cover part of the photo.
   void _openFullScreen(BuildContext context, File file) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(

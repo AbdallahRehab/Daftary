@@ -5,16 +5,17 @@ import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion_attachment.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion_detail.dart';
+import 'package:daftary/features/occasions/domain/entities/occasion_failures.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion_participant_row.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion_summary.dart';
 import 'package:daftary/features/occasions/domain/entities/occasion_type.dart';
 import 'package:daftary/features/occasions/domain/usecases/add_occasion_attachment.dart';
 import 'package:daftary/features/occasions/domain/usecases/archive_occasion.dart';
 import 'package:daftary/features/occasions/domain/usecases/delete_occasion.dart';
-import 'package:daftary/features/occasions/domain/usecases/get_occasion_detail.dart';
 import 'package:daftary/features/occasions/domain/usecases/remove_occasion_attachment.dart';
 import 'package:daftary/features/occasions/domain/usecases/remove_participant_contribution.dart';
 import 'package:daftary/features/occasions/domain/usecases/restore_occasion.dart';
+import 'package:daftary/features/occasions/domain/usecases/watch_occasion_detail.dart';
 import 'package:daftary/features/occasions/presentation/cubit/occasion_detail_cubit.dart';
 import 'package:daftary/features/occasions/presentation/cubit/occasion_detail_state.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
@@ -23,7 +24,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetOccasionDetail extends Mock implements GetOccasionDetail {}
+import '../../../../helpers/watch_stubs.dart';
+import '../../helpers/occasions_watch_stubs.dart';
 
 class MockRemoveParticipantContribution extends Mock
     implements RemoveParticipantContribution {}
@@ -46,7 +48,8 @@ class MockAttachmentPickerService extends Mock
 /// change (FR-007), and an attachment flow whose failure modes never take
 /// the occasion down with them (FR-017 Edge Cases).
 void main() {
-  late MockGetOccasionDetail getOccasionDetail;
+  late MockOccasionsRepository repository;
+  late FakeTableChanges changes;
   late MockRemoveParticipantContribution removeParticipant;
   late MockAddOccasionAttachment addAttachment;
   late MockRemoveOccasionAttachment removeAttachment;
@@ -103,7 +106,9 @@ void main() {
   final oneParticipant = detailWith([row('t2', 'Mohamed', 100000)]);
 
   setUp(() {
-    getOccasionDetail = MockGetOccasionDetail();
+    repository = MockOccasionsRepository();
+    changes = FakeTableChanges();
+    stubOccasionsWatches(repository, changes);
     removeParticipant = MockRemoveParticipantContribution();
     addAttachment = MockAddOccasionAttachment();
     removeAttachment = MockRemoveOccasionAttachment();
@@ -113,8 +118,10 @@ void main() {
     picker = MockAttachmentPickerService();
   });
 
+  tearDown(() => changes.close());
+
   OccasionDetailCubit build() => OccasionDetailCubit(
-    getOccasionDetail,
+    WatchOccasionDetail(repository),
     removeParticipant,
     addAttachment,
     removeAttachment,
@@ -125,7 +132,9 @@ void main() {
   );
 
   void stubDetail(OccasionDetail detail) {
-    when(() => getOccasionDetail(any())).thenAnswer((_) async => Right(detail));
+    when(
+      () => repository.getOccasionDetail(any()),
+    ).thenAnswer((_) async => Right(detail));
   }
 
   blocTest<OccasionDetailCubit, OccasionDetailState>(
@@ -135,7 +144,7 @@ void main() {
       stubDetail(twoParticipants);
       return build();
     },
-    act: (cubit) => cubit.load(occasionId),
+    act: (cubit) => cubit.subscribe(occasionId),
     verify: (cubit) {
       expect(cubit.state.status, OccasionDetailStatus.success);
       expect(cubit.state.detail!.summary.totalReceived.minorUnits, 300000);
@@ -145,23 +154,26 @@ void main() {
   );
 
   blocTest<OccasionDetailCubit, OccasionDetailState>(
-    'removing a participant re-reads the totals rather than patching the '
-    'list in memory, so they recalculate immediately (FR-007/FR-011)',
+    'removing a participant lets the live read recalculate the totals '
+    'rather than patching the list in memory (FR-007/FR-011, 021 FR-031)',
     build: () {
       var removed = false;
-      when(() => getOccasionDetail(any())).thenAnswer(
+      when(() => repository.getOccasionDetail(any())).thenAnswer(
         (_) async => Right(removed ? oneParticipant : twoParticipants),
       );
       when(() => removeParticipant(any())).thenAnswer((_) async {
+        // The soft delete writes the table; only the notification follows.
         removed = true;
+        changes.notify();
         return const Right(unit);
       });
       return build();
     },
     act: (cubit) async {
-      await cubit.load(occasionId);
+      await cubit.subscribe(occasionId);
       await cubit.removeParticipant('t1');
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
       verify(() => removeParticipant('t1')).called(1);
       expect(cubit.state.detail!.summary.totalReceived.minorUnits, 100000);
@@ -176,7 +188,7 @@ void main() {
       stubDetail(detailWith(const []));
       return build();
     },
-    act: (cubit) => cubit.load(occasionId),
+    act: (cubit) => cubit.subscribe(occasionId),
     verify: (cubit) {
       expect(cubit.state.hasParticipants, isFalse);
       expect(cubit.state.status, OccasionDetailStatus.success);
@@ -196,7 +208,7 @@ void main() {
       'a successful pick is persisted and appears in state',
       build: () {
         var attached = false;
-        when(() => getOccasionDetail(any())).thenAnswer(
+        when(() => repository.getOccasionDetail(any())).thenAnswer(
           (_) async => Right(
             detailWith(
               const [],
@@ -214,14 +226,16 @@ void main() {
           ),
         ).thenAnswer((_) async {
           attached = true;
+          changes.notify();
           return Right(attachment);
         });
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.attachFromGallery();
       },
+      wait: const Duration(milliseconds: 10),
       verify: (cubit) {
         verify(
           () => addAttachment(
@@ -247,7 +261,7 @@ void main() {
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.attachFromCamera();
       },
       verify: (cubit) {
@@ -277,7 +291,7 @@ void main() {
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.attachFromGallery();
       },
       verify: (cubit) {
@@ -297,7 +311,7 @@ void main() {
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.attachFromCamera();
         cubit.attachmentFailureShown();
       },
@@ -305,10 +319,10 @@ void main() {
     );
 
     blocTest<OccasionDetailCubit, OccasionDetailState>(
-      'removing an attachment re-reads the occasion',
+      'removing an attachment drops it through the live read',
       build: () {
         var removed = false;
-        when(() => getOccasionDetail(any())).thenAnswer(
+        when(() => repository.getOccasionDetail(any())).thenAnswer(
           (_) async => Right(
             detailWith(
               const [],
@@ -318,22 +332,24 @@ void main() {
         );
         when(() => removeAttachment(any())).thenAnswer((_) async {
           removed = true;
+          changes.notify();
           return const Right(unit);
         });
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.removeAttachment('a1');
       },
+      wait: const Duration(milliseconds: 10),
       verify: (cubit) => expect(cubit.state.detail!.attachments, isEmpty),
     );
   });
 
   group('occasion-level actions', () {
     blocTest<OccasionDetailCubit, OccasionDetailState>(
-      'archiving reloads rather than popping — the occasion is still there '
-      'to look at, just off the default list (FR-014)',
+      'archiving keeps the page open rather than popping — the occasion is '
+      'still there to look at, just off the default list (FR-014)',
       build: () {
         stubDetail(twoParticipants);
         when(
@@ -342,7 +358,7 @@ void main() {
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.archive();
       },
       verify: (cubit) {
@@ -353,16 +369,24 @@ void main() {
 
     blocTest<OccasionDetailCubit, OccasionDetailState>(
       'deleting marks the occasion gone so the page pops instead of '
-      'reloading a tombstone (FR-013)',
+      're-reading a tombstone (FR-013)',
       build: () {
-        stubDetail(twoParticipants);
-        when(
-          () => deleteOccasion(any()),
-        ).thenAnswer((_) async => const Right(unit));
+        var deleted = false;
+        when(() => repository.getOccasionDetail(any())).thenAnswer(
+          (_) async => deleted
+              ? const Left(OccasionNotFoundFailure('Occasion not found'))
+              : Right(twoParticipants),
+        );
+        when(() => deleteOccasion(any())).thenAnswer((_) async {
+          deleted = true;
+          changes.notify();
+          return const Right(unit);
+        });
         return build();
       },
+      wait: const Duration(milliseconds: 10),
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         // The count the confirmation names comes from the already-loaded
         // summary, not a second read that could disagree with it.
         expect(cubit.state.participantCount, 2);
@@ -371,6 +395,8 @@ void main() {
       verify: (cubit) {
         verify(() => deleteOccasion(occasionId)).called(1);
         expect(cubit.state.isDeleted, isTrue);
+        // The tombstone is never re-read into an error.
+        expect(cubit.state.failure, isNull);
       },
     );
 
@@ -384,7 +410,7 @@ void main() {
         return build();
       },
       act: (cubit) async {
-        await cubit.load(occasionId);
+        await cubit.subscribe(occasionId);
         await cubit.delete();
       },
       verify: (cubit) {
@@ -392,5 +418,85 @@ void main() {
         expect(cubit.state.failure, isA<CacheFailure>());
       },
     );
+  });
+
+  group('live (021 FR-031)', () {
+    test('a contribution added, edited or removed elsewhere — on its form, '
+        'the person\'s own profile, or through sync — recalculates the open '
+        'page with no reload', () async {
+      var current = oneParticipant;
+      when(
+        () => repository.getOccasionDetail(occasionId),
+      ).thenAnswer((_) async => Right(current));
+      final cubit = build();
+      addTearDown(cubit.close);
+      await cubit.subscribe(occasionId);
+      expect(cubit.state.detail!.summary.totalReceived.minorUnits, 100000);
+
+      current = twoParticipants;
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.detail!.summary.totalReceived.minorUnits, 300000);
+      expect(cubit.state.participantCount, 2);
+
+      current = detailWith([row('t2', 'Mohamed', 150000)]);
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.detail!.summary.totalReceived.minorUnits, 150000);
+      expect(cubit.state.participantCount, 1);
+    });
+
+    test('an occasion deleted elsewhere after it was shown is marked gone, '
+        'not reported as an error', () async {
+      Either<Failure, OccasionDetail> current = Right(twoParticipants);
+      when(
+        () => repository.getOccasionDetail(occasionId),
+      ).thenAnswer((_) async => current);
+      final cubit = build();
+      addTearDown(cubit.close);
+      await cubit.subscribe(occasionId);
+
+      current = const Left(OccasionNotFoundFailure('Occasion not found'));
+      changes.notify();
+      await pumpEventQueue();
+      expect(cubit.state.isDeleted, isTrue);
+      expect(cubit.state.failure, isNull);
+      expect(cubit.state.detail, twoParticipants);
+
+      // Nothing is re-read once the occasion is gone.
+      clearInteractions(repository);
+      changes.notify();
+      await pumpEventQueue();
+      verifyNever(() => repository.getOccasionDetail(any()));
+    });
+
+    blocTest<OccasionDetailCubit, OccasionDetailState>(
+      'an occasion that was never shown still reports "not found" as a '
+      'failure',
+      build: () {
+        when(() => repository.getOccasionDetail(any())).thenAnswer(
+          (_) async =>
+              const Left(OccasionNotFoundFailure('Occasion not found')),
+        );
+        return build();
+      },
+      act: (cubit) => cubit.subscribe(occasionId),
+      verify: (cubit) {
+        expect(cubit.state.status, OccasionDetailStatus.failure);
+        expect(cubit.state.isDeleted, isFalse);
+      },
+    );
+
+    test('close cancels the subscription', () async {
+      stubDetail(twoParticipants);
+      final cubit = build();
+      await cubit.subscribe(occasionId);
+      await cubit.close();
+
+      clearInteractions(repository);
+      changes.notify();
+      await pumpEventQueue();
+      verifyNever(() => repository.getOccasionDetail(any()));
+    });
   });
 }

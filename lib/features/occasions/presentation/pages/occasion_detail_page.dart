@@ -6,6 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_fab.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_modal_sheet.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/di/injection.dart';
@@ -21,6 +26,10 @@ import '../widgets/settlement_status_badge.dart';
 
 /// One occasion in full: its totals and settlement status (FR-007/FR-008),
 /// its participant list (FR-016), and its photos (FR-017).
+///
+/// 021: live — a participant added or edited on its form, a contribution
+/// changed from the person's own profile, a rate change, or any of these
+/// applied by sync reaches the open page with no reload (FR-031).
 class OccasionDetailPage extends StatelessWidget {
   const OccasionDetailPage({required this.occasionId, super.key});
 
@@ -29,7 +38,7 @@ class OccasionDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<OccasionDetailCubit>()..load(occasionId),
+      create: (_) => getIt<OccasionDetailCubit>()..subscribe(occasionId),
       child: const _OccasionDetailView(),
     );
   }
@@ -45,7 +54,10 @@ class _OccasionDetailView extends StatelessWidget {
     return BlocConsumer<OccasionDetailCubit, OccasionDetailState>(
       listener: (context, state) {
         if (state.isDeleted) {
-          context.pop(true);
+          // Only while this page is on top: when the occasion was deleted
+          // from its edit screen, that screen pops first and the edit
+          // action below then closes this page too.
+          if (ModalRoute.of(context)?.isCurrent ?? true) context.pop(true);
           return;
         }
         final attachmentFailure = state.attachmentFailure;
@@ -65,13 +77,13 @@ class _OccasionDetailView extends StatelessWidget {
         final detail = state.detail;
 
         if (state.isLoading && detail == null) {
-          return const Scaffold(
+          return const AppScaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
         if (detail == null) {
-          return Scaffold(
-            appBar: AppBar(),
+          return AppScaffold(
+            appBar: const AppTopBar(),
             body: AppEmptyView(
               icon: Icons.error_outline,
               title: l10n.occasionsEmptyTitle,
@@ -81,8 +93,8 @@ class _OccasionDetailView extends StatelessWidget {
         }
 
         final occasion = detail.occasion;
-        return Scaffold(
-          appBar: AppBar(
+        return AppScaffold(
+          appBar: AppTopBar(
             title: Text(occasion.name),
             actions: [
               IconButton(
@@ -102,94 +114,98 @@ class _OccasionDetailView extends StatelessWidget {
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {
-              await context.push('/occasions/${occasion.id}/participants/new');
-              if (context.mounted) unawaited(cubit.reload());
-            },
+          floatingActionButton: AppFab.extended(
+            onPressed: () =>
+                context.push('/occasions/${occasion.id}/participants/new'),
             icon: const Icon(Icons.person_add_alt),
             label: Text(l10n.occasionAddParticipantAction),
           ),
-          body: RefreshIndicator(
-            onRefresh: cubit.reload,
-            child: ListView(
-              padding: const EdgeInsets.only(bottom: AppSpacing.xxl * 2),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(AppSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          OccasionTypeChip(type: occasion.type),
-                          // A blocked summary (018) has no known settlement.
-                          if (!detail.summary.isBlocked) ...[
-                            const SizedBox(width: AppSpacing.sm),
-                            Flexible(
-                              child: SettlementStatusBadge(
-                                status: detail.summary.settlementStatus,
-                                outstanding: detail.summary.outstanding,
-                                dense: true,
+          // Builder: the glass insets are read below the scaffold, where
+          // they include the bars the body extends behind.
+          body: Builder(
+            builder: (context) => RefreshIndicator(
+              onRefresh: cubit.resubscribe,
+              child: ListView(
+                padding:
+                    const EdgeInsets.only(bottom: AppSpacing.xxl * 2) +
+                    AppGlassInsets.of(context),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            OccasionTypeChip(type: occasion.type),
+                            // A blocked summary (018) has no known settlement.
+                            if (!detail.summary.isBlocked) ...[
+                              const SizedBox(width: AppSpacing.sm),
+                              Flexible(
+                                child: SettlementStatusBadge(
+                                  status: detail.summary.settlementStatus,
+                                  outstanding: detail.summary.outstanding,
+                                  dense: true,
+                                ),
                               ),
-                            ),
+                            ],
                           ],
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      OccasionTotalsCard(summary: detail.summary),
-                      if (occasion.notes != null &&
-                          occasion.notes!.trim().isNotEmpty) ...[
+                        ),
                         const SizedBox(height: AppSpacing.md),
-                        Text(occasion.notes!, style: AppTypography.body),
+                        OccasionTotalsCard(summary: detail.summary),
+                        if (occasion.notes != null &&
+                            occasion.notes!.trim().isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          Text(occasion.notes!, style: AppTypography.body),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-                _SectionHeader(title: l10n.occasionParticipantsHeader),
-                if (!state.hasParticipants)
-                  AppEmptyView(
-                    icon: Icons.group_outlined,
-                    title: l10n.occasionParticipantsEmptyTitle,
-                    message: l10n.occasionParticipantsEmptyMessage,
-                  )
-                else
-                  for (final row in detail.participants)
-                    ParticipantRow(
-                      row: row,
-                      onTap: () async {
-                        await context.push(
+                  _SectionHeader(title: l10n.occasionParticipantsHeader),
+                  if (!state.hasParticipants)
+                    AppEmptyView(
+                      icon: Icons.group_outlined,
+                      title: l10n.occasionParticipantsEmptyTitle,
+                      message: l10n.occasionParticipantsEmptyMessage,
+                    )
+                  else
+                    for (final row in detail.participants)
+                      ParticipantRow(
+                        row: row,
+                        onTap: () => context.push(
                           '/occasions/${occasion.id}/participants/'
                           '${row.transactionId}/edit',
-                        );
-                        if (context.mounted) unawaited(cubit.reload());
-                      },
-                      onRemove: () =>
-                          _removeParticipant(context, l10n, row.transactionId),
+                        ),
+                        onRemove: () => _removeParticipant(
+                          context,
+                          l10n,
+                          row.transactionId,
+                        ),
+                      ),
+                  _SectionHeader(
+                    title: l10n.occasionAttachmentsHeader,
+                    action: TextButton.icon(
+                      onPressed: state.isAttachmentBusy
+                          ? null
+                          : () => _chooseAttachmentSource(context, l10n, cubit),
+                      icon: const Icon(Icons.add_a_photo_outlined),
+                      label: Text(l10n.occasionAttachPhotoAction),
                     ),
-                _SectionHeader(
-                  title: l10n.occasionAttachmentsHeader,
-                  action: TextButton.icon(
-                    onPressed: state.isAttachmentBusy
-                        ? null
-                        : () => _chooseAttachmentSource(context, l10n, cubit),
-                    icon: const Icon(Icons.add_a_photo_outlined),
-                    label: Text(l10n.occasionAttachPhotoAction),
                   ),
-                ),
-                if (detail.attachments.isEmpty)
-                  AppEmptyView(
-                    icon: Icons.photo_library_outlined,
-                    title: l10n.occasionAttachmentsEmptyTitle,
-                    message: l10n.occasionAttachmentsEmptyMessage,
-                  )
-                else
-                  OccasionAttachmentGallery(
-                    attachments: detail.attachments,
-                    onRemove: (attachment) =>
-                        cubit.removeAttachment(attachment.id),
-                  ),
-              ],
+                  if (detail.attachments.isEmpty)
+                    AppEmptyView(
+                      icon: Icons.photo_library_outlined,
+                      title: l10n.occasionAttachmentsEmptyTitle,
+                      message: l10n.occasionAttachmentsEmptyMessage,
+                    )
+                  else
+                    OccasionAttachmentGallery(
+                      attachments: detail.attachments,
+                      onRemove: (attachment) =>
+                          cubit.removeAttachment(attachment.id),
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -218,7 +234,7 @@ class _OccasionDetailView extends StatelessWidget {
     AppLocalizations l10n,
     OccasionDetailCubit cubit,
   ) async {
-    final fromCamera = await showModalBottomSheet<bool>(
+    final fromCamera = await showAppModalSheet<bool>(
       context: context,
       builder: (sheetContext) => SafeArea(
         child: Column(

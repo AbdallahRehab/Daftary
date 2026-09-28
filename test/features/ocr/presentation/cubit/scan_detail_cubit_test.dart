@@ -6,7 +6,7 @@ import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan_detail.dart';
 import 'package:daftary/features/ocr/domain/usecases/delete_scan.dart';
-import 'package:daftary/features/ocr/domain/usecases/get_scan_detail.dart';
+import 'package:daftary/features/ocr/domain/usecases/watch_scan_detail.dart';
 import 'package:daftary/features/ocr/presentation/cubit/scan_detail_cubit.dart';
 import 'package:daftary/features/ocr/presentation/cubit/scan_detail_state.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
@@ -14,13 +14,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetScanDetail extends Mock implements GetScanDetail {}
+import '../../../../helpers/watch_stubs.dart';
+import '../../helpers/ocr_watch_stubs.dart';
 
 class MockDeleteScan extends Mock implements DeleteScan {}
 
 /// T067 — one past scan in full (User Story 5 AC2, FR-018, FR-023).
 void main() {
-  late MockGetScanDetail getScanDetail;
+  late MockOcrRepository repository;
+  late FakeTableChanges changes;
   late MockDeleteScan deleteScan;
 
   final createdAt = DateTime(2026, 9, 20);
@@ -73,18 +75,27 @@ void main() {
   );
 
   setUp(() {
-    getScanDetail = MockGetScanDetail();
+    repository = MockOcrRepository();
+    changes = FakeTableChanges();
+    stubOcrWatches(repository, changes);
     deleteScan = MockDeleteScan();
   });
+
+  tearDown(() => changes.close());
+
+  ScanDetailCubit build() =>
+      ScanDetailCubit(WatchScanDetail(repository), deleteScan);
 
   blocTest<ScanDetailCubit, ScanDetailState>(
     'loads the scan with its entries and the transactions it produced '
     '(FR-018)',
     build: () {
-      when(() => getScanDetail('s1')).thenAnswer((_) async => Right(detail));
-      return ScanDetailCubit(getScanDetail, deleteScan);
+      when(
+        () => repository.getScanDetail('s1'),
+      ).thenAnswer((_) async => Right(detail));
+      return build();
     },
-    act: (cubit) => cubit.load('s1'),
+    act: (cubit) => cubit.subscribe('s1'),
     verify: (cubit) {
       expect(cubit.state.status, ScanDetailStatus.success);
       expect(cubit.state.detail?.entries.map((e) => e.id), ['e1', 'e2']);
@@ -98,7 +109,7 @@ void main() {
     'a scan that produced nothing still loads, flagged as such rather than '
     'hidden (User Story 5, Acceptance Scenario 3)',
     build: () {
-      when(() => getScanDetail('s1')).thenAnswer(
+      when(() => repository.getScanDetail('s1')).thenAnswer(
         (_) async => Right(
           OcrScanDetail(
             scan: scan,
@@ -107,9 +118,9 @@ void main() {
           ),
         ),
       );
-      return ScanDetailCubit(getScanDetail, deleteScan);
+      return build();
     },
-    act: (cubit) => cubit.load('s1'),
+    act: (cubit) => cubit.subscribe('s1'),
     verify: (cubit) {
       expect(cubit.state.status, ScanDetailStatus.success);
       expect(cubit.state.producedNoTransactions, isTrue);
@@ -120,11 +131,11 @@ void main() {
     'a read failure surfaces as a failure state carrying the Failure',
     build: () {
       when(
-        () => getScanDetail('s1'),
+        () => repository.getScanDetail('s1'),
       ).thenAnswer((_) async => const Left(NotFoundFailure('no such scan')));
-      return ScanDetailCubit(getScanDetail, deleteScan);
+      return build();
     },
-    act: (cubit) => cubit.load('s1'),
+    act: (cubit) => cubit.subscribe('s1'),
     verify: (cubit) {
       expect(cubit.state.hasFailed, isTrue);
       expect(cubit.state.failure, const NotFoundFailure('no such scan'));
@@ -136,15 +147,27 @@ void main() {
     'delete removes the loaded scan and leaves its transactions in state — '
     'the scan goes, the money does not (FR-023)',
     build: () {
-      when(() => getScanDetail('s1')).thenAnswer((_) async => Right(detail));
-      when(() => deleteScan('s1')).thenAnswer((_) async => const Right(unit));
-      return ScanDetailCubit(getScanDetail, deleteScan);
+      var deleted = false;
+      when(() => repository.getScanDetail('s1')).thenAnswer(
+        (_) async =>
+            deleted ? const Left(NotFoundFailure('gone')) : Right(detail),
+      );
+      when(() => deleteScan('s1')).thenAnswer((_) async {
+        // The deleted scan's table write must not be re-read into a
+        // "not found" failure on the page that is about to pop.
+        deleted = true;
+        changes.notify();
+        return const Right(unit);
+      });
+      return build();
     },
     act: (cubit) async {
-      await cubit.load('s1');
+      await cubit.subscribe('s1');
       await cubit.delete();
     },
+    wait: const Duration(milliseconds: 10),
     verify: (cubit) {
+      expect(cubit.state.hasFailed, isFalse);
       verify(() => deleteScan('s1')).called(1);
       expect(cubit.state.isDeleted, isTrue);
       expect(cubit.state.detail?.transactions.single.id, 't1');
@@ -152,9 +175,9 @@ void main() {
   );
 
   blocTest<ScanDetailCubit, ScanDetailState>(
-    'delete before any load is a no-op — it can never target a scan other '
+    'delete before any subscribe is a no-op — it can never target a scan other '
     'than the one on screen',
-    build: () => ScanDetailCubit(getScanDetail, deleteScan),
+    build: build,
     act: (cubit) => cubit.delete(),
     expect: () => <ScanDetailState>[],
     verify: (_) => verifyNever(() => deleteScan(any())),
@@ -163,14 +186,16 @@ void main() {
   blocTest<ScanDetailCubit, ScanDetailState>(
     'a failed delete reports the failure and keeps the scan on screen',
     build: () {
-      when(() => getScanDetail('s1')).thenAnswer((_) async => Right(detail));
+      when(
+        () => repository.getScanDetail('s1'),
+      ).thenAnswer((_) async => Right(detail));
       when(
         () => deleteScan('s1'),
       ).thenAnswer((_) async => const Left(CacheFailure('delete failed')));
-      return ScanDetailCubit(getScanDetail, deleteScan);
+      return build();
     },
     act: (cubit) async {
-      await cubit.load('s1');
+      await cubit.subscribe('s1');
       await cubit.delete();
     },
     verify: (cubit) {
@@ -180,4 +205,25 @@ void main() {
       expect(cubit.state.detail, detail);
     },
   );
+
+  test('a produced transaction deleted from its person\'s screen leaves the '
+      'open scan detail with no reload (021 FR-031)', () async {
+    var current = detail;
+    when(
+      () => repository.getScanDetail('s1'),
+    ).thenAnswer((_) async => Right(current));
+    final cubit = build();
+    addTearDown(cubit.close);
+    await cubit.subscribe('s1');
+    expect(cubit.state.detail?.transactions.map((t) => t.id), ['t1']);
+
+    current = OcrScanDetail(
+      scan: scan,
+      entries: detail.entries,
+      transactions: const [],
+    );
+    changes.notify();
+    await pumpEventQueue();
+    expect(cubit.state.producedNoTransactions, isTrue);
+  });
 }

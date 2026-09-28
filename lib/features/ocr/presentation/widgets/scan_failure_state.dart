@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -54,7 +55,8 @@ class ScanFailureState extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding:
+            const EdgeInsets.all(AppSpacing.xl) + AppGlassInsets.of(context),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

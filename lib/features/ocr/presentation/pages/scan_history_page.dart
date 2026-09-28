@@ -1,11 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../cubit/scan_history_cubit.dart';
@@ -17,13 +17,16 @@ import '../widgets/scan_history_tile.dart';
 /// A scan that produced nothing is still listed rather than hidden — the
 /// user asked for it, and "this one came to nothing" is exactly the kind of
 /// thing a history is for (User Story 5, Acceptance Scenario 3).
+///
+/// 021: live — a scan deleted from its detail screen, or finished in the
+/// scan flow, shows here with no reload (FR-031).
 class ScanHistoryPage extends StatelessWidget {
   const ScanHistoryPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ScanHistoryCubit>()..load(),
+      create: (_) => getIt<ScanHistoryCubit>()..subscribe(),
       child: const _ScanHistoryView(),
     );
   }
@@ -37,8 +40,8 @@ class _ScanHistoryView extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final cubit = context.read<ScanHistoryCubit>();
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.ocrHistoryTitle)),
+    return AppScaffold(
+      appBar: AppTopBar(title: Text(l10n.ocrHistoryTitle)),
       body: BlocBuilder<ScanHistoryCubit, ScanHistoryState>(
         builder: (context, state) {
           if (state.isLoading && state.scans.isEmpty) {
@@ -51,7 +54,7 @@ class _ScanHistoryView extends StatelessWidget {
               title: l10n.ocrHistoryErrorTitle,
               message: state.failure?.message ?? l10n.ocrHistoryErrorMessage,
               actionLabel: l10n.commonRetry,
-              onAction: cubit.load,
+              onAction: cubit.resubscribe,
             );
           }
 
@@ -64,23 +67,21 @@ class _ScanHistoryView extends StatelessWidget {
           }
 
           return RefreshIndicator(
-            onRefresh: cubit.load,
+            onRefresh: cubit.resubscribe,
             // `builder`, not a Column: a long-running user can accumulate
             // a lot of scans, and only the visible handful should decode
-            // their thumbnail.
+            // their thumbnail. No explicit padding: the list takes the
+            // scaffold's insets itself, which under glass keeps the first
+            // and last rows clear of the bars.
             child: ListView.builder(
               itemCount: state.scans.length,
               itemBuilder: (context, index) {
                 final scan = state.scans[index];
                 return ScanHistoryTile(
                   scan: scan,
-                  onTap: () async {
-                    await context.push('/ocr/history/${scan.id}');
-                    // The detail screen can delete the scan it was
-                    // showing, so the list is re-read on return rather
-                    // than left displaying a row that no longer exists.
-                    if (context.mounted) unawaited(cubit.load());
-                  },
+                  // The detail screen can delete the scan it was showing;
+                  // the live list drops the row without a re-read here.
+                  onTap: () => context.push('/ocr/history/${scan.id}'),
                   onDelete: () => _confirmDelete(context, cubit, scan.id),
                 );
               },

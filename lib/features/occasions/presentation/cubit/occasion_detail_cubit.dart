@@ -1,29 +1,35 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/media/attachment_picker_service.dart';
+import '../../domain/entities/occasion_detail.dart';
+import '../../domain/entities/occasion_failures.dart';
 import '../../domain/usecases/add_occasion_attachment.dart';
 import '../../domain/usecases/archive_occasion.dart';
 import '../../domain/usecases/delete_occasion.dart';
-import '../../domain/usecases/get_occasion_detail.dart';
 import '../../domain/usecases/remove_occasion_attachment.dart';
 import '../../domain/usecases/remove_participant_contribution.dart';
 import '../../domain/usecases/restore_occasion.dart';
+import '../../domain/usecases/watch_occasion_detail.dart';
 import 'occasion_detail_state.dart';
 
 /// Drives the occasion detail screen: totals, settlement, participant rows,
 /// attachments, and the occasion-level archive/restore/delete actions.
 ///
-/// Every mutation ends in a [load], rather than patching the in-memory list,
-/// because the totals are a SQL aggregate over the same rows — recomputing
-/// them from the source is what makes FR-007's "recalculated immediately"
-/// true rather than approximately true.
+/// 021: the detail is a live [WatchOccasionDetail] subscription, cancelled
+/// in [close]. No mutation patches the in-memory detail or re-reads it by
+/// hand: the totals are an aggregate over the same rows, so every change —
+/// made here, from a person's own profile, or applied by sync — reaches the
+/// page through the one re-read, which is what makes FR-007's "recalculated
+/// immediately" true rather than approximately true (FR-031).
 @injectable
 class OccasionDetailCubit extends Cubit<OccasionDetailState> {
   OccasionDetailCubit(
-    this._getOccasionDetail,
+    this._watchOccasionDetail,
     this._removeParticipantContribution,
     this._addOccasionAttachment,
     this._removeOccasionAttachment,
@@ -33,7 +39,7 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
     this._pickerService,
   ) : super(const OccasionDetailState(occasionId: ''));
 
-  final GetOccasionDetail _getOccasionDetail;
+  final WatchOccasionDetail _watchOccasionDetail;
   final RemoveParticipantContribution _removeParticipantContribution;
   final AddOccasionAttachment _addOccasionAttachment;
   final RemoveOccasionAttachment _removeOccasionAttachment;
@@ -42,26 +48,49 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
   final DeleteOccasion _deleteOccasion;
   final AttachmentPickerService _pickerService;
 
-  /// Loads [occasionId]. Call once when the page opens; later refreshes go
-  /// through [reload], which keeps the id already in state.
-  Future<void> load(String occasionId) {
+  StreamSubscription<void>? _subscription;
+  Completer<void>? _firstResult;
+
+  /// Subscribes to [occasionId], replacing any earlier subscription. The
+  /// returned future completes once the first result has been emitted.
+  Future<void> subscribe(String occasionId) {
+    _cancelSubscription();
     emit(
       OccasionDetailState(
         occasionId: occasionId,
         status: OccasionDetailStatus.loading,
       ),
     );
-    return reload();
+
+    final firstResult = _firstResult = Completer<void>();
+    _subscription = _watchOccasionDetail(occasionId).listen(_onDetail);
+    return firstResult.future;
   }
 
-  Future<void> reload() async {
-    final result = await _getOccasionDetail(state.occasionId);
-    if (isClosed) return;
+  /// Retry and pull to refresh: subscribes again, from scratch, to the
+  /// displayed occasion.
+  Future<void> resubscribe() => subscribe(state.occasionId);
 
+  void _onDetail(Either<Failure, OccasionDetail> result) {
+    if (isClosed || state.isDeleted) return;
     result.match(
-      (failure) => emit(
-        state.copyWith(status: OccasionDetailStatus.failure, failure: failure),
-      ),
+      (failure) {
+        // An occasion that was on screen and is now unreadable as "not
+        // found" was deleted — from its edit screen, or on another device
+        // and applied by sync. It is marked gone, exactly like a delete
+        // made here (FR-013), rather than reported as an error.
+        if (failure is OccasionNotFoundFailure && state.detail != null) {
+          _cancelSubscription();
+          emit(state.copyWith(isDeleted: true));
+          return;
+        }
+        emit(
+          state.copyWith(
+            status: OccasionDetailStatus.failure,
+            failure: failure,
+          ),
+        );
+      },
       (detail) => emit(
         state.copyWith(
           status: OccasionDetailStatus.success,
@@ -70,25 +99,21 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
         ),
       ),
     );
+    _completeFirstResult();
   }
 
   /// Removes one participant's contribution after the page has confirmed it
   /// (FR-011). The same row disappears from that person's own history too,
-  /// because it is the same row.
+  /// because it is the same row; the live subscription drops it here and
+  /// recalculates the totals.
   Future<bool> removeParticipant(String transactionId) async {
     final result = await _removeParticipantContribution(transactionId);
     if (isClosed) return false;
 
-    return result.match(
-      (failure) {
-        emit(state.copyWith(failure: failure));
-        return false;
-      },
-      (_) {
-        reload();
-        return true;
-      },
-    );
+    return result.match((failure) {
+      emit(state.copyWith(failure: failure));
+      return false;
+    }, (_) => true);
   }
 
   Future<void> attachFromCamera() => _attach(_pickerService.pickFromCamera);
@@ -136,32 +161,24 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
               attachmentFailure: failure,
             ),
           ),
-          (_) async {
-            await reload();
-            if (!isClosed) {
-              emit(state.copyWith(attachmentStatus: AttachmentStatus.idle));
-            }
-          },
+          // The live subscription brings the new photo in.
+          (_) async =>
+              emit(state.copyWith(attachmentStatus: AttachmentStatus.idle)),
         );
       },
     );
   }
 
-  /// Removes an attachment after the page has confirmed it (FR-017).
+  /// Removes an attachment after the page has confirmed it (FR-017); the
+  /// live subscription drops it from the gallery.
   Future<bool> removeAttachment(String attachmentId) async {
     final result = await _removeOccasionAttachment(attachmentId);
     if (isClosed) return false;
 
-    return result.match(
-      (failure) {
-        emit(state.copyWith(attachmentFailure: failure));
-        return false;
-      },
-      (_) {
-        reload();
-        return true;
-      },
-    );
+    return result.match((failure) {
+      emit(state.copyWith(attachmentFailure: failure));
+      return false;
+    }, (_) => true);
   }
 
   /// Hides the occasion from the default list, leaving its contributions —
@@ -185,6 +202,8 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
         return false;
       },
       (_) {
+        // The tombstone must not be re-read into a "not found" failure.
+        _cancelSubscription();
         emit(state.copyWith(isDeleted: true));
         return true;
       },
@@ -197,21 +216,35 @@ class OccasionDetailCubit extends Cubit<OccasionDetailState> {
     final result = await action();
     if (isClosed) return false;
 
-    return result.match(
-      (failure) {
-        emit(state.copyWith(failure: failure));
-        return false;
-      },
-      (_) {
-        reload();
-        return true;
-      },
-    );
+    return result.match((failure) {
+      emit(state.copyWith(failure: failure));
+      return false;
+    }, (_) => true);
   }
 
   /// Clears a surfaced attachment error once the page has shown it, so it
   /// is explained once rather than on every rebuild.
   void attachmentFailureShown() {
     emit(state.copyWith(clearAttachmentFailure: true));
+  }
+
+  void _completeFirstResult() {
+    final firstResult = _firstResult;
+    if (firstResult != null && !firstResult.isCompleted) {
+      firstResult.complete();
+    }
+  }
+
+  void _cancelSubscription() {
+    _subscription?.cancel();
+    _subscription = null;
+    // A superseded subscription will never deliver; release its waiter.
+    _completeFirstResult();
+  }
+
+  @override
+  Future<void> close() {
+    _cancelSubscription();
+    return super.close();
   }
 }

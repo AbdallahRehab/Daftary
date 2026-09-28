@@ -113,6 +113,17 @@ abstract class OcrRepository {
   /// One scan with its entries and the transactions it produced (FR-018).
   Future<Either<Failure, OcrScanDetail>> getScanDetail(String scanId);
 
+  /// 021: [getScanHistory], re-read whenever scans change — a scan started,
+  /// finished, abandoned or deleted on any screen reaches the history with
+  /// no reload (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, List<OcrScan>>> watchScanHistory();
+
+  /// 021: [getScanDetail], re-read whenever the scan, its entries, or the
+  /// transactions it produced change — a produced transaction edited or
+  /// deleted from its person's screen, or through sync, updates the scan's
+  /// detail with no reload (FR-031). Emits only when the result changes.
+  Stream<Either<Failure, OcrScanDetail>> watchScanDetail(String scanId);
+
   /// Deletes the scan record, its entries, and its source image file
   /// (FR-023). Never deletes a `MoneyTransaction` the scan already
   /// produced — by then those are real financial records of their own

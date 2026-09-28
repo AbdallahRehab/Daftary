@@ -428,6 +428,10 @@ import '../../features/occasions/domain/usecases/remove_participant_contribution
     as _i192;
 import '../../features/occasions/domain/usecases/restore_occasion.dart'
     as _i154;
+import '../../features/occasions/domain/usecases/watch_occasion_detail.dart'
+    as _i294;
+import '../../features/occasions/domain/usecases/watch_occasions_list.dart'
+    as _i276;
 import '../../features/occasions/presentation/cubit/archived_occasions_cubit.dart'
     as _i185;
 import '../../features/occasions/presentation/cubit/occasion_detail_cubit.dart'
@@ -466,6 +470,8 @@ import '../../features/ocr/domain/usecases/set_batch_default_direction.dart'
     as _i1011;
 import '../../features/ocr/domain/usecases/start_scan.dart' as _i856;
 import '../../features/ocr/domain/usecases/tag_batch_to_occasion.dart' as _i237;
+import '../../features/ocr/domain/usecases/watch_scan_detail.dart' as _i138;
+import '../../features/ocr/domain/usecases/watch_scan_history.dart' as _i130;
 import '../../features/ocr/presentation/cubit/image_prep_cubit.dart' as _i427;
 import '../../features/ocr/presentation/cubit/scan_capture_cubit.dart' as _i354;
 import '../../features/ocr/presentation/cubit/scan_detail_cubit.dart' as _i919;
@@ -1499,6 +1505,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i137.FinanceRepository>(),
       ),
     );
+    gh.lazySingleton<_i578.OcrRepository>(
+      () => _i457.OcrRepositoryImpl(
+        gh<_i976.OcrDao>(),
+        gh<_i176.TextRecognitionService>(),
+        gh<_i918.CandidateEntryParser>(),
+        gh<_i957.TransactionsRepository>(),
+        gh<_i72.OccasionsRepository>(),
+        gh<_i646.PeopleRepository>(),
+        gh<_i903.GetPrimaryCurrency>(),
+        gh<_i982.AppDatabase>(),
+      ),
+    );
     gh.factory<_i793.ResolveOnboardingStatus>(
       () => _i793.ResolveOnboardingStatus(
         gh<_i430.OnboardingRepository>(),
@@ -1654,17 +1672,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i956.AppClock>(),
       ),
     );
-    gh.lazySingleton<_i578.OcrRepository>(
-      () => _i457.OcrRepositoryImpl(
-        gh<_i976.OcrDao>(),
-        gh<_i176.TextRecognitionService>(),
-        gh<_i918.CandidateEntryParser>(),
-        gh<_i957.TransactionsRepository>(),
-        gh<_i72.OccasionsRepository>(),
-        gh<_i646.PeopleRepository>(),
-        gh<_i903.GetPrimaryCurrency>(),
-      ),
-    );
     gh.lazySingleton<_i172.NotificationTapRouter>(
       () => _i172.NotificationTapRouter(
         gh<_i209.NotificationScheduler>(),
@@ -1735,6 +1742,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i237.TagBatchToOccasion>(
       () => _i237.TagBatchToOccasion(gh<_i578.OcrRepository>()),
     );
+    gh.factory<_i138.WatchScanDetail>(
+      () => _i138.WatchScanDetail(gh<_i578.OcrRepository>()),
+    );
+    gh.factory<_i130.WatchScanHistory>(
+      () => _i130.WatchScanHistory(gh<_i578.OcrRepository>()),
+    );
     gh.factory<_i1005.EmailLinkCubit>(
       () => _i1005.EmailLinkCubit(
         gh<_i861.RequestEmailCode>(),
@@ -1798,6 +1811,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i154.RestoreOccasion>(
       () => _i154.RestoreOccasion(gh<_i72.OccasionsRepository>()),
     );
+    gh.factory<_i294.WatchOccasionDetail>(
+      () => _i294.WatchOccasionDetail(gh<_i72.OccasionsRepository>()),
+    );
+    gh.factory<_i276.WatchOccasionsList>(
+      () => _i276.WatchOccasionsList(gh<_i72.OccasionsRepository>()),
+    );
     gh.factory<_i621.ScanReviewCubit>(
       () => _i621.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
@@ -1827,16 +1846,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i907.DeletePerson>(),
       ),
     );
-    gh.factory<_i53.OccasionDetailCubit>(
-      () => _i53.OccasionDetailCubit(
-        gh<_i432.GetOccasionDetail>(),
-        gh<_i192.RemoveParticipantContribution>(),
-        gh<_i247.AddOccasionAttachment>(),
-        gh<_i191.RemoveOccasionAttachment>(),
-        gh<_i847.ArchiveOccasion>(),
+    gh.factory<_i185.ArchivedOccasionsCubit>(
+      () => _i185.ArchivedOccasionsCubit(
+        gh<_i276.WatchOccasionsList>(),
         gh<_i154.RestoreOccasion>(),
-        gh<_i1046.DeleteOccasion>(),
-        gh<_i780.AttachmentPickerService>(),
       ),
     );
     gh.factory<_i666.GetOccasionTotalsTool>(
@@ -1888,11 +1901,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i259.RetryFailedSync>(),
       ),
     );
-    gh.factory<_i622.ScanHistoryCubit>(
-      () => _i622.ScanHistoryCubit(
-        gh<_i331.GetScanHistory>(),
-        gh<_i413.DeleteScan>(),
-      ),
+    gh.factory<_i194.OccasionsListCubit>(
+      () => _i194.OccasionsListCubit(gh<_i276.WatchOccasionsList>()),
     );
     gh.factory<_i218.ParticipantFormCubit>(
       () => _i218.ParticipantFormCubit(
@@ -1904,22 +1914,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
-    gh.factory<_i185.ArchivedOccasionsCubit>(
-      () => _i185.ArchivedOccasionsCubit(
-        gh<_i958.GetOccasionsList>(),
-        gh<_i154.RestoreOccasion>(),
+    gh.factory<_i622.ScanHistoryCubit>(
+      () => _i622.ScanHistoryCubit(
+        gh<_i130.WatchScanHistory>(),
+        gh<_i413.DeleteScan>(),
       ),
     );
     gh.factory<_i756.DeleteAccountCubit>(
       () => _i756.DeleteAccountCubit(
         gh<_i431.DeleteAllUserData>(),
         gh<_i807.OnboardingCubit>(),
-      ),
-    );
-    gh.factory<_i919.ScanDetailCubit>(
-      () => _i919.ScanDetailCubit(
-        gh<_i267.GetScanDetail>(),
-        gh<_i413.DeleteScan>(),
       ),
     );
     gh.factory<_i427.ImagePrepCubit>(
@@ -1929,6 +1933,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i350.RunOcrExtraction>(),
         gh<_i1011.SetBatchDefaultDirection>(),
         gh<_i377.CancelScan>(),
+      ),
+    );
+    gh.factory<_i919.ScanDetailCubit>(
+      () => _i919.ScanDetailCubit(
+        gh<_i138.WatchScanDetail>(),
+        gh<_i413.DeleteScan>(),
       ),
     );
     gh.factory<_i15.OccasionFormCubit>(
@@ -1944,8 +1954,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i500.AppLifecycleObserver>(),
       ),
     );
-    gh.factory<_i194.OccasionsListCubit>(
-      () => _i194.OccasionsListCubit(gh<_i958.GetOccasionsList>()),
+    gh.factory<_i53.OccasionDetailCubit>(
+      () => _i53.OccasionDetailCubit(
+        gh<_i294.WatchOccasionDetail>(),
+        gh<_i192.RemoveParticipantContribution>(),
+        gh<_i247.AddOccasionAttachment>(),
+        gh<_i191.RemoveOccasionAttachment>(),
+        gh<_i847.ArchiveOccasion>(),
+        gh<_i154.RestoreOccasion>(),
+        gh<_i1046.DeleteOccasion>(),
+        gh<_i780.AttachmentPickerService>(),
+      ),
     );
     gh.factory<_i636.AskFinancialQuestion>(
       () => _i636.AskFinancialQuestion(

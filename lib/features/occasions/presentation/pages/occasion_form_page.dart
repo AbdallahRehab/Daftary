@@ -8,6 +8,9 @@ import '../../../../core/design_system/app_button.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -92,8 +95,8 @@ class _OccasionFormViewState extends State<_OccasionFormView> {
       },
       builder: (context, state) {
         final cubit = context.read<OccasionFormCubit>();
-        return Scaffold(
-          appBar: AppBar(
+        return AppScaffold(
+          appBar: AppTopBar(
             title: Text(
               isEdit
                   ? l10n.occasionFormEditTitle
@@ -114,51 +117,57 @@ class _OccasionFormViewState extends State<_OccasionFormView> {
                   ]
                 : null,
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(AppSpacing.md),
-            children: [
-              AppTextField(
-                label: l10n.occasionNameLabel,
-                controller: _nameController,
-                onChanged: cubit.nameChanged,
-                autofocus: !isEdit,
-                errorText: state.nameInvalid
-                    ? l10n.occasionNameRequiredError
-                    : null,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppDateField(
-                label: l10n.occasionDateLabel,
-                date: state.date,
-                onDateChanged: cubit.dateChanged,
-                // Deliberately open-ended forward: an occasion can be
-                // recorded before it happens (spec Edge Cases).
-                lastDate: DateTime(DateTime.now().year + 5),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              OccasionTypePicker(
-                selectedType: state.type,
-                onTypeSelected: (type) => cubit.typeChanged(type ?? ''),
-                errorText: state.typeInvalid
-                    ? l10n.occasionTypeRequiredError
-                    : null,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                label: l10n.occasionNotesLabel,
-                controller: _notesController,
-                onChanged: cubit.notesChanged,
-                maxLines: 3,
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: isEdit
-                    ? l10n.occasionUpdateAction
-                    : l10n.occasionCreateAction,
-                isLoading: state.isSubmitting,
-                onPressed: cubit.submit,
-              ),
-            ],
+          // Builder: the glass insets are read below the scaffold, where
+          // they include the bars the body extends behind.
+          body: Builder(
+            builder: (context) => ListView(
+              padding:
+                  const EdgeInsets.all(AppSpacing.md) +
+                  AppGlassInsets.of(context),
+              children: [
+                AppTextField(
+                  label: l10n.occasionNameLabel,
+                  controller: _nameController,
+                  onChanged: cubit.nameChanged,
+                  autofocus: !isEdit,
+                  errorText: state.nameInvalid
+                      ? l10n.occasionNameRequiredError
+                      : null,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppDateField(
+                  label: l10n.occasionDateLabel,
+                  date: state.date,
+                  onDateChanged: cubit.dateChanged,
+                  // Deliberately open-ended forward: an occasion can be
+                  // recorded before it happens (spec Edge Cases).
+                  lastDate: DateTime(DateTime.now().year + 5),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                OccasionTypePicker(
+                  selectedType: state.type,
+                  onTypeSelected: (type) => cubit.typeChanged(type ?? ''),
+                  errorText: state.typeInvalid
+                      ? l10n.occasionTypeRequiredError
+                      : null,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  label: l10n.occasionNotesLabel,
+                  controller: _notesController,
+                  onChanged: cubit.notesChanged,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: isEdit
+                      ? l10n.occasionUpdateAction
+                      : l10n.occasionCreateAction,
+                  isLoading: state.isSubmitting,
+                  onPressed: cubit.submit,
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -174,7 +183,7 @@ class _OccasionFormViewState extends State<_OccasionFormView> {
     );
     if (!confirmed || !context.mounted) return;
     final cubit = getIt<OccasionDetailCubit>();
-    await cubit.load(widget.editingOccasionId!);
+    await cubit.subscribe(widget.editingOccasionId!);
     final ok = await cubit.archive();
     await cubit.close();
     if (ok && context.mounted) context.pop(true);
@@ -185,7 +194,7 @@ class _OccasionFormViewState extends State<_OccasionFormView> {
     // it is about to take with it (FR-013) — a bare "are you sure?" would
     // hide the part that actually matters.
     final cubit = getIt<OccasionDetailCubit>();
-    await cubit.load(widget.editingOccasionId!);
+    await cubit.subscribe(widget.editingOccasionId!);
     if (!context.mounted) {
       await cubit.close();
       return;

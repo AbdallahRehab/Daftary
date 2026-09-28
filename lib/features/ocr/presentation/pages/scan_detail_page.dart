@@ -8,6 +8,9 @@ import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/app_card.dart';
 import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_empty_view.dart';
+import '../../../../core/design_system/glass/app_glass_insets.dart';
+import '../../../../core/design_system/glass/app_scaffold.dart';
+import '../../../../core/design_system/glass/app_top_bar.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -25,6 +28,9 @@ import '../widgets/scan_history_tile.dart';
 /// the candidate entries as they ended up, and every transaction the scan
 /// produced — each linking through to its person's detail screen (001), so
 /// an OCR-sourced amount is never a dead end.
+///
+/// 021: live — a produced transaction edited or deleted from its person's
+/// screen, or through sync, updates the page with no reload (FR-031).
 class ScanDetailPage extends StatelessWidget {
   const ScanDetailPage({required this.scanId, super.key});
 
@@ -33,7 +39,7 @@ class ScanDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ScanDetailCubit>()..load(scanId),
+      create: (_) => getIt<ScanDetailCubit>()..subscribe(scanId),
       child: const _ScanDetailView(),
     );
   }
@@ -58,8 +64,8 @@ class _ScanDetailView extends StatelessWidget {
         );
         if (context.canPop()) context.pop();
       },
-      child: Scaffold(
-        appBar: AppBar(
+      child: AppScaffold(
+        appBar: AppTopBar(
           title: Text(l10n.ocrScanDetailTitle),
           actions: [
             BlocBuilder<ScanDetailCubit, ScanDetailState>(
@@ -136,7 +142,7 @@ class _DetailBody extends StatelessWidget {
     ).format(detail.scan.createdAt);
 
     return ListView(
-      padding: const EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
       children: [
         _SourceImage(imagePath: detail.scan.sourceImagePath),
         const SizedBox(height: AppSpacing.md),

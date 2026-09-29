@@ -1,3 +1,8 @@
+import 'package:fpdart/fpdart.dart' hide State;
+import 'package:daftary/features/savings/domain/usecases/get_savings_overview.dart';
+import 'package:daftary/features/savings/domain/entities/savings_overview.dart';
+import 'package:daftary/core/money/currency.dart';
+import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
@@ -23,6 +28,18 @@ import 'package:flutter_test/flutter_test.dart';
 /// inline validation (US2/US3). Disclaimer presence on these pages is
 /// covered by the consolidated suite in
 /// `financial_education_disclaimer_test.dart` (T048).
+/// 016 reads 011 only through `GetSavingsOverview`; these pages are tested
+/// with no savings goal on record, so the pre-fill stays hidden.
+class _NoSavingsGoals implements GetSavingsOverview {
+  const _NoSavingsGoals();
+
+  @override
+  Future<Either<Failure, SavingsOverview>> call({
+    bool includeArchived = false,
+  }) async =>
+      const Right(SavingsOverview(goals: [], primaryCurrency: Currency.egp));
+}
+
 void main() {
   setUp(() async {
     await getIt.reset();
@@ -32,7 +49,7 @@ void main() {
       ..registerFactory<CompoundGrowthCalculatorCubit>(
         () => CompoundGrowthCalculatorCubit(
           const CalculateCompoundGrowth(CompoundGrowthCalculatorImpl()),
-          const GetPrefillableSavingsGoalAmount(),
+          const GetPrefillableSavingsGoalAmount(_NoSavingsGoals()),
           EgpFormatter(),
         ),
       )

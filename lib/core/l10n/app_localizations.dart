@@ -2312,6 +2312,24 @@ abstract class AppLocalizations {
   /// **'Budget category'**
   String get syncKindBudgetAllocation;
 
+  /// No description provided for @syncKindSavingsGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings goal'**
+  String get syncKindSavingsGoal;
+
+  /// No description provided for @syncKindSavingsContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings entry'**
+  String get syncKindSavingsContribution;
+
+  /// No description provided for @syncKindSavingsContributionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings entry history'**
+  String get syncKindSavingsContributionHistory;
+
   /// Why a change was refused.
   ///
   /// In en, this message translates to:
@@ -4547,8 +4565,32 @@ abstract class AppLocalizations {
   /// No description provided for @homeUpcomingPlaceholder.
   ///
   /// In en, this message translates to:
-  /// **'Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.'**
+  /// **'Savings goals with a target date will appear here. Upcoming bills will follow once reminders are available.'**
   String get homeUpcomingPlaceholder;
+
+  /// No description provided for @homeSavingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings goals'**
+  String get homeSavingsTitle;
+
+  /// No description provided for @homeSavingsEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan and track what you\'re saving for'**
+  String get homeSavingsEntrySubtitle;
+
+  /// 012/011 Home Upcoming: one goal's target date, already formatted.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date {date}'**
+  String homeSavingsUpcomingTargetDate(String date);
+
+  /// 012/011 Home Upcoming: saved so far of the target, both formatted in the goal's currency.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} of {target}'**
+  String homeSavingsUpcomingProgress(String current, String target);
 
   /// No description provided for @homeOverviewLoadError.
   ///
@@ -5707,6 +5749,848 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Observation from the assistant, based on your own records'**
   String get aiObservationSemanticLabel;
+
+  /// 011: the goal (or entry) being viewed or changed was deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This savings goal no longer exists.'**
+  String get savingsGoalNotFoundError;
+
+  /// 011 FR-006: a withdrawal, edit or delete would take the goal's balance below zero.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t withdraw more than this goal has saved.'**
+  String get savingsWithdrawalExceedsBalanceError;
+
+  /// 011 FR-021: delete is blocked for a goal with contribution history; archiving is offered instead.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal has saved amounts, so it can\'t be deleted. You can archive it instead.'**
+  String get savingsGoalHasHistoryError;
+
+  /// 011 FR-003/FR-016: the target date is today or in the past.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a target date after today.'**
+  String get savingsInvalidTargetDateError;
+
+  /// 011 FR-020: new contributions/withdrawals are rejected on an archived goal.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal is archived. Restore it to add new amounts.'**
+  String get savingsGoalArchivedError;
+
+  /// 011 goal form title, create mode.
+  ///
+  /// In en, this message translates to:
+  /// **'New savings goal'**
+  String get savingsGoalFormCreateTitle;
+
+  /// 011 goal form title, edit mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal'**
+  String get savingsGoalFormEditTitle;
+
+  /// 011 goal detail app-bar action tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit goal'**
+  String get savingsGoalEditAction;
+
+  /// 011 goal form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal name'**
+  String get savingsGoalNameLabel;
+
+  /// 011 FR-001 validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Give the goal a name.'**
+  String get savingsGoalNameRequiredError;
+
+  /// 011 goal type picker label; the type only picks an icon.
+  ///
+  /// In en, this message translates to:
+  /// **'Type (optional)'**
+  String get savingsGoalTypeLabel;
+
+  /// 011 type picker option for a plain custom-named goal.
+  ///
+  /// In en, this message translates to:
+  /// **'No type'**
+  String get savingsGoalTypeNone;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency fund'**
+  String get savingsGoalTypeEmergencyFund;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'New car'**
+  String get savingsGoalTypeNewCar;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Wedding'**
+  String get savingsGoalTypeWedding;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Vacation'**
+  String get savingsGoalTypeVacation;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'New phone'**
+  String get savingsGoalTypeNewPhone;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Home furniture'**
+  String get savingsGoalTypeHomeFurniture;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get savingsGoalTypeEducation;
+
+  /// 011 standard goal type.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get savingsGoalTypeOther;
+
+  /// 011 FR-027 currency picker label (create only).
+  ///
+  /// In en, this message translates to:
+  /// **'Goal currency'**
+  String get savingsGoalCurrencyLabel;
+
+  /// 011 FR-027: shown instead of the currency picker when editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Every amount of this goal is in {currency}. The currency can\'t be changed after the goal is created.'**
+  String savingsGoalCurrencyFixedHint(String currency);
+
+  /// 011 goal form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Target amount'**
+  String get savingsGoalTargetLabel;
+
+  /// 011 FR-002 validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a target amount greater than zero.'**
+  String get savingsGoalTargetInvalidError;
+
+  /// 011 starting amount field, create only.
+  ///
+  /// In en, this message translates to:
+  /// **'Already saved (optional)'**
+  String get savingsGoalStartingLabel;
+
+  /// 011 starting amount helper text.
+  ///
+  /// In en, this message translates to:
+  /// **'Money you had already set aside before tracking it here.'**
+  String get savingsGoalStartingHint;
+
+  /// 011 FR-002 validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter zero or a positive amount.'**
+  String get savingsGoalStartingInvalidError;
+
+  /// 011 goal form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly contribution (optional)'**
+  String get savingsGoalMonthlyLabel;
+
+  /// 011 FR-002 validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a monthly amount greater than zero, or leave it empty.'**
+  String get savingsGoalMonthlyInvalidError;
+
+  /// 011 goal form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date (optional)'**
+  String get savingsGoalTargetDateLabel;
+
+  /// 011 target date field placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set'**
+  String get savingsGoalTargetDateNotSet;
+
+  /// 011 target date clear button tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear target date'**
+  String get savingsGoalTargetDateClear;
+
+  /// 011 goal form submit, create mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Create goal'**
+  String get savingsGoalCreateAction;
+
+  /// 011 goal form submit, edit mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get savingsGoalUpdateAction;
+
+  /// 011 live estimate preview heading on the goal form.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan'**
+  String get savingsGoalPreviewTitle;
+
+  /// 011 progress card figure label.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get savingsProgressSavedLabel;
+
+  /// 011 progress card figure label.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get savingsProgressRemainingLabel;
+
+  /// 011 progress card figure label.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get savingsProgressTargetLabel;
+
+  /// 011 progress percentage; percent is pre-formatted with Western digits.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% saved'**
+  String savingsProgressPercent(String percent);
+
+  /// 011 FR-010 estimate.
+  ///
+  /// In en, this message translates to:
+  /// **'At {amount} a month, you\'ll reach it in {duration}, around {date}.'**
+  String savingsEstimateByContribution(
+    String amount,
+    String duration,
+    String date,
+  );
+
+  /// 011 FR-010 estimate when the date is too far to show.
+  ///
+  /// In en, this message translates to:
+  /// **'At {amount} a month, you\'ll reach it in {duration}.'**
+  String savingsEstimateByContributionUndated(String amount, String duration);
+
+  /// 011 FR-011 required monthly contribution.
+  ///
+  /// In en, this message translates to:
+  /// **'To reach it by {date}, save {amount} a month.'**
+  String savingsEstimateRequired(String date, String amount);
+
+  /// 011 FR-012 honest shortfall line.
+  ///
+  /// In en, this message translates to:
+  /// **'At this rate, you\'ll reach this {duration} after your target date.'**
+  String savingsEstimateShortfall(String duration);
+
+  /// 011 US1 AS-6: shown when the goal has no plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a monthly contribution or a target date to see when you\'ll reach this goal.'**
+  String get savingsNoEstimatePrompt;
+
+  /// 011 a number of months.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String savingsDurationMonths(int count);
+
+  /// 011 a number of years.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String savingsDurationYears(int count);
+
+  /// 011 a long timeline, e.g. '2 years and 3 months'.
+  ///
+  /// In en, this message translates to:
+  /// **'{years} and {months}'**
+  String savingsDurationYearsAndMonths(String years, String months);
+
+  /// 011 FR-017 celebratory badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal reached!'**
+  String get savingsGoalAchievedBadge;
+
+  /// 011 FR-017 celebratory message.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve saved everything you planned for this goal. Well done!'**
+  String get savingsGoalAchievedMessage;
+
+  /// 011 goal detail history section.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get savingsGoalHistoryHeader;
+
+  /// 011 empty history title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged yet'**
+  String get savingsGoalHistoryEmptyTitle;
+
+  /// 011 empty history message.
+  ///
+  /// In en, this message translates to:
+  /// **'Add what you put toward this goal to track your real progress.'**
+  String get savingsGoalHistoryEmptyMessage;
+
+  /// 011 log contribution action.
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get savingsLogContributionAction;
+
+  /// 011 log withdrawal action.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get savingsLogWithdrawalAction;
+
+  /// 011 FR-020 explanation shown instead of the log actions.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal is archived. You can still correct past entries; restore it to add new ones.'**
+  String get savingsGoalArchivedNotice;
+
+  /// 011 goal detail error state.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this goal'**
+  String get savingsGoalLoadErrorTitle;
+
+  /// 011 retry action.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get savingsRetryAction;
+
+  /// 011 entry type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution'**
+  String get savingsEntryContribution;
+
+  /// 011 entry type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal'**
+  String get savingsEntryWithdrawal;
+
+  /// 011 label of the entry created from the goal's starting amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting amount'**
+  String get savingsEntryStartingAmount;
+
+  /// 011 FR-028: the converted goal-currency amount under a foreign entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Counted as {amount}'**
+  String savingsEntryConvertedAmount(String amount);
+
+  /// 011 marker on an edited entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get savingsEntryEditedLabel;
+
+  /// 011 entry action.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get savingsEntryEditAction;
+
+  /// 011 entry action.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get savingsEntryDeleteAction;
+
+  /// 011 entry overflow menu tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry options'**
+  String get savingsEntryActionsTooltip;
+
+  /// 011 FR-009 delete confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry?'**
+  String get savingsEntryDeleteConfirmTitle;
+
+  /// 011 FR-009/FR-030 delete confirmation message.
+  ///
+  /// In en, this message translates to:
+  /// **'The goal\'s figures will be recalculated. A record of the entry\'s values is kept.'**
+  String get savingsEntryDeleteConfirmMessage;
+
+  /// 011 contribution form title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add money'**
+  String get savingsContributionFormAddTitle;
+
+  /// 011 withdrawal form title.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw money'**
+  String get savingsContributionFormWithdrawTitle;
+
+  /// 011 contribution form title, edit mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit entry'**
+  String get savingsContributionFormEditTitle;
+
+  /// 011 contribution form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get savingsContributionAmountLabel;
+
+  /// 011 FR-007 validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount greater than zero.'**
+  String get savingsContributionAmountInvalidError;
+
+  /// 011 contribution form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get savingsContributionDateLabel;
+
+  /// 011 contribution form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get savingsContributionNoteLabel;
+
+  /// 011 contribution form submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get savingsContributionSaveAction;
+
+  /// 011 FR-028 hint when the entered currency differs from the goal's.
+  ///
+  /// In en, this message translates to:
+  /// **'This will be converted to {currency} at the current rate when you save.'**
+  String savingsContributionConversionHint(String currency);
+
+  /// 011 US4 overview page title.
+  ///
+  /// In en, this message translates to:
+  /// **'Savings goals'**
+  String get savingsOverviewTitle;
+
+  /// 011 US4 overview: create-goal FAB.
+  ///
+  /// In en, this message translates to:
+  /// **'New goal'**
+  String get savingsOverviewNewGoalAction;
+
+  /// 011 US4 overview: open archived goals.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived goals'**
+  String get savingsOverviewArchivedAction;
+
+  /// 011 FR-023 empty-state title.
+  ///
+  /// In en, this message translates to:
+  /// **'Start saving toward something'**
+  String get savingsOverviewEmptyTitle;
+
+  /// 011 FR-023 empty-state explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a goal — an emergency fund, a trip, a new phone — and track every amount you put aside until you reach it.'**
+  String get savingsOverviewEmptyMessage;
+
+  /// 011 FR-023 empty-state action.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first goal'**
+  String get savingsOverviewEmptyAction;
+
+  /// 011 FR-019 combined total label.
+  ///
+  /// In en, this message translates to:
+  /// **'Total saved'**
+  String get savingsOverviewTotalLabel;
+
+  /// 011 FR-019: how many goals the total spans.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Across 1 goal} other{Across {count} goals}}'**
+  String savingsOverviewGoalCount(int count);
+
+  /// 011 FR-019 incomplete-total marker title.
+  ///
+  /// In en, this message translates to:
+  /// **'Total incomplete'**
+  String get savingsOverviewIncompleteTitle;
+
+  /// 011 FR-019: names the missing rates.
+  ///
+  /// In en, this message translates to:
+  /// **'It leaves out goals in {currencies}. Add an exchange rate for {currencies} to count them.'**
+  String savingsOverviewIncompleteMessage(String currencies);
+
+  /// 011 FR-019: a blocked goal line.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in the total — needs a {currency} rate'**
+  String savingsOverviewNotInTotal(String currency);
+
+  /// 011 overview card: saved of target, in the goal's currency.
+  ///
+  /// In en, this message translates to:
+  /// **'{saved} of {target}'**
+  String savingsOverviewGoalProgress(String saved, String target);
+
+  /// 011 overview: goal list header.
+  ///
+  /// In en, this message translates to:
+  /// **'Your goals'**
+  String get savingsOverviewGoalsHeader;
+
+  /// 011 overview load error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your goals'**
+  String get savingsOverviewLoadErrorTitle;
+
+  /// 011: goal overflow menu tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal options'**
+  String get savingsOverviewGoalActionsTooltip;
+
+  /// 011 FR-020 archive action.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get savingsArchiveAction;
+
+  /// 011 FR-020 restore action.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get savingsArchiveRestoreAction;
+
+  /// 011 FR-020 snackbar after archiving.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal archived'**
+  String get savingsArchiveDoneMessage;
+
+  /// 011 FR-020 snackbar after restoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal restored'**
+  String get savingsArchiveRestoredMessage;
+
+  /// 011 FR-020 undo an archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get savingsArchiveUndoAction;
+
+  /// 011 FR-020 archived goals page title.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived goals'**
+  String get savingsArchiveTitle;
+
+  /// 011 archived goals empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived goals'**
+  String get savingsArchiveEmptyTitle;
+
+  /// 011 archived goals empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals you archive are kept here with their full history, ready to restore.'**
+  String get savingsArchiveEmptyMessage;
+
+  /// 011 FR-021 delete action.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete goal'**
+  String get savingsDeleteAction;
+
+  /// 011 FR-021 delete confirmation title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”?'**
+  String savingsDeleteConfirmTitle(String name);
+
+  /// 011 FR-021 delete confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal will be removed for good.'**
+  String get savingsDeleteConfirmMessage;
+
+  /// 011 FR-021 delete blocked dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'This goal has history'**
+  String get savingsDeleteBlockedTitle;
+
+  /// 011 FR-021 offer to archive instead.
+  ///
+  /// In en, this message translates to:
+  /// **'Amounts have been logged to this goal, so it can\'t be deleted. Archive it instead to hide it while keeping its full history.'**
+  String get savingsDeleteBlockedMessage;
+
+  /// 011 FR-021 archive-instead action.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive instead'**
+  String get savingsDeleteBlockedArchiveAction;
+
+  /// 011 FR-021 snackbar after deleting.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal deleted'**
+  String get savingsDeleteDoneMessage;
+
+  /// 011 FR-006 hint on the withdrawal form.
+  ///
+  /// In en, this message translates to:
+  /// **'Available to withdraw: {amount}'**
+  String savingsWithdrawalAvailableHint(String amount);
+
+  /// 011 FR-013/FR-014 goal page entry point to the what-if calculator.
+  ///
+  /// In en, this message translates to:
+  /// **'What if?'**
+  String get savingsWhatIfAction;
+
+  /// 011 what-if calculator page title.
+  ///
+  /// In en, this message translates to:
+  /// **'What if?'**
+  String get savingsWhatIfTitle;
+
+  /// 011 FR-013 what-if mode: a hypothetical monthly contribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a different amount'**
+  String get savingsWhatIfModeMonthly;
+
+  /// 011 FR-014 what-if mode: a hypothetical target date.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish by a date'**
+  String get savingsWhatIfModeDate;
+
+  /// 011 what-if: heading of the goal's real, current plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan now'**
+  String get savingsWhatIfCurrentPlanTitle;
+
+  /// 011 what-if: the goal's real remaining amount.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left to save'**
+  String savingsWhatIfCurrentRemaining(String amount);
+
+  /// 011 what-if: the goal's real monthly contribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving {amount} a month'**
+  String savingsWhatIfCurrentMonthly(String amount);
+
+  /// 011 what-if: the goal has no monthly contribution.
+  ///
+  /// In en, this message translates to:
+  /// **'No monthly contribution set'**
+  String get savingsWhatIfCurrentNoMonthly;
+
+  /// 011 what-if: the goal's real target date.
+  ///
+  /// In en, this message translates to:
+  /// **'Target date: {date}'**
+  String savingsWhatIfCurrentTargetDate(String date);
+
+  /// 011 FR-013 hypothetical monthly contribution field.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly amount to try'**
+  String get savingsWhatIfMonthlyLabel;
+
+  /// 011 FR-016: the hypothetical monthly contribution is empty, zero or negative.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a monthly amount greater than zero.'**
+  String get savingsWhatIfMonthlyInvalidError;
+
+  /// 011 FR-014 hypothetical target date field.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish by'**
+  String get savingsWhatIfTargetDateLabel;
+
+  /// 011 what-if target date field placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get savingsWhatIfTargetDateNotSet;
+
+  /// 011 what-if: run the calculation.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculate'**
+  String get savingsWhatIfCalculateAction;
+
+  /// 011 what-if: heading of the hypothetical result card.
+  ///
+  /// In en, this message translates to:
+  /// **'If you did this'**
+  String get savingsWhatIfResultTitle;
+
+  /// 011 FR-013 what-if result.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving {amount} a month, you\'d reach your goal in {duration}, around {date}.'**
+  String savingsWhatIfResultByMonthly(
+    String amount,
+    String duration,
+    String date,
+  );
+
+  /// 011 FR-013 what-if result for a timeline too long to date.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving {amount} a month, you\'d reach your goal in {duration}.'**
+  String savingsWhatIfResultByMonthlyUndated(String amount, String duration);
+
+  /// 011 FR-014 what-if result.
+  ///
+  /// In en, this message translates to:
+  /// **'To finish by {date}, you\'d need to save {amount} a month.'**
+  String savingsWhatIfResultByDate(String date, String amount);
+
+  /// 011 what-if: the hypothetical finishes earlier than the real plan.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} sooner than your current plan'**
+  String savingsWhatIfCompareSooner(String duration);
+
+  /// 011 what-if: the hypothetical finishes later than the real plan.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} later than your current plan'**
+  String savingsWhatIfCompareLater(String duration);
+
+  /// 011 what-if: the hypothetical finishes when the real plan does.
+  ///
+  /// In en, this message translates to:
+  /// **'The same timeline as your current plan'**
+  String get savingsWhatIfCompareSame;
+
+  /// 011 what-if: the required contribution exceeds the real one.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} a month more than you save now'**
+  String savingsWhatIfCompareMore(String amount);
+
+  /// 011 what-if: the required contribution is below the real one.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} a month less than you save now'**
+  String savingsWhatIfCompareLess(String amount);
+
+  /// 011 FR-015: exploring never changes the goal.
+  ///
+  /// In en, this message translates to:
+  /// **'This is only a preview. Your goal stays as it is unless you apply it.'**
+  String get savingsWhatIfPreviewNotice;
+
+  /// 011 FR-015: what applying a monthly what-if changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Applying sets your monthly contribution to {amount}. Your target date stays as it is.'**
+  String savingsWhatIfApplyExplainMonthly(String amount);
+
+  /// 011 FR-015: what applying a target-date what-if changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Applying sets your target date to {date} and your monthly contribution to {amount}.'**
+  String savingsWhatIfApplyExplainDate(String date, String amount);
+
+  /// 011 FR-015 apply action.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to my goal'**
+  String get savingsWhatIfApplyAction;
+
+  /// 011 what-if: leave without changing the goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get savingsWhatIfCancelAction;
+
+  /// 011 FR-015: confirmation after applying.
+  ///
+  /// In en, this message translates to:
+  /// **'Your goal\'s plan was updated.'**
+  String get savingsWhatIfAppliedMessage;
+
+  /// 011 FR-016: what-if opened on an achieved goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal achieved'**
+  String get savingsWhatIfAchievedTitle;
+
+  /// 011 FR-016: what-if opened on an achieved goal.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve already reached this goal, so there\'s nothing left to plan for.'**
+  String get savingsWhatIfAchievedMessage;
+
+  /// 011 what-if: return to the goal page.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to goal'**
+  String get savingsWhatIfBackAction;
 }
 
 class _AppLocalizationsDelegate

@@ -58,11 +58,10 @@ import 'package:uuid/uuid.dart';
 /// conversation) and seeds uniquely-named rows, so the shared on-device
 /// database's other contents never affect the figures asserted here.
 ///
-/// Scenario 5 as written needs feature 011 (Savings), which is not built:
-/// `getSavingsGoalStatus` does not exist. Its savings-specific step is
-/// skipped; the same honest-decline guarantee (a `foundData: false` tool
-/// result never becomes a figure) is exercised with `getPersonBalance` for
-/// a person who does not exist.
+/// Scenario 5 checks the honest-decline guarantee (a `foundData: false`
+/// tool result never becomes a figure) with `getSavingsGoalStatus` for a
+/// savings goal that does not exist, then with `getPersonBalance` for a
+/// person who does not exist.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -377,12 +376,42 @@ void main() {
 
     testWidgets('Scenario 5: no data on record → an honest decline with no '
         'figures', (tester) async {
-      // Savings step skipped: feature 011 (getSavingsGoalStatus) is not
-      // built. Same guarantee, via a person who does not exist.
       await bootApp(tester);
       await openChat(tester);
-      final ghost = 'Nobody ${uuid.v4()}';
 
+      // Savings: a uniquely-named goal never exists, however many goals the
+      // shared on-device database already holds.
+      final ghostGoal = 'No goal ${uuid.v4()}';
+      ai
+        ..enqueue(
+          (_) => Right(
+            AITurnResult.toolCalls([
+              AIToolCallRequest(
+                id: 'call-ghost-goal',
+                toolName: AIToolNames.getSavingsGoalStatus,
+                arguments: {AIToolArgs.goalName: ghostGoal},
+              ),
+            ]),
+          ),
+        )
+        ..enqueue((turn) {
+          expect(turn.toolResults.single.foundData, isFalse);
+          return const Right(
+            AITurnResult.answer(
+              "I don't have a savings goal by that name, so I can't say.",
+            ),
+          );
+        });
+      await ask(tester, 'How much do I need monthly for $ghostGoal?');
+
+      expect(ai.calls.last.toolResults.single.foundData, isFalse);
+      const savingsReply =
+          "I don't have a savings goal by that name, so I can't say.";
+      expect(find.text(savingsReply), findsOneWidget);
+      expect(RegExp(r'\d').hasMatch(savingsReply), isFalse);
+
+      // Same guarantee for a person who does not exist.
+      final ghost = 'Nobody ${uuid.v4()}';
       ai
         ..enqueue(
           (_) => Right(

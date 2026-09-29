@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'support/v11_fixture.dart';
 import 'support/v9_fixture.dart';
 
 /// 017 T008 — the v5 -> v6 migration adds `notification_preferences` and
@@ -36,6 +37,7 @@ void main() {
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
     // 021 (v9) additions, so the upgrade runs through v9 for real.
     dropSyncSupportAdditions(raw);
+    dropSavingsGoalsAdditions(raw);
     raw.execute(
       "INSERT INTO app_settings (id, language_code, theme_mode, updated_at) "
       "VALUES ('singleton', 'ar', 'dark', 300);",
@@ -82,7 +84,7 @@ void main() {
     () {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
-      expect(db.schemaVersion, 10);
+      expect(db.schemaVersion, 11);
     },
   );
 }

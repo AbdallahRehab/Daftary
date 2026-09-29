@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../finance/domain/entities/finance_summary.dart';
+import '../../../savings/domain/entities/savings_overview.dart';
 import '../../../transactions/domain/entities/overview_summary.dart';
 import 'load_status.dart';
 
@@ -21,6 +22,7 @@ class DashboardState extends Equatable {
     this.financeSummary,
     this.financeError,
     this.isCombinedEmpty = false,
+    this.upcomingSavingsGoals = const [],
   });
 
   final LoadStatus overviewStatus;
@@ -46,6 +48,14 @@ class DashboardState extends Equatable {
   /// Decision 3). Only ever `true` while both sides are
   /// [LoadStatus.success]; a partial error is never an empty state.
   final bool isCombinedEmpty;
+
+  /// Home's Upcoming section (012 FR-010, 011 FR-031): active, not yet
+  /// achieved savings goals with a target date, soonest first, exactly as
+  /// 011's `WatchUpcomingSavingsGoals` returned them. Empty while loading,
+  /// when there are none, and when the read failed — Home then shows its
+  /// honest empty state, never a fabricated item. Independent of both
+  /// snapshot sides, so it never affects their status.
+  final List<GoalOverviewLine> upcomingSavingsGoals;
 
   /// Both sides still loading — the initial full-screen loading gate
   /// (FR-002).
@@ -89,6 +99,7 @@ class DashboardState extends Equatable {
     String? financeError,
     bool clearFinanceError = false,
     bool? isCombinedEmpty,
+    List<GoalOverviewLine>? upcomingSavingsGoals,
   }) {
     return DashboardState(
       overviewStatus: overviewStatus ?? this.overviewStatus,
@@ -106,6 +117,7 @@ class DashboardState extends Equatable {
           ? null
           : (financeError ?? this.financeError),
       isCombinedEmpty: isCombinedEmpty ?? this.isCombinedEmpty,
+      upcomingSavingsGoals: upcomingSavingsGoals ?? this.upcomingSavingsGoals,
     );
   }
 
@@ -118,5 +130,6 @@ class DashboardState extends Equatable {
     financeSummary,
     financeError,
     isCombinedEmpty,
+    upcomingSavingsGoals,
   ];
 }

@@ -14,6 +14,9 @@ import 'package:daftary/features/finance/domain/entities/finance_summary.dart';
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/finance/domain/usecases/watch_finance_history.dart';
 import 'package:daftary/features/finance/domain/usecases/watch_finance_summary.dart';
+import 'package:daftary/features/savings/data/repositories/savings_repository_impl.dart';
+import 'package:daftary/features/savings/domain/services/savings_calculator.dart';
+import 'package:daftary/features/savings/domain/usecases/watch_upcoming_savings_goals.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
@@ -36,6 +39,17 @@ void main() {
   late GetOverview getOverview;
   late GetFinanceSummary getFinanceSummary;
 
+  /// 011's real repository on [db], for Home's Upcoming section.
+  SavingsRepositoryImpl savingsRepository(CurrencyRepositoryImpl currency) =>
+      SavingsRepositoryImpl(
+        testSavingsDao(db),
+        db,
+        GetConversionContext(currency),
+        const CurrencyConverterImpl(),
+        const DefaultSavingsCalculator(),
+        const SystemAppClock(),
+      );
+
   /// Home's cubit over real repositories on [db], wired as DI wires it.
   DashboardCubit homeCubit() {
     final currency = CurrencyRepositoryImpl(
@@ -57,6 +71,7 @@ void main() {
       WatchOverview(transactions),
       WatchFinanceSummary(finance, WatchConversionContext(currency), summary),
       WatchFinanceHistory(finance),
+      WatchUpcomingSavingsGoals(savingsRepository(currency)),
     );
   }
 
@@ -172,11 +187,61 @@ void main() {
     expect(cubit.state.overviewSummary, expectedOverview);
     expect(cubit.state.financeSummary, expectedFinance);
     expect(cubit.state.isCombinedEmpty, isFalse);
+    // No savings goal exists: the Upcoming section has nothing real to
+    // show, so it stays on its honest empty state (012 FR-010).
+    expect(cubit.state.upcomingSavingsGoals, isEmpty);
 
     // Reading through Home is side-effect-free: the sources still agree
     // with what they returned before Home ever loaded.
     expect(await directOverview(), expectedOverview);
     expect(await directFinance(), expectedFinance);
+  });
+
+  test('Upcoming lists exactly 011\'s own lines: active, not achieved, '
+      'with a target date, soonest first (011 FR-031)', () async {
+    final currency = CurrencyRepositoryImpl(
+      testCurrencyDao(db),
+      const SystemAppClock(),
+    );
+    final savings = savingsRepository(currency);
+    final now = DateTime.now();
+    Future<String> goal(
+      String name, {
+      DateTime? targetDate,
+      int? starting,
+    }) async => (await savings.createSavingsGoal(
+      idempotencyKey: 'goal-$name',
+      name: name,
+      currency: Currency.egp,
+      targetAmountMinorUnits: 100000,
+      startingAmountMinorUnits: starting,
+      targetDate: targetDate,
+    )).getOrElse((f) => throw StateError(f.message)).id;
+    final later = await goal('Later', targetDate: DateTime(now.year + 2, 1));
+    final sooner = await goal('Sooner', targetDate: DateTime(now.year + 1, 1));
+    await goal('No date');
+    await goal('Done', targetDate: DateTime(now.year + 1, 6), starting: 100000);
+
+    final direct = (await savings.getSavingsOverview()).getOrElse(
+      (f) => throw StateError(f.message),
+    );
+
+    final cubit = homeCubit();
+    addTearDown(cubit.close);
+    final ready = cubit.stream.firstWhere(
+      (s) => s.upcomingSavingsGoals.isNotEmpty,
+    );
+    await cubit.load();
+    await ready;
+
+    expect(
+      cubit.state.upcomingSavingsGoals,
+      WatchUpcomingSavingsGoals.upcoming(direct),
+    );
+    expect(
+      [for (final line in cubit.state.upcomingSavingsGoals) line.goal.id],
+      [sooner, later],
+    );
   });
 
   test('a fresh database is the combined empty state end to end', () async {

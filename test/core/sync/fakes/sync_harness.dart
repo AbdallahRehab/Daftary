@@ -20,6 +20,9 @@ import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.
 import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dart';
 import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
+import 'package:daftary/features/savings/data/sync/savings_contribution_audit_sync_mapper.dart';
+import 'package:daftary/features/savings/data/sync/savings_contribution_sync_mapper.dart';
+import 'package:daftary/features/savings/data/sync/savings_goal_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/money_transaction_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/transaction_audit_sync_mapper.dart';
 import 'package:daftary/core/sync/sync_scheduler.dart';
@@ -43,6 +46,9 @@ SyncMapperRegistry realMapperRegistry() => SyncMapperRegistry(const [
   OccasionSyncMapper(),
   BudgetSyncMapper(),
   BudgetAllocationSyncMapper(),
+  SavingsGoalSyncMapper(),
+  SavingsContributionSyncMapper(),
+  SavingsContributionAuditSyncMapper(),
 ]);
 
 /// The real applier, with the app's mappers and pristine-seed rule.

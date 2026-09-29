@@ -57,6 +57,10 @@ import '../../features/ai_assistant/domain/tools/get_person_balance_tool.dart'
     as _i1049;
 import '../../features/ai_assistant/domain/tools/get_proactive_observation_tool.dart'
     as _i65;
+import '../../features/ai_assistant/domain/tools/get_savings_goal_status_tool.dart'
+    as _i410;
+import '../../features/ai_assistant/domain/tools/get_savings_projection_tool.dart'
+    as _i567;
 import '../../features/ai_assistant/domain/tools/get_top_spending_category.dart'
     as _i1050;
 import '../../features/ai_assistant/domain/tools/tool_arguments.dart' as _i1038;
@@ -86,7 +90,7 @@ import '../../features/app_lock/data/datasources/secure_app_lock_storage.dart'
     as _i872;
 import '../../features/app_lock/data/repositories/app_lock_repository_impl.dart'
     as _i731;
-import '../../features/app_lock/data/services/app_lock_module.dart' as _i849;
+import '../../features/app_lock/data/services/app_lock_module.dart' as _i850;
 import '../../features/app_lock/data/services/app_lock_secure_storage_wiper.dart'
     as _i236;
 import '../../features/app_lock/data/services/local_auth_biometric_service.dart'
@@ -138,7 +142,7 @@ import '../../features/budgets/domain/usecases/add_budget_category_allocation.da
     as _i552;
 import '../../features/budgets/domain/usecases/copy_budget_to_month.dart'
     as _i809;
-import '../../features/budgets/domain/usecases/create_budget.dart' as _i254;
+import '../../features/budgets/domain/usecases/create_budget.dart' as _i255;
 import '../../features/budgets/domain/usecases/delete_budget.dart' as _i150;
 import '../../features/budgets/domain/usecases/edit_budget.dart' as _i755;
 import '../../features/budgets/domain/usecases/edit_budget_category_allocation.dart'
@@ -155,7 +159,7 @@ import '../../features/budgets/domain/usecases/watch_budget_for_month.dart'
 import '../../features/budgets/domain/usecases/watch_budget_trend.dart'
     as _i621;
 import '../../features/budgets/presentation/cubit/budget_form_cubit.dart'
-    as _i720;
+    as _i722;
 import '../../features/budgets/presentation/cubit/budget_month_cubit.dart'
     as _i1031;
 import '../../features/budgets/presentation/cubit/budget_trend_cubit.dart'
@@ -360,8 +364,6 @@ import '../../features/insights_notifications/data/datasources/in_memory_notific
     as _i771;
 import '../../features/insights_notifications/data/datasources/notifications_dao.dart'
     as _i338;
-import '../../features/insights_notifications/data/datasources/unavailable_savings_insights_source.dart'
-    as _i386;
 import '../../features/insights_notifications/data/repositories/notification_history_repository_impl.dart'
     as _i551;
 import '../../features/insights_notifications/data/repositories/notification_preference_repository_impl.dart'
@@ -419,7 +421,7 @@ import '../../features/occasions/domain/usecases/add_occasion_attachment.dart'
 import '../../features/occasions/domain/usecases/add_participant_contribution.dart'
     as _i415;
 import '../../features/occasions/domain/usecases/archive_occasion.dart'
-    as _i847;
+    as _i848;
 import '../../features/occasions/domain/usecases/create_occasion.dart' as _i905;
 import '../../features/occasions/domain/usecases/delete_occasion.dart'
     as _i1046;
@@ -483,8 +485,8 @@ import '../../features/ocr/domain/usecases/watch_scan_history.dart' as _i130;
 import '../../features/ocr/presentation/cubit/image_prep_cubit.dart' as _i427;
 import '../../features/ocr/presentation/cubit/scan_capture_cubit.dart' as _i354;
 import '../../features/ocr/presentation/cubit/scan_detail_cubit.dart' as _i919;
-import '../../features/ocr/presentation/cubit/scan_history_cubit.dart' as _i624;
-import '../../features/ocr/presentation/cubit/scan_review_cubit.dart' as _i622;
+import '../../features/ocr/presentation/cubit/scan_history_cubit.dart' as _i626;
+import '../../features/ocr/presentation/cubit/scan_review_cubit.dart' as _i624;
 import '../../features/onboarding/data/datasources/onboarding_dao.dart'
     as _i360;
 import '../../features/onboarding/data/repositories/onboarding_repository_impl.dart'
@@ -519,6 +521,62 @@ import '../../features/people/presentation/cubit/person_form_cubit.dart'
     as _i668;
 import '../../features/people/presentation/cubit/person_list_cubit.dart'
     as _i1018;
+import '../../features/savings/data/adapters/savings_repository_insights_source.dart'
+    as _i487;
+import '../../features/savings/data/datasources/savings_dao.dart' as _i308;
+import '../../features/savings/data/repositories/savings_repository_impl.dart'
+    as _i177;
+import '../../features/savings/data/sync/savings_contribution_audit_sync_mapper.dart'
+    as _i116;
+import '../../features/savings/data/sync/savings_contribution_sync_mapper.dart'
+    as _i322;
+import '../../features/savings/data/sync/savings_goal_sync_mapper.dart'
+    as _i1024;
+import '../../features/savings/domain/repositories/savings_repository.dart'
+    as _i117;
+import '../../features/savings/domain/services/savings_calculator.dart'
+    as _i784;
+import '../../features/savings/domain/usecases/apply_what_if_scenario.dart'
+    as _i1060;
+import '../../features/savings/domain/usecases/archive_savings_goal.dart'
+    as _i709;
+import '../../features/savings/domain/usecases/calculate_what_if_completion_date.dart'
+    as _i691;
+import '../../features/savings/domain/usecases/calculate_what_if_monthly_contribution.dart'
+    as _i1027;
+import '../../features/savings/domain/usecases/create_savings_goal.dart'
+    as _i291;
+import '../../features/savings/domain/usecases/delete_contribution.dart'
+    as _i772;
+import '../../features/savings/domain/usecases/delete_savings_goal.dart'
+    as _i327;
+import '../../features/savings/domain/usecases/edit_contribution.dart' as _i776;
+import '../../features/savings/domain/usecases/edit_savings_goal.dart' as _i847;
+import '../../features/savings/domain/usecases/get_goal_detail.dart' as _i720;
+import '../../features/savings/domain/usecases/get_savings_overview.dart'
+    as _i110;
+import '../../features/savings/domain/usecases/log_contribution.dart' as _i1056;
+import '../../features/savings/domain/usecases/log_withdrawal.dart' as _i622;
+import '../../features/savings/domain/usecases/restore_savings_goal.dart'
+    as _i383;
+import '../../features/savings/domain/usecases/watch_goal_detail.dart' as _i995;
+import '../../features/savings/domain/usecases/watch_savings_overview.dart'
+    as _i282;
+import '../../features/savings/domain/usecases/watch_upcoming_savings_goals.dart'
+    as _i254;
+import '../../features/savings/presentation/cubit/archived_goals_cubit.dart'
+    as _i849;
+import '../../features/savings/presentation/cubit/contribution_form_cubit.dart'
+    as _i916;
+import '../../features/savings/presentation/cubit/goal_detail_cubit.dart'
+    as _i451;
+import '../../features/savings/presentation/cubit/goal_form_cubit.dart'
+    as _i921;
+import '../../features/savings/presentation/cubit/savings_goal_actions_cubit.dart'
+    as _i1059;
+import '../../features/savings/presentation/cubit/savings_overview_cubit.dart'
+    as _i986;
+import '../../features/savings/presentation/cubit/what_if_cubit.dart' as _i380;
 import '../../features/settings/data/datasources/settings_dao.dart' as _i586;
 import '../../features/settings/data/repositories/settings_repository_impl.dart'
     as _i955;
@@ -601,7 +659,7 @@ import '../sync/sync_engine.dart' as _i846;
 import '../sync/sync_logger.dart' as _i414;
 import '../sync/sync_mapper_registry.dart' as _i834;
 import '../sync/sync_scheduler.dart' as _i253;
-import 'register_module.dart' as _i291;
+import 'register_module.dart' as _i292;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -617,9 +675,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => const _i775.SystemPromptBuilder(),
     );
     gh.factory<_i1038.AIPeriodResolver>(() => _i1038.AIPeriodResolver());
-    gh.factory<_i60.GetPrefillableSavingsGoalAmount>(
-      () => const _i60.GetPrefillableSavingsGoalAmount(),
-    );
     gh.factory<_i769.FindPossibleDuplicatePerson>(
       () => const _i769.FindPossibleDuplicatePerson(),
     );
@@ -673,6 +728,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i334.PersonSyncMapper>(
       () => const _i334.PersonSyncMapper(),
+    );
+    gh.lazySingleton<_i116.SavingsContributionAuditSyncMapper>(
+      () => const _i116.SavingsContributionAuditSyncMapper(),
+    );
+    gh.lazySingleton<_i322.SavingsContributionSyncMapper>(
+      () => const _i322.SavingsContributionSyncMapper(),
+    );
+    gh.lazySingleton<_i1024.SavingsGoalSyncMapper>(
+      () => const _i1024.SavingsGoalSyncMapper(),
     );
     gh.lazySingleton<_i315.MoneyTransactionSyncMapper>(
       () => const _i315.MoneyTransactionSyncMapper(),
@@ -730,6 +794,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i597.SupabaseCloudAuthDataSource(gh<_i822.SupabaseInitializer>()),
     );
     gh.lazySingleton<_i956.AppClock>(() => const _i956.SystemAppClock());
+    gh.lazySingleton<_i784.SavingsCalculator>(
+      () => const _i784.DefaultSavingsCalculator(),
+    );
     gh.lazySingleton<_i966.CurrencyConverter>(
       () => const _i966.CurrencyConverterImpl(),
     );
@@ -740,8 +807,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i12.LockoutPolicy>(
       () => const _i12.EscalatingLockoutPolicy(),
     );
-    gh.lazySingleton<_i842.SavingsInsightsSource>(
-      () => const _i386.UnavailableSavingsInsightsSource(),
+    gh.lazySingleton<_i834.SyncMapperRegistry>(
+      () => registerModule.syncMapperRegistry(
+        gh<_i334.PersonSyncMapper>(),
+        gh<_i315.MoneyTransactionSyncMapper>(),
+        gh<_i92.TransactionAuditSyncMapper>(),
+        gh<_i539.FinanceCategorySyncMapper>(),
+        gh<_i960.FinanceEntrySyncMapper>(),
+        gh<_i770.ExchangeRateSyncMapper>(),
+        gh<_i900.PrimaryCurrencySyncMapper>(),
+        gh<_i346.ConflictResolutionSyncMapper>(),
+        gh<_i1001.OccasionSyncMapper>(),
+        gh<_i56.BudgetSyncMapper>(),
+        gh<_i56.BudgetAllocationSyncMapper>(),
+        gh<_i1024.SavingsGoalSyncMapper>(),
+        gh<_i322.SavingsContributionSyncMapper>(),
+        gh<_i116.SavingsContributionAuditSyncMapper>(),
+      ),
     );
     gh.factory<_i897.CalculateSavingsRate>(
       () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
@@ -764,21 +846,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i68.BiometricService>(
       () => _i791.LocalAuthBiometricService(gh<_i152.LocalAuthentication>()),
     );
-    gh.lazySingleton<_i834.SyncMapperRegistry>(
-      () => registerModule.syncMapperRegistry(
-        gh<_i334.PersonSyncMapper>(),
-        gh<_i315.MoneyTransactionSyncMapper>(),
-        gh<_i92.TransactionAuditSyncMapper>(),
-        gh<_i539.FinanceCategorySyncMapper>(),
-        gh<_i960.FinanceEntrySyncMapper>(),
-        gh<_i770.ExchangeRateSyncMapper>(),
-        gh<_i900.PrimaryCurrencySyncMapper>(),
-        gh<_i346.ConflictResolutionSyncMapper>(),
-        gh<_i1001.OccasionSyncMapper>(),
-        gh<_i56.BudgetSyncMapper>(),
-        gh<_i56.BudgetAllocationSyncMapper>(),
-      ),
-    );
     gh.lazySingleton<_i972.ConnectivityMonitor>(
       () => _i972.ConnectivityPlusMonitor(gh<_i895.Connectivity>()),
     );
@@ -789,13 +856,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i217.CalculateCompoundGrowth>(
       () => _i217.CalculateCompoundGrowth(gh<_i585.CompoundGrowthCalculator>()),
-    );
-    gh.factory<_i896.CompoundGrowthCalculatorCubit>(
-      () => _i896.CompoundGrowthCalculatorCubit(
-        gh<_i217.CalculateCompoundGrowth>(),
-        gh<_i60.GetPrefillableSavingsGoalAmount>(),
-        gh<_i999.EgpFormatter>(),
-      ),
     );
     gh.lazySingleton<_i209.NotificationScheduler>(
       () => _i0.FlutterLocalNotificationsScheduler(
@@ -1044,6 +1104,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i183.ImagePicker>(),
         gh<_i780.DocumentsDirectory>(),
         gh<_i500.AppLifecycleObserver>(),
+      ),
+    );
+    gh.factory<_i308.SavingsDao>(
+      () => _i308.SavingsDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i1024.SavingsGoalSyncMapper>(),
+        gh<_i322.SavingsContributionSyncMapper>(),
+        gh<_i116.SavingsContributionAuditSyncMapper>(),
       ),
     );
     gh.lazySingleton<_i137.FinanceRepository>(
@@ -1354,6 +1423,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i854.GetCategoryBreakdown>(),
       ),
     );
+    gh.lazySingleton<_i117.SavingsRepository>(
+      () => _i177.SavingsRepositoryImpl(
+        gh<_i308.SavingsDao>(),
+        gh<_i982.AppDatabase>(),
+        gh<_i602.GetConversionContext>(),
+        gh<_i966.CurrencyConverter>(),
+        gh<_i784.SavingsCalculator>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i1061.PrimaryCurrencyCubit>(
       () => _i1061.PrimaryCurrencyCubit(
         gh<_i1028.WatchPrimaryCurrency>(),
@@ -1374,6 +1453,66 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i323.GetSpendingTrend>(
       () => _i323.GetSpendingTrend(gh<_i844.GetFinanceSummary>()),
+    );
+    gh.factory<_i709.ArchiveSavingsGoal>(
+      () => _i709.ArchiveSavingsGoal(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i772.DeleteContribution>(
+      () => _i772.DeleteContribution(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i327.DeleteSavingsGoal>(
+      () => _i327.DeleteSavingsGoal(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i776.EditContribution>(
+      () => _i776.EditContribution(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i847.EditSavingsGoal>(
+      () => _i847.EditSavingsGoal(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i720.GetGoalDetail>(
+      () => _i720.GetGoalDetail(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i110.GetSavingsOverview>(
+      () => _i110.GetSavingsOverview(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i1056.LogContribution>(
+      () => _i1056.LogContribution(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i622.LogWithdrawal>(
+      () => _i622.LogWithdrawal(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i383.RestoreSavingsGoal>(
+      () => _i383.RestoreSavingsGoal(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i995.WatchGoalDetail>(
+      () => _i995.WatchGoalDetail(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i282.WatchSavingsOverview>(
+      () => _i282.WatchSavingsOverview(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i254.WatchUpcomingSavingsGoals>(
+      () => _i254.WatchUpcomingSavingsGoals(gh<_i117.SavingsRepository>()),
+    );
+    gh.lazySingleton<_i842.SavingsInsightsSource>(
+      () =>
+          _i487.SavingsRepositoryInsightsSource(gh<_i117.SavingsRepository>()),
+    );
+    gh.factory<_i916.ContributionFormCubit>(
+      () => _i916.ContributionFormCubit(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i1056.LogContribution>(),
+        gh<_i622.LogWithdrawal>(),
+        gh<_i776.EditContribution>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i25.DashboardCubit>(
+      () => _i25.DashboardCubit(
+        gh<_i615.WatchOverview>(),
+        gh<_i240.WatchFinanceSummary>(),
+        gh<_i542.WatchFinanceHistory>(),
+        gh<_i254.WatchUpcomingSavingsGoals>(),
+      ),
     );
     gh.lazySingleton<_i948.CloudSyncRepository>(
       () => _i241.CloudSyncRepositoryImpl(
@@ -1444,6 +1583,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1028.WatchPrimaryCurrency>(),
         gh<_i166.WatchExchangeRates>(),
         gh<_i1025.RemoveExchangeRate>(),
+      ),
+    );
+    gh.factory<_i410.GetSavingsGoalStatusTool>(
+      () => _i410.GetSavingsGoalStatusTool(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i110.GetSavingsOverview>(),
       ),
     );
     gh.factory<_i1049.GetPersonBalanceTool>(
@@ -1530,6 +1675,26 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i162.NotificationPreferenceRepository>(),
       ),
     );
+    gh.factory<_i291.CreateSavingsGoal>(
+      () => _i291.CreateSavingsGoal(
+        gh<_i117.SavingsRepository>(),
+        gh<_i903.GetPrimaryCurrency>(),
+      ),
+    );
+    gh.factory<_i691.CalculateWhatIfCompletionDate>(
+      () => _i691.CalculateWhatIfCompletionDate(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i784.SavingsCalculator>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i1027.CalculateWhatIfMonthlyContribution>(
+      () => _i1027.CalculateWhatIfMonthlyContribution(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i784.SavingsCalculator>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i613.WipeAllLocalData>(
       () => _i613.WipeAllLocalData(gh<_i431.DeleteAllUserData>()),
     );
@@ -1574,6 +1739,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i178.WatchSyncStatus>(
       () => _i178.WatchSyncStatus(gh<_i948.CloudSyncRepository>()),
     );
+    gh.factory<_i451.GoalDetailCubit>(
+      () => _i451.GoalDetailCubit(
+        gh<_i995.WatchGoalDetail>(),
+        gh<_i772.DeleteContribution>(),
+      ),
+    );
     gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
       (personId, _) => _i34.RepaymentFormCubit(
         gh<_i426.RecordRepayment>(),
@@ -1587,8 +1758,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i809.CopyBudgetToMonth>(
       () => _i809.CopyBudgetToMonth(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i254.CreateBudget>(
-      () => _i254.CreateBudget(gh<_i855.BudgetsRepository>()),
+    gh.factory<_i255.CreateBudget>(
+      () => _i255.CreateBudget(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i150.DeleteBudget>(
       () => _i150.DeleteBudget(gh<_i855.BudgetsRepository>()),
@@ -1653,13 +1824,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
-    gh.factory<_i25.DashboardCubit>(
-      () => _i25.DashboardCubit(
-        gh<_i615.WatchOverview>(),
-        gh<_i240.WatchFinanceSummary>(),
-        gh<_i542.WatchFinanceHistory>(),
-      ),
-    );
     gh.factory<_i782.ExportCubit>(
       () => _i782.ExportCubit(
         gh<_i496.ExportUserData>(),
@@ -1708,12 +1872,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i130.WatchScanHistory>(
       () => _i130.WatchScanHistory(gh<_i578.OcrRepository>()),
     );
+    gh.factory<_i60.GetPrefillableSavingsGoalAmount>(
+      () =>
+          _i60.GetPrefillableSavingsGoalAmount(gh<_i110.GetSavingsOverview>()),
+    );
     gh.factory<_i329.ReportsCubit>(
       () => _i329.ReportsCubit(
         gh<_i508.WatchSpendingTrend>(),
         gh<_i74.WatchCategoryBreakdown>(),
         gh<_i137.FinanceRepository>(),
       ),
+    );
+    gh.factory<_i849.ArchivedGoalsCubit>(
+      () => _i849.ArchivedGoalsCubit(gh<_i282.WatchSavingsOverview>()),
+    );
+    gh.factory<_i986.SavingsOverviewCubit>(
+      () => _i986.SavingsOverviewCubit(gh<_i282.WatchSavingsOverview>()),
     );
     gh.factory<_i28.CopyBudgetCubit>(
       () => _i28.CopyBudgetCubit(
@@ -1725,6 +1899,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1005.EmailLinkCubit(
         gh<_i861.RequestEmailCode>(),
         gh<_i394.ConfirmEmailCode>(),
+      ),
+    );
+    gh.factory<_i567.GetSavingsProjectionTool>(
+      () => _i567.GetSavingsProjectionTool(
+        gh<_i110.GetSavingsOverview>(),
+        gh<_i1027.CalculateWhatIfMonthlyContribution>(),
+        gh<_i691.CalculateWhatIfCompletionDate>(),
       ),
     );
     gh.factory<_i738.SyncNoticeCubit>(
@@ -1742,10 +1923,23 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
+    gh.factory<_i1059.SavingsGoalActionsCubit>(
+      () => _i1059.SavingsGoalActionsCubit(
+        gh<_i709.ArchiveSavingsGoal>(),
+        gh<_i383.RestoreSavingsGoal>(),
+        gh<_i327.DeleteSavingsGoal>(),
+      ),
+    );
     gh.lazySingleton<_i807.OnboardingCubit>(
       () => _i807.OnboardingCubit(
         gh<_i793.ResolveOnboardingStatus>(),
         gh<_i430.OnboardingRepository>(),
+      ),
+    );
+    gh.factory<_i1060.ApplyWhatIfScenario>(
+      () => _i1060.ApplyWhatIfScenario(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i847.EditSavingsGoal>(),
       ),
     );
     gh.factory<_i247.AddOccasionAttachment>(
@@ -1754,8 +1948,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i415.AddParticipantContribution>(
       () => _i415.AddParticipantContribution(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i847.ArchiveOccasion>(
-      () => _i847.ArchiveOccasion(gh<_i72.OccasionsRepository>()),
+    gh.factory<_i848.ArchiveOccasion>(
+      () => _i848.ArchiveOccasion(gh<_i72.OccasionsRepository>()),
     );
     gh.factory<_i905.CreateOccasion>(
       () => _i905.CreateOccasion(gh<_i72.OccasionsRepository>()),
@@ -1790,8 +1984,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i276.WatchOccasionsList>(
       () => _i276.WatchOccasionsList(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i622.ScanReviewCubit>(
-      () => _i622.ScanReviewCubit(
+    gh.factory<_i624.ScanReviewCubit>(
+      () => _i624.ScanReviewCubit(
         gh<_i267.GetScanDetail>(),
         gh<_i303.GetCandidateEntries>(),
         gh<_i506.EditCandidateEntry>(),
@@ -1802,6 +1996,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i237.TagBatchToOccasion>(),
         gh<_i20.GetPossibleDuplicateForCandidate>(),
         gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i921.GoalFormCubit>(
+      () => _i921.GoalFormCubit(
+        gh<_i291.CreateSavingsGoal>(),
+        gh<_i847.EditSavingsGoal>(),
+        gh<_i720.GetGoalDetail>(),
+        gh<_i903.GetPrimaryCurrency>(),
+        gh<_i784.SavingsCalculator>(),
+        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i62.ArchivedPeopleCubit>(
@@ -1892,10 +2096,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i259.RetryFailedSync>(),
       ),
     );
-    gh.factory<_i720.BudgetFormCubit>(
-      () => _i720.BudgetFormCubit(
+    gh.factory<_i722.BudgetFormCubit>(
+      () => _i722.BudgetFormCubit(
         gh<_i587.GetBudgetForMonth>(),
-        gh<_i254.CreateBudget>(),
+        gh<_i255.CreateBudget>(),
         gh<_i755.EditBudget>(),
         gh<_i150.DeleteBudget>(),
         gh<_i552.AddBudgetCategoryAllocation>(),
@@ -1919,8 +2123,28 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
-    gh.factory<_i624.ScanHistoryCubit>(
-      () => _i624.ScanHistoryCubit(
+    gh.factory<_i896.CompoundGrowthCalculatorCubit>(
+      () => _i896.CompoundGrowthCalculatorCubit(
+        gh<_i217.CalculateCompoundGrowth>(),
+        gh<_i60.GetPrefillableSavingsGoalAmount>(),
+        gh<_i999.EgpFormatter>(),
+      ),
+    );
+    gh.factory<_i332.AIToolRegistry>(
+      () => _i332.AIToolRegistry(
+        gh<_i917.GetCategorySpendTool>(),
+        gh<_i1050.GetTopSpendingCategoryTool>(),
+        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i1049.GetPersonBalanceTool>(),
+        gh<_i14.GetOwedOverviewTool>(),
+        gh<_i59.GetBudgetStatusTool>(),
+        gh<_i410.GetSavingsGoalStatusTool>(),
+        gh<_i567.GetSavingsProjectionTool>(),
+        gh<_i666.GetOccasionTotalsTool>(),
+      ),
+    );
+    gh.factory<_i626.ScanHistoryCubit>(
+      () => _i626.ScanHistoryCubit(
         gh<_i130.WatchScanHistory>(),
         gh<_i413.DeleteScan>(),
       ),
@@ -1972,27 +2196,24 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i500.AppLifecycleObserver>(),
       ),
     );
+    gh.factory<_i380.WhatIfCubit>(
+      () => _i380.WhatIfCubit(
+        gh<_i720.GetGoalDetail>(),
+        gh<_i1027.CalculateWhatIfMonthlyContribution>(),
+        gh<_i691.CalculateWhatIfCompletionDate>(),
+        gh<_i1060.ApplyWhatIfScenario>(),
+      ),
+    );
     gh.factory<_i53.OccasionDetailCubit>(
       () => _i53.OccasionDetailCubit(
         gh<_i294.WatchOccasionDetail>(),
         gh<_i192.RemoveParticipantContribution>(),
         gh<_i247.AddOccasionAttachment>(),
         gh<_i191.RemoveOccasionAttachment>(),
-        gh<_i847.ArchiveOccasion>(),
+        gh<_i848.ArchiveOccasion>(),
         gh<_i154.RestoreOccasion>(),
         gh<_i1046.DeleteOccasion>(),
         gh<_i780.AttachmentPickerService>(),
-      ),
-    );
-    gh.factory<_i332.AIToolRegistry>(
-      () => _i332.AIToolRegistry(
-        gh<_i917.GetCategorySpendTool>(),
-        gh<_i1050.GetTopSpendingCategoryTool>(),
-        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
-        gh<_i1049.GetPersonBalanceTool>(),
-        gh<_i14.GetOwedOverviewTool>(),
-        gh<_i59.GetBudgetStatusTool>(),
-        gh<_i666.GetOccasionTotalsTool>(),
       ),
     );
     gh.factory<_i636.AskFinancialQuestion>(
@@ -2017,8 +2238,8 @@ extension GetItInjectableX on _i174.GetIt {
   }
 }
 
-class _$RegisterModule extends _i291.RegisterModule {}
+class _$RegisterModule extends _i292.RegisterModule {}
 
 class _$AIHttpModule extends _i88.AIHttpModule {}
 
-class _$AppLockModule extends _i849.AppLockModule {}
+class _$AppLockModule extends _i850.AppLockModule {}

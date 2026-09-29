@@ -8,6 +8,8 @@ import 'package:daftary/features/ai_assistant/domain/tools/get_category_spend.da
 import 'package:daftary/features/ai_assistant/domain/tools/get_occasion_totals_tool.dart';
 import 'package:daftary/features/ai_assistant/domain/tools/get_owed_overview_tool.dart';
 import 'package:daftary/features/ai_assistant/domain/tools/get_person_balance_tool.dart';
+import 'package:daftary/features/ai_assistant/domain/tools/get_savings_goal_status_tool.dart';
+import 'package:daftary/features/ai_assistant/domain/tools/get_savings_projection_tool.dart';
 import 'package:daftary/features/ai_assistant/domain/tools/get_top_spending_category.dart';
 import 'package:daftary/features/ai_assistant/domain/tools/tool_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,6 +48,10 @@ class _MockOwedOverview extends Mock implements GetOwedOverviewTool {}
 
 class _MockBudgetStatus extends Mock implements GetBudgetStatusTool {}
 
+class _MockSavingsGoalStatus extends Mock implements GetSavingsGoalStatusTool {}
+
+class _MockSavingsProjection extends Mock implements GetSavingsProjectionTool {}
+
 class _MockOccasionTotals extends Mock implements GetOccasionTotalsTool {}
 
 void main() {
@@ -57,6 +63,8 @@ void main() {
       _MockPersonBalance(),
       _MockOwedOverview(),
       _MockBudgetStatus(),
+      _MockSavingsGoalStatus(),
+      _MockSavingsProjection(),
       _MockOccasionTotals(),
     ];
     final names = [
@@ -66,6 +74,8 @@ void main() {
       AIToolNames.getPersonBalance,
       AIToolNames.getOwedOverview,
       AIToolNames.getBudgetStatus,
+      AIToolNames.getSavingsGoalStatus,
+      AIToolNames.getSavingsProjection,
       AIToolNames.getOccasionTotals,
     ];
     for (var i = 0; i < tools.length; i++) {
@@ -79,10 +89,19 @@ void main() {
       tools[3] as GetPersonBalanceTool,
       tools[4] as GetOwedOverviewTool,
       tools[5] as GetBudgetStatusTool,
-      tools[6] as GetOccasionTotalsTool,
+      tools[6] as GetSavingsGoalStatusTool,
+      tools[7] as GetSavingsProjectionTool,
+      tools[8] as GetOccasionTotalsTool,
     );
 
     expect(registry.toolNames, AIToolNames.all);
+    expect(
+      AIToolNames.all,
+      containsAll([
+        AIToolNames.getSavingsGoalStatus,
+        AIToolNames.getSavingsProjection,
+      ]),
+    );
     expect(
       aiToolCatalog.map((d) => d.name).toSet(),
       registry.toolNames,
@@ -113,11 +132,11 @@ void main() {
     final a = _FakeTool('a');
     final registry = AIToolRegistry.fromTools([a]);
 
-    final result = await registry.dispatch('getSavingsProjection', {});
+    final result = await registry.dispatch('applyWhatIfScenario', {});
 
     expect(
       result,
-      const Left<Failure, Never>(UnknownAIToolFailure('getSavingsProjection')),
+      const Left<Failure, Never>(UnknownAIToolFailure('applyWhatIfScenario')),
     );
     expect(a.calls, isEmpty);
   });

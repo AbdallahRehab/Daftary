@@ -83,10 +83,9 @@ class SavingsGoalSnapshot extends Equatable {
 /// Read-only port onto 011 Savings Goals' published repository contract
 /// (specs/011-savings-goals/contracts/savings_repository.md).
 ///
-/// Declared here rather than importing 011 because 011 is specified but not
-/// yet implemented in code; once it ships, an adapter over its
-/// `SavingsRepository` replaces `UnavailableSavingsInsightsSource` and
-/// nothing in this feature's Domain layer changes.
+/// Declared here so this feature's Domain layer never imports 011; 011's
+/// `SavingsRepositoryInsightsSource` (lib/features/savings/data/adapters/)
+/// implements it over its `SavingsRepository` (011 FR-031).
 abstract class SavingsInsightsSource {
   /// Every active (non-archived, non-deleted) goal.
   Future<Either<Failure, List<SavingsGoalSnapshot>>> activeGoals();

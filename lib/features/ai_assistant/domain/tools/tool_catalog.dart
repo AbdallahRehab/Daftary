@@ -14,12 +14,8 @@ abstract final class AIToolNames {
   static const String getBudgetStatus = 'getBudgetStatus';
   static const String getOccasionTotals = 'getOccasionTotals';
 
-  // `getSavingsGoalStatus` / `getSavingsProjection` are deferred until
-  // feature 011 (Savings Goals) lands: the use cases they wrap
-  // (`GetGoalDetail`, `GetSavingsOverview`,
-  // `CalculateWhatIfMonthlyContribution`) do not exist in this codebase
-  // yet, and a tool may only wrap an existing use case (research.md
-  // Decision 4).
+  static const String getSavingsGoalStatus = 'getSavingsGoalStatus';
+  static const String getSavingsProjection = 'getSavingsProjection';
 
   /// Every declared name — what a requested tool call is checked against
   /// before anything is dispatched.
@@ -30,6 +26,8 @@ abstract final class AIToolNames {
     getPersonBalance,
     getOwedOverview,
     getBudgetStatus,
+    getSavingsGoalStatus,
+    getSavingsProjection,
     getOccasionTotals,
   };
 }
@@ -44,6 +42,16 @@ abstract final class AIToolArgs {
   static const String personName = 'personName';
   static const String month = 'month';
   static const String occasionName = 'occasionName';
+  static const String goalName = 'goalName';
+
+  /// `getSavingsProjection`: a hypothetical monthly contribution, integer
+  /// minor units of the goal's own currency (011 FR-013).
+  static const String hypotheticalMonthlyContributionMinorUnits =
+      'hypotheticalMonthlyContributionMinorUnits';
+
+  /// `getSavingsProjection`: a hypothetical `YYYY-MM-DD` date to finish the
+  /// goal by (011 FR-014).
+  static const String hypotheticalTargetDate = 'hypotheticalTargetDate';
 
   /// Keys inside a period object.
   static const String preset = 'preset';
@@ -175,6 +183,58 @@ final List<AIToolDeclaration> aiToolCatalog = List.unmodifiable([
           'description': 'YYYY-MM. Omit for the current month.',
         },
       },
+    },
+  ),
+  AIToolDeclaration(
+    name: AIToolNames.getSavingsGoalStatus,
+    description:
+        "Returns the user's savings goals: target, saved, remaining, "
+        'percentage progress, whether achieved, and the estimated completion '
+        '(months and date) and required monthly contribution the app '
+        'computed for each. Each goal carries its own currency — amounts are '
+        'integer minor units of that goal\'s currency. Pass goalName for one '
+        'goal; omit it for every active goal plus the total saved in the '
+        'primary currency.',
+    parametersSchema: {
+      'type': 'object',
+      'properties': {
+        AIToolArgs.goalName: {
+          'type': 'string',
+          'description': "The savings goal's name, as the user said it.",
+        },
+      },
+    },
+  ),
+  AIToolDeclaration(
+    name: AIToolNames.getSavingsProjection,
+    description:
+        'A read-only "what if" for one savings goal, computed by the app '
+        '(the goal is never changed). Give exactly one of: '
+        'hypotheticalMonthlyContributionMinorUnits (returns how many months '
+        'it would take and the completion date), or hypotheticalTargetDate '
+        '(returns the monthly contribution required to finish by then). '
+        'Amounts are integer minor units of the goal\'s own currency — call '
+        'getSavingsGoalStatus first if you do not know it.',
+    parametersSchema: {
+      'type': 'object',
+      'properties': {
+        AIToolArgs.goalName: {
+          'type': 'string',
+          'description': "The savings goal's name, as the user said it.",
+        },
+        AIToolArgs.hypotheticalMonthlyContributionMinorUnits: {
+          'type': 'integer',
+          'description':
+              'A monthly amount to try, > 0, in integer minor units of the '
+              "goal's currency (the user's own figure, only re-expressed in "
+              'minor units).',
+        },
+        AIToolArgs.hypotheticalTargetDate: {
+          'type': 'string',
+          'description': 'YYYY-MM-DD, after today: the date to finish by.',
+        },
+      },
+      'required': [AIToolArgs.goalName],
     },
   ),
   AIToolDeclaration(

@@ -84,6 +84,7 @@ void main() {
     for (final t in [
       SyncEntityType.transactionAudit,
       SyncEntityType.conflictResolution,
+      SyncEntityType.savingsContributionAudit,
     ]) {
       expect(
         coalesce(op(), type: t, newOpType: OutboxOpType.upsert),

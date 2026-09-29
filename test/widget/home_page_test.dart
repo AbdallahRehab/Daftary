@@ -12,12 +12,18 @@ import 'package:daftary/features/dashboard/presentation/widgets/overview_summary
 import 'package:daftary/features/dashboard/presentation/widgets/quick_action_row.dart';
 import 'package:daftary/features/dashboard/presentation/widgets/snapshot_error_card.dart';
 import 'package:daftary/features/dashboard/presentation/widgets/upcoming_placeholder_card.dart';
+import 'package:daftary/features/dashboard/presentation/widgets/upcoming_savings_goals_card.dart';
 import 'package:daftary/features/finance/domain/entities/finance_history_filter.dart';
 import 'package:daftary/features/finance/domain/entities/finance_summary.dart';
+import 'package:daftary/features/savings/domain/entities/goal_progress.dart';
+import 'package:daftary/features/savings/domain/entities/savings_goal.dart';
+import 'package:daftary/features/savings/domain/entities/savings_overview.dart';
+import 'package:daftary/features/savings/presentation/savings_routes.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockDashboardCubit extends MockCubit<DashboardState>
@@ -134,6 +140,7 @@ void main() {
         find.byType(QuickActionRow),
         find.text(en.homeSectionsTitle),
         find.widgetWithText(ListTile, en.budgetsTitle),
+        find.widgetWithText(ListTile, en.homeSavingsTitle),
         find.widgetWithText(ListTile, en.occasionsTitle),
         find.widgetWithText(ListTile, en.ocrCaptureTitle),
         find.text(en.overviewSectionTheyOweYou),
@@ -199,6 +206,158 @@ void main() {
       await tester.pump();
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(find.byType(OverviewSummaryCard), findsNothing);
+    });
+  });
+
+  group('savings (011 FR-031, research.md Decision 12)', () {
+    GoalOverviewLine line(
+      String id,
+      String name, {
+      required DateTime targetDate,
+      Currency currency = Currency.egp,
+      int current = 250000,
+    }) => GoalOverviewLine(
+      goal: SavingsGoal(
+        id: id,
+        idempotencyKey: 'k-$id',
+        name: name,
+        currency: currency,
+        targetAmountMinorUnits: 1000000,
+        targetDate: targetDate,
+        createdAt: DateTime(2026, 9),
+        updatedAt: DateTime(2026, 9),
+      ),
+      progress: GoalProgress(
+        goalId: id,
+        currency: currency,
+        targetAmountMinorUnits: 1000000,
+        currentAmountMinorUnits: current,
+      ),
+      primaryCurrencyAmountMinorUnits: current,
+    );
+
+    final goals = [
+      line('g1', 'New car', targetDate: DateTime(2027, 3, 1)),
+      line(
+        'g2',
+        'Trip',
+        targetDate: DateTime(2027, 8, 1),
+        currency: Currency.usd,
+        current: 50000,
+      ),
+    ];
+
+    /// Home under a real router, so `_openThenRefresh` can push.
+    Future<void> pumpRouted(WidgetTester tester, DashboardState state) async {
+      tester.view.physicalSize = const Size(800, 3200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      when(() => cubit.state).thenReturn(state);
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => BlocProvider<DashboardCubit>.value(
+              value: cubit,
+              child: const HomeView(),
+            ),
+          ),
+          GoRoute(
+            path: SavingsRoutes.overview,
+            builder: (_, _) => const Scaffold(body: Text('savings overview')),
+          ),
+          GoRoute(
+            path: '/savings/:goalId',
+            builder: (_, s) =>
+                Scaffold(body: Text('goal ${s.pathParameters['goalId']}')),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          theme: buildLightTheme(),
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the Savings card opens /savings and refreshes Home on '
+        'return', (tester) async {
+      await pumpRouted(tester, success);
+
+      final card = find.widgetWithText(ListTile, en.homeSavingsTitle);
+      expect(card, findsOneWidget);
+      expect(find.text(en.homeSavingsEntrySubtitle), findsOneWidget);
+      await tester.tap(card);
+      await tester.pumpAndSettle();
+      expect(find.text('savings overview'), findsOneWidget);
+
+      tester.state<NavigatorState>(find.byType(Navigator).last).pop();
+      await tester.pumpAndSettle();
+      verify(() => cubit.refresh()).called(1);
+    });
+
+    testWidgets('no upcoming goals keeps the honest empty state', (
+      tester,
+    ) async {
+      await pump(tester, success);
+
+      expect(find.byType(UpcomingPlaceholderCard), findsOneWidget);
+      expect(find.byType(UpcomingSavingsGoalsCard), findsNothing);
+    });
+
+    testWidgets('upcoming goals replace the placeholder, showing only 011\'s '
+        'figures in each goal\'s own currency', (tester) async {
+      await pump(tester, success.copyWith(upcomingSavingsGoals: goals));
+
+      expect(find.byType(UpcomingPlaceholderCard), findsNothing);
+      expect(find.byType(UpcomingSavingsGoalsCard), findsOneWidget);
+      expect(find.text(en.homeUpcomingTitle), findsOneWidget);
+      expect(find.text('New car'), findsOneWidget);
+      expect(find.text('Trip'), findsOneWidget);
+      expect(find.text('2,500.00 EGP of 10,000.00 EGP'), findsOneWidget);
+      expect(find.text('500.00 USD of 10,000.00 USD'), findsOneWidget);
+      expect(
+        topOf(tester, find.text('New car')),
+        lessThan(topOf(tester, find.text('Trip'))),
+      );
+      // Still the last section on Home.
+      expect(
+        topOf(tester, find.byType(UpcomingSavingsGoalsCard)),
+        greaterThan(topOf(tester, find.byType(InsightsPlaceholderCard))),
+      );
+    });
+
+    testWidgets('tapping an upcoming goal opens /savings/:goalId', (
+      tester,
+    ) async {
+      await pumpRouted(tester, success.copyWith(upcomingSavingsGoals: goals));
+
+      await tester.tap(find.text('Trip'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('goal g2'), findsOneWidget);
+    });
+
+    testWidgets('Arabic RTL at phone width renders upcoming goals without '
+        'overflow', (tester) async {
+      final ar = await AppLocalizations.delegate.load(const Locale('ar'));
+      await pump(
+        tester,
+        success.copyWith(upcomingSavingsGoals: goals),
+        locale: const Locale('ar'),
+        theme: buildDarkTheme(),
+        size: const Size(360, 3200),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text(ar.homeUpcomingTitle), findsOneWidget);
+      expect(find.text(ar.homeSavingsTitle), findsOneWidget);
     });
   });
 

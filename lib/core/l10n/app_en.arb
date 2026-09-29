@@ -826,6 +826,9 @@
   "syncKindOccasion": "Occasion",
   "syncKindBudget": "Budget",
   "syncKindBudgetAllocation": "Budget category",
+  "syncKindSavingsGoal": "Savings goal",
+  "syncKindSavingsContribution": "Savings entry",
+  "syncKindSavingsContributionHistory": "Savings entry history",
   "@syncKindConflictResolution": {
     "description": "Record type label."
   },
@@ -1564,7 +1567,30 @@
   "homeInsightsTitle": "Insights",
   "homeInsightsPlaceholder": "Insights will appear here once the AI Assistant is set up.",
   "homeUpcomingTitle": "Upcoming",
-  "homeUpcomingPlaceholder": "Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.",
+  "homeUpcomingPlaceholder": "Savings goals with a target date will appear here. Upcoming bills will follow once reminders are available.",
+  "homeSavingsTitle": "Savings goals",
+  "homeSavingsEntrySubtitle": "Plan and track what you're saving for",
+  "homeSavingsUpcomingTargetDate": "Target date {date}",
+  "@homeSavingsUpcomingTargetDate": {
+    "description": "012/011 Home Upcoming: one goal's target date, already formatted.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSavingsUpcomingProgress": "{current} of {target}",
+  "@homeSavingsUpcomingProgress": {
+    "description": "012/011 Home Upcoming: saved so far of the target, both formatted in the goal's currency.",
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
   "homeOverviewLoadError": "Couldn't load your balances.",
   "homeFinanceLoadError": "Couldn't load this month's income and expenses.",
   "homeFullErrorMessage": "Your dashboard couldn't be loaded. Please try again.",
@@ -1831,5 +1857,739 @@
   "aiFailureRetryAction": "Try again",
   "aiFailureUpdateKeyAction": "Update API key",
   "aiObservationLabel": "Observation",
-  "aiObservationSemanticLabel": "Observation from the assistant, based on your own records"
+  "aiObservationSemanticLabel": "Observation from the assistant, based on your own records",
+  "savingsGoalNotFoundError": "This savings goal no longer exists.",
+  "@savingsGoalNotFoundError": {
+    "description": "011: the goal (or entry) being viewed or changed was deleted."
+  },
+  "savingsWithdrawalExceedsBalanceError": "You can't withdraw more than this goal has saved.",
+  "@savingsWithdrawalExceedsBalanceError": {
+    "description": "011 FR-006: a withdrawal, edit or delete would take the goal's balance below zero."
+  },
+  "savingsGoalHasHistoryError": "This goal has saved amounts, so it can't be deleted. You can archive it instead.",
+  "@savingsGoalHasHistoryError": {
+    "description": "011 FR-021: delete is blocked for a goal with contribution history; archiving is offered instead."
+  },
+  "savingsInvalidTargetDateError": "Choose a target date after today.",
+  "@savingsInvalidTargetDateError": {
+    "description": "011 FR-003/FR-016: the target date is today or in the past."
+  },
+  "savingsGoalArchivedError": "This goal is archived. Restore it to add new amounts.",
+  "@savingsGoalArchivedError": {
+    "description": "011 FR-020: new contributions/withdrawals are rejected on an archived goal."
+  },
+  "savingsGoalFormCreateTitle": "New savings goal",
+  "@savingsGoalFormCreateTitle": {
+    "description": "011 goal form title, create mode."
+  },
+  "savingsGoalFormEditTitle": "Edit goal",
+  "@savingsGoalFormEditTitle": {
+    "description": "011 goal form title, edit mode."
+  },
+  "savingsGoalEditAction": "Edit goal",
+  "@savingsGoalEditAction": {
+    "description": "011 goal detail app-bar action tooltip."
+  },
+  "savingsGoalNameLabel": "Goal name",
+  "@savingsGoalNameLabel": {
+    "description": "011 goal form field."
+  },
+  "savingsGoalNameRequiredError": "Give the goal a name.",
+  "@savingsGoalNameRequiredError": {
+    "description": "011 FR-001 validation."
+  },
+  "savingsGoalTypeLabel": "Type (optional)",
+  "@savingsGoalTypeLabel": {
+    "description": "011 goal type picker label; the type only picks an icon."
+  },
+  "savingsGoalTypeNone": "No type",
+  "@savingsGoalTypeNone": {
+    "description": "011 type picker option for a plain custom-named goal."
+  },
+  "savingsGoalTypeEmergencyFund": "Emergency fund",
+  "@savingsGoalTypeEmergencyFund": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeNewCar": "New car",
+  "@savingsGoalTypeNewCar": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeWedding": "Wedding",
+  "@savingsGoalTypeWedding": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeVacation": "Vacation",
+  "@savingsGoalTypeVacation": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeNewPhone": "New phone",
+  "@savingsGoalTypeNewPhone": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeHomeFurniture": "Home furniture",
+  "@savingsGoalTypeHomeFurniture": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeEducation": "Education",
+  "@savingsGoalTypeEducation": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalTypeOther": "Other",
+  "@savingsGoalTypeOther": {
+    "description": "011 standard goal type."
+  },
+  "savingsGoalCurrencyLabel": "Goal currency",
+  "@savingsGoalCurrencyLabel": {
+    "description": "011 FR-027 currency picker label (create only)."
+  },
+  "savingsGoalCurrencyFixedHint": "Every amount of this goal is in {currency}. The currency can't be changed after the goal is created.",
+  "@savingsGoalCurrencyFixedHint": {
+    "description": "011 FR-027: shown instead of the currency picker when editing.",
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalTargetLabel": "Target amount",
+  "@savingsGoalTargetLabel": {
+    "description": "011 goal form field."
+  },
+  "savingsGoalTargetInvalidError": "Enter a target amount greater than zero.",
+  "@savingsGoalTargetInvalidError": {
+    "description": "011 FR-002 validation."
+  },
+  "savingsGoalStartingLabel": "Already saved (optional)",
+  "@savingsGoalStartingLabel": {
+    "description": "011 starting amount field, create only."
+  },
+  "savingsGoalStartingHint": "Money you had already set aside before tracking it here.",
+  "@savingsGoalStartingHint": {
+    "description": "011 starting amount helper text."
+  },
+  "savingsGoalStartingInvalidError": "Enter zero or a positive amount.",
+  "@savingsGoalStartingInvalidError": {
+    "description": "011 FR-002 validation."
+  },
+  "savingsGoalMonthlyLabel": "Monthly contribution (optional)",
+  "@savingsGoalMonthlyLabel": {
+    "description": "011 goal form field."
+  },
+  "savingsGoalMonthlyInvalidError": "Enter a monthly amount greater than zero, or leave it empty.",
+  "@savingsGoalMonthlyInvalidError": {
+    "description": "011 FR-002 validation."
+  },
+  "savingsGoalTargetDateLabel": "Target date (optional)",
+  "@savingsGoalTargetDateLabel": {
+    "description": "011 goal form field."
+  },
+  "savingsGoalTargetDateNotSet": "Not set",
+  "@savingsGoalTargetDateNotSet": {
+    "description": "011 target date field placeholder."
+  },
+  "savingsGoalTargetDateClear": "Clear target date",
+  "@savingsGoalTargetDateClear": {
+    "description": "011 target date clear button tooltip."
+  },
+  "savingsGoalCreateAction": "Create goal",
+  "@savingsGoalCreateAction": {
+    "description": "011 goal form submit, create mode."
+  },
+  "savingsGoalUpdateAction": "Save changes",
+  "@savingsGoalUpdateAction": {
+    "description": "011 goal form submit, edit mode."
+  },
+  "savingsGoalPreviewTitle": "Your plan",
+  "@savingsGoalPreviewTitle": {
+    "description": "011 live estimate preview heading on the goal form."
+  },
+  "savingsProgressSavedLabel": "Saved",
+  "@savingsProgressSavedLabel": {
+    "description": "011 progress card figure label."
+  },
+  "savingsProgressRemainingLabel": "Remaining",
+  "@savingsProgressRemainingLabel": {
+    "description": "011 progress card figure label."
+  },
+  "savingsProgressTargetLabel": "Target",
+  "@savingsProgressTargetLabel": {
+    "description": "011 progress card figure label."
+  },
+  "savingsProgressPercent": "{percent}% saved",
+  "@savingsProgressPercent": {
+    "description": "011 progress percentage; percent is pre-formatted with Western digits.",
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsEstimateByContribution": "At {amount} a month, you'll reach it in {duration}, around {date}.",
+  "@savingsEstimateByContribution": {
+    "description": "011 FR-010 estimate.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsEstimateByContributionUndated": "At {amount} a month, you'll reach it in {duration}.",
+  "@savingsEstimateByContributionUndated": {
+    "description": "011 FR-010 estimate when the date is too far to show.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsEstimateRequired": "To reach it by {date}, save {amount} a month.",
+  "@savingsEstimateRequired": {
+    "description": "011 FR-011 required monthly contribution.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsEstimateShortfall": "At this rate, you'll reach this {duration} after your target date.",
+  "@savingsEstimateShortfall": {
+    "description": "011 FR-012 honest shortfall line.",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsNoEstimatePrompt": "Set a monthly contribution or a target date to see when you'll reach this goal.",
+  "@savingsNoEstimatePrompt": {
+    "description": "011 US1 AS-6: shown when the goal has no plan."
+  },
+  "savingsDurationMonths": "{count, plural, =1{1 month} other{{count} months}}",
+  "@savingsDurationMonths": {
+    "description": "011 a number of months.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savingsDurationYears": "{count, plural, =1{1 year} other{{count} years}}",
+  "@savingsDurationYears": {
+    "description": "011 a number of years.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savingsDurationYearsAndMonths": "{years} and {months}",
+  "@savingsDurationYearsAndMonths": {
+    "description": "011 a long timeline, e.g. '2 years and 3 months'.",
+    "placeholders": {
+      "years": {
+        "type": "String"
+      },
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsGoalAchievedBadge": "Goal reached!",
+  "@savingsGoalAchievedBadge": {
+    "description": "011 FR-017 celebratory badge."
+  },
+  "savingsGoalAchievedMessage": "You've saved everything you planned for this goal. Well done!",
+  "@savingsGoalAchievedMessage": {
+    "description": "011 FR-017 celebratory message."
+  },
+  "savingsGoalHistoryHeader": "History",
+  "@savingsGoalHistoryHeader": {
+    "description": "011 goal detail history section."
+  },
+  "savingsGoalHistoryEmptyTitle": "Nothing logged yet",
+  "@savingsGoalHistoryEmptyTitle": {
+    "description": "011 empty history title."
+  },
+  "savingsGoalHistoryEmptyMessage": "Add what you put toward this goal to track your real progress.",
+  "@savingsGoalHistoryEmptyMessage": {
+    "description": "011 empty history message."
+  },
+  "savingsLogContributionAction": "Add money",
+  "@savingsLogContributionAction": {
+    "description": "011 log contribution action."
+  },
+  "savingsLogWithdrawalAction": "Withdraw",
+  "@savingsLogWithdrawalAction": {
+    "description": "011 log withdrawal action."
+  },
+  "savingsGoalArchivedNotice": "This goal is archived. You can still correct past entries; restore it to add new ones.",
+  "@savingsGoalArchivedNotice": {
+    "description": "011 FR-020 explanation shown instead of the log actions."
+  },
+  "savingsGoalLoadErrorTitle": "Couldn't open this goal",
+  "@savingsGoalLoadErrorTitle": {
+    "description": "011 goal detail error state."
+  },
+  "savingsRetryAction": "Try again",
+  "@savingsRetryAction": {
+    "description": "011 retry action."
+  },
+  "savingsEntryContribution": "Contribution",
+  "@savingsEntryContribution": {
+    "description": "011 entry type label."
+  },
+  "savingsEntryWithdrawal": "Withdrawal",
+  "@savingsEntryWithdrawal": {
+    "description": "011 entry type label."
+  },
+  "savingsEntryStartingAmount": "Starting amount",
+  "@savingsEntryStartingAmount": {
+    "description": "011 label of the entry created from the goal's starting amount."
+  },
+  "savingsEntryConvertedAmount": "Counted as {amount}",
+  "@savingsEntryConvertedAmount": {
+    "description": "011 FR-028: the converted goal-currency amount under a foreign entry.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsEntryEditedLabel": "Edited",
+  "@savingsEntryEditedLabel": {
+    "description": "011 marker on an edited entry."
+  },
+  "savingsEntryEditAction": "Edit",
+  "@savingsEntryEditAction": {
+    "description": "011 entry action."
+  },
+  "savingsEntryDeleteAction": "Delete",
+  "@savingsEntryDeleteAction": {
+    "description": "011 entry action."
+  },
+  "savingsEntryActionsTooltip": "Entry options",
+  "@savingsEntryActionsTooltip": {
+    "description": "011 entry overflow menu tooltip."
+  },
+  "savingsEntryDeleteConfirmTitle": "Delete this entry?",
+  "@savingsEntryDeleteConfirmTitle": {
+    "description": "011 FR-009 delete confirmation title."
+  },
+  "savingsEntryDeleteConfirmMessage": "The goal's figures will be recalculated. A record of the entry's values is kept.",
+  "@savingsEntryDeleteConfirmMessage": {
+    "description": "011 FR-009/FR-030 delete confirmation message."
+  },
+  "savingsContributionFormAddTitle": "Add money",
+  "@savingsContributionFormAddTitle": {
+    "description": "011 contribution form title."
+  },
+  "savingsContributionFormWithdrawTitle": "Withdraw money",
+  "@savingsContributionFormWithdrawTitle": {
+    "description": "011 withdrawal form title."
+  },
+  "savingsContributionFormEditTitle": "Edit entry",
+  "@savingsContributionFormEditTitle": {
+    "description": "011 contribution form title, edit mode."
+  },
+  "savingsContributionAmountLabel": "Amount",
+  "@savingsContributionAmountLabel": {
+    "description": "011 contribution form field."
+  },
+  "savingsContributionAmountInvalidError": "Enter an amount greater than zero.",
+  "@savingsContributionAmountInvalidError": {
+    "description": "011 FR-007 validation."
+  },
+  "savingsContributionDateLabel": "Date",
+  "@savingsContributionDateLabel": {
+    "description": "011 contribution form field."
+  },
+  "savingsContributionNoteLabel": "Note (optional)",
+  "@savingsContributionNoteLabel": {
+    "description": "011 contribution form field."
+  },
+  "savingsContributionSaveAction": "Save",
+  "@savingsContributionSaveAction": {
+    "description": "011 contribution form submit."
+  },
+  "savingsContributionConversionHint": "This will be converted to {currency} at the current rate when you save.",
+  "@savingsContributionConversionHint": {
+    "description": "011 FR-028 hint when the entered currency differs from the goal's.",
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsOverviewTitle": "Savings goals",
+  "@savingsOverviewTitle": {
+    "description": "011 US4 overview page title."
+  },
+  "savingsOverviewNewGoalAction": "New goal",
+  "@savingsOverviewNewGoalAction": {
+    "description": "011 US4 overview: create-goal FAB."
+  },
+  "savingsOverviewArchivedAction": "Archived goals",
+  "@savingsOverviewArchivedAction": {
+    "description": "011 US4 overview: open archived goals."
+  },
+  "savingsOverviewEmptyTitle": "Start saving toward something",
+  "@savingsOverviewEmptyTitle": {
+    "description": "011 FR-023 empty-state title."
+  },
+  "savingsOverviewEmptyMessage": "Set a goal — an emergency fund, a trip, a new phone — and track every amount you put aside until you reach it.",
+  "@savingsOverviewEmptyMessage": {
+    "description": "011 FR-023 empty-state explanation."
+  },
+  "savingsOverviewEmptyAction": "Create your first goal",
+  "@savingsOverviewEmptyAction": {
+    "description": "011 FR-023 empty-state action."
+  },
+  "savingsOverviewTotalLabel": "Total saved",
+  "@savingsOverviewTotalLabel": {
+    "description": "011 FR-019 combined total label."
+  },
+  "savingsOverviewGoalCount": "{count, plural, =1{Across 1 goal} other{Across {count} goals}}",
+  "@savingsOverviewGoalCount": {
+    "description": "011 FR-019: how many goals the total spans.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savingsOverviewIncompleteTitle": "Total incomplete",
+  "@savingsOverviewIncompleteTitle": {
+    "description": "011 FR-019 incomplete-total marker title."
+  },
+  "savingsOverviewIncompleteMessage": "It leaves out goals in {currencies}. Add an exchange rate for {currencies} to count them.",
+  "@savingsOverviewIncompleteMessage": {
+    "description": "011 FR-019: names the missing rates.",
+    "placeholders": {
+      "currencies": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsOverviewNotInTotal": "Not in the total — needs a {currency} rate",
+  "@savingsOverviewNotInTotal": {
+    "description": "011 FR-019: a blocked goal line.",
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsOverviewGoalProgress": "{saved} of {target}",
+  "@savingsOverviewGoalProgress": {
+    "description": "011 overview card: saved of target, in the goal's currency.",
+    "placeholders": {
+      "saved": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsOverviewGoalsHeader": "Your goals",
+  "@savingsOverviewGoalsHeader": {
+    "description": "011 overview: goal list header."
+  },
+  "savingsOverviewLoadErrorTitle": "Couldn't load your goals",
+  "@savingsOverviewLoadErrorTitle": {
+    "description": "011 overview load error."
+  },
+  "savingsOverviewGoalActionsTooltip": "Goal options",
+  "@savingsOverviewGoalActionsTooltip": {
+    "description": "011: goal overflow menu tooltip."
+  },
+  "savingsArchiveAction": "Archive",
+  "@savingsArchiveAction": {
+    "description": "011 FR-020 archive action."
+  },
+  "savingsArchiveRestoreAction": "Restore",
+  "@savingsArchiveRestoreAction": {
+    "description": "011 FR-020 restore action."
+  },
+  "savingsArchiveDoneMessage": "Goal archived",
+  "@savingsArchiveDoneMessage": {
+    "description": "011 FR-020 snackbar after archiving."
+  },
+  "savingsArchiveRestoredMessage": "Goal restored",
+  "@savingsArchiveRestoredMessage": {
+    "description": "011 FR-020 snackbar after restoring."
+  },
+  "savingsArchiveUndoAction": "Undo",
+  "@savingsArchiveUndoAction": {
+    "description": "011 FR-020 undo an archive."
+  },
+  "savingsArchiveTitle": "Archived goals",
+  "@savingsArchiveTitle": {
+    "description": "011 FR-020 archived goals page title."
+  },
+  "savingsArchiveEmptyTitle": "No archived goals",
+  "@savingsArchiveEmptyTitle": {
+    "description": "011 archived goals empty state."
+  },
+  "savingsArchiveEmptyMessage": "Goals you archive are kept here with their full history, ready to restore.",
+  "@savingsArchiveEmptyMessage": {
+    "description": "011 archived goals empty state."
+  },
+  "savingsDeleteAction": "Delete goal",
+  "@savingsDeleteAction": {
+    "description": "011 FR-021 delete action."
+  },
+  "savingsDeleteConfirmTitle": "Delete “{name}”?",
+  "@savingsDeleteConfirmTitle": {
+    "description": "011 FR-021 delete confirmation title.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsDeleteConfirmMessage": "This goal will be removed for good.",
+  "@savingsDeleteConfirmMessage": {
+    "description": "011 FR-021 delete confirmation."
+  },
+  "savingsDeleteBlockedTitle": "This goal has history",
+  "@savingsDeleteBlockedTitle": {
+    "description": "011 FR-021 delete blocked dialog title."
+  },
+  "savingsDeleteBlockedMessage": "Amounts have been logged to this goal, so it can't be deleted. Archive it instead to hide it while keeping its full history.",
+  "@savingsDeleteBlockedMessage": {
+    "description": "011 FR-021 offer to archive instead."
+  },
+  "savingsDeleteBlockedArchiveAction": "Archive instead",
+  "@savingsDeleteBlockedArchiveAction": {
+    "description": "011 FR-021 archive-instead action."
+  },
+  "savingsDeleteDoneMessage": "Goal deleted",
+  "@savingsDeleteDoneMessage": {
+    "description": "011 FR-021 snackbar after deleting."
+  },
+  "savingsWithdrawalAvailableHint": "Available to withdraw: {amount}",
+  "@savingsWithdrawalAvailableHint": {
+    "description": "011 FR-006 hint on the withdrawal form.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfAction": "What if?",
+  "@savingsWhatIfAction": {
+    "description": "011 FR-013/FR-014 goal page entry point to the what-if calculator."
+  },
+  "savingsWhatIfTitle": "What if?",
+  "@savingsWhatIfTitle": {
+    "description": "011 what-if calculator page title."
+  },
+  "savingsWhatIfModeMonthly": "Save a different amount",
+  "@savingsWhatIfModeMonthly": {
+    "description": "011 FR-013 what-if mode: a hypothetical monthly contribution."
+  },
+  "savingsWhatIfModeDate": "Finish by a date",
+  "@savingsWhatIfModeDate": {
+    "description": "011 FR-014 what-if mode: a hypothetical target date."
+  },
+  "savingsWhatIfCurrentPlanTitle": "Your plan now",
+  "@savingsWhatIfCurrentPlanTitle": {
+    "description": "011 what-if: heading of the goal's real, current plan."
+  },
+  "savingsWhatIfCurrentRemaining": "{amount} left to save",
+  "@savingsWhatIfCurrentRemaining": {
+    "description": "011 what-if: the goal's real remaining amount.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCurrentMonthly": "Saving {amount} a month",
+  "@savingsWhatIfCurrentMonthly": {
+    "description": "011 what-if: the goal's real monthly contribution.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCurrentNoMonthly": "No monthly contribution set",
+  "@savingsWhatIfCurrentNoMonthly": {
+    "description": "011 what-if: the goal has no monthly contribution."
+  },
+  "savingsWhatIfCurrentTargetDate": "Target date: {date}",
+  "@savingsWhatIfCurrentTargetDate": {
+    "description": "011 what-if: the goal's real target date.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfMonthlyLabel": "Monthly amount to try",
+  "@savingsWhatIfMonthlyLabel": {
+    "description": "011 FR-013 hypothetical monthly contribution field."
+  },
+  "savingsWhatIfMonthlyInvalidError": "Enter a monthly amount greater than zero.",
+  "@savingsWhatIfMonthlyInvalidError": {
+    "description": "011 FR-016: the hypothetical monthly contribution is empty, zero or negative."
+  },
+  "savingsWhatIfTargetDateLabel": "Finish by",
+  "@savingsWhatIfTargetDateLabel": {
+    "description": "011 FR-014 hypothetical target date field."
+  },
+  "savingsWhatIfTargetDateNotSet": "Pick a date",
+  "@savingsWhatIfTargetDateNotSet": {
+    "description": "011 what-if target date field placeholder."
+  },
+  "savingsWhatIfCalculateAction": "Calculate",
+  "@savingsWhatIfCalculateAction": {
+    "description": "011 what-if: run the calculation."
+  },
+  "savingsWhatIfResultTitle": "If you did this",
+  "@savingsWhatIfResultTitle": {
+    "description": "011 what-if: heading of the hypothetical result card."
+  },
+  "savingsWhatIfResultByMonthly": "Saving {amount} a month, you'd reach your goal in {duration}, around {date}.",
+  "@savingsWhatIfResultByMonthly": {
+    "description": "011 FR-013 what-if result.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfResultByMonthlyUndated": "Saving {amount} a month, you'd reach your goal in {duration}.",
+  "@savingsWhatIfResultByMonthlyUndated": {
+    "description": "011 FR-013 what-if result for a timeline too long to date.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfResultByDate": "To finish by {date}, you'd need to save {amount} a month.",
+  "@savingsWhatIfResultByDate": {
+    "description": "011 FR-014 what-if result.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCompareSooner": "{duration} sooner than your current plan",
+  "@savingsWhatIfCompareSooner": {
+    "description": "011 what-if: the hypothetical finishes earlier than the real plan.",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCompareLater": "{duration} later than your current plan",
+  "@savingsWhatIfCompareLater": {
+    "description": "011 what-if: the hypothetical finishes later than the real plan.",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCompareSame": "The same timeline as your current plan",
+  "@savingsWhatIfCompareSame": {
+    "description": "011 what-if: the hypothetical finishes when the real plan does."
+  },
+  "savingsWhatIfCompareMore": "{amount} a month more than you save now",
+  "@savingsWhatIfCompareMore": {
+    "description": "011 what-if: the required contribution exceeds the real one.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfCompareLess": "{amount} a month less than you save now",
+  "@savingsWhatIfCompareLess": {
+    "description": "011 what-if: the required contribution is below the real one.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfPreviewNotice": "This is only a preview. Your goal stays as it is unless you apply it.",
+  "@savingsWhatIfPreviewNotice": {
+    "description": "011 FR-015: exploring never changes the goal."
+  },
+  "savingsWhatIfApplyExplainMonthly": "Applying sets your monthly contribution to {amount}. Your target date stays as it is.",
+  "@savingsWhatIfApplyExplainMonthly": {
+    "description": "011 FR-015: what applying a monthly what-if changes.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfApplyExplainDate": "Applying sets your target date to {date} and your monthly contribution to {amount}.",
+  "@savingsWhatIfApplyExplainDate": {
+    "description": "011 FR-015: what applying a target-date what-if changes.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsWhatIfApplyAction": "Apply to my goal",
+  "@savingsWhatIfApplyAction": {
+    "description": "011 FR-015 apply action."
+  },
+  "savingsWhatIfCancelAction": "Cancel",
+  "@savingsWhatIfCancelAction": {
+    "description": "011 what-if: leave without changing the goal."
+  },
+  "savingsWhatIfAppliedMessage": "Your goal's plan was updated.",
+  "@savingsWhatIfAppliedMessage": {
+    "description": "011 FR-015: confirmation after applying."
+  },
+  "savingsWhatIfAchievedTitle": "Goal achieved",
+  "@savingsWhatIfAchievedTitle": {
+    "description": "011 FR-016: what-if opened on an achieved goal."
+  },
+  "savingsWhatIfAchievedMessage": "You've already reached this goal, so there's nothing left to plan for.",
+  "@savingsWhatIfAchievedMessage": {
+    "description": "011 FR-016: what-if opened on an achieved goal."
+  },
+  "savingsWhatIfBackAction": "Back to goal",
+  "@savingsWhatIfBackAction": {
+    "description": "011 what-if: return to the goal page."
+  }
 }

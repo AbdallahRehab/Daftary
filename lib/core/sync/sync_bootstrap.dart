@@ -185,5 +185,8 @@ class SyncBootstrap {
     SyncEntityType.occasion => db.occasions,
     SyncEntityType.budget => db.budgets,
     SyncEntityType.budgetAllocation => db.budgetCategoryAllocations,
+    SyncEntityType.savingsGoal => db.savingsGoals,
+    SyncEntityType.savingsContribution => db.savingsContributions,
+    SyncEntityType.savingsContributionAudit => db.savingsContributionAudits,
   };
 }

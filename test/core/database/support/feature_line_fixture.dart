@@ -2,13 +2,15 @@ import 'package:daftary/core/database/app_database.dart';
 import 'package:drift/native.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'v11_fixture.dart';
 import 'v9_fixture.dart';
 
 /// A database exactly as the pre-merge feature line (008 → 009 → 010 → 014)
-/// left it at [version] (`6..9`): today's schema minus everything `main`
-/// added in its own v6..v9 (017, 018, 020, 021) and minus every feature-line
-/// step newer than [version]. Opening [AppDatabase] on it runs the real
-/// upgrade a phone that ran those branches takes (v10_merge_features.dart).
+/// left it at [version] (`6..9`): today's schema minus 011's v11 tables,
+/// minus everything `main` added in its own v6..v9 (017, 018, 020, 021) and
+/// minus every feature-line step newer than [version]. Opening [AppDatabase]
+/// on it runs the real upgrade a phone that ran those branches takes
+/// (v10_merge_features.dart).
 ///
 /// Built from today's schema, then trimmed, rather than typed out by hand,
 /// so it cannot drift from the real tables it stands for.
@@ -22,6 +24,8 @@ Future<Database> createFeatureLineDatabase(int version) async {
   await bootstrap.customSelect('SELECT 1').get();
   await bootstrap.close();
 
+  // 011 (v11), newer than both lines.
+  dropSavingsGoalsAdditions(raw);
   // Merge-era columns neither line had before v10.
   raw.execute('ALTER TABLE budgets DROP COLUMN currency_code;');
   raw.execute('ALTER TABLE ocr_scans DROP COLUMN currency_code;');

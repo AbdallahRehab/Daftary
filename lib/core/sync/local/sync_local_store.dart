@@ -566,6 +566,14 @@ class DriftSyncLocalStore implements SyncLocalStore {
         SyncEntityType.moneyTransaction,
         'transaction_id',
       ),
+      SyncEntityType.savingsContribution => (
+        SyncEntityType.savingsGoal,
+        'goal_id',
+      ),
+      SyncEntityType.savingsContributionAudit => (
+        SyncEntityType.savingsContribution,
+        'contribution_id',
+      ),
       _ => (null, null),
     };
     if (parentType == null) return null;

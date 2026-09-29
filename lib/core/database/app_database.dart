@@ -387,6 +387,110 @@ class BudgetCategoryAllocations extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// A named target the user is saving toward (011). Carries the plan only:
+/// the saved amount is always aggregated from its [SavingsContributions]
+/// rows, never stored here (011 research.md Decision 2).
+@TableIndex(
+  name: 'idx_savings_goals_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+class SavingsGoals extends Table {
+  TextColumn get id => text()();
+  TextColumn get idempotencyKey => text()();
+  TextColumn get name => text()();
+
+  /// A standard `SavingsGoalType` value, or `null` for a plain custom-named
+  /// goal — cosmetic only, same open-set pattern as [Occasions.type].
+  TextColumn get type => text().nullable()();
+
+  /// 018: the ISO 4217 code every amount of this goal (and every
+  /// [SavingsContributions.amountMinorUnits] under it) is in. Set at
+  /// creation and never edited (011 FR-027).
+  TextColumn get currencyCode => text().withDefault(const Constant('EGP'))();
+
+  /// `> 0` (011 FR-002).
+  IntColumn get targetAmountMinorUnits => integer()();
+
+  /// `> 0` when present; `null` means no contribution plan.
+  IntColumn get monthlyContributionMinorUnits => integer().nullable()();
+
+  /// Epoch millis, date-only.
+  IntColumn get targetDate => integer().nullable()();
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  /// Tombstone of a goal deleted with no history (011 FR-021), kept so the
+  /// delete syncs.
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// One deposit or withdrawal against a [SavingsGoals] row (011). The amount
+/// is always positive; [type] carries the direction (011 FR-007).
+@TableIndex(
+  name: 'idx_savings_contributions_idempotency_key',
+  columns: {#idempotencyKey},
+  unique: true,
+)
+@TableIndex(
+  name: 'idx_savings_contributions_goal_id',
+  columns: {#goalId, #deletedAt},
+)
+class SavingsContributions extends Table {
+  TextColumn get id => text()();
+  TextColumn get idempotencyKey => text()();
+  TextColumn get goalId => text().references(SavingsGoals, #id)();
+
+  /// `'contribution'` | `'withdrawal'`. Immutable after creation.
+  TextColumn get type => text()();
+
+  /// In the goal's currency — the only figure progress sums.
+  IntColumn get amountMinorUnits => integer()();
+
+  /// What the user typed, in [enteredCurrencyCode] (018, 011 FR-028); equal
+  /// to [amountMinorUnits] when that is the goal's currency, otherwise
+  /// converted once at log/edit time.
+  IntColumn get enteredAmountMinorUnits => integer()();
+  TextColumn get enteredCurrencyCode => text()();
+
+  /// Epoch millis, date-only.
+  IntColumn get date => integer()();
+  TextColumn get note => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get editedAt => integer().nullable()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Prior values of a [SavingsContributions] row, captured on each edit or
+/// delete (011 FR-030) — the same shape as [TransactionAuditEntries].
+/// Append-only.
+@TableIndex(
+  name: 'idx_savings_contribution_audits_contribution_id',
+  columns: {#contributionId},
+)
+class SavingsContributionAudits extends Table {
+  TextColumn get id => text()();
+  TextColumn get contributionId =>
+      text().references(SavingsContributions, #id)();
+
+  /// `'edited'` | `'deleted'`.
+  TextColumn get changeType => text()();
+
+  /// JSON of the row before the change.
+  TextColumn get previousValuesJson => text()();
+  IntColumn get changedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The user's language, theme and Liquid Glass preferences. Single-row
 /// table (data-model.md): the app always reads/writes the fixed `id`
 /// `'singleton'` — there is never more than one row.
@@ -609,6 +713,9 @@ class AiSettings extends Table {
     AiConversations,
     AiMessages,
     AiSettings,
+    SavingsGoals,
+    SavingsContributions,
+    SavingsContributionAudits,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -625,7 +732,7 @@ class AppDatabase extends _$AppDatabase {
   final SyncBootstrap? _syncBootstrap;
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -677,6 +784,20 @@ class AppDatabase extends _$AppDatabase {
         // "v6..v9" of their own before they were merged, so this step
         // reconciles instead of assuming (v10_merge_features.dart).
         await migrateToMergedFeatures(this, m);
+      }
+      if (from < 11) {
+        // 011 Savings Goals: purely additive — three new tables and their
+        // indexes, no existing table touched. One transaction, so a failure
+        // leaves the file at v10 and the next open retries cleanly.
+        await transaction(() async {
+          await m.createTable(savingsGoals);
+          await m.createTable(savingsContributions);
+          await m.createTable(savingsContributionAudits);
+          await m.createIndex(idxSavingsGoalsIdempotencyKey);
+          await m.createIndex(idxSavingsContributionsIdempotencyKey);
+          await m.createIndex(idxSavingsContributionsGoalId);
+          await m.createIndex(idxSavingsContributionAuditsContributionId);
+        });
       }
     },
     beforeOpen: (details) async {

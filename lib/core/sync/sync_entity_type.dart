@@ -15,15 +15,20 @@ enum SyncEntityType {
   // 022: the features merged from the 008-015 line.
   occasion('occasion', 0),
   budget('budget', 0),
-  budgetAllocation('budget_allocation', 1);
+  budgetAllocation('budget_allocation', 1),
+  // 011 Savings Goals (migration 023).
+  savingsGoal('savings_goal', 0),
+  savingsContribution('savings_contribution', 1),
+  savingsContributionAudit('savings_contribution_audit', 2);
 
   const SyncEntityType(this.wire, this.rank);
 
   /// The `entity_type` value used on the wire and in the local sync tables.
   final String wire;
 
-  /// The outbox `depends_on_rank`: 0 = person, category, occasion or
-  /// budget, 1 = transaction, entry or budget allocation, 2 = audit or
+  /// The outbox `depends_on_rank`: 0 = person, category, occasion, budget
+  /// or savings goal, 1 = transaction, entry, budget allocation or savings
+  /// contribution, 2 = audit (transaction or savings contribution) or
   /// conflict resolution, 3 = rate or primary currency.
   final int rank;
 

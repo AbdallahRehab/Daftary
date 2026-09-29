@@ -371,6 +371,10 @@ class _FailedSection extends StatelessWidget {
         SyncItemKind.occasion => l10n.syncKindOccasion,
         SyncItemKind.budget => l10n.syncKindBudget,
         SyncItemKind.budgetAllocation => l10n.syncKindBudgetAllocation,
+        SyncItemKind.savingsGoal => l10n.syncKindSavingsGoal,
+        SyncItemKind.savingsContribution => l10n.syncKindSavingsContribution,
+        SyncItemKind.savingsContributionHistory =>
+          l10n.syncKindSavingsContributionHistory,
       };
 
   static String _reason(AppLocalizations l10n, SyncFailedReason reason) =>

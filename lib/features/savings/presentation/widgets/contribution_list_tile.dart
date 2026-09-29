@@ -1,0 +1,127 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/design_system/tokens.dart';
+import '../../../../core/money/money.dart';
+import '../../domain/entities/savings_contribution.dart';
+import 'savings_format.dart';
+
+/// Which per-entry action the user picked.
+enum ContributionTileAction { edit, delete }
+
+/// One history row (FR-008): labelled by type in words (never colour
+/// alone), with its date and optional note, and the amount as entered. When
+/// that was another currency, the converted goal-currency amount — the one
+/// that counts — is shown under it (FR-028).
+class ContributionListTile extends StatelessWidget {
+  const ContributionListTile({
+    required this.entry,
+    required this.goalCurrency,
+    required this.onAction,
+    super.key,
+  });
+
+  final SavingsContribution entry;
+  final Currency goalCurrency;
+  final ValueChanged<ContributionTileAction> onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final format = SavingsFormat.of(context);
+    final l10n = format.l10n;
+    final theme = Theme.of(context);
+    final colors = context.financeColors;
+    final isWithdrawal = entry.isWithdrawal;
+    final typeLabel = isWithdrawal
+        ? l10n.savingsEntryWithdrawal
+        : l10n.savingsEntryContribution;
+    final tint = isWithdrawal ? colors.neutral : colors.positive;
+    final sign = isWithdrawal ? '−' : '+';
+    final converted = entry.enteredCurrency != goalCurrency;
+    final note = entry.isStartingAmount
+        ? l10n.savingsEntryStartingAmount
+        : entry.note;
+    final muted = AppTypography.bodyMuted.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+
+    final amounts = Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$sign${format.money(entry.enteredAmount)}',
+          style: AppTypography.figure.copyWith(color: tint),
+          textAlign: TextAlign.end,
+        ),
+        if (converted)
+          Text(
+            l10n.savingsEntryConvertedAmount(
+              format.money(
+                Money.fromMinorUnits(entry.amountMinorUnits, goalCurrency),
+              ),
+            ),
+            style: muted,
+            textAlign: TextAlign.end,
+          ),
+      ],
+    );
+
+    // A plain row rather than a `ListTile`: a ListTile's trailing slot is
+    // unconstrained, so a large (or converted) amount on a 360dp phone
+    // would claim the whole width. Here the amounts share the row and wrap
+    // instead (T071).
+    return InkWell(
+      onTap: () => onAction(ContributionTileAction.edit),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.only(
+          start: AppSpacing.md,
+          top: AppSpacing.sm,
+          bottom: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isWithdrawal ? Icons.north_east : Icons.south_west,
+              color: tint,
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              flex: 5,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(typeLabel, style: AppTypography.body),
+                  Text(
+                    [
+                      format.date(entry.date),
+                      if (note != null && note.isNotEmpty) note,
+                      if (entry.isEdited) l10n.savingsEntryEditedLabel,
+                    ].join(' · '),
+                    style: muted,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Flexible(flex: 4, child: amounts),
+            PopupMenuButton<ContributionTileAction>(
+              tooltip: l10n.savingsEntryActionsTooltip,
+              onSelected: onAction,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: ContributionTileAction.edit,
+                  child: Text(l10n.savingsEntryEditAction),
+                ),
+                PopupMenuItem(
+                  value: ContributionTileAction.delete,
+                  child: Text(l10n.savingsEntryDeleteAction),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

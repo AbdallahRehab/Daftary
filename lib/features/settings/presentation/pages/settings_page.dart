@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +18,7 @@ import '../../domain/entities/app_theme_mode.dart';
 import '../../domain/entities/glass_appearance.dart';
 import '../cubit/settings_cubit.dart';
 import '../cubit/settings_state.dart';
+import '../debug/debug_seed_tile.dart';
 import '../widgets/glass_level_selector.dart';
 import '../widgets/glass_preview.dart';
 
@@ -218,6 +220,14 @@ class SettingsPage extends StatelessWidget {
                   onTap: () => context.push('/settings/export'),
                 ),
               ),
+              if (kDebugMode) ...[
+                const SizedBox(height: AppSpacing.lg),
+                const _SettingsSection(
+                  icon: Icons.bug_report_outlined,
+                  title: 'Debug',
+                  child: DebugSeedTile(),
+                ),
+              ],
               const SizedBox(height: AppSpacing.lg),
               // Last on the page, and in the theme's error color, so the
               // one irreversible action is never mistaken for a preference

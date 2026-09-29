@@ -23,6 +23,9 @@ void main() {
         SyncEntityType.occasion: 'occasion',
         SyncEntityType.budget: 'budget',
         SyncEntityType.budgetAllocation: 'budget_allocation',
+        SyncEntityType.savingsGoal: 'savings_goal',
+        SyncEntityType.savingsContribution: 'savings_contribution',
+        SyncEntityType.savingsContributionAudit: 'savings_contribution_audit',
       },
     );
   });
@@ -35,11 +38,14 @@ void main() {
         SyncEntityType.financeCategory: 0,
         SyncEntityType.occasion: 0,
         SyncEntityType.budget: 0,
+        SyncEntityType.savingsGoal: 0,
         SyncEntityType.moneyTransaction: 1,
         SyncEntityType.budgetAllocation: 1,
         SyncEntityType.financeEntry: 1,
+        SyncEntityType.savingsContribution: 1,
         SyncEntityType.transactionAudit: 2,
         SyncEntityType.conflictResolution: 2,
+        SyncEntityType.savingsContributionAudit: 2,
         SyncEntityType.exchangeRate: 3,
         SyncEntityType.primaryCurrency: 3,
       },
@@ -47,7 +53,10 @@ void main() {
   });
 
   test('fromWire throws on an unknown value', () {
-    expect(() => SyncEntityType.fromWire('savings_goal'), throwsArgumentError);
+    expect(
+      () => SyncEntityType.fromWire('recurring_bill'),
+      throwsArgumentError,
+    );
     expect(() => SyncEntityType.fromWire(''), throwsArgumentError);
   });
 }

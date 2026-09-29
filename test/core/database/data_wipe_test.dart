@@ -201,6 +201,44 @@ void main() {
           ),
         );
     await db
+        .into(db.savingsGoals)
+        .insert(
+          SavingsGoalsCompanion.insert(
+            id: 'g1',
+            idempotencyKey: 'gk1',
+            name: 'Emergency Fund',
+            targetAmountMinorUnits: 10000000,
+            createdAt: t,
+            updatedAt: t,
+          ),
+        );
+    await db
+        .into(db.savingsContributions)
+        .insert(
+          SavingsContributionsCompanion.insert(
+            id: 'sc1',
+            idempotencyKey: 'sck1',
+            goalId: 'g1',
+            type: 'contribution',
+            amountMinorUnits: 3500000,
+            enteredAmountMinorUnits: 3500000,
+            enteredCurrencyCode: 'EGP',
+            date: t,
+            createdAt: t,
+          ),
+        );
+    await db
+        .into(db.savingsContributionAudits)
+        .insert(
+          SavingsContributionAuditsCompanion.insert(
+            id: 'sa1',
+            contributionId: 'sc1',
+            changeType: 'edited',
+            previousValuesJson: '{"amountMinorUnits":3000000}',
+            changedAt: t,
+          ),
+        );
+    await db
         .into(db.appSettings)
         .insert(
           AppSettingsCompanion.insert(

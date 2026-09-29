@@ -10,6 +10,10 @@ import 'package:daftary/features/finance/domain/entities/finance_history_filter.
 import 'package:daftary/features/finance/domain/entities/finance_summary.dart';
 import 'package:daftary/features/finance/domain/usecases/watch_finance_history.dart';
 import 'package:daftary/features/finance/domain/usecases/watch_finance_summary.dart';
+import 'package:daftary/features/savings/domain/entities/goal_progress.dart';
+import 'package:daftary/features/savings/domain/entities/savings_goal.dart';
+import 'package:daftary/features/savings/domain/entities/savings_overview.dart';
+import 'package:daftary/features/savings/domain/usecases/watch_upcoming_savings_goals.dart';
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_overview.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,12 +26,17 @@ class MockWatchFinanceSummary extends Mock implements WatchFinanceSummary {}
 
 class MockWatchFinanceHistory extends Mock implements WatchFinanceHistory {}
 
+class MockWatchUpcomingSavingsGoals extends Mock
+    implements WatchUpcomingSavingsGoals {}
+
 /// Home's two aggregates are live subscriptions (012 + 021 FR-031) that
 /// succeed, fail and retry independently (FR-001–FR-005, FR-012).
 void main() {
   late MockWatchOverview watchOverview;
   late MockWatchFinanceSummary watchFinanceSummary;
   late MockWatchFinanceHistory watchFinanceHistory;
+  late MockWatchUpcomingSavingsGoals watchUpcomingSavings;
+  late StreamController<Either<Failure, List<GoalOverviewLine>>> savings;
   late StreamController<Either<Failure, OverviewSummary>> overview;
   late StreamController<Either<Failure, FinanceSummary>> finance;
   late StreamController<Either<Failure, List<FinanceEntry>>> history;
@@ -93,6 +102,11 @@ void main() {
     overview = StreamController.broadcast();
     finance = StreamController.broadcast();
     history = StreamController.broadcast();
+    watchUpcomingSavings = MockWatchUpcomingSavingsGoals();
+    savings = StreamController.broadcast();
+    when(
+      () => watchUpcomingSavings(limit: any(named: 'limit')),
+    ).thenAnswer((_) => savings.stream);
     when(() => watchOverview()).thenAnswer((_) => overview.stream);
     when(() => watchFinanceSummary(any())).thenAnswer((_) => finance.stream);
     when(
@@ -104,10 +118,15 @@ void main() {
     await overview.close();
     await finance.close();
     await history.close();
+    await savings.close();
   });
 
-  DashboardCubit buildCubit() =>
-      DashboardCubit(watchOverview, watchFinanceSummary, watchFinanceHistory);
+  DashboardCubit buildCubit() => DashboardCubit(
+    watchOverview,
+    watchFinanceSummary,
+    watchFinanceHistory,
+    watchUpcomingSavings,
+  );
 
   Future<void> pump() => Future<void>.delayed(Duration.zero);
 
@@ -261,6 +280,72 @@ void main() {
       expect(cubit.state.financeStatus, LoadStatus.success);
       verify(() => watchFinanceSummary(any())).called(2);
       verify(() => watchOverview()).called(1);
+    });
+  });
+
+  group('upcoming savings goals (011 FR-031, 012 FR-010)', () {
+    final goal = SavingsGoal(
+      id: 'g1',
+      idempotencyKey: 'k-g1',
+      name: 'Car',
+      currency: Currency.egp,
+      targetAmountMinorUnits: 1000000,
+      targetDate: DateTime(2027, 3, 1),
+      createdAt: DateTime(2026, 9),
+      updatedAt: DateTime(2026, 9),
+    );
+    final line = GoalOverviewLine(
+      goal: goal,
+      progress: const GoalProgress(
+        goalId: 'g1',
+        currency: Currency.egp,
+        targetAmountMinorUnits: 1000000,
+        currentAmountMinorUnits: 250000,
+      ),
+      primaryCurrencyAmountMinorUnits: 250000,
+    );
+
+    test('surfaces exactly the lines the use case returned, live', () async {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.load();
+      expect(cubit.state.upcomingSavingsGoals, isEmpty);
+
+      savings.add(Right([line]));
+      await pump();
+      expect(cubit.state.upcomingSavingsGoals, [line]);
+
+      savings.add(const Right([]));
+      await pump();
+      expect(cubit.state.upcomingSavingsGoals, isEmpty);
+    });
+
+    test('a failed read leaves the section empty and never touches the '
+        'snapshot sides', () async {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.load();
+      overview.add(const Right(withBalances));
+      finance.add(Right(thisMonth));
+      savings.add(Right([line]));
+      await pump();
+
+      savings.add(const Left(CacheFailure('savings read failed')));
+      await pump();
+
+      expect(cubit.state.upcomingSavingsGoals, isEmpty);
+      expect(cubit.state.overviewStatus, LoadStatus.success);
+      expect(cubit.state.financeStatus, LoadStatus.success);
+      expect(cubit.state.isAnyPartialError, isFalse);
+    });
+
+    test('refresh re-subscribes the savings read', () async {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.load();
+      await cubit.refresh();
+
+      verify(() => watchUpcomingSavings(limit: any(named: 'limit'))).called(2);
     });
   });
 

@@ -1280,6 +1280,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncKindBudgetAllocation => 'Budget category';
 
   @override
+  String get syncKindSavingsGoal => 'Savings goal';
+
+  @override
+  String get syncKindSavingsContribution => 'Savings entry';
+
+  @override
+  String get syncKindSavingsContributionHistory => 'Savings entry history';
+
+  @override
   String get syncFailedReasonPersonHasTransactions =>
       'This person has transactions on another device.';
 
@@ -2538,7 +2547,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeUpcomingPlaceholder =>
-      'Upcoming bills and savings-goal milestones will appear here once reminders and savings goals are available.';
+      'Savings goals with a target date will appear here. Upcoming bills will follow once reminders are available.';
+
+  @override
+  String get homeSavingsTitle => 'Savings goals';
+
+  @override
+  String get homeSavingsEntrySubtitle =>
+      'Plan and track what you\'re saving for';
+
+  @override
+  String homeSavingsUpcomingTargetDate(String date) {
+    return 'Target date $date';
+  }
+
+  @override
+  String homeSavingsUpcomingProgress(String current, String target) {
+    return '$current of $target';
+  }
 
   @override
   String get homeOverviewLoadError => 'Couldn\'t load your balances.';
@@ -3200,4 +3226,527 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiObservationSemanticLabel =>
       'Observation from the assistant, based on your own records';
+
+  @override
+  String get savingsGoalNotFoundError => 'This savings goal no longer exists.';
+
+  @override
+  String get savingsWithdrawalExceedsBalanceError =>
+      'You can\'t withdraw more than this goal has saved.';
+
+  @override
+  String get savingsGoalHasHistoryError =>
+      'This goal has saved amounts, so it can\'t be deleted. You can archive it instead.';
+
+  @override
+  String get savingsInvalidTargetDateError =>
+      'Choose a target date after today.';
+
+  @override
+  String get savingsGoalArchivedError =>
+      'This goal is archived. Restore it to add new amounts.';
+
+  @override
+  String get savingsGoalFormCreateTitle => 'New savings goal';
+
+  @override
+  String get savingsGoalFormEditTitle => 'Edit goal';
+
+  @override
+  String get savingsGoalEditAction => 'Edit goal';
+
+  @override
+  String get savingsGoalNameLabel => 'Goal name';
+
+  @override
+  String get savingsGoalNameRequiredError => 'Give the goal a name.';
+
+  @override
+  String get savingsGoalTypeLabel => 'Type (optional)';
+
+  @override
+  String get savingsGoalTypeNone => 'No type';
+
+  @override
+  String get savingsGoalTypeEmergencyFund => 'Emergency fund';
+
+  @override
+  String get savingsGoalTypeNewCar => 'New car';
+
+  @override
+  String get savingsGoalTypeWedding => 'Wedding';
+
+  @override
+  String get savingsGoalTypeVacation => 'Vacation';
+
+  @override
+  String get savingsGoalTypeNewPhone => 'New phone';
+
+  @override
+  String get savingsGoalTypeHomeFurniture => 'Home furniture';
+
+  @override
+  String get savingsGoalTypeEducation => 'Education';
+
+  @override
+  String get savingsGoalTypeOther => 'Other';
+
+  @override
+  String get savingsGoalCurrencyLabel => 'Goal currency';
+
+  @override
+  String savingsGoalCurrencyFixedHint(String currency) {
+    return 'Every amount of this goal is in $currency. The currency can\'t be changed after the goal is created.';
+  }
+
+  @override
+  String get savingsGoalTargetLabel => 'Target amount';
+
+  @override
+  String get savingsGoalTargetInvalidError =>
+      'Enter a target amount greater than zero.';
+
+  @override
+  String get savingsGoalStartingLabel => 'Already saved (optional)';
+
+  @override
+  String get savingsGoalStartingHint =>
+      'Money you had already set aside before tracking it here.';
+
+  @override
+  String get savingsGoalStartingInvalidError =>
+      'Enter zero or a positive amount.';
+
+  @override
+  String get savingsGoalMonthlyLabel => 'Monthly contribution (optional)';
+
+  @override
+  String get savingsGoalMonthlyInvalidError =>
+      'Enter a monthly amount greater than zero, or leave it empty.';
+
+  @override
+  String get savingsGoalTargetDateLabel => 'Target date (optional)';
+
+  @override
+  String get savingsGoalTargetDateNotSet => 'Not set';
+
+  @override
+  String get savingsGoalTargetDateClear => 'Clear target date';
+
+  @override
+  String get savingsGoalCreateAction => 'Create goal';
+
+  @override
+  String get savingsGoalUpdateAction => 'Save changes';
+
+  @override
+  String get savingsGoalPreviewTitle => 'Your plan';
+
+  @override
+  String get savingsProgressSavedLabel => 'Saved';
+
+  @override
+  String get savingsProgressRemainingLabel => 'Remaining';
+
+  @override
+  String get savingsProgressTargetLabel => 'Target';
+
+  @override
+  String savingsProgressPercent(String percent) {
+    return '$percent% saved';
+  }
+
+  @override
+  String savingsEstimateByContribution(
+    String amount,
+    String duration,
+    String date,
+  ) {
+    return 'At $amount a month, you\'ll reach it in $duration, around $date.';
+  }
+
+  @override
+  String savingsEstimateByContributionUndated(String amount, String duration) {
+    return 'At $amount a month, you\'ll reach it in $duration.';
+  }
+
+  @override
+  String savingsEstimateRequired(String date, String amount) {
+    return 'To reach it by $date, save $amount a month.';
+  }
+
+  @override
+  String savingsEstimateShortfall(String duration) {
+    return 'At this rate, you\'ll reach this $duration after your target date.';
+  }
+
+  @override
+  String get savingsNoEstimatePrompt =>
+      'Set a monthly contribution or a target date to see when you\'ll reach this goal.';
+
+  @override
+  String savingsDurationMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsDurationYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsDurationYearsAndMonths(String years, String months) {
+    return '$years and $months';
+  }
+
+  @override
+  String get savingsGoalAchievedBadge => 'Goal reached!';
+
+  @override
+  String get savingsGoalAchievedMessage =>
+      'You\'ve saved everything you planned for this goal. Well done!';
+
+  @override
+  String get savingsGoalHistoryHeader => 'History';
+
+  @override
+  String get savingsGoalHistoryEmptyTitle => 'Nothing logged yet';
+
+  @override
+  String get savingsGoalHistoryEmptyMessage =>
+      'Add what you put toward this goal to track your real progress.';
+
+  @override
+  String get savingsLogContributionAction => 'Add money';
+
+  @override
+  String get savingsLogWithdrawalAction => 'Withdraw';
+
+  @override
+  String get savingsGoalArchivedNotice =>
+      'This goal is archived. You can still correct past entries; restore it to add new ones.';
+
+  @override
+  String get savingsGoalLoadErrorTitle => 'Couldn\'t open this goal';
+
+  @override
+  String get savingsRetryAction => 'Try again';
+
+  @override
+  String get savingsEntryContribution => 'Contribution';
+
+  @override
+  String get savingsEntryWithdrawal => 'Withdrawal';
+
+  @override
+  String get savingsEntryStartingAmount => 'Starting amount';
+
+  @override
+  String savingsEntryConvertedAmount(String amount) {
+    return 'Counted as $amount';
+  }
+
+  @override
+  String get savingsEntryEditedLabel => 'Edited';
+
+  @override
+  String get savingsEntryEditAction => 'Edit';
+
+  @override
+  String get savingsEntryDeleteAction => 'Delete';
+
+  @override
+  String get savingsEntryActionsTooltip => 'Entry options';
+
+  @override
+  String get savingsEntryDeleteConfirmTitle => 'Delete this entry?';
+
+  @override
+  String get savingsEntryDeleteConfirmMessage =>
+      'The goal\'s figures will be recalculated. A record of the entry\'s values is kept.';
+
+  @override
+  String get savingsContributionFormAddTitle => 'Add money';
+
+  @override
+  String get savingsContributionFormWithdrawTitle => 'Withdraw money';
+
+  @override
+  String get savingsContributionFormEditTitle => 'Edit entry';
+
+  @override
+  String get savingsContributionAmountLabel => 'Amount';
+
+  @override
+  String get savingsContributionAmountInvalidError =>
+      'Enter an amount greater than zero.';
+
+  @override
+  String get savingsContributionDateLabel => 'Date';
+
+  @override
+  String get savingsContributionNoteLabel => 'Note (optional)';
+
+  @override
+  String get savingsContributionSaveAction => 'Save';
+
+  @override
+  String savingsContributionConversionHint(String currency) {
+    return 'This will be converted to $currency at the current rate when you save.';
+  }
+
+  @override
+  String get savingsOverviewTitle => 'Savings goals';
+
+  @override
+  String get savingsOverviewNewGoalAction => 'New goal';
+
+  @override
+  String get savingsOverviewArchivedAction => 'Archived goals';
+
+  @override
+  String get savingsOverviewEmptyTitle => 'Start saving toward something';
+
+  @override
+  String get savingsOverviewEmptyMessage =>
+      'Set a goal — an emergency fund, a trip, a new phone — and track every amount you put aside until you reach it.';
+
+  @override
+  String get savingsOverviewEmptyAction => 'Create your first goal';
+
+  @override
+  String get savingsOverviewTotalLabel => 'Total saved';
+
+  @override
+  String savingsOverviewGoalCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Across $count goals',
+      one: 'Across 1 goal',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savingsOverviewIncompleteTitle => 'Total incomplete';
+
+  @override
+  String savingsOverviewIncompleteMessage(String currencies) {
+    return 'It leaves out goals in $currencies. Add an exchange rate for $currencies to count them.';
+  }
+
+  @override
+  String savingsOverviewNotInTotal(String currency) {
+    return 'Not in the total — needs a $currency rate';
+  }
+
+  @override
+  String savingsOverviewGoalProgress(String saved, String target) {
+    return '$saved of $target';
+  }
+
+  @override
+  String get savingsOverviewGoalsHeader => 'Your goals';
+
+  @override
+  String get savingsOverviewLoadErrorTitle => 'Couldn\'t load your goals';
+
+  @override
+  String get savingsOverviewGoalActionsTooltip => 'Goal options';
+
+  @override
+  String get savingsArchiveAction => 'Archive';
+
+  @override
+  String get savingsArchiveRestoreAction => 'Restore';
+
+  @override
+  String get savingsArchiveDoneMessage => 'Goal archived';
+
+  @override
+  String get savingsArchiveRestoredMessage => 'Goal restored';
+
+  @override
+  String get savingsArchiveUndoAction => 'Undo';
+
+  @override
+  String get savingsArchiveTitle => 'Archived goals';
+
+  @override
+  String get savingsArchiveEmptyTitle => 'No archived goals';
+
+  @override
+  String get savingsArchiveEmptyMessage =>
+      'Goals you archive are kept here with their full history, ready to restore.';
+
+  @override
+  String get savingsDeleteAction => 'Delete goal';
+
+  @override
+  String savingsDeleteConfirmTitle(String name) {
+    return 'Delete “$name”?';
+  }
+
+  @override
+  String get savingsDeleteConfirmMessage =>
+      'This goal will be removed for good.';
+
+  @override
+  String get savingsDeleteBlockedTitle => 'This goal has history';
+
+  @override
+  String get savingsDeleteBlockedMessage =>
+      'Amounts have been logged to this goal, so it can\'t be deleted. Archive it instead to hide it while keeping its full history.';
+
+  @override
+  String get savingsDeleteBlockedArchiveAction => 'Archive instead';
+
+  @override
+  String get savingsDeleteDoneMessage => 'Goal deleted';
+
+  @override
+  String savingsWithdrawalAvailableHint(String amount) {
+    return 'Available to withdraw: $amount';
+  }
+
+  @override
+  String get savingsWhatIfAction => 'What if?';
+
+  @override
+  String get savingsWhatIfTitle => 'What if?';
+
+  @override
+  String get savingsWhatIfModeMonthly => 'Save a different amount';
+
+  @override
+  String get savingsWhatIfModeDate => 'Finish by a date';
+
+  @override
+  String get savingsWhatIfCurrentPlanTitle => 'Your plan now';
+
+  @override
+  String savingsWhatIfCurrentRemaining(String amount) {
+    return '$amount left to save';
+  }
+
+  @override
+  String savingsWhatIfCurrentMonthly(String amount) {
+    return 'Saving $amount a month';
+  }
+
+  @override
+  String get savingsWhatIfCurrentNoMonthly => 'No monthly contribution set';
+
+  @override
+  String savingsWhatIfCurrentTargetDate(String date) {
+    return 'Target date: $date';
+  }
+
+  @override
+  String get savingsWhatIfMonthlyLabel => 'Monthly amount to try';
+
+  @override
+  String get savingsWhatIfMonthlyInvalidError =>
+      'Enter a monthly amount greater than zero.';
+
+  @override
+  String get savingsWhatIfTargetDateLabel => 'Finish by';
+
+  @override
+  String get savingsWhatIfTargetDateNotSet => 'Pick a date';
+
+  @override
+  String get savingsWhatIfCalculateAction => 'Calculate';
+
+  @override
+  String get savingsWhatIfResultTitle => 'If you did this';
+
+  @override
+  String savingsWhatIfResultByMonthly(
+    String amount,
+    String duration,
+    String date,
+  ) {
+    return 'Saving $amount a month, you\'d reach your goal in $duration, around $date.';
+  }
+
+  @override
+  String savingsWhatIfResultByMonthlyUndated(String amount, String duration) {
+    return 'Saving $amount a month, you\'d reach your goal in $duration.';
+  }
+
+  @override
+  String savingsWhatIfResultByDate(String date, String amount) {
+    return 'To finish by $date, you\'d need to save $amount a month.';
+  }
+
+  @override
+  String savingsWhatIfCompareSooner(String duration) {
+    return '$duration sooner than your current plan';
+  }
+
+  @override
+  String savingsWhatIfCompareLater(String duration) {
+    return '$duration later than your current plan';
+  }
+
+  @override
+  String get savingsWhatIfCompareSame =>
+      'The same timeline as your current plan';
+
+  @override
+  String savingsWhatIfCompareMore(String amount) {
+    return '$amount a month more than you save now';
+  }
+
+  @override
+  String savingsWhatIfCompareLess(String amount) {
+    return '$amount a month less than you save now';
+  }
+
+  @override
+  String get savingsWhatIfPreviewNotice =>
+      'This is only a preview. Your goal stays as it is unless you apply it.';
+
+  @override
+  String savingsWhatIfApplyExplainMonthly(String amount) {
+    return 'Applying sets your monthly contribution to $amount. Your target date stays as it is.';
+  }
+
+  @override
+  String savingsWhatIfApplyExplainDate(String date, String amount) {
+    return 'Applying sets your target date to $date and your monthly contribution to $amount.';
+  }
+
+  @override
+  String get savingsWhatIfApplyAction => 'Apply to my goal';
+
+  @override
+  String get savingsWhatIfCancelAction => 'Cancel';
+
+  @override
+  String get savingsWhatIfAppliedMessage => 'Your goal\'s plan was updated.';
+
+  @override
+  String get savingsWhatIfAchievedTitle => 'Goal achieved';
+
+  @override
+  String get savingsWhatIfAchievedMessage =>
+      'You\'ve already reached this goal, so there\'s nothing left to plan for.';
+
+  @override
+  String get savingsWhatIfBackAction => 'Back to goal';
 }

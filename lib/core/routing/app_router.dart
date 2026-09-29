@@ -36,6 +36,14 @@ import '../../features/occasions/presentation/pages/occasion_detail_page.dart';
 import '../../features/occasions/presentation/pages/occasion_form_page.dart';
 import '../../features/occasions/presentation/pages/occasions_list_page.dart';
 import '../../features/occasions/presentation/pages/participant_form_page.dart';
+import '../../features/savings/domain/entities/savings_contribution.dart';
+import '../../features/savings/presentation/pages/archived_goals_page.dart';
+import '../../features/savings/presentation/pages/contribution_form_page.dart';
+import '../../features/savings/presentation/pages/goal_detail_page.dart';
+import '../../features/savings/presentation/pages/goal_form_page.dart';
+import '../../features/savings/presentation/pages/savings_overview_page.dart';
+import '../../features/savings/presentation/pages/what_if_calculator_page.dart';
+import '../../features/savings/presentation/savings_routes.dart';
 import '../../features/ocr/presentation/pages/image_prep_page.dart';
 import '../../features/ocr/presentation/pages/scan_capture_page.dart';
 import '../../features/ocr/presentation/pages/scan_detail_page.dart';
@@ -279,6 +287,56 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) => BudgetFormPage(
                 month: _budgetMonthFrom(state.pathParameters['month']),
               ),
+            ),
+            // Savings goals (011) live in the People branch for the same
+            // reason occasions and budgets do (research.md Decision 12):
+            // reached from Home, not from a bottom-nav tab of their own.
+            // Static `/savings/...` paths (`new`, `archived`) MUST be
+            // declared above `/savings/:goalId` so a literal segment is
+            // never captured as a goal id. `/savings/:goalId` is also 017's
+            // notification deep-link target (`savingsGoalPath`).
+            GoRoute(
+              path: SavingsRoutes.overview,
+              builder: (context, state) => const SavingsOverviewPage(),
+            ),
+            GoRoute(
+              path: SavingsRoutes.archived,
+              builder: (context, state) => const ArchivedGoalsPage(),
+            ),
+            GoRoute(
+              path: SavingsRoutes.newGoal,
+              builder: (context, state) => const GoalFormPage(),
+            ),
+            GoRoute(
+              path: '/savings/:goalId/edit',
+              builder: (context, state) =>
+                  GoalFormPage(editingGoalId: state.pathParameters['goalId']!),
+            ),
+            // One form for logging and correcting entries:
+            // `?type=withdrawal` opens it on a withdrawal, `?entry=<id>`
+            // edits that entry.
+            GoRoute(
+              path: '/savings/:goalId/log',
+              builder: (context, state) {
+                final query = state.uri.queryParameters;
+                return ContributionFormPage(
+                  goalId: state.pathParameters['goalId']!,
+                  type: query['type'] == SavingsRoutes.withdrawalType
+                      ? ContributionType.withdrawal
+                      : ContributionType.contribution,
+                  editingContributionId: query['entry'],
+                );
+              },
+            ),
+            GoRoute(
+              path: '/savings/:goalId/what-if',
+              builder: (context, state) =>
+                  WhatIfCalculatorPage(goalId: state.pathParameters['goalId']!),
+            ),
+            GoRoute(
+              path: '/savings/:goalId',
+              builder: (context, state) =>
+                  GoalDetailPage(goalId: state.pathParameters['goalId']!),
             ),
             // The scan flow lives in the People branch for the same reason
             // finance and occasions do (research.md Decision 9): it is

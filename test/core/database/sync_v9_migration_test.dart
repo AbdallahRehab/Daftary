@@ -10,6 +10,7 @@ import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.
     show isPristineSeed;
 
 import '../sync/fakes/sync_harness.dart';
+import 'support/v11_fixture.dart';
 import 'support/v9_fixture.dart';
 
 /// 021 T012 — the v8 -> v9 migration (data-model.md §3): every business
@@ -45,6 +46,7 @@ void main() {
     await bootstrap.select(bootstrap.financeCategories).get();
     await bootstrap.close();
     dropSyncSupportAdditions(raw);
+    dropSavingsGoalsAdditions(raw);
     raw.execute('PRAGMA user_version = 8;');
     return raw;
   }
@@ -193,8 +195,8 @@ void main() {
       await db.customSelect('SELECT 1').get();
     });
 
-    test('reaches the latest user_version (10)', () {
-      expect(raw.select('PRAGMA user_version').single.values.single, 10);
+    test('reaches the latest user_version (11)', () {
+      expect(raw.select('PRAGMA user_version').single.values.single, 11);
     });
 
     test('every business column of every row is unchanged, except '
@@ -304,7 +306,7 @@ void main() {
     );
     await retry.customSelect('SELECT 1').get();
     await retry.close();
-    expect(raw.select('PRAGMA user_version').single.values.single, 10);
+    expect(raw.select('PRAGMA user_version').single.values.single, 11);
     expect(tablesOf(raw), containsAll(syncTables));
   });
 
@@ -386,8 +388,8 @@ void main() {
     });
     await db.customSelect('SELECT 1').get();
     expect(tablesOf(raw), containsAll(syncTables));
-    expect(raw.select('PRAGMA user_version').single.values.single, 10);
-    expect(db.schemaVersion, 10);
+    expect(raw.select('PRAGMA user_version').single.values.single, 11);
+    expect(db.schemaVersion, 11);
   });
 }
 

@@ -46,6 +46,13 @@ void main() {
     });
   });
 
+  test('011: savings goals carry their own currency; an incomplete total '
+      'is disclosed; a what-if never changes the goal', () {
+    expect(prompt, contains('each savings goal, carries its own "currency"'));
+    expect(prompt, contains('"isTotalIncomplete"'));
+    expect(prompt, contains('never changes the goal'));
+  });
+
   group('boundaries (T049)', () {
     test('declines create/edit/delete of records', () {
       expect(prompt, contains('read-only'));

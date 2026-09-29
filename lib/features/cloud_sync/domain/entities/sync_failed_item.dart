@@ -13,6 +13,9 @@ enum SyncItemKind {
   occasion,
   budget,
   budgetAllocation,
+  savingsGoal,
+  savingsContribution,
+  savingsContributionHistory,
 }
 
 /// Why the cloud refused a record.

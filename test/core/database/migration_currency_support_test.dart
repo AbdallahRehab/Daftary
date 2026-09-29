@@ -3,6 +3,7 @@ import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
+import 'support/v11_fixture.dart';
 import 'support/v9_fixture.dart';
 
 /// 018 T020 + T056 — the v6 -> v7 migration (research.md Decision 3,
@@ -40,6 +41,7 @@ void main() {
     raw.execute('ALTER TABLE app_settings DROP COLUMN glass_intensity;');
     // 021 (v9) additions, so the upgrade runs through v9 for real.
     dropSyncSupportAdditions(raw);
+    dropSavingsGoalsAdditions(raw);
     raw.execute('PRAGMA user_version = 6;');
     return raw;
   }
@@ -303,7 +305,7 @@ void main() {
       expect(tx.amountMinorUnits, 25000);
       expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
       expect(await db.select(db.exchangeRates).get(), isEmpty);
-      expect(raw.select('PRAGMA user_version').single.values.single, 10);
+      expect(raw.select('PRAGMA user_version').single.values.single, 11);
     },
   );
 
@@ -345,7 +347,7 @@ void main() {
         "AND name = 'idx_exchange_rates_pair'",
       );
       expect(index.single['sql'] as String, contains('UNIQUE'));
-      expect(raw.select('PRAGMA user_version').single.values.single, 10);
+      expect(raw.select('PRAGMA user_version').single.values.single, 11);
     });
 
     test(
@@ -353,7 +355,7 @@ void main() {
       () {
         final db = AppDatabase.forTesting(NativeDatabase.memory());
         addTearDown(db.close);
-        expect(db.schemaVersion, 10);
+        expect(db.schemaVersion, 11);
       },
     );
   });

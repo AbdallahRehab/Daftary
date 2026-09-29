@@ -36,6 +36,37 @@ abstract final class AIToolArgumentReader {
     return Right(trimmed.isEmpty ? null : trimmed);
   }
 
+  /// An optional integer; absent and `null` mean "not given". A JSON
+  /// number with no fractional part (`5000.0`) is accepted as that
+  /// integer — a representation detail of the provider's JSON, never a
+  /// rounding: `5000.5` is a [ValidationFailure].
+  static Either<Failure, int?> optionalInt(
+    Map<String, Object?> arguments,
+    String key,
+  ) {
+    final value = arguments[key];
+    if (value == null) return const Right(null);
+    if (value is int) return Right(value);
+    if (value is double && value.isFinite && value == value.truncate()) {
+      return Right(value.toInt());
+    }
+    return Left(ValidationFailure('"$key" must be an integer'));
+  }
+
+  /// An optional strict `YYYY-MM-DD` date; absent/`null`/blank mean "not
+  /// given", anything else unparseable is a [ValidationFailure].
+  static Either<Failure, DateTime?> optionalDate(
+    Map<String, Object?> arguments,
+    String key,
+  ) => optionalString(arguments, key).flatMap((value) {
+    if (value == null) return const Right(null);
+    final date = AIPeriodResolver.parseDate(value);
+    if (date == null) {
+      return Left(ValidationFailure('"$key" must be a YYYY-MM-DD date'));
+    }
+    return Right(date);
+  });
+
   /// A required period object (`tool_catalog.dart`'s period schema).
   static Either<Failure, Map<String, Object?>> periodObject(
     Map<String, Object?> arguments,
@@ -103,8 +134,8 @@ class AIPeriodResolver {
       case AIPeriodPresets.lastMonth:
         return Right(lastMonth());
       case AIPeriodPresets.custom:
-        final start = _parseDate(period[AIToolArgs.startDate]);
-        final end = _parseDate(period[AIToolArgs.endDate]);
+        final start = parseDate(period[AIToolArgs.startDate]);
+        final end = parseDate(period[AIToolArgs.endDate]);
         if (start == null || end == null) {
           return Left(
             ValidationFailure(
@@ -129,8 +160,9 @@ class AIPeriodResolver {
   }
 
   /// A strict `YYYY-MM-DD` parse that rejects impossible dates (e.g.
-  /// `2026-02-30`) instead of letting `DateTime` roll them over.
-  static DateTime? _parseDate(Object? value) {
+  /// `2026-02-30`) instead of letting `DateTime` roll them over. `null`
+  /// when [value] is not such a date.
+  static DateTime? parseDate(Object? value) {
     if (value is! String) return null;
     final match = _datePattern.firstMatch(value.trim());
     if (match == null) return null;

@@ -25,6 +25,9 @@ import '../sync/sync_logger.dart';
 import '../sync/sync_mapper_registry.dart';
 import '../../features/budgets/data/sync/budget_sync_mapper.dart';
 import '../../features/occasions/data/sync/occasion_sync_mapper.dart';
+import '../../features/savings/data/sync/savings_contribution_audit_sync_mapper.dart';
+import '../../features/savings/data/sync/savings_contribution_sync_mapper.dart';
+import '../../features/savings/data/sync/savings_goal_sync_mapper.dart';
 
 /// Registers third-party/leaf dependencies that aren't themselves annotated
 /// with `@injectable` (research.md Decision 11: the DB file lives in the
@@ -119,6 +122,9 @@ abstract class RegisterModule {
     OccasionSyncMapper occasion,
     BudgetSyncMapper budget,
     BudgetAllocationSyncMapper budgetAllocation,
+    SavingsGoalSyncMapper savingsGoal,
+    SavingsContributionSyncMapper savingsContribution,
+    SavingsContributionAuditSyncMapper savingsContributionAudit,
   ) => SyncMapperRegistry([
     person,
     moneyTransaction,
@@ -131,6 +137,9 @@ abstract class RegisterModule {
     occasion,
     budget,
     budgetAllocation,
+    savingsGoal,
+    savingsContribution,
+    savingsContributionAudit,
   ]);
 
   @lazySingleton

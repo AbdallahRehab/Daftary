@@ -332,6 +332,10 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
         SyncEntityType.occasion => SyncItemKind.occasion,
         SyncEntityType.budget => SyncItemKind.budget,
         SyncEntityType.budgetAllocation => SyncItemKind.budgetAllocation,
+        SyncEntityType.savingsGoal => SyncItemKind.savingsGoal,
+        SyncEntityType.savingsContribution => SyncItemKind.savingsContribution,
+        SyncEntityType.savingsContributionAudit =>
+          SyncItemKind.savingsContributionHistory,
       },
   };
 

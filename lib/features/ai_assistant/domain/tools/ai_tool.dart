@@ -76,6 +76,15 @@ abstract final class AIToolNoDataReasons {
   static const String occasionNotFound = 'occasionNotFound';
   static const String ambiguousOccasion = 'ambiguousOccasion';
   static const String noOccasionsRecorded = 'noOccasionsRecorded';
+
+  /// 011: the user has no (active, when summarizing) savings goal at all.
+  static const String noSavingsGoals = 'noSavingsGoals';
+  static const String goalNotFound = 'goalNotFound';
+  static const String ambiguousGoal = 'ambiguousGoal';
+
+  /// 011 FR-016: a what-if on an achieved goal — nothing left to plan for,
+  /// so no projection is offered (never a misleading "0 months").
+  static const String goalAlreadyAchieved = 'goalAlreadyAchieved';
   static const String insufficientHistory = 'insufficientHistory';
   static const String belowThreshold = 'belowThreshold';
 

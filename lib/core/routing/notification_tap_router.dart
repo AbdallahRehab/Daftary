@@ -15,11 +15,10 @@ import '../l10n/app_localizations.dart';
 final GlobalKey<ScaffoldMessengerState> appScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>(debugLabel: 'appScaffoldMessenger');
 
-/// Route paths reserved by 010's and 011's own plans (`/budgets/:month`,
-/// `/savings/:goalId`). Those features aren't implemented yet, so their
-/// placeholder insight sources report nothing as existing and every tap
-/// currently resolves to [SourceNoLongerExists] — these paths only become
-/// reachable once 010/011 register them.
+/// Route paths registered by 010 and 011 (`/budgets/:month`,
+/// `/savings/:goalId`). A tap reaches them only when the source still
+/// exists; otherwise it resolves to [SourceNoLongerExists]. 011's
+/// `SavingsRoutes.goal` builds the same path, so neither may move.
 String budgetMonthPath(String month) => '/budgets/$month';
 String savingsGoalPath(String goalId) => '/savings/$goalId';
 

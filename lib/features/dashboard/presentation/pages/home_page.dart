@@ -13,6 +13,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../budgets/domain/entities/budget_month.dart';
 import '../../../currency/presentation/widgets/rate_needed_banner.dart';
+import '../../../savings/presentation/savings_routes.dart';
 import '../../../transactions/domain/entities/overview_summary.dart';
 import '../../../transactions/presentation/widgets/balance_amount_text.dart';
 import '../cubit/dashboard_cubit.dart';
@@ -25,11 +26,13 @@ import '../widgets/placeholder_section_card.dart';
 import '../widgets/quick_action_row.dart';
 import '../widgets/snapshot_error_card.dart';
 import '../widgets/upcoming_placeholder_card.dart';
+import '../widgets/upcoming_savings_goals_card.dart';
 
 /// Home (012): the financial snapshot (balances + this month's finance),
 /// quick actions, the section entry points, the per-person balance lists,
-/// and the Insights/Upcoming placeholders — in progressive-disclosure
-/// order. Relocated from the retired `OverviewPage`; still served at
+/// the Insights placeholder and the Upcoming section (011's savings goals
+/// with a target date, or its honest empty state) — in
+/// progressive-disclosure order. Relocated from the retired `OverviewPage`; still served at
 /// `/overview` (research.md Decision 5).
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -157,7 +160,17 @@ class HomeView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 const InsightsPlaceholderCard(),
                 const SizedBox(height: AppSpacing.sm),
-                const UpcomingPlaceholderCard(),
+                // 011 FR-031 / 012 FR-010: real upcoming goals when any
+                // exist; otherwise the honest empty state, never a
+                // fabricated item.
+                if (state.upcomingSavingsGoals.isNotEmpty)
+                  UpcomingSavingsGoalsCard(
+                    goals: state.upcomingSavingsGoals,
+                    onOpenGoal: (goalId) =>
+                        _openThenRefresh(context, SavingsRoutes.goal(goalId)),
+                  )
+                else
+                  const UpcomingPlaceholderCard(),
               ],
             ),
           );
@@ -230,6 +243,16 @@ class HomeView extends StatelessWidget {
       const SizedBox(height: AppSpacing.lg),
       _SectionHeader(title: l10n.homeSectionsTitle),
       const _BudgetsEntryCard(),
+      // The savings section's entry point (011 research.md Decision 12).
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.savings_outlined),
+          title: Text(l10n.homeSavingsTitle),
+          subtitle: Text(l10n.homeSavingsEntrySubtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => _openThenRefresh(context, SavingsRoutes.overview),
+        ),
+      ),
       Card(
         child: ListTile(
           leading: const Icon(Icons.celebration_outlined),

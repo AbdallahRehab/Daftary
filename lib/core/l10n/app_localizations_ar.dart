@@ -1272,6 +1272,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncKindBudgetAllocation => 'فئة في الميزانية';
 
   @override
+  String get syncKindSavingsGoal => 'هدف ادخار';
+
+  @override
+  String get syncKindSavingsContribution => 'مبلغ ادخار';
+
+  @override
+  String get syncKindSavingsContributionHistory => 'سجل مبلغ الادخار';
+
+  @override
   String get syncFailedReasonPersonHasTransactions =>
       'لهذا الشخص معاملات على جهاز آخر.';
 
@@ -2525,7 +2534,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeUpcomingPlaceholder =>
-      'ستظهر هنا الفواتير القادمة ومحطات أهداف الادخار بعد توفر التذكيرات وأهداف الادخار.';
+      'ستظهر هنا أهداف الادخار التي لها تاريخ مستهدف، وستتبعها الفواتير القادمة بعد توفر التذكيرات.';
+
+  @override
+  String get homeSavingsTitle => 'أهداف الادخار';
+
+  @override
+  String get homeSavingsEntrySubtitle => 'خطّط لما تدّخر من أجله وتابع تقدّمك';
+
+  @override
+  String homeSavingsUpcomingTargetDate(String date) {
+    return 'التاريخ المستهدف: $date';
+  }
+
+  @override
+  String homeSavingsUpcomingProgress(String current, String target) {
+    return '$current من $target';
+  }
 
   @override
   String get homeOverviewLoadError => 'تعذر تحميل الأرصدة.';
@@ -3174,4 +3199,534 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aiObservationSemanticLabel => 'ملاحظة من المساعد مبنية على سجلاتك';
+
+  @override
+  String get savingsGoalNotFoundError => 'هدف الادخار هذا لم يعد موجودًا.';
+
+  @override
+  String get savingsWithdrawalExceedsBalanceError =>
+      'لا يمكنك سحب أكثر مما ادخرته لهذا الهدف.';
+
+  @override
+  String get savingsGoalHasHistoryError =>
+      'هذا الهدف فيه مبالغ مدخرة، لذلك لا يمكن حذفه. يمكنك أرشفته بدلًا من ذلك.';
+
+  @override
+  String get savingsInvalidTargetDateError =>
+      'اختر تاريخًا مستهدفًا بعد اليوم.';
+
+  @override
+  String get savingsGoalArchivedError =>
+      'هذا الهدف مؤرشف. استعِده لإضافة مبالغ جديدة.';
+
+  @override
+  String get savingsGoalFormCreateTitle => 'هدف ادخار جديد';
+
+  @override
+  String get savingsGoalFormEditTitle => 'تعديل الهدف';
+
+  @override
+  String get savingsGoalEditAction => 'تعديل الهدف';
+
+  @override
+  String get savingsGoalNameLabel => 'اسم الهدف';
+
+  @override
+  String get savingsGoalNameRequiredError => 'اكتب اسمًا للهدف.';
+
+  @override
+  String get savingsGoalTypeLabel => 'النوع (اختياري)';
+
+  @override
+  String get savingsGoalTypeNone => 'بدون نوع';
+
+  @override
+  String get savingsGoalTypeEmergencyFund => 'صندوق طوارئ';
+
+  @override
+  String get savingsGoalTypeNewCar => 'سيارة جديدة';
+
+  @override
+  String get savingsGoalTypeWedding => 'زواج';
+
+  @override
+  String get savingsGoalTypeVacation => 'إجازة';
+
+  @override
+  String get savingsGoalTypeNewPhone => 'هاتف جديد';
+
+  @override
+  String get savingsGoalTypeHomeFurniture => 'أثاث المنزل';
+
+  @override
+  String get savingsGoalTypeEducation => 'تعليم';
+
+  @override
+  String get savingsGoalTypeOther => 'أخرى';
+
+  @override
+  String get savingsGoalCurrencyLabel => 'عملة الهدف';
+
+  @override
+  String savingsGoalCurrencyFixedHint(String currency) {
+    return 'كل مبالغ هذا الهدف بعملة $currency. لا يمكن تغيير العملة بعد إنشاء الهدف.';
+  }
+
+  @override
+  String get savingsGoalTargetLabel => 'المبلغ المستهدف';
+
+  @override
+  String get savingsGoalTargetInvalidError =>
+      'أدخل مبلغًا مستهدفًا أكبر من صفر.';
+
+  @override
+  String get savingsGoalStartingLabel => 'المدخر حتى الآن (اختياري)';
+
+  @override
+  String get savingsGoalStartingHint =>
+      'المال الذي ادخرته بالفعل قبل تسجيله هنا.';
+
+  @override
+  String get savingsGoalStartingInvalidError => 'أدخل صفرًا أو مبلغًا موجبًا.';
+
+  @override
+  String get savingsGoalMonthlyLabel => 'المساهمة الشهرية (اختياري)';
+
+  @override
+  String get savingsGoalMonthlyInvalidError =>
+      'أدخل مبلغًا شهريًا أكبر من صفر، أو اتركه فارغًا.';
+
+  @override
+  String get savingsGoalTargetDateLabel => 'التاريخ المستهدف (اختياري)';
+
+  @override
+  String get savingsGoalTargetDateNotSet => 'غير محدد';
+
+  @override
+  String get savingsGoalTargetDateClear => 'مسح التاريخ المستهدف';
+
+  @override
+  String get savingsGoalCreateAction => 'إنشاء الهدف';
+
+  @override
+  String get savingsGoalUpdateAction => 'حفظ التغييرات';
+
+  @override
+  String get savingsGoalPreviewTitle => 'خطتك';
+
+  @override
+  String get savingsProgressSavedLabel => 'المدخر';
+
+  @override
+  String get savingsProgressRemainingLabel => 'المتبقي';
+
+  @override
+  String get savingsProgressTargetLabel => 'المستهدف';
+
+  @override
+  String savingsProgressPercent(String percent) {
+    return 'تم ادخار $percent٪';
+  }
+
+  @override
+  String savingsEstimateByContribution(
+    String amount,
+    String duration,
+    String date,
+  ) {
+    return 'بمعدل $amount شهريًا ستصل إليه خلال $duration، في حدود $date.';
+  }
+
+  @override
+  String savingsEstimateByContributionUndated(String amount, String duration) {
+    return 'بمعدل $amount شهريًا ستصل إليه خلال $duration.';
+  }
+
+  @override
+  String savingsEstimateRequired(String date, String amount) {
+    return 'لتصل إليه بحلول $date، ادّخر $amount شهريًا.';
+  }
+
+  @override
+  String savingsEstimateShortfall(String duration) {
+    return 'بهذا المعدل ستصل إليه متأخرًا عن تاريخك المستهدف بـ$duration.';
+  }
+
+  @override
+  String get savingsNoEstimatePrompt =>
+      'حدّد مساهمة شهرية أو تاريخًا مستهدفًا لتعرف متى ستصل إلى هذا الهدف.';
+
+  @override
+  String savingsDurationMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شهر',
+      many: '$count شهرًا',
+      few: '$count أشهر',
+      two: 'شهرين',
+      one: 'شهر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsDurationYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سنة',
+      many: '$count سنةً',
+      few: '$count سنوات',
+      two: 'سنتين',
+      one: 'سنة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String savingsDurationYearsAndMonths(String years, String months) {
+    return '$years و$months';
+  }
+
+  @override
+  String get savingsGoalAchievedBadge => 'تحقّق الهدف!';
+
+  @override
+  String get savingsGoalAchievedMessage =>
+      'ادّخرت كل ما خططت له لهذا الهدف. أحسنت!';
+
+  @override
+  String get savingsGoalHistoryHeader => 'السجل';
+
+  @override
+  String get savingsGoalHistoryEmptyTitle => 'لم يُسجَّل شيء بعد';
+
+  @override
+  String get savingsGoalHistoryEmptyMessage =>
+      'أضف ما تدّخره لهذا الهدف لتتابع تقدمك الفعلي.';
+
+  @override
+  String get savingsLogContributionAction => 'إضافة مبلغ';
+
+  @override
+  String get savingsLogWithdrawalAction => 'سحب';
+
+  @override
+  String get savingsGoalArchivedNotice =>
+      'هذا الهدف مؤرشف. لا يزال بإمكانك تصحيح القيود السابقة، واستعِده لإضافة قيود جديدة.';
+
+  @override
+  String get savingsGoalLoadErrorTitle => 'تعذّر فتح هذا الهدف';
+
+  @override
+  String get savingsRetryAction => 'حاول مرة أخرى';
+
+  @override
+  String get savingsEntryContribution => 'إيداع';
+
+  @override
+  String get savingsEntryWithdrawal => 'سحب';
+
+  @override
+  String get savingsEntryStartingAmount => 'المبلغ المبدئي';
+
+  @override
+  String savingsEntryConvertedAmount(String amount) {
+    return 'المحتسب: $amount';
+  }
+
+  @override
+  String get savingsEntryEditedLabel => 'معدّل';
+
+  @override
+  String get savingsEntryEditAction => 'تعديل';
+
+  @override
+  String get savingsEntryDeleteAction => 'حذف';
+
+  @override
+  String get savingsEntryActionsTooltip => 'خيارات القيد';
+
+  @override
+  String get savingsEntryDeleteConfirmTitle => 'حذف هذا القيد؟';
+
+  @override
+  String get savingsEntryDeleteConfirmMessage =>
+      'سيُعاد حساب أرقام الهدف، ويُحتفظ بسجل لقيم هذا القيد.';
+
+  @override
+  String get savingsContributionFormAddTitle => 'إضافة مبلغ';
+
+  @override
+  String get savingsContributionFormWithdrawTitle => 'سحب مبلغ';
+
+  @override
+  String get savingsContributionFormEditTitle => 'تعديل القيد';
+
+  @override
+  String get savingsContributionAmountLabel => 'المبلغ';
+
+  @override
+  String get savingsContributionAmountInvalidError =>
+      'أدخل مبلغًا أكبر من صفر.';
+
+  @override
+  String get savingsContributionDateLabel => 'التاريخ';
+
+  @override
+  String get savingsContributionNoteLabel => 'ملاحظة (اختياري)';
+
+  @override
+  String get savingsContributionSaveAction => 'حفظ';
+
+  @override
+  String savingsContributionConversionHint(String currency) {
+    return 'سيُحوَّل هذا المبلغ إلى $currency بالسعر الحالي عند الحفظ.';
+  }
+
+  @override
+  String get savingsOverviewTitle => 'أهداف الادخار';
+
+  @override
+  String get savingsOverviewNewGoalAction => 'هدف جديد';
+
+  @override
+  String get savingsOverviewArchivedAction => 'الأهداف المؤرشفة';
+
+  @override
+  String get savingsOverviewEmptyTitle => 'ابدأ الادخار لشيء تريده';
+
+  @override
+  String get savingsOverviewEmptyMessage =>
+      'حدّد هدفًا — صندوق طوارئ أو رحلة أو هاتفًا جديدًا — وتابع كل مبلغ تدّخره حتى تصل إليه.';
+
+  @override
+  String get savingsOverviewEmptyAction => 'أنشئ هدفك الأول';
+
+  @override
+  String get savingsOverviewTotalLabel => 'إجمالي المدخرات';
+
+  @override
+  String savingsOverviewGoalCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'في $count هدف',
+      many: 'في $count هدفًا',
+      few: 'في $count أهداف',
+      two: 'في هدفين',
+      one: 'في هدف واحد',
+      zero: 'لا توجد أهداف',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get savingsOverviewIncompleteTitle => 'الإجمالي غير مكتمل';
+
+  @override
+  String savingsOverviewIncompleteMessage(String currencies) {
+    return 'لا يشمل الأهداف بعملة $currencies. أضف سعر صرف $currencies لاحتسابها.';
+  }
+
+  @override
+  String savingsOverviewNotInTotal(String currency) {
+    return 'غير محتسب في الإجمالي — يلزم سعر $currency';
+  }
+
+  @override
+  String savingsOverviewGoalProgress(String saved, String target) {
+    return '$saved من $target';
+  }
+
+  @override
+  String get savingsOverviewGoalsHeader => 'أهدافك';
+
+  @override
+  String get savingsOverviewLoadErrorTitle => 'تعذّر تحميل أهدافك';
+
+  @override
+  String get savingsOverviewGoalActionsTooltip => 'خيارات الهدف';
+
+  @override
+  String get savingsArchiveAction => 'أرشفة';
+
+  @override
+  String get savingsArchiveRestoreAction => 'استعادة';
+
+  @override
+  String get savingsArchiveDoneMessage => 'تمت أرشفة الهدف';
+
+  @override
+  String get savingsArchiveRestoredMessage => 'تمت استعادة الهدف';
+
+  @override
+  String get savingsArchiveUndoAction => 'تراجع';
+
+  @override
+  String get savingsArchiveTitle => 'الأهداف المؤرشفة';
+
+  @override
+  String get savingsArchiveEmptyTitle => 'لا توجد أهداف مؤرشفة';
+
+  @override
+  String get savingsArchiveEmptyMessage =>
+      'تُحفظ هنا الأهداف التي تؤرشفها بسجلها الكامل، جاهزةً للاستعادة.';
+
+  @override
+  String get savingsDeleteAction => 'حذف الهدف';
+
+  @override
+  String savingsDeleteConfirmTitle(String name) {
+    return 'حذف «$name»؟';
+  }
+
+  @override
+  String get savingsDeleteConfirmMessage => 'سيُحذف هذا الهدف نهائيًا.';
+
+  @override
+  String get savingsDeleteBlockedTitle => 'لهذا الهدف سجل';
+
+  @override
+  String get savingsDeleteBlockedMessage =>
+      'سُجّلت مبالغ لهذا الهدف، لذا لا يمكن حذفه. أرشِفه بدلًا من ذلك لإخفائه مع الاحتفاظ بسجله الكامل.';
+
+  @override
+  String get savingsDeleteBlockedArchiveAction => 'أرشفة بدلًا من ذلك';
+
+  @override
+  String get savingsDeleteDoneMessage => 'تم حذف الهدف';
+
+  @override
+  String savingsWithdrawalAvailableHint(String amount) {
+    return 'المتاح للسحب: $amount';
+  }
+
+  @override
+  String get savingsWhatIfAction => 'ماذا لو؟';
+
+  @override
+  String get savingsWhatIfTitle => 'ماذا لو؟';
+
+  @override
+  String get savingsWhatIfModeMonthly => 'ادّخار مبلغ مختلف';
+
+  @override
+  String get savingsWhatIfModeDate => 'الانتهاء بحلول تاريخ';
+
+  @override
+  String get savingsWhatIfCurrentPlanTitle => 'خطتك الحالية';
+
+  @override
+  String savingsWhatIfCurrentRemaining(String amount) {
+    return 'المتبقي للادخار: $amount';
+  }
+
+  @override
+  String savingsWhatIfCurrentMonthly(String amount) {
+    return 'تدّخر $amount شهريًا';
+  }
+
+  @override
+  String get savingsWhatIfCurrentNoMonthly => 'لم تحدّد مساهمة شهرية';
+
+  @override
+  String savingsWhatIfCurrentTargetDate(String date) {
+    return 'التاريخ المستهدف: $date';
+  }
+
+  @override
+  String get savingsWhatIfMonthlyLabel => 'المبلغ الشهري المقترح';
+
+  @override
+  String get savingsWhatIfMonthlyInvalidError =>
+      'أدخل مبلغًا شهريًا أكبر من صفر.';
+
+  @override
+  String get savingsWhatIfTargetDateLabel => 'الانتهاء بحلول';
+
+  @override
+  String get savingsWhatIfTargetDateNotSet => 'اختر تاريخًا';
+
+  @override
+  String get savingsWhatIfCalculateAction => 'احسب';
+
+  @override
+  String get savingsWhatIfResultTitle => 'لو فعلت ذلك';
+
+  @override
+  String savingsWhatIfResultByMonthly(
+    String amount,
+    String duration,
+    String date,
+  ) {
+    return 'بادخار $amount شهريًا، ستصل إلى هدفك خلال $duration، في حدود $date.';
+  }
+
+  @override
+  String savingsWhatIfResultByMonthlyUndated(String amount, String duration) {
+    return 'بادخار $amount شهريًا، ستصل إلى هدفك خلال $duration.';
+  }
+
+  @override
+  String savingsWhatIfResultByDate(String date, String amount) {
+    return 'لتنتهي بحلول $date، ستحتاج إلى ادخار $amount شهريًا.';
+  }
+
+  @override
+  String savingsWhatIfCompareSooner(String duration) {
+    return 'أسرع من خطتك الحالية بـ$duration';
+  }
+
+  @override
+  String savingsWhatIfCompareLater(String duration) {
+    return 'أبطأ من خطتك الحالية بـ$duration';
+  }
+
+  @override
+  String get savingsWhatIfCompareSame => 'المدة نفسها كما في خطتك الحالية';
+
+  @override
+  String savingsWhatIfCompareMore(String amount) {
+    return 'أكثر مما تدّخره الآن بـ$amount شهريًا';
+  }
+
+  @override
+  String savingsWhatIfCompareLess(String amount) {
+    return 'أقل مما تدّخره الآن بـ$amount شهريًا';
+  }
+
+  @override
+  String get savingsWhatIfPreviewNotice =>
+      'هذه معاينة فقط. يبقى هدفك كما هو ما لم تطبّقها.';
+
+  @override
+  String savingsWhatIfApplyExplainMonthly(String amount) {
+    return 'عند التطبيق تصبح مساهمتك الشهرية $amount، ويبقى تاريخك المستهدف كما هو.';
+  }
+
+  @override
+  String savingsWhatIfApplyExplainDate(String date, String amount) {
+    return 'عند التطبيق يصبح تاريخك المستهدف $date، ومساهمتك الشهرية $amount.';
+  }
+
+  @override
+  String get savingsWhatIfApplyAction => 'طبّق على هدفي';
+
+  @override
+  String get savingsWhatIfCancelAction => 'إلغاء';
+
+  @override
+  String get savingsWhatIfAppliedMessage => 'تم تحديث خطة هدفك.';
+
+  @override
+  String get savingsWhatIfAchievedTitle => 'تم تحقيق الهدف';
+
+  @override
+  String get savingsWhatIfAchievedMessage =>
+      'لقد حققت هذا الهدف بالفعل، فلم يتبقَّ شيء للتخطيط له.';
+
+  @override
+  String get savingsWhatIfBackAction => 'العودة إلى الهدف';
 }

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqlite3/sqlite3.dart';
 
 import 'support/feature_line_fixture.dart';
+import 'support/v11_fixture.dart';
 
 /// The v10 step that joins the two pre-merge lines (v10_merge_features.dart):
 /// a `main` v9 file and a feature-line v9 file both end with exactly the
@@ -72,6 +73,7 @@ void main() {
       raw.execute('ALTER TABLE money_transactions DROP COLUMN $column;');
     }
     raw.execute('DROP TABLE occasions;');
+    dropSavingsGoalsAdditions(raw);
     raw.execute('PRAGMA user_version = 9;');
     return raw;
   }
@@ -98,7 +100,7 @@ void main() {
     addTearDown(db.close);
 
     final row = await db.select(db.moneyTransactions).getSingle();
-    expect(raw.select('PRAGMA user_version').single.values.single, 10);
+    expect(raw.select('PRAGMA user_version').single.values.single, 11);
     expect(schemaOf(raw), await freshSchema());
     // The existing row reads as what it always was.
     expect(row.currencyCode, 'USD');
@@ -126,7 +128,7 @@ void main() {
     addTearDown(db.close);
     await db.customSelect('SELECT 1').get();
 
-    expect(raw.select('PRAGMA user_version').single.values.single, 10);
+    expect(raw.select('PRAGMA user_version').single.values.single, 11);
     expect(schemaOf(raw), await freshSchema());
     // main's steps ran: the pre-merge amounts are labelled EGP (018) and the
     // budget, planned when EGP was the only currency, is in EGP too.

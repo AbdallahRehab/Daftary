@@ -12,14 +12,14 @@ void main() {
     'en': (
       title: 'Upcoming',
       placeholder:
-          'Upcoming bills and savings-goal milestones will appear here once '
-          'reminders and savings goals are available.',
+          'Savings goals with a target date will appear here. Upcoming bills '
+          'will follow once reminders are available.',
     ),
     'ar': (
       title: 'القادم',
       placeholder:
-          'ستظهر هنا الفواتير القادمة ومحطات أهداف الادخار بعد توفر '
-          'التذكيرات وأهداف الادخار.',
+          'ستظهر هنا أهداف الادخار التي لها تاريخ مستهدف، وستتبعها الفواتير '
+          'القادمة بعد توفر التذكيرات.',
     ),
   };
 

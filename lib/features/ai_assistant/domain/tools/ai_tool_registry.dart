@@ -10,6 +10,8 @@ import 'get_category_spend.dart';
 import 'get_occasion_totals_tool.dart';
 import 'get_owed_overview_tool.dart';
 import 'get_person_balance_tool.dart';
+import 'get_savings_goal_status_tool.dart';
+import 'get_savings_projection_tool.dart';
 import 'get_top_spending_category.dart';
 
 /// Dispatches a provider-requested tool call to the one [AITool] declared
@@ -27,6 +29,8 @@ class AIToolRegistry {
     GetPersonBalanceTool getPersonBalance,
     GetOwedOverviewTool getOwedOverview,
     GetBudgetStatusTool getBudgetStatus,
+    GetSavingsGoalStatusTool getSavingsGoalStatus,
+    GetSavingsProjectionTool getSavingsProjection,
     GetOccasionTotalsTool getOccasionTotals,
   ) : this.fromTools([
         getCategorySpend,
@@ -35,6 +39,8 @@ class AIToolRegistry {
         getPersonBalance,
         getOwedOverview,
         getBudgetStatus,
+        getSavingsGoalStatus,
+        getSavingsProjection,
         getOccasionTotals,
       ]);
 

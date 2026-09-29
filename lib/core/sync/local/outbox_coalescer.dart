@@ -100,6 +100,7 @@ const _droppableOnDelete = {
 const _neverCoalesced = {
   SyncEntityType.transactionAudit,
   SyncEntityType.conflictResolution,
+  SyncEntityType.savingsContributionAudit,
 };
 
 /// The coalescing rules of data-model.md §5 (FR-025), as a pure function.

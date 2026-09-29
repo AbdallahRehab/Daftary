@@ -13,6 +13,10 @@ import 'package:daftary/features/occasions/data/datasources/occasions_dao.dart';
 import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
 import 'package:daftary/features/people/data/datasources/people_dao.dart';
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
+import 'package:daftary/features/savings/data/datasources/savings_dao.dart';
+import 'package:daftary/features/savings/data/sync/savings_contribution_audit_sync_mapper.dart';
+import 'package:daftary/features/savings/data/sync/savings_contribution_sync_mapper.dart';
+import 'package:daftary/features/savings/data/sync/savings_goal_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/datasources/transactions_dao.dart';
 import 'package:daftary/features/transactions/data/sync/money_transaction_sync_mapper.dart';
 import 'package:daftary/features/transactions/data/sync/transaction_audit_sync_mapper.dart';
@@ -56,4 +60,12 @@ BudgetsDao testBudgetsDao(AppDatabase db) => BudgetsDao(
   testOutbox(db),
   const BudgetSyncMapper(),
   const BudgetAllocationSyncMapper(),
+);
+
+SavingsDao testSavingsDao(AppDatabase db) => SavingsDao(
+  db,
+  testOutbox(db),
+  const SavingsGoalSyncMapper(),
+  const SavingsContributionSyncMapper(),
+  const SavingsContributionAuditSyncMapper(),
 );

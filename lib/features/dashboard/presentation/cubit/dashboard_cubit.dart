@@ -10,6 +10,7 @@ import '../../../finance/domain/entities/finance_history_filter.dart';
 import '../../../finance/domain/entities/finance_summary.dart';
 import '../../../finance/domain/usecases/watch_finance_history.dart';
 import '../../../finance/domain/usecases/watch_finance_summary.dart';
+import '../../../savings/domain/usecases/watch_upcoming_savings_goals.dart';
 import '../../../transactions/domain/entities/overview_summary.dart';
 import '../../../transactions/domain/usecases/watch_overview.dart';
 import '../../domain/entities/dashboard_snapshot.dart';
@@ -25,21 +26,28 @@ import 'load_status.dart';
 /// anywhere (another screen, a rate, the primary currency, or a sync pull)
 /// updates Home with no reload (FR-011, 021 FR-031). All subscriptions are
 /// cancelled in [close].
+///
+/// 011 FR-031: the Upcoming section's savings goals are a fourth, separate
+/// subscription. It never touches either snapshot side's status, and a
+/// failed read simply leaves the section on its honest empty state.
 @injectable
 class DashboardCubit extends Cubit<DashboardState> {
   DashboardCubit(
     this._watchOverview,
     this._watchFinanceSummary,
     this._watchFinanceHistory,
+    this._watchUpcomingSavingsGoals,
   ) : super(const DashboardState());
 
   final WatchOverview _watchOverview;
   final WatchFinanceSummary _watchFinanceSummary;
   final WatchFinanceHistory _watchFinanceHistory;
+  final WatchUpcomingSavingsGoals _watchUpcomingSavingsGoals;
 
   StreamSubscription<void>? _overviewSubscription;
   StreamSubscription<void>? _financeSubscription;
   StreamSubscription<void>? _historySubscription;
+  StreamSubscription<void>? _savingsSubscription;
 
   /// Assumed until the existence check answers, and kept on a failed check:
   /// wrongly showing the first-run state would hide real data (FR-012).
@@ -51,6 +59,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     _subscribeOverview();
     _subscribeFinance();
     _subscribeHistory();
+    _subscribeSavings();
   }
 
   /// Pull to refresh: subscribes again without clearing what is shown.
@@ -58,6 +67,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     _subscribeOverview();
     _subscribeFinance();
     _subscribeHistory();
+    _subscribeSavings();
   }
 
   Future<void> retryOverview() async {
@@ -111,6 +121,24 @@ class DashboardCubit extends Cubit<DashboardState> {
       );
       _emitCombined(state);
     });
+  }
+
+  void _subscribeSavings() {
+    _savingsSubscription?.cancel();
+    _savingsSubscription = _watchUpcomingSavingsGoals().listen(
+      (result) {
+        if (isClosed) return;
+        emit(
+          state.copyWith(
+            upcomingSavingsGoals: result.getOrElse((_) => const []),
+          ),
+        );
+      },
+      // Home must never break over its least essential section.
+      onError: (Object _) {
+        if (!isClosed) emit(state.copyWith(upcomingSavingsGoals: const []));
+      },
+    );
   }
 
   void _emitCombined(DashboardState next) {
@@ -171,6 +199,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     _overviewSubscription?.cancel();
     _financeSubscription?.cancel();
     _historySubscription?.cancel();
+    _savingsSubscription?.cancel();
     return super.close();
   }
 }

@@ -59,3 +59,59 @@ All Technical Context unknowns from `plan.md` are resolved below. The spec (011)
 **Rationale**: Directly satisfies FR-022 using the identical mechanism and reasoning already proven four times over in this codebase — no new idempotency pattern invented.
 
 **Alternatives considered**: None seriously considered; direct reuse of an existing, working convention.
+
+---
+
+## Post-merge re-baseline (2026-09-29)
+
+Decisions 8-13 were added by `/speckit-analyze` after 014/017/018/020/021 merged into `main`. They supersede anything above that assumed a local-only, single-currency feature.
+
+## 8. Sync: adopt the 021 contract like occasions and budgets
+
+**Decision**: `SavingsGoals`, `SavingsContributions` and `SavingsContributionAudits` are synced tables. Each gets a `SyncEntityType` (`savingsGoal` rank 0, `savingsContribution` rank 1, `savingsContributionAudit` rank 2), a `SyncMapper` under `lib/features/savings/data/sync/`, and a Supabase table in a new migration (`023_savings_goals_sync`) with the same columns, `sync_stamp` trigger, RLS policies and `(owner_id, revision)` index as 022's `occasions`/`budgets`. The migration replaces `sync_push`/`sync_pull`/`sync_delete_all` so they know the three new entity types. Every local write enqueues an outbox row in the same drift transaction, exactly as `BudgetsDao` does.
+
+**Rationale**: 021 FR-006 requires it, and `table_classification_guard_test.dart` fails until every table in `allTables` is either synced or listed in `localOnlyTables`. Savings data is user-owned financial data, so local-only is not an option.
+
+**Alternatives considered**: Listing the tables in `localOnlyTables` — rejected; a user's goals would silently not follow them to a new device, contradicting 021's promise.
+
+## 9. Currency: one per goal, convert at log time
+
+**Decision**: Follows 018's data model for 011. `SavingsGoals.currency_code` is set at creation (default: primary currency) and never edited. `SavingsContributions` stores `amount_minor_units` in the goal's currency (the only figure progress sums) plus `entered_amount_minor_units` and `entered_currency_code`. When they differ, `LogContribution`/`LogWithdrawal`/`EditContribution` convert through 018's `CurrencyConverter` using the current `ConversionContext`; a missing rate returns `RatesMissingFailure` and nothing is written. `SavingsCalculator` never converts — it only ever sees goal-currency integers.
+
+The overview total (FR-019) converts each goal's current amount into the primary currency at read time. A goal needing a missing rate is returned with `isBlocked` and `missingRatesFor`, is excluded from the total, and the total carries `isIncomplete` — the same shape as 010's `UnbudgetedCategorySpend`.
+
+**Rationale**: Freezing the converted figure at log time is what makes "progress never silently changes" true; the overview is the one place that must span currencies, so it converts at read time like budgets do.
+
+**Alternatives considered**: Converting every entry at read time — rejected; a rate edit would move every goal's progress with no user action.
+
+## 10. Contribution audit trail
+
+**Decision**: A new `SavingsContributionAudits` table (`id`, `contribution_id`, `change_type` `edited|deleted`, `previous_values_json`, `changed_at`), a copy of 001's `TransactionAuditEntries`. `EditContribution` and `DeleteContribution` write the audit row and the change in one drift transaction. Audit rows are append-only and never read by progress math.
+
+**Rationale**: The constitution's Financial Domain Override requires every financial mutation to be traceable with audit metadata. `editedAt` alone loses the prior amount.
+
+**Alternatives considered**: Following 007 (`editedAt` only) — rejected; 007's gap is not a precedent to copy (constitution Governance: undocumented deviations are defects).
+
+## 11. Month counting and rounding
+
+**Decision**: `core/date` gains `wholeMonthsBetween(DateTime from, DateTime to)` = `(to.year − from.year) × 12 + (to.month − from.month)`, minus 1 when `to.day < from.day`, and `addCalendarMonths(DateTime, int)` (clamps to the month's last day). `SavingsCalculator` floors months-remaining at 1 and uses ceiling integer division for both estimated months and required monthly contribution.
+
+**Rationale**: Calendar months match how users think about "10 months from now"; integer ceiling keeps Principle VIII (no floating point for money).
+
+## 12. Navigation
+
+**Decision**: Routes go in the People shell branch, next to `/occasions` and `/budgets`; Home gets a Savings card (like the Budgets card) and Home's Upcoming section lists active goals with a target date. Static paths `/savings/new` and `/savings/archived` are declared before `/savings/:goalId`. `/savings/:goalId` is already the deep-link target of `notification_tap_router.dart` (017), so that path is fixed.
+
+**Rationale**: Mirrors 008/010's research Decision 9 — sections reached from Home, not a fourth tab.
+
+## 13. Integrations that are already waiting
+
+**Decision**: When this feature lands, it ships with the adapters other features reserved for it:
+- 017: `SavingsRepositoryInsightsSource implements SavingsInsightsSource`, replacing `UnavailableSavingsInsightsSource` in DI; maps `GoalProgress`/`EstimatedCompletion` to `SavingsGoalSnapshot`.
+- 014: `getSavingsGoalStatus` (wraps `GetGoalDetail`/`GetSavingsOverview`) and `getSavingsProjection` (wraps `CalculateWhatIfMonthlyContribution`) added to `ToolCatalog`.
+- 012: Home's `UpcomingPlaceholderCard` is replaced by real upcoming goals when any exist.
+- 018: `DriftCurrencyUsageChecker` gains `EXISTS` clauses for `savings_goals.currency_code` and `savings_contributions.entered_currency_code`.
+- 013: `deleteAllUserData` deletes the three tables (audits → contributions → goals).
+- 020: every savings page uses the shared adaptive app bar and `showAppModalSheet`.
+
+**Rationale**: Each of these is a documented placeholder in the code pointing at 011; leaving them out would ship a feature the rest of the app can't see. All are read-only uses of this feature's Domain layer, so FR-026's independence still holds.

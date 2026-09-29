@@ -1,6 +1,6 @@
 # Phase 1 Data Model: Savings Goals
 
-Derived from the spec's Key Entities section and the Phase 0 research decisions (derived current amount, starting amount as a first contribution, blocked over-withdrawal, derived reversible achieved status). All money fields are integer minor units (piastres) via the existing `Money` type; all timestamps are UTC `DateTime`. This feature shares no entity with, and adds no column to, any existing feature's tables (001/007/008/009/010).
+Derived from the spec's Key Entities section and the Phase 0 research decisions (derived current amount, starting amount as a first contribution, blocked over-withdrawal, derived reversible achieved status). All money fields are integer minor units via the existing currency-aware `Money` type (018); all timestamps are UTC `DateTime`. This feature shares no entity with, and adds no column to, any existing feature's tables (001/007/008/009/010). Re-baselined 2026-09-29 for sync (021), currency (018) and the contribution audit trail (research.md Decisions 8-10).
 
 ## Entity: SavingsGoal (NEW)
 
@@ -12,13 +12,14 @@ A named target the user is saving toward.
 | `idempotencyKey` | `String` (UUID) | **Unique index.** Client-generated once per creation save action; a retried insert with the same key is a no-op returning the existing row (FR-022) |
 | `name` | `String` | Required, non-empty after trim (FR-001) |
 | `type` | `String?` | Optional; one of the standard set (`emergencyFund`, `newCar`, `wedding`, `vacation`, `newPhone`, `homeFurniture`, `education`, `other`) or `null` for a plain custom-named goal with no type — cosmetic only (Assumptions), same free-form pattern as `Person.relationshipTag`/`Occasion.type` |
+| `currencyCode` | `String` (ISO 4217) | Required; set at creation, default the primary currency; **not editable** (FR-027). Every amount on the goal is in this currency |
 | `targetAmountMinorUnits` | `int` | Required, `> 0` (FR-002) |
 | `monthlyContributionMinorUnits` | `int?` | Optional; if present, `> 0` (FR-002 — zero/negative rejected, but the field itself may be entirely absent) |
 | `targetDate` | `DateTime?` (date-only) | Optional; if present, MUST be strictly after the current date at the time it is set (FR-003) |
 | `isArchived` | `bool` | Default `false`. `true` hides the goal from the active goals list/overview while preserving it (FR-020) |
 | `createdAt` | `DateTime` | Set once on creation |
 | `updatedAt` | `DateTime` | Updated on every edit (name/type/target/monthly contribution/target date, archive/restore) |
-| `deletedAt` | `DateTime?` | Soft-delete tombstone; set only when a zero-contribution-history goal is permanently deleted (FR-021) |
+| `deletedAt` | `DateTime?` | Tombstone; set only when a zero-contribution-history goal is deleted (FR-021). Shown to the user as a permanent delete; kept as a tombstone so the delete syncs (021) |
 
 **Validation rules**:
 - `name` MUST be non-empty (trimmed). No uniqueness constraint (Assumptions — unlike `Person`).
@@ -29,7 +30,7 @@ A named target the user is saving toward.
 
 **Derived (not stored)**: `currentAmountMinorUnits` (research.md Decision 2), `remainingMinorUnits`, `percentageProgress`, `isAchieved` (research.md Decision 6), `estimatedCompletion` — see `GoalProgress` below. None of these are stored columns.
 
-**Lifecycle**: `active → archived → active` (restore, FR-020). A goal with zero `SavingsContribution` rows may be hard-deleted (`active → deleted`, FR-021); a goal with any contribution/withdrawal history is never hard-deleted, only archived — identical rule shape to `Person` (001).
+**Lifecycle**: `active → archived → active` (restore, FR-020). An archived goal accepts edits/deletes of its existing contributions but rejects new ones (`GoalArchivedFailure`, FR-020). A goal with zero `SavingsContribution` rows may be deleted (`active → deleted` via tombstone, FR-021); a goal with any contribution/withdrawal history is never hard-deleted, only archived — identical rule shape to `Person` (001).
 
 ## Entity: SavingsContribution (NEW)
 
@@ -41,7 +42,9 @@ A single logged deposit or withdrawal against one `SavingsGoal`.
 | `idempotencyKey` | `String` (UUID) | **Unique index.** Per FR-022/research.md Decision 7 |
 | `goalId` | `String` (FK → `SavingsGoal.id`) | Required |
 | `type` | enum `contribution` \| `withdrawal` | Required (FR-005/FR-006) |
-| `amountMinorUnits` | `int` | Required, `> 0` regardless of `type` — direction is carried by `type`, never by sign (FR-007) |
+| `amountMinorUnits` | `int` | Required, `> 0` regardless of `type` — direction is carried by `type`, never by sign (FR-007). **In the goal's currency**; the only figure progress sums |
+| `enteredAmountMinorUnits` | `int` | Required, `> 0`. What the user typed (FR-028); equals `amountMinorUnits` when `enteredCurrencyCode` is the goal's currency |
+| `enteredCurrencyCode` | `String` (ISO 4217) | Required; defaults to the goal's currency. When different, `amountMinorUnits` is converted at log/edit time via `CurrencyConverter`; a missing rate → `RatesMissingFailure`, nothing written |
 | `date` | `DateTime` (date-only) | Defaults to today, user-editable (FR-005) |
 | `note` | `String?` | Optional; system-generated note (e.g. "Starting amount") for the initial contribution created alongside a new goal with a non-zero starting amount (research.md Decision 3) |
 | `createdAt` | `DateTime` | Set once on creation |
@@ -51,9 +54,25 @@ A single logged deposit or withdrawal against one `SavingsGoal`.
 **Validation rules**:
 - `amountMinorUnits > 0` for both `contribution` and `withdrawal` rows (FR-007).
 - A `withdrawal` row is rejected at write time if `amountMinorUnits` exceeds the goal's current computed balance (Decision 2's live aggregate, evaluated over all *other* non-deleted rows for that goal) — `WithdrawalExceedsBalanceFailure` (FR-006, research.md Decision 5). An *edit* to an existing withdrawal is validated the same way, excluding the row being edited from the "current balance" check against itself.
-- Same decimal-precision and maximum-amount ceiling as `MoneyTransaction`/`FinanceEntry` (FR-007).
+- Same decimal-precision and maximum-amount ceiling as `MoneyTransaction`/`FinanceEntry` (FR-007), applied to both the entered and converted amount.
+- A new row is rejected with `GoalArchivedFailure` when the goal is archived (FR-020); edits/deletes of existing rows are allowed.
+- Every edit or delete writes a `SavingsContributionAudit` row in the same DB transaction (FR-030).
 
 **State transitions**: `created → [edited]* → [deleted]`. Mirrors `MoneyTransaction`'s (001) and `FinanceEntry`'s (007) shape exactly: `type` is fixed at creation (not offered as an edit field — reclassifying a contribution as a withdrawal or vice versa means delete + re-create, same convention as `MoneyTransaction.kind`).
+
+## Entity: SavingsContributionAudit (NEW)
+
+Prior values of one `SavingsContribution`, captured when it is edited or deleted (FR-030, research.md Decision 10). A copy of 001's `TransactionAuditEntries`.
+
+| Field | Type | Rules |
+|---|---|---|
+| `id` | `String` (UUID) | Primary key |
+| `contributionId` | `String` (FK → `SavingsContribution.id`) | Required |
+| `changeType` | enum `edited` \| `deleted` | Required |
+| `previousValuesJson` | `String` | JSON of the row before the change: `amountMinorUnits`, `enteredAmountMinorUnits`, `enteredCurrencyCode`, `date`, `note` |
+| `changedAt` | `DateTime` | Required |
+
+Append-only: never edited, never deleted (except by 013's full data wipe), never counted toward progress, never shown as a history entry.
 
 ## Value Object: GoalProgress *(derived, not persisted)*
 
@@ -72,9 +91,9 @@ Computed on demand for one `SavingsGoal`, combining its stored fields with its `
 
 | Field | Type | Derivation |
 |---|---|---|
-| `estimatedMonths` | `int?` | When `monthlyContributionMinorUnits` is set: `ceil(remainingMinorUnits / monthlyContributionMinorUnits)` (FR-010, Assumptions: always rounded up). `null` if `monthlyContributionMinorUnits` is not set. |
+| `estimatedMonths` | `int?` | When `monthlyContributionMinorUnits` is set: `ceil(remainingMinorUnits / monthlyContributionMinorUnits)` via integer ceiling division (FR-010, Assumptions: always rounded up). `null` if `monthlyContributionMinorUnits` is not set. |
 | `estimatedDate` | `DateTime?` | `today + estimatedMonths` (calendar-month arithmetic via `core/date`), when `estimatedMonths` is present |
-| `requiredMonthlyContributionMinorUnits` | `int?` | When `targetDate` is set: `ceil(remainingMinorUnits / monthsBetween(today, targetDate))` (FR-011). `null` if `targetDate` is not set. `monthsBetween` uses whole calendar months remaining, minimum `1` (a target date within the current month still requires at least one month's worth of contribution, never a division by zero) |
+| `requiredMonthlyContributionMinorUnits` | `int?` | When `targetDate` is set: `ceil(remainingMinorUnits / wholeMonthsBetween(today, targetDate))`, integer ceiling to the next minor unit (FR-011). `null` if `targetDate` is not set. `wholeMonthsBetween` (`core/date`, research.md Decision 11) = `(Δyears × 12 + Δmonths)`, minus 1 when the target's day-of-month is earlier than today's, minimum `1` (a target date within the current month still requires at least one month's worth of contribution, never a division by zero) |
 | `hasShortfall` | `bool` | `true` when both `monthlyContributionMinorUnits` and `targetDate` are set and `estimatedDate` falls after `targetDate` (FR-012) — triggers the "honest mismatch" display, never silently resolved |
 | `shortfallMonths` | `int?` | When `hasShortfall`, the whole-month gap between `estimatedDate` and `targetDate`, for the "you'll reach this N months after your target" message (FR-012) |
 
@@ -90,10 +109,20 @@ Produced by `CalculateWhatIfMonthlyContribution`/`CalculateWhatIfCompletionDate`
 
 **Rule**: Applying a `WhatIfResult` (FR-015, `ApplyWhatIfScenario`) is the *only* write path that can set `SavingsGoal.monthlyContributionMinorUnits`/`targetDate` from a what-if exploration — `CalculateWhatIfMonthlyContribution`/`CalculateWhatIfCompletionDate` never call `SavingsRepository` at all (research.md Decision 1), which is what makes this rule structurally, not just behaviorally, true.
 
+## Value Object: SavingsOverview *(derived, not persisted)*
+
+| Field | Type | Derivation |
+|---|---|---|
+| `goals` | `List<GoalOverviewLine>` | One per active goal (or archived, with `includeArchived`): the goal, its `GoalProgress` in its own currency, and `primaryCurrencyAmountMinorUnits` (`int?`, `null` when blocked) plus `missingRatesFor` (`List<Currency>`) |
+| `totalSavedMinorUnits` | `int` | Sum of the non-blocked lines' `primaryCurrencyAmountMinorUnits`, in the primary currency (FR-019) |
+| `primaryCurrency` | `Currency` | From 018's `ConversionContext` |
+| `isIncomplete` | `bool` | `true` when any line is blocked; the UI names the missing rates (018 FR-009) |
+
 ## Relationships
 
 ```
-SavingsGoal (1) ──< (many) SavingsContribution
+SavingsGoal (1) ──< (many) SavingsContribution (1) ──< (many) SavingsContributionAudit
+Currency (018) ──1:N── SavingsGoal.currencyCode, SavingsContribution.enteredCurrencyCode
 ```
 
 - No relationship to `Person`, `MoneyTransaction`, `Occasion`, `Category`, `FinanceEntry`, or `Budget` — this feature is entirely independent (FR-026, Assumptions).
@@ -108,6 +137,7 @@ Table SavingsGoals (
   idempotency_key TEXT NOT NULL,
   name TEXT NOT NULL,
   type TEXT NULL,
+  currency_code TEXT NOT NULL DEFAULT 'EGP',
   target_amount_minor_units INTEGER NOT NULL,
   monthly_contribution_minor_units INTEGER NULL,
   target_date INTEGER NULL,
@@ -123,7 +153,9 @@ Table SavingsContributions (
   idempotency_key TEXT NOT NULL,
   goal_id TEXT NOT NULL REFERENCES SavingsGoals(id),
   type TEXT NOT NULL,                       -- 'contribution' | 'withdrawal'
-  amount_minor_units INTEGER NOT NULL,
+  amount_minor_units INTEGER NOT NULL,       -- goal currency
+  entered_amount_minor_units INTEGER NOT NULL,
+  entered_currency_code TEXT NOT NULL,
   date INTEGER NOT NULL,
   note TEXT NULL,
   created_at INTEGER NOT NULL,
@@ -132,6 +164,18 @@ Table SavingsContributions (
 )
 UNIQUE INDEX idx_savings_contributions_idempotency_key ON SavingsContributions(idempotency_key)
 INDEX idx_savings_contributions_goal_id ON SavingsContributions(goal_id, deleted_at)
+
+Table SavingsContributionAudits (
+  id TEXT PRIMARY KEY,
+  contribution_id TEXT NOT NULL REFERENCES SavingsContributions(id),
+  change_type TEXT NOT NULL,                -- 'edited' | 'deleted'
+  previous_values_json TEXT NOT NULL,
+  changed_at INTEGER NOT NULL
+)
 ```
 
-**No changes to any existing table** — this feature is purely additive at the schema level and shares no foreign key with any table outside its own two (FR-026).
+Local `schemaVersion` goes from 10 to 11 (one additive `onUpgrade` step creating the three tables).
+
+**Cloud (Supabase migration `023_savings_goals_sync`)**: `savings_goals`, `savings_contributions`, `savings_contribution_audits`, each with 022's sync columns (`owner_id`, `id`, `revision`, `client_created_at`, `client_updated_at`, `server_created_at`, `server_updated_at`, `deleted_at`, `last_device_id`), primary key `(owner_id, id)`, `unique (owner_id, idempotency_key)` where applicable, `sync_stamp` trigger, RLS select/insert/update policies on `owner_id = auth.uid()`, and `(owner_id, revision)` index. `sync_push`/`sync_pull`/`sync_delete_all` are replaced to include them. Sync ranks: goal 0, contribution 1, audit 2.
+
+**No changes to any existing table** — this feature is purely additive at the schema level and shares no foreign key with any table outside its own three (FR-026).

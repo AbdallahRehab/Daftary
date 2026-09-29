@@ -11,7 +11,7 @@ This is a run/validation guide, not an implementation reference — see `data-mo
   fvm dart run build_runner build --delete-conflicting-outputs   # drift + injectable codegen
   ```
 - An Android emulator/device or iOS simulator/device attached (`fvm flutter devices`).
-- No dependency on any other feature's data — this feature can be validated on a fresh install with zero prior app usage.
+- Scenarios 1-5 need no other data. Scenario 6 needs at least one exchange rate configured (018 Settings → Currency). Scenario 7 needs two devices/simulators signed in to the same account (021) and the Supabase migration `023_savings_goals_sync` applied.
 
 ## Run the app
 
@@ -19,7 +19,7 @@ This is a run/validation guide, not an implementation reference — see `data-mo
 fvm flutter run
 ```
 
-On first launch after this feature ships, the migration creates `SavingsGoals`/`SavingsContributions` automatically — no manual setup or network configuration needed (feature is local-only and touches no existing table).
+On first launch after this feature ships, the local migration (schema v10 → v11) creates `SavingsGoals`/`SavingsContributions`/`SavingsContributionAudits` automatically; it touches no existing table. The feature works fully offline; sync starts once the user is signed in.
 
 ## Automated verification
 
@@ -89,3 +89,31 @@ Each scenario maps directly to a spec acceptance scenario; use as a scripted smo
    - **Expect**: correct RTL layout, numeral/date formatting, no truncation in the celebratory state or calculator.
 2. Switch between light and dark mode.
    - **Expect**: progress indicators and the achieved badge remain legible and correctly themed.
+
+### 6. Currency (FR-019, FR-027, FR-028)
+1. With EGP primary and a USD rate set, create a USD goal and log 100 USD into an EGP goal.
+   - **Expect**: the EGP goal's history row shows 100 USD and the converted EGP amount; progress counts the EGP amount.
+2. Remove the USD rate, then try to log another USD contribution.
+   - **Expect**: blocked, message names USD; nothing recorded.
+3. Open the overview.
+   - **Expect**: the USD goal is listed with its own progress; the EGP total excludes it and is marked incomplete, naming USD.
+4. Edit the goal and look for a currency field.
+   - **Expect**: none — currency is fixed at creation.
+
+### 7. Sync and audit (FR-024, FR-030)
+1. On device A, create a goal and log two contributions; on device B, pull.
+   - **Expect**: the goal and both entries appear with identical figures.
+2. On device A, edit one entry and delete the other; sync.
+   - **Expect**: device B reflects both changes; two audit rows exist (inspect `savings_contribution_audits`) with the prior values.
+3. Use Settings → Delete all my data.
+   - **Expect**: savings goals, contributions and audits are gone locally and in the cloud.
+
+### 8. Integrations (FR-031)
+1. Enable savings check-ins in notification settings with an active goal behind pace.
+   - **Expect**: a savings check-in fires and tapping it opens `/savings/:goalId`.
+2. Ask the AI assistant "how much do I need to save monthly to reach my goal?"
+   - **Expect**: the figure matches the goal detail screen exactly.
+3. Open Home.
+   - **Expect**: a Savings card opens the goals overview; the Upcoming section lists goals with target dates instead of the placeholder.
+4. Turn Liquid Glass on and walk every savings screen.
+   - **Expect**: app bars and sheets use glass like the rest of the app.

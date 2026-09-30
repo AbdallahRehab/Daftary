@@ -1,0 +1,117 @@
+# Builds a signed release APK and attaches it to a GitHub Release whenever a
+# version tag is pushed:
+#
+#   git tag v1.0.0 && git push origin v1.0.0
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   ANDROID_KEYSTORE_BASE64   base64 of android/upload-keystore.jks
+#   ANDROID_KEYSTORE_PASSWORD keystore password
+#   ANDROID_KEY_PASSWORD      key password
+#   ANDROID_KEY_ALIAS         key alias (upload)
+# Optional (enables cloud sync in the build; without them the app runs fully
+# local, see CloudConfig.isConfigured):
+#   SUPABASE_URL
+#   SUPABASE_PUBLISHABLE_KEY
+
+name: Release Android APK
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Keep in sync with .fvmrc.
+          flutter-version: "3.47.0"
+          channel: stable
+          cache: true
+
+      - name: Restore release keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 secret is missing"
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/upload-keystore.jks
+          cat > android/key.properties <<EOF
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Write cloud config
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          mkdir -p config
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            jq -n --arg url "$SUPABASE_URL" --arg key "$SUPABASE_PUBLISHABLE_KEY" \
+              '{SUPABASE_URL: $url, SUPABASE_PUBLISHABLE_KEY: $key}' > config/supabase.release.json
+          else
+            echo "Supabase secrets not set; building a local-only APK."
+            echo '{}' > config/supabase.release.json
+          fi
+
+      - run: flutter pub get
+
+      - name: Build APK
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then
+            VERSION="$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')"
+          fi
+          flutter build apk --release \
+            --build-name="$VERSION" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define-from-file=config/supabase.release.json
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/Daftary-$VERSION-universal.apk"
+          # Smaller per-ABI build; arm64 covers practically every phone from
+          # the last several years and is the recommended download.
+          flutter build apk --release --split-per-abi \
+            --build-name="$VERSION" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define-from-file=config/supabase.release.json
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/Daftary-$VERSION-arm64.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daftary-apk
+          path: dist/*.apk
+
+      - name: Publish GitHub Release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.apk
+          generate_release_notes: true
+          body: |
+            ## Install on Android
+            1. Download **Daftary-…-arm64.apk** from the assets below (works on almost every modern phone).
+               If it won't install, use **Daftary-…-universal.apk** instead.
+            2. Open it on your phone and allow "Install unknown apps" when asked.
+
+            iPhone: join the TestFlight beta (link in the README).

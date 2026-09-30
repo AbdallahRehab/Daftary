@@ -269,6 +269,11 @@ fvm flutter test                          # unit + widget
 fvm flutter test integration_test -d <device>
 ```
 
+## Try it
+
+- **Android:** download the latest APK from [Releases](https://github.com/AbdallahRehab/Daftary/releases/latest). Pick `-arm64.apk`, open it on your phone and allow "Install unknown apps".
+- **iPhone:** a public TestFlight beta is coming soon.
+
 ## Getting started
 
 **Requirements:** [FVM](https://fvm.app) (the project pins Flutter 3.47.0), Xcode and/or Android Studio.
@@ -287,6 +292,16 @@ The app runs **fully offline** by default. To turn on cloud sync, copy `config/s
 ```sh
 fvm flutter run --dart-define-from-file=config/supabase.dev.json
 ```
+
+### Releasing the Android APK
+
+Pushing a version tag builds a signed APK in GitHub Actions ([release-android.yml](.github/workflows/release-android.yml)) and attaches it to a GitHub Release:
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+The workflow needs the `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD` and `ANDROID_KEY_ALIAS` repository secrets. `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are optional: without them the APK runs local-only. For a local release build, put the keystore at `android/upload-keystore.jks` and its details in `android/key.properties` (both gitignored). Without them, release builds are signed with the debug key.
 
 ### Regenerating the screenshots
 

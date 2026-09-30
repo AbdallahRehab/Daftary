@@ -6,6 +6,7 @@
 **A people-first personal finance app for Arabic-speaking users.**
 Track who owes you and who you owe, then manage your own income, budgets and savings, all in one notebook that stays on your phone.
 
+[![CI](https://github.com/AbdallahRehab/Daftary/actions/workflows/ci.yml/badge.svg)](https://github.com/AbdallahRehab/Daftary/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.10-0175C2?logo=dart&logoColor=white)
 ![Architecture](https://img.shields.io/badge/Architecture-Clean%20%2B%20BLoC-6A1B9A)

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
 import '../sync_entity_type.dart';
+import '../sync_logger.dart';
 import '../sync_models.dart';
 import 'supabase_initializer.dart';
 import 'sync_error_mapper.dart';
@@ -27,7 +28,7 @@ typedef RpcCall =
 
 @LazySingleton(as: SyncRemoteDataSource)
 class SupabaseSyncRemoteDataSource implements SyncRemoteDataSource {
-  SupabaseSyncRemoteDataSource(SupabaseInitializer supabase)
+  SupabaseSyncRemoteDataSource(SupabaseInitializer supabase, SyncLogger logger)
     : this.withRpc((function, params) async {
         // `rpc` returns a builder that is itself a Future; awaiting it here
         // lets `timeout` apply to the whole request.
@@ -36,15 +37,17 @@ class SupabaseSyncRemoteDataSource implements SyncRemoteDataSource {
           params: params,
         );
         return result;
-      });
+      }, logger: logger);
 
   @visibleForTesting
   SupabaseSyncRemoteDataSource.withRpc(
     this._rpc, {
     this.timeout = const Duration(seconds: 20),
-  });
+    SyncLogger? logger,
+  }) : _logger = logger;
 
   final RpcCall _rpc;
+  final SyncLogger? _logger;
 
   /// research.md Decision 19.
   final Duration timeout;
@@ -64,14 +67,27 @@ class SupabaseSyncRemoteDataSource implements SyncRemoteDataSource {
     }
   }
 
+  /// 022 D2 (migration 026): the pull this release calls. `sync_pull_v2`
+  /// also returns `finance_entry_audit`; the original `sync_pull` never
+  /// does, so v1.0.1 and R1 keep calling it unharmed. Both walk the same
+  /// revision cursor.
+  static const pullFunction = 'sync_pull_v2';
+
   @override
   Future<PullPage> pull({required int since, int limit = 500}) async {
     try {
-      final response = await _rpc('sync_pull', {
+      final response = await _rpc(pullFunction, {
         'p_since': since,
         'p_limit': limit,
       }).timeout(timeout);
-      return parsePullResponse(response, since: since);
+      return parsePullResponse(
+        response,
+        since: since,
+        onUnknownType: (type) => _logger?.event(
+          SyncEvent.unknownEntitySkipped,
+          fields: {SyncLogField.entityType: type},
+        ),
+      );
     } catch (error) {
       throw SyncErrorMapper.map(error);
     }
@@ -81,21 +97,43 @@ class SupabaseSyncRemoteDataSource implements SyncRemoteDataSource {
 /// Parses a `sync_pull` response body (contracts/sync-rpc.md §3). Money and
 /// revisions arrive as JSON numbers (`to_jsonb` of a `bigint`). Throws
 /// [FormatException] when it does not have the contracted shape.
+///
+/// S0: a change whose `entity_type` this app does not know is skipped, so a
+/// newer server can add record types without failing the page. [onUnknownType]
+/// receives the type name only, never the row. The cursor still moves past
+/// the skipped row: `maxRevision` falls back to the raw page's last revision.
 @visibleForTesting
-PullPage parsePullResponse(Object? response, {required int since}) {
+PullPage parsePullResponse(
+  Object? response, {
+  required int since,
+  void Function(String entityType)? onUnknownType,
+}) {
   if (response is! Map) throw const FormatException('pull: not an object');
   final changes = response['changes'];
   if (changes is! List) throw const FormatException('pull: no changes');
-  final parsed = [for (final item in changes) _parseChange(item)];
+  final parsed = <PulledChange>[];
+  var rawHighest = since;
+  for (final item in changes) {
+    final change = _parseChange(item, onUnknownType);
+    final revision = _rawRevision(item);
+    if (revision > rawHighest) rawHighest = revision;
+    if (change != null) parsed.add(change);
+  }
   final hasMore = response['has_more'];
   if (hasMore is! bool) throw const FormatException('pull: bad has_more');
-  final maxRevision =
-      _intOrNull(response['max_revision']) ??
-      (parsed.isEmpty ? since : parsed.last.revision);
+  final maxRevision = _intOrNull(response['max_revision']) ?? rawHighest;
   return PullPage(changes: parsed, maxRevision: maxRevision, hasMore: hasMore);
 }
 
-PulledChange _parseChange(Object? item) {
+/// The revision of a raw change, known to be a map by the caller.
+int _rawRevision(Object? item) =>
+    _required(_intOrNull((item! as Map)['revision']), 'revision');
+
+/// Null for an unknown `entity_type` (S0).
+PulledChange? _parseChange(
+  Object? item,
+  void Function(String entityType)? onUnknownType,
+) {
   if (item is! Map) throw const FormatException('pull: bad change');
   final type = item['entity_type'];
   if (type is! String) throw const FormatException('pull: bad entity_type');
@@ -103,7 +141,8 @@ PulledChange _parseChange(Object? item) {
   try {
     entityType = SyncEntityType.fromWire(type);
   } on ArgumentError {
-    throw const FormatException('pull: unknown entity_type');
+    onUnknownType?.call(type);
+    return null;
   }
   final row = _rowOrNull(item['row']);
   if (row == null) throw const FormatException('pull: no row');

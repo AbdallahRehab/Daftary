@@ -12,6 +12,8 @@
 
 ### Session 2026-09-19
 
+- Q (added 2026-10-06, feature 022 A1): Can a repayment's direction be edited? → A: No. Editing it made a repayment increase the debt while still labelled a repayment (022 research PF-02). Amount, date and note stay editable; to change direction, delete the repayment and record it again.
+
 - Q: When a person with an outstanding (non-zero) balance is archived, should they still count toward the overview's "total owed to you" / "total you owe" figures (User Story 4)? → A: Yes, always include — archiving only hides a person from the active people list; their balance keeps counting in overview totals until it reaches zero.
 - Q: Is this feature a single-device, local-only app (no login, no cross-device sync), or does it need a user account with cloud-backed sync across multiple devices? → A: Single device, local-only — no authentication or account in scope; "another session" in the sync-conflict edge case means concurrent app instances/processes on the same device, not another device.
 - Q: When a user edits an existing transaction (FR-015), can they change its kind between a regular exchange and a repayment, or is the kind fixed once the transaction is created? → A: Kind is fixed at creation — to reclassify a transaction, the user deletes it and records a new one of the correct kind.
@@ -149,7 +151,7 @@ A user wants to fix a transaction they entered incorrectly (wrong amount, wrong 
 - **FR-012**: The system MUST accept a repayment larger than the current outstanding balance and reflect the resulting reversed-direction balance rather than blocking the entry.
 - **FR-013**: Users MUST be able to view a consolidated overview showing the total amount owed to them, the total amount they owe, and the list of people contributing to each total.
 - **FR-014**: The overview and every affected person's balance MUST update immediately whenever a transaction is added, edited, or deleted.
-- **FR-015**: Users MUST be able to edit an existing transaction's amount, direction, date, or note, with the edit reflected in recalculated balances and visibly marked as an edited record (not a silent overwrite). A transaction's kind (initial exchange vs. repayment) MUST NOT be changeable via edit once the transaction is created; reclassifying requires deleting the transaction and recording a new one of the correct kind.
+- **FR-015**: Users MUST be able to edit an existing transaction's amount, direction, date, or note, with the edit reflected in recalculated balances and visibly marked as an edited record (not a silent overwrite). A transaction's kind (initial exchange vs. repayment) MUST NOT be changeable via edit once the transaction is created; reclassifying requires deleting the transaction and recording a new one of the correct kind. The **direction of a repayment** is likewise fixed at creation (it is inferred from the balance) and MUST NOT be changeable via edit (amended 2026-10-06 by 022 A1).
 - **FR-016**: Users MUST be able to delete a transaction after an explicit confirmation step that states the action cannot be undone.
 - **FR-017**: The system MUST prevent permanently deleting a person who has any recorded transactions, offering to archive that person instead so their history remains fully retrievable.
 - **FR-018**: Users MUST be able to view, search, and restore archived people separately from their active people list.

@@ -17,6 +17,7 @@ import 'package:daftary/features/cloud_sync/data/sync/conflict_resolution_sync_m
 import 'package:daftary/features/currency/data/sync/exchange_rate_sync_mapper.dart';
 import 'package:daftary/features/currency/data/sync/primary_currency_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.dart';
+import 'package:daftary/features/finance/data/sync/finance_entry_audit_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dart';
 import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
 import 'package:daftary/features/people/data/sync/person_sync_mapper.dart';
@@ -49,6 +50,7 @@ SyncMapperRegistry realMapperRegistry() => SyncMapperRegistry(const [
   SavingsGoalSyncMapper(),
   SavingsContributionSyncMapper(),
   SavingsContributionAuditSyncMapper(),
+  FinanceEntryAuditSyncMapper(),
 ]);
 
 /// The real applier, with the app's mappers and pristine-seed rule.
@@ -159,6 +161,8 @@ class SyncHarness {
   static const _person = PersonSyncMapper();
   static const _txn = MoneyTransactionSyncMapper();
   static const _audit = TransactionAuditSyncMapper();
+  static const _goal = SavingsGoalSyncMapper();
+  static const _contribution = SavingsContributionSyncMapper();
 
   /// The cloud_sync repository on this harness. Without a [scheduler] it
   /// serves the conflict methods only.
@@ -301,6 +305,82 @@ class SyncHarness {
           _audit.toWire(row),
         );
       });
+
+  // --- savings (023) ------------------------------------------------------
+
+  Future<void> createGoal(String id) => db.transaction(() async {
+    await db
+        .into(db.savingsGoals)
+        .insert(
+          SavingsGoalsCompanion.insert(
+            id: id,
+            idempotencyKey: 'key-$id',
+            name: 'Goal',
+            targetAmountMinorUnits: 1000000,
+            createdAt: 1000,
+            updatedAt: 1000,
+          ),
+        );
+    final row = await (db.select(
+      db.savingsGoals,
+    )..where((g) => g.id.equals(id))).getSingle();
+    await outbox.recordUpsert(
+      SyncEntityType.savingsGoal,
+      id,
+      _goal.toWire(row),
+    );
+  });
+
+  /// A contribution of [amount] EGP minor units (entered in EGP too).
+  Future<void> createContribution(
+    String id, {
+    required String goalId,
+    int amount = 100000,
+  }) => db.transaction(() async {
+    await db
+        .into(db.savingsContributions)
+        .insert(
+          SavingsContributionsCompanion.insert(
+            id: id,
+            idempotencyKey: 'key-$id',
+            goalId: goalId,
+            type: 'contribution',
+            amountMinorUnits: amount,
+            enteredAmountMinorUnits: amount,
+            enteredCurrencyCode: 'EGP',
+            date: 1000,
+            createdAt: 1000,
+          ),
+        );
+    await _recordContribution(id);
+  });
+
+  Future<void> editContribution(String id, {required int amount}) =>
+      db.transaction(() async {
+        await (db.update(
+          db.savingsContributions,
+        )..where((c) => c.id.equals(id))).write(
+          SavingsContributionsCompanion(
+            amountMinorUnits: Value(amount),
+            enteredAmountMinorUnits: Value(amount),
+            editedAt: const Value(3000),
+          ),
+        );
+        await _recordContribution(id);
+      });
+
+  Future<void> _recordContribution(String id) async {
+    final row = await contribution(id);
+    await outbox.recordUpsert(
+      SyncEntityType.savingsContribution,
+      id,
+      _contribution.toWire(row),
+    );
+  }
+
+  Future<SavingsContribution> contribution(String id) => (db.select(
+    db.savingsContributions,
+  )..where((c) => c.id.equals(id))).getSingle();
 
   // --- inspection ---------------------------------------------------------
 

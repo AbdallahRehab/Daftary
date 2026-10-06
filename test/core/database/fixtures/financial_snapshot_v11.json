@@ -1,0 +1,242 @@
+{
+  "people": {
+    "ahmed": {
+      "net": {
+        "minor": -200000,
+        "currency": "EGP"
+      },
+      "status": "youOweThem",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "karim": {
+      "net": {
+        "minor": 20000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "laila": {
+      "net": {
+        "minor": 150000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": true
+    },
+    "mona": {
+      "net": {
+        "minor": 120000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "nadia": {
+      "net": {
+        "minor": 60000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "omar": {
+      "net": {
+        "minor": 385000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "salma": {
+      "net": {
+        "minor": 0,
+        "currency": "EGP"
+      },
+      "status": "settled",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "sara": {
+      "net": {
+        "minor": 485000,
+        "currency": "EGP"
+      },
+      "status": "theyOweYou",
+      "missingRatesFor": [],
+      "nativeNets": [],
+      "archived": false
+    },
+    "tom": {
+      "net": {
+        "blocked": true
+      },
+      "status": null,
+      "missingRatesFor": [
+        "GBP"
+      ],
+      "nativeNets": [
+        {
+          "minor": -100000,
+          "currency": "EGP"
+        },
+        {
+          "minor": 5000,
+          "currency": "GBP"
+        }
+      ],
+      "archived": false
+    }
+  },
+  "overview": {
+    "totalOwedToUser": {
+      "blocked": true
+    },
+    "totalUserOwes": {
+      "blocked": true
+    },
+    "theyOweYou": [
+      "karim",
+      "laila",
+      "mona",
+      "nadia",
+      "omar",
+      "sara"
+    ],
+    "youOweThem": [
+      "ahmed"
+    ],
+    "rateNeeded": [
+      "tom"
+    ],
+    "settledCount": 1
+  },
+  "finance": {
+    "2026-10": {
+      "income": {
+        "minor": 1000000,
+        "currency": "EGP"
+      },
+      "expense": {
+        "minor": 273000,
+        "currency": "EGP"
+      },
+      "net": {
+        "minor": 727000,
+        "currency": "EGP"
+      }
+    },
+    "2026-11": {
+      "income": {
+        "minor": 0,
+        "currency": "EGP"
+      },
+      "expense": {
+        "minor": 99999,
+        "currency": "EGP"
+      },
+      "net": {
+        "minor": -99999,
+        "currency": "EGP"
+      }
+    }
+  },
+  "budget_2026_10": {
+    "lines": {
+      "seed_groceries": {
+        "planned": 200000,
+        "actual": 120000,
+        "remaining": 80000,
+        "status": "onTrack"
+      },
+      "seed_rent": {
+        "planned": 100000,
+        "actual": 90000,
+        "remaining": 10000,
+        "status": "nearFull"
+      },
+      "seed_transportation": {
+        "planned": 50000,
+        "actual": 30000,
+        "remaining": 20000,
+        "status": "onTrack"
+      },
+      "seed_family": {
+        "planned": 20000,
+        "actual": 25000,
+        "remaining": -5000,
+        "status": "overBudget"
+      }
+    },
+    "totalPlanned": 370000,
+    "totalActual": 265000,
+    "totalUnbudgeted": 8000,
+    "unbudgeted": {
+      "seed_medical": 8000
+    }
+  },
+  "occasions": {
+    "Condolence": {
+      "received": {
+        "minor": 0,
+        "currency": "EGP"
+      },
+      "given": {
+        "minor": 40000,
+        "currency": "EGP"
+      },
+      "participants": 1
+    },
+    "Wedding": {
+      "received": {
+        "minor": 80000,
+        "currency": "EGP"
+      },
+      "given": {
+        "minor": 20000,
+        "currency": "EGP"
+      },
+      "participants": 3
+    }
+  },
+  "savings": {
+    "totalSaved": 935000,
+    "goals": {
+      "Car": {
+        "current": 635000,
+        "remaining": 565000,
+        "target": 1200000,
+        "achieved": false,
+        "primaryCurrencyAmount": 635000,
+        "estimatedMonths": 6,
+        "estimatedDate": "2027-04-05T00:00:00.000",
+        "requiredMonthly": 94167,
+        "shortfallMonths": null
+      },
+      "Phone": {
+        "current": 300000,
+        "remaining": 0,
+        "target": 300000,
+        "achieved": true,
+        "primaryCurrencyAmount": 300000,
+        "estimatedMonths": null,
+        "estimatedDate": null,
+        "requiredMonthly": null,
+        "shortfallMonths": null
+      }
+    }
+  }
+}

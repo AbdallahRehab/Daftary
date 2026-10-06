@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:fpdart/fpdart.dart';
@@ -6,28 +7,48 @@ import 'package:path/path.dart' as p;
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
+import '../../../budgets/domain/entities/budget.dart';
+import '../../../budgets/domain/entities/budget_category_allocation.dart';
+import '../../../budgets/domain/repositories/budgets_repository.dart';
+import '../../../currency/domain/entities/exchange_rate.dart';
+import '../../../currency/domain/repositories/currency_repository.dart';
 import '../../../finance/domain/entities/category.dart';
 import '../../../finance/domain/entities/finance_entry.dart';
+import '../../../finance/domain/entities/finance_entry_audit.dart';
 import '../../../finance/domain/entities/finance_entry_type.dart';
 import '../../../finance/domain/repositories/category_repository.dart';
 import '../../../finance/domain/repositories/finance_repository.dart';
+import '../../../occasions/domain/entities/occasion.dart';
+import '../../../occasions/domain/repositories/occasions_repository.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../../people/domain/repositories/people_repository.dart';
+import '../../../savings/domain/entities/savings_contribution_audit.dart';
+import '../../../savings/domain/entities/savings_goal_with_contributions.dart';
+import '../../../savings/domain/repositories/savings_repository.dart';
 import '../../../settings/domain/entities/app_language.dart';
 import '../../../settings/domain/entities/app_theme_mode.dart';
 import '../../../settings/domain/repositories/settings_repository.dart';
 import '../../../transactions/domain/entities/money_transaction.dart';
+import '../../../transactions/domain/entities/transaction_audit_entry.dart';
 import '../../../transactions/domain/repositories/transactions_repository.dart';
 import '../entities/export_result.dart';
 import '../services/export_directory_provider.dart';
 
-/// Composes every existing repository read (research.md Decision 2) into
-/// one section-delimited CSV file (Decision 4) in the app's sandboxed temp
+/// Composes repository reads (research.md Decision 2) into one
+/// section-delimited CSV file (Decision 4) in the app's sandboxed temp
 /// directory (contracts/export_user_data.md).
 ///
 /// Read-only, and never transmits anything (FR-012): this only produces a
 /// local file — sharing it is a separate, explicit user action through
 /// `ShareService`. Adds no repository method of its own.
+///
+/// 022 D1: after the original five sections it appends occasions (archived
+/// included), the occasion contributions (by reference, from the
+/// transactions already read), budgets and their allocations, savings goals
+/// (archived included) and their entries, exchange rates, and the change
+/// history of transactions, savings entries and income/expense entries.
+/// Soft-deleted records are left out everywhere, as in the original
+/// sections; change history is complete.
 @injectable
 class ExportUserData {
   const ExportUserData(
@@ -37,6 +58,10 @@ class ExportUserData {
     this._categoryRepository,
     this._settingsRepository,
     this._exportDirectory,
+    this._occasionsRepository,
+    this._budgetsRepository,
+    this._savingsRepository,
+    this._currencyRepository,
   );
 
   final PeopleRepository _peopleRepository;
@@ -45,6 +70,10 @@ class ExportUserData {
   final CategoryRepository _categoryRepository;
   final SettingsRepository _settingsRepository;
   final ExportDirectoryProvider _exportDirectory;
+  final OccasionsRepository _occasionsRepository;
+  final BudgetsRepository _budgetsRepository;
+  final SavingsRepository _savingsRepository;
+  final CurrencyRepository _currencyRepository;
 
   /// Page size used to read finance history to completion.
   static const financePageSize = 500;
@@ -106,8 +135,41 @@ class ExportUserData {
     final themeMode = await _settingsRepository.getThemeModePreference();
     if (themeMode case Left(value: final failure)) return Left(failure);
 
+    // 022 D1: the sections appended after the original five.
+    final occasionsResult = await _occasionsRepository.getOccasionsList(
+      includeArchived: true,
+    );
+    if (occasionsResult case Left(value: final failure)) return Left(failure);
+    final budgetsResult = await _budgetsRepository.getAllBudgets();
+    if (budgetsResult case Left(value: final failure)) return Left(failure);
+    final allocationsResult = await _budgetsRepository.getAllAllocations();
+    if (allocationsResult case Left(value: final failure)) {
+      return Left(failure);
+    }
+    final goalsResult = await _savingsRepository.getAllGoalsWithContributions();
+    if (goalsResult case Left(value: final failure)) return Left(failure);
+    final ratesResult = await _currencyRepository.getExchangeRates();
+    if (ratesResult case Left(value: final failure)) return Left(failure);
+    final transactionChanges = await _transactionsRepository
+        .getAllAuditEntries();
+    if (transactionChanges case Left(value: final failure)) {
+      return Left(failure);
+    }
+    final savingsChanges = await _savingsRepository.getAllContributionAudits();
+    if (savingsChanges case Left(value: final failure)) return Left(failure);
+    final entryChanges = await _financeRepository.getAllEntryAudits();
+    if (entryChanges case Left(value: final failure)) return Left(failure);
+
     return Right(
       _ExportData(
+        occasions: _rows(occasionsResult),
+        budgets: _rows(budgetsResult),
+        allocations: _rows(allocationsResult),
+        goals: _rows(goalsResult),
+        rates: _rows(ratesResult),
+        transactionChanges: _rows(transactionChanges),
+        savingsChanges: _rows(savingsChanges),
+        entryChanges: _rows(entryChanges),
         people: people,
         transactions: transactions,
         entries: entries,
@@ -285,6 +347,7 @@ class ExportUserData {
         ],
       ),
       ExportSection.settings: (const ['key', 'value'], settingsRows),
+      ..._appendedSections(data, categoryNames),
     };
 
     // A byte-order mark so spreadsheet tools open Arabic text as UTF-8.
@@ -301,6 +364,260 @@ class ExportUserData {
     }
     return (buffer.toString(), counts);
   }
+
+  /// The sections 022 D1 appends after the original five. Money is written
+  /// as exact minor units plus a two-decimal major-unit column, like the
+  /// original sections.
+  Map<ExportSection, (List<String>, List<List<Object?>>)> _appendedSections(
+    _ExportData data,
+    Map<String, String> categoryNames,
+  ) {
+    final goalCurrency = {
+      for (final g in data.goals) g.goal.id: g.goal.currency.code,
+    };
+    String major(int? minor) => minor == null
+        ? ''
+        : _majorUnits(Money.fromMinorUnits(minor, Currency.egp));
+    return {
+      ExportSection.occasions: (
+        const [
+          'id',
+          'name',
+          'date',
+          'type',
+          'notes',
+          'is_archived',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          for (final o in data.occasions)
+            [
+              o.id,
+              o.name,
+              o.date,
+              o.type,
+              o.notes,
+              o.isArchived,
+              o.createdAt,
+              o.updatedAt,
+            ],
+        ],
+      ),
+      ExportSection.occasionContributions: (
+        const [
+          'transaction_id',
+          'occasion_id',
+          'person_id',
+          'counts_toward_balance',
+        ],
+        [
+          for (final tx in data.transactions)
+            if (tx.occasionId != null)
+              [tx.id, tx.occasionId, tx.personId, tx.countsTowardBalance],
+        ],
+      ),
+      ExportSection.budgets: (
+        const [
+          'id',
+          'month',
+          'expected_income_minor_units',
+          'expected_income',
+          'currency_code',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          for (final b in data.budgets)
+            [
+              b.id,
+              b.month,
+              b.expectedIncomeMinorUnits,
+              major(b.expectedIncomeMinorUnits),
+              b.currency.code,
+              b.createdAt,
+              b.updatedAt,
+            ],
+        ],
+      ),
+      ExportSection.budgetAllocations: (
+        const [
+          'id',
+          'budget_id',
+          'category_id',
+          'category_name',
+          'planned_amount_minor_units',
+          'planned_amount',
+          'currency_code',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          for (final a in data.allocations)
+            [
+              a.id,
+              a.budgetId,
+              a.categoryId,
+              categoryNames[a.categoryId],
+              a.plannedAmountMinorUnits,
+              major(a.plannedAmountMinorUnits),
+              a.currency.code,
+              a.createdAt,
+              a.updatedAt,
+            ],
+        ],
+      ),
+      ExportSection.savingsGoals: (
+        const [
+          'id',
+          'name',
+          'type',
+          'currency_code',
+          'target_amount_minor_units',
+          'target_amount',
+          'monthly_contribution_minor_units',
+          'monthly_contribution',
+          'target_date',
+          'is_archived',
+          'created_at',
+          'updated_at',
+        ],
+        [
+          for (final g in data.goals.map((g) => g.goal))
+            [
+              g.id,
+              g.name,
+              g.type,
+              g.currency.code,
+              g.targetAmountMinorUnits,
+              major(g.targetAmountMinorUnits),
+              g.monthlyContributionMinorUnits,
+              major(g.monthlyContributionMinorUnits),
+              g.targetDate,
+              g.isArchived,
+              g.createdAt,
+              g.updatedAt,
+            ],
+        ],
+      ),
+      ExportSection.savingsContributions: (
+        const [
+          'id',
+          'goal_id',
+          'type',
+          'amount_minor_units',
+          'amount',
+          'currency_code',
+          'entered_amount_minor_units',
+          'entered_amount',
+          'entered_currency_code',
+          'date',
+          'note',
+          'created_at',
+          'edited_at',
+        ],
+        [
+          for (final g in data.goals)
+            for (final c in g.contributions)
+              [
+                c.id,
+                c.goalId,
+                c.type.value,
+                c.amountMinorUnits,
+                major(c.amountMinorUnits),
+                goalCurrency[c.goalId],
+                c.enteredAmountMinorUnits,
+                major(c.enteredAmountMinorUnits),
+                c.enteredCurrency.code,
+                c.date,
+                c.note,
+                c.createdAt,
+                c.editedAt,
+              ],
+        ],
+      ),
+      ExportSection.exchangeRates: (
+        const [
+          'currency_code',
+          'relative_to_currency_code',
+          'rate_micros',
+          'last_updated_at',
+        ],
+        [
+          for (final r in data.rates)
+            [r.currency.code, r.relativeTo.code, r.rateMicros, r.lastUpdatedAt],
+        ],
+      ),
+      ExportSection.transactionChanges: (
+        _changeHeader('transaction_id'),
+        [
+          for (final c in data.transactionChanges)
+            [
+              c.id,
+              c.transactionId,
+              c.changeType.name,
+              _canonicalJson(c.previousValuesJson),
+              c.changedAt,
+            ],
+        ],
+      ),
+      ExportSection.savingsContributionChanges: (
+        _changeHeader('contribution_id'),
+        [
+          for (final c in data.savingsChanges)
+            [
+              c.id,
+              c.contributionId,
+              c.changeType.value,
+              _canonicalJson(c.previousValuesJson),
+              c.changedAt,
+            ],
+        ],
+      ),
+      ExportSection.financeEntryChanges: (
+        _changeHeader('finance_entry_id'),
+        [
+          for (final c in data.entryChanges)
+            [
+              c.id,
+              c.financeEntryId,
+              c.changeType.value,
+              _canonicalJson(c.previousValuesJson),
+              c.changedAt,
+            ],
+        ],
+      ),
+    };
+  }
+
+  /// Re-encodes a stored JSON object with its keys sorted, so the same
+  /// change exports identically whichever device wrote it. Anything that is
+  /// not valid JSON is written as it was stored.
+  static String? _canonicalJson(String? json) {
+    if (json == null) return null;
+    try {
+      return jsonEncode(_sorted(jsonDecode(json)));
+    } on FormatException {
+      return json;
+    }
+  }
+
+  static Object? _sorted(Object? value) => switch (value) {
+    Map() => {
+      for (final key in (value.keys.cast<String>().toList()..sort()))
+        key: _sorted(value[key]),
+    },
+    List() => [for (final item in value) _sorted(item)],
+    _ => value,
+  };
+
+  static List<String> _changeHeader(String recordColumn) => [
+    'id',
+    recordColumn,
+    'change_type',
+    'previous_values_json',
+    'changed_at',
+  ];
 
   static const _eol = '\r\n';
 
@@ -347,6 +664,14 @@ class ExportUserData {
 /// Everything read for one export, gathered before anything is written.
 class _ExportData {
   const _ExportData({
+    required this.occasions,
+    required this.budgets,
+    required this.allocations,
+    required this.goals,
+    required this.rates,
+    required this.transactionChanges,
+    required this.savingsChanges,
+    required this.entryChanges,
     required this.people,
     required this.transactions,
     required this.entries,
@@ -355,6 +680,14 @@ class _ExportData {
     required this.themeMode,
   });
 
+  final List<Occasion> occasions;
+  final List<Budget> budgets;
+  final List<BudgetCategoryAllocation> allocations;
+  final List<SavingsGoalWithContributions> goals;
+  final List<ExchangeRate> rates;
+  final List<TransactionAuditEntry> transactionChanges;
+  final List<SavingsContributionAudit> savingsChanges;
+  final List<FinanceEntryAudit> entryChanges;
   final List<Person> people;
   final List<MoneyTransaction> transactions;
   final List<FinanceEntry> entries;

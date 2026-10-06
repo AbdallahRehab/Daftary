@@ -18,6 +18,7 @@ import 'package:daftary/features/transactions/domain/entities/person_balance.dar
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/transactions/domain/usecases/add_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/preview_transaction_deletion.dart';
 import 'package:daftary/features/transactions/domain/usecases/edit_transaction.dart';
 import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
 import 'package:daftary/features/people/domain/usecases/watch_person.dart';
@@ -38,6 +39,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../features/transactions/helpers/currency_test_doubles.dart';
+import '../features/transactions/helpers/duplicate_test_doubles.dart';
 
 import '../helpers/stub_person_balances.dart';
 import '../helpers/watch_stubs.dart';
@@ -137,6 +139,10 @@ void main() {
         DeleteTransaction(transactionsRepository),
         watchPrimary(),
         transactionsRepository,
+        PreviewTransactionDeletion(
+          transactionsRepository,
+          getConversionContextWith(),
+        ),
       ),
     );
     getIt.registerFactory<TransactionFormCubit>(
@@ -146,6 +152,7 @@ void main() {
         addTransaction,
         editTransaction,
         getPrimaryCurrencyReturning(),
+        findPossibleDuplicateReturning(),
       ),
     );
     getIt.registerFactory<PersonListCubit>(

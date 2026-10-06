@@ -25,6 +25,7 @@ import '../cubit/finance_history_cubit.dart';
 import '../cubit/finance_history_state.dart';
 import '../widgets/category_breakdown_bar.dart';
 import '../widgets/category_display_name.dart';
+import '../widgets/finance_entry_change_history.dart';
 import '../widgets/finance_entry_list_tile.dart';
 import '../widgets/finance_summary_card.dart';
 import '../widgets/period_selector.dart';
@@ -169,6 +170,14 @@ class _FinanceHistoryView extends StatelessWidget {
                     onEdit: () =>
                         _push(context, '/finance/entries/${entry.id}/edit'),
                     onDelete: () => _confirmDelete(context, entry),
+                    onEditedTap: () => showFinanceEntryChangeHistory(
+                      context,
+                      entry,
+                      categoryNames: {
+                        for (final c in categoriesById.values)
+                          c.id: categoryDisplayName(l10n, c),
+                      },
+                    ),
                     conflictBadge: conflict == null
                         ? null
                         : ConflictBadge(

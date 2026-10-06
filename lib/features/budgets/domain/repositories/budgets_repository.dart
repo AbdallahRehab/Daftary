@@ -106,6 +106,14 @@ abstract class BudgetsRepository {
   /// through sync). Equal re-reads are not re-emitted.
   Stream<Either<Failure, BudgetMonthDetail>> watchBudgetForMonth(String month);
 
+  /// 022 D1: every active budget of every month, oldest month first, for the
+  /// data export. Soft-deleted budgets are left out. A plain read.
+  Future<Either<Failure, List<Budget>>> getAllBudgets();
+
+  /// 022 D1: every allocation of every active budget, for the data export.
+  /// Allocations of a soft-deleted budget are left out. A plain read.
+  Future<Either<Failure, List<BudgetCategoryAllocation>>> getAllAllocations();
+
   /// The most recent month strictly before [month] that has an active
   /// budget, or `null` when there is none — the copy-forward source the
   /// FR-018 empty state offers (FR-012: "typically the most recent").

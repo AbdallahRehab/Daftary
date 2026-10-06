@@ -21,9 +21,52 @@ import 'package:daftary/core/sync/sync_models.dart';
 /// - `rejected missing_parent` for a foreign-key miss, **not** ledgered;
 /// - money comes back as JSON numbers, like `jsonb` renders a `bigint`.
 ///
+/// 022 (migration 025): `savings_contribution` uses the `financial` policy
+/// only when the pushing app is at least [savingsConflictMinVersion]
+/// (`public.app_version_at_least(p_app_version, '1.1.0')`); older apps keep
+/// last-write-wins, as `savings_goal` always does.
+///
 /// Tests script failures with [failNextCalls], [failOnCall] and
 /// [dropResponseAfterCommit], and seed server data with [seedServerRow].
 class FakeSyncRemote implements SyncRemoteDataSource {
+  /// Migration 025's first app version with the savings conflict policy.
+  static const savingsConflictMinVersion = '1.1.0';
+
+  /// Test-only: the `p_app_version` the server sees, instead of the one the
+  /// engine sends (a test build reports `unknown`, which counts as old).
+  String? appVersionOverride;
+  String _callerVersion = 'unknown';
+
+  /// `public.app_version_at_least`: dotted numeric compare, `+build`
+  /// ignored; a null or unparsable version is never "at least".
+  static bool appVersionAtLeast(String? version, String minimum) {
+    List<int>? parse(String? v) {
+      if (v == null) return null;
+      final parts = v.split('+').first.split('.');
+      final numbers = [for (final p in parts) int.tryParse(p)];
+      return numbers.contains(null) || numbers.isEmpty
+          ? null
+          : numbers.cast<int>();
+    }
+
+    final a = parse(version);
+    final b = parse(minimum);
+    if (a == null || b == null) return false;
+    for (var i = 0; i < (a.length > b.length ? a.length : b.length); i++) {
+      final x = i < a.length ? a[i] : 0;
+      final y = i < b.length ? b[i] : 0;
+      if (x != y) return x > y;
+    }
+    return true;
+  }
+
+  _Policy _policyOf(SyncEntityType type) =>
+      type == SyncEntityType.savingsContribution
+      ? (appVersionAtLeast(_callerVersion, savingsConflictMinVersion)
+            ? _Policy.financial
+            : _Policy.lww)
+      : _specs[type]!.policy;
+
   static const ownerId = '00000000-0000-4000-8000-000000000001';
 
   /// The account the calls act as (`auth.uid()`). Each account has its own
@@ -49,6 +92,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   final List<SyncRemoteException> _scriptedFailures = [];
   final List<SyncRemoteException> _scriptedPullFailures = [];
   final Map<int, SyncRemoteException> _failOnCall = {};
+  final Map<int, SyncRemoteException> _failPullOnCall = {};
   bool _dropNextResponse = false;
   int? _dropOnCall;
 
@@ -77,6 +121,12 @@ class FakeSyncRemote implements SyncRemoteDataSource {
       _scriptedPullFailures.add(_exception(failure, transient));
     }
   }
+
+  /// The [callNumber]-th pull call (1-based, counting every call) fails.
+  void failPullOnCall(
+    int callNumber, [
+    Failure failure = const NetworkFailure('scripted'),
+  ]) => _failPullOnCall[callNumber] = _exception(failure, true);
 
   /// The [callNumber]-th push call (1-based, counting every call) fails
   /// before touching the server state.
@@ -141,6 +191,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   @override
   Future<List<PushResult>> push(List<OutboxOp> ops, DeviceInfo device) async {
     pushCalls++;
+    _callerVersion = appVersionOverride ?? device.appVersion;
     if (_scriptedFailures.isNotEmpty) throw _scriptedFailures.removeAt(0);
     final scripted = _failOnCall.remove(pushCalls);
     if (scripted != null) throw scripted;
@@ -163,6 +214,8 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   @override
   Future<PullPage> pull({required int since, int limit = 500}) async {
     pullCalls++;
+    final scripted = _failPullOnCall.remove(pullCalls);
+    if (scripted != null) throw scripted;
     if (_scriptedPullFailures.isNotEmpty) {
       throw _scriptedPullFailures.removeAt(0);
     }
@@ -273,7 +326,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
 
     if (current == null) {
       // 3a
-      if (spec.policy == _Policy.financial) {
+      if (_policyOf(op.entityType) == _Policy.financial) {
         final key = payload['idempotency_key'];
         for (final row in table.values) {
           if (row['idempotency_key'] == key) {
@@ -293,7 +346,7 @@ class FakeSyncRemote implements SyncRemoteDataSource {
     }
 
     final currentRevision = current['revision']! as int;
-    switch (spec.policy) {
+    switch (_policyOf(op.entityType)) {
       case _Policy.append:
         return PushApplied(
           op.opId,
@@ -381,12 +434,12 @@ class FakeSyncRemote implements SyncRemoteDataSource {
     Map<String, Object?>? current,
   ) {
     final revision = ++_lastRevision;
-    final spec = _specs[op.entityType]!;
     _tables[op.entityType]![op.entityId] = {
       ...?current,
       ...payload,
       // Step 4: an LWW upsert always restates deleted_at (undelete).
-      if (spec.policy == _Policy.lww && !payload.containsKey('deleted_at'))
+      if (_policyOf(op.entityType) == _Policy.lww &&
+          !payload.containsKey('deleted_at'))
         'deleted_at': null,
       'id': op.entityId,
       'owner_id': owner,
@@ -429,6 +482,14 @@ class FakeSyncRemote implements SyncRemoteDataSource {
         SyncEntityType.moneyTransaction,
         'transaction_id',
       ),
+      SyncEntityType.savingsContribution => (
+        SyncEntityType.savingsGoal,
+        'goal_id',
+      ),
+      SyncEntityType.financeEntryAudit => (
+        SyncEntityType.financeEntry,
+        'finance_entry_id',
+      ),
       _ => (null, null),
     };
     if (parentType == null) return false;
@@ -439,7 +500,11 @@ class FakeSyncRemote implements SyncRemoteDataSource {
   /// Money is sent as a string and stored as a number.
   static Map<String, Object?> _normalize(Map<String, Object?> payload) => {
     for (final MapEntry(:key, :value) in payload.entries)
-      key: key == 'amount_minor' && value is String
+      key:
+          (key == 'amount_minor' ||
+                  key == 'amount_minor_units' ||
+                  key == 'entered_amount_minor_units') &&
+              value is String
           ? int.tryParse(value) ?? value
           : value,
   };
@@ -524,6 +589,41 @@ const _specs = {
     'rate_micros',
   ], deletable: true),
   SyncEntityType.primaryCurrency: _EntitySpec(_Policy.lww, ['currency_code']),
+  SyncEntityType.savingsGoal: _EntitySpec(_Policy.lww, [
+    'name',
+    'type',
+    'currency_code',
+    'target_amount_minor_units',
+    'monthly_contribution_minor_units',
+    'target_date',
+    'is_archived',
+    'deleted_at',
+  ]),
+  // The policy of a contribution depends on the caller: see `_policyOf`.
+  SyncEntityType.savingsContribution: _EntitySpec(_Policy.lww, [
+    'goal_id',
+    'idempotency_key',
+    'type',
+    'amount_minor_units',
+    'entered_amount_minor_units',
+    'entered_currency_code',
+    'date',
+    'note',
+    'edited_at',
+    'deleted_at',
+  ]),
+  SyncEntityType.savingsContributionAudit: _EntitySpec(_Policy.append, [
+    'contribution_id',
+    'change_type',
+    'previous_values',
+    'changed_at',
+  ]),
+  SyncEntityType.financeEntryAudit: _EntitySpec(_Policy.append, [
+    'finance_entry_id',
+    'change_type',
+    'previous_values',
+    'changed_at',
+  ]),
   SyncEntityType.conflictResolution: _EntitySpec(_Policy.append, [
     'entity_type',
     'entity_id',

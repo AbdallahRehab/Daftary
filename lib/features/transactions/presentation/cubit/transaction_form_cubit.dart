@@ -13,6 +13,7 @@ import '../../../people/domain/usecases/create_person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/usecases/add_transaction.dart';
 import '../../domain/usecases/edit_transaction.dart';
+import '../../domain/usecases/find_possible_duplicate.dart';
 import 'transaction_form_state.dart';
 
 /// Drives the record/edit-transaction form. A fresh idempotency key is
@@ -27,6 +28,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
     this._addTransaction,
     this._editTransaction,
     this._getPrimaryCurrency,
+    this._findPossibleDuplicate,
   ) : super(TransactionFormState(idempotencyKey: const Uuid().v4()));
 
   final PeopleRepository _peopleRepository;
@@ -34,6 +36,7 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   final AddTransaction _addTransaction;
   final EditTransaction _editTransaction;
   final GetPrimaryCurrency _getPrimaryCurrency;
+  final FindPossibleDuplicate _findPossibleDuplicate;
 
   /// Defaults the currency picker to the current primary currency (018
   /// FR-003) — never a hardcoded EGP. A no-op in edit mode (the record
@@ -51,6 +54,16 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   }
 
   void currencyChanged(Currency currency) {
+    // 022 E3: while editing, the currency changes only after the user
+    // confirms "recorded without conversion".
+    if (state.isEditMode) {
+      if (currency == state.currency) {
+        emit(state.copyWith(clearPendingCurrency: true));
+      } else {
+        emit(state.copyWith(pendingCurrency: currency));
+      }
+      return;
+    }
     emit(
       state.copyWith(
         currency: currency,
@@ -58,6 +71,27 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
         clearAmountError: true,
       ),
     );
+  }
+
+  /// Applies the currency awaiting confirmation (022 E3). The digits stay
+  /// as typed; no conversion happens.
+  void confirmCurrencyChange() {
+    final pending = state.pendingCurrency;
+    if (pending == null) return;
+    emit(
+      state.copyWith(
+        currency: pending,
+        currencyChosenByUser: true,
+        clearPendingCurrency: true,
+        clearAmountError: true,
+      ),
+    );
+  }
+
+  /// Drops the currency awaiting confirmation, keeping the original.
+  void cancelCurrencyChange() {
+    if (state.pendingCurrency == null) return;
+    emit(state.copyWith(clearPendingCurrency: true));
   }
 
   /// Pre-binds the form to an already-known person (e.g. opened from that
@@ -182,6 +216,9 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   }
 
   void directionChanged(TransactionDirection direction) {
+    // A repayment's direction comes from the balance and is never edited
+    // (022 A1).
+    if (state.isEditMode && state.kind == TransactionKind.repayment) return;
     emit(state.copyWith(direction: direction));
   }
 
@@ -196,7 +233,9 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
   Future<void> submit() async {
     // A rapid double-tap re-enters here before the first call resolves;
     // ignoring it (rather than re-invoking the use case) is what makes the
-    // single-flight guarantee hold even before the UI has re-rendered.
+    // single-flight guarantee hold even before the UI has re-rendered. It
+    // also covers the duplicate lookup below, which is why `submitting` is
+    // emitted before it.
     if (state.isSubmitting) return;
 
     final person = state.selectedPerson;
@@ -205,17 +244,8 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
       return;
     }
 
-    final Money amount;
-    try {
-      final normalized = NumeralParser.toWesternDigits(state.amountInput);
-      final parsed = CurrencyFormatter(
-        currency: state.currency,
-      ).parse(normalized);
-      if (!parsed.isPositive) {
-        throw const FormatException('Amount must be greater than zero');
-      }
-      amount = parsed;
-    } on FormatException {
+    final amount = _parseAmount();
+    if (amount == null) {
       emit(state.copyWith(amountInvalid: true));
       return;
     }
@@ -227,6 +257,70 @@ class TransactionFormCubit extends Cubit<TransactionFormState> {
       ),
     );
 
+    // 022 C4: create mode only. A match asks the user first; a failed
+    // lookup never blocks the save.
+    if (!state.isEditMode) {
+      final lookup = await _findPossibleDuplicate(
+        personId: person.id,
+        amount: amount,
+        direction: state.direction,
+        date: state.date,
+      );
+      if (isClosed) return;
+      final match = lookup.toNullable();
+      if (match != null) {
+        emit(
+          state.copyWith(
+            status: TransactionFormStatus.editing,
+            possibleDuplicate: match,
+          ),
+        );
+        return;
+      }
+    }
+
+    await _save(person, amount);
+  }
+
+  /// The user confirmed saving despite the possible duplicate (022 C4).
+  /// Saves with the SAME idempotency key, so the row exists exactly once.
+  Future<void> confirmDuplicate() async {
+    if (state.isSubmitting || state.possibleDuplicate == null) return;
+    final person = state.selectedPerson;
+    final amount = _parseAmount();
+    if (person == null || amount == null) {
+      emit(state.copyWith(clearPossibleDuplicate: true));
+      return;
+    }
+    emit(
+      state.copyWith(
+        status: TransactionFormStatus.submitting,
+        clearPossibleDuplicate: true,
+        clearFailure: true,
+      ),
+    );
+    await _save(person, amount);
+  }
+
+  /// The user chose not to save the possible duplicate (022 C4).
+  void cancelDuplicate() {
+    if (state.possibleDuplicate == null) return;
+    emit(state.copyWith(clearPossibleDuplicate: true));
+  }
+
+  Money? _parseAmount() {
+    try {
+      final normalized = NumeralParser.toWesternDigits(state.amountInput);
+      final parsed = CurrencyFormatter(
+        currency: state.currency,
+      ).parse(normalized);
+      return parsed.isPositive ? parsed : null;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  Future<void> _save(Person person, Money amount) async {
     final result = state.isEditMode
         ? await _editTransaction(
             transactionId: state.editingTransactionId!,

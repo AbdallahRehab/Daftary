@@ -85,6 +85,7 @@ void main() {
       SyncEntityType.transactionAudit,
       SyncEntityType.conflictResolution,
       SyncEntityType.savingsContributionAudit,
+      SyncEntityType.financeEntryAudit,
     ]) {
       expect(
         coalesce(op(), type: t, newOpType: OutboxOpType.upsert),

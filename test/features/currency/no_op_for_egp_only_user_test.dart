@@ -19,6 +19,9 @@ import 'package:daftary/features/finance/domain/usecases/get_category_breakdown.
 import 'package:daftary/features/finance/domain/usecases/get_finance_summary.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_entry_form_cubit.dart';
 import 'package:daftary/features/finance/presentation/cubit/finance_entry_form_state.dart';
+import 'package:daftary/features/currency/domain/usecases/watch_conversion_context.dart';
+import 'package:daftary/features/people/domain/usecases/watch_person.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
 import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/usecases/create_person.dart';
@@ -29,6 +32,7 @@ import 'package:daftary/features/transactions/domain/entities/money_transaction.
 import 'package:daftary/features/transactions/domain/entities/overview_summary.dart';
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/usecases/add_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/find_possible_duplicate.dart';
 import 'package:daftary/features/transactions/domain/usecases/edit_transaction.dart';
 import 'package:daftary/features/transactions/domain/usecases/record_repayment.dart';
 import 'package:daftary/features/transactions/presentation/cubit/repayment_form_cubit.dart';
@@ -131,6 +135,7 @@ void main() {
     AddTransaction(transactionsRepository),
     EditTransaction(transactionsRepository),
     getPrimaryCurrency,
+    FindPossibleDuplicate(transactionsRepository),
   );
 
   /// Creates [name] inline from the transaction form (FR-002) and records
@@ -165,10 +170,16 @@ void main() {
     final cubit = RepaymentFormCubit(
       RecordRepayment(transactionsRepository),
       getPrimaryCurrency,
+      WatchPersonBalance(transactionsRepository),
+      WatchConversionContext(currencyRepository),
+      WatchPerson(peopleRepository),
       person.id,
     );
     addTearDown(cubit.close);
     await cubit.loadDefaultCurrency();
+    cubit.subscribe();
+    // Saving waits for the balance and the rates to load (022 A2).
+    await cubit.stream.firstWhere((s) => s.balanceLoaded);
     cubit
       ..amountChanged(amount)
       ..dateChanged(recordDate);

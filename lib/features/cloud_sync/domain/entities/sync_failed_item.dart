@@ -16,6 +16,7 @@ enum SyncItemKind {
   savingsGoal,
   savingsContribution,
   savingsContributionHistory,
+  financeEntryHistory,
 }
 
 /// Why the cloud refused a record.

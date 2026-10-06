@@ -17,12 +17,17 @@ class ContributionListTile extends StatelessWidget {
     required this.entry,
     required this.goalCurrency,
     required this.onAction,
+    this.onEditedTap,
     super.key,
   });
 
   final SavingsContribution entry;
   final Currency goalCurrency;
   final ValueChanged<ContributionTileAction> onAction;
+
+  /// 022 C3: tapping the "Edited" marker opens the change history. Null
+  /// keeps the marker inline plain text.
+  final VoidCallback? onEditedTap;
 
   @override
   Widget build(BuildContext context) {
@@ -94,12 +99,42 @@ class ContributionListTile extends StatelessWidget {
                     [
                       format.date(entry.date),
                       if (note != null && note.isNotEmpty) note,
-                      if (entry.isEdited) l10n.savingsEntryEditedLabel,
+                      if (entry.isEdited && onEditedTap == null)
+                        l10n.savingsEntryEditedLabel,
                     ].join(' · '),
                     style: muted,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (entry.isEdited && onEditedTap != null)
+                    Semantics(
+                      button: true,
+                      label:
+                          '${l10n.savingsEntryEditedLabel}, '
+                          '${l10n.changeHistoryTitle}',
+                      excludeSemantics: true,
+                      child: InkWell(
+                        key: const ValueKey('edited-marker'),
+                        onTap: onEditedTap,
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: 48,
+                            minWidth: 48,
+                          ),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            widthFactor: 1,
+                            child: Text(
+                              l10n.savingsEntryEditedLabel,
+                              style: muted.copyWith(
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),

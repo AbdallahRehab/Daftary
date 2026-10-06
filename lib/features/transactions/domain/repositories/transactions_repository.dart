@@ -5,6 +5,7 @@ import '../../../../core/money/money.dart';
 import '../entities/money_transaction.dart';
 import '../entities/overview_summary.dart';
 import '../entities/person_balance.dart';
+import '../entities/transaction_audit_entry.dart';
 
 /// Domain/Data boundary for everything about a [MoneyTransaction] and the
 /// balances/overview derived from it (constitution Principle VI).
@@ -54,6 +55,25 @@ abstract class TransactionsRepository {
   /// `TransactionAuditEntry` in the same DB transaction.
   Future<Either<Failure, Unit>> deleteTransaction(String transactionId);
 
+  /// How many active repayments of [personId] are dated on or after
+  /// [fromDate], not counting [excludingTransactionId] (022 E6). Used to
+  /// warn before deleting a row that later repayments were recorded against.
+  Future<Either<Failure, int>> countLaterRepayments(
+    String personId,
+    DateTime fromDate, {
+    String? excludingTransactionId,
+  });
+
+  /// 022 C4: an active (non-deleted) row of [personId] with the same
+  /// [amount] (minor units and currency), [direction] and [date] (day), or
+  /// `null`. Create-mode forms ask before saving; it never blocks a save.
+  Future<Either<Failure, MoneyTransaction?>> findPossibleDuplicate(
+    String personId,
+    Money amount,
+    TransactionDirection direction,
+    DateTime date,
+  );
+
   /// Full chronological history for one person, active (non-deleted) rows
   /// only, each entry carrying its edited/kind/direction metadata (FR-010).
   Future<Either<Failure, List<MoneyTransaction>>> getPersonHistory(
@@ -85,6 +105,16 @@ abstract class TransactionsRepository {
   /// locally or through sync (FR-031). Emits only when the result changes.
   Stream<Either<Failure, List<MoneyTransaction>>> watchPersonHistory(
     String personId,
+  );
+
+  /// 022 D1: every audit row of every transaction, oldest first, including
+  /// those of deleted transactions. A plain read for the data export.
+  Future<Either<Failure, List<TransactionAuditEntry>>> getAllAuditEntries();
+
+  /// 022 C3: the append-only change history of [transactionId] (created,
+  /// edited, deleted), oldest first by `changedAt`, live. Read-only.
+  Stream<Either<Failure, List<TransactionAuditEntry>>> watchAuditHistory(
+    String transactionId,
   );
 
   /// 021: [getPersonBalance], re-read whenever transactions, people,

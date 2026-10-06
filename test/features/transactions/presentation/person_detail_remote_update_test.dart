@@ -17,6 +17,7 @@ import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_
 import 'package:daftary/features/people/domain/usecases/watch_person.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/preview_transaction_deletion.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_person_history.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
@@ -65,6 +66,10 @@ void main() {
           DeleteTransaction(transactions),
           WatchPrimaryCurrency(currency),
           transactions,
+          PreviewTransactionDeletion(
+            transactions,
+            GetConversionContext(currency),
+          ),
         ),
       )
       ..registerFactory<SyncConflictsCubit>(

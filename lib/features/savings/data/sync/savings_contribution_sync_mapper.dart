@@ -6,7 +6,9 @@ import '../../../../core/sync/sync_mapper_registry.dart';
 import '../../domain/entities/savings_contribution.dart' show ContributionType;
 
 /// 023: `savings_contributions` ⇄ the `savings_contribution` wire payload.
-/// Last-write-wins; a soft delete travels as `deleted_at` on an upsert,
+/// Conflict policy (migration 025): `financial` (a stale edit becomes a
+/// manual conflict) for app 1.1.0 and later, last-write-wins for older
+/// apps; a soft delete travels as `deleted_at` on an upsert,
 /// never as a delete op. Both the goal-currency amount and what the user
 /// entered travel, so no device ever re-converts (011 research.md
 /// Decision 9).

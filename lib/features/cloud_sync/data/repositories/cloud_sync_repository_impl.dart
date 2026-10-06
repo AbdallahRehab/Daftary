@@ -61,7 +61,9 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
             ..where((c) => c.resolvedAt.isNull())
             ..orderBy([(c) => OrderingTerm.asc(c.detectedAt)]))
           .watch()
-          .map((rows) => [for (final row in rows) ?_toItem(row)]);
+          .asyncMap(
+            (rows) async => [for (final row in rows) ?await _toItem(row)],
+          );
 
   @override
   Stream<bool> watchHasConflict(String entityType, String entityId) =>
@@ -102,21 +104,46 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
   }
 
   /// Null for a record type that is never in a manual conflict.
-  SyncConflictItem? _toItem(SyncConflictRow row) {
+  Future<SyncConflictItem?> _toItem(SyncConflictRow row) async {
     final type = ConflictEntityType.tryFromWire(row.entityType);
     if (type == null) return null;
+    final isSavings = type == ConflictEntityType.savingsContribution;
+    // Each version names its own goal; its currency is looked up per version.
+    final localCurrency = isSavings
+        ? await _goalCurrency(row.localPayloadJson)
+        : null;
+    final serverCurrency = isSavings
+        ? await _goalCurrency(row.serverPayloadJson)
+        : null;
     return SyncConflictItem(
       entityType: type,
       entityId: row.entityId,
-      localSummary: _version(type, row.localPayloadJson),
-      serverSummary: _version(type, row.serverPayloadJson),
+      localSummary: _version(type, row.localPayloadJson, localCurrency),
+      serverSummary: _version(type, row.serverPayloadJson, serverCurrency),
       detectedAt: DateTime.fromMillisecondsSinceEpoch(row.detectedAt),
     );
   }
 
+  /// The currency of the goal a savings entry belongs to (its wire carries
+  /// only the goal-currency amount, not the code); null when the payload has
+  /// no goal or the goal is not on this device.
+  Future<Currency?> _goalCurrency(String payloadJson) async {
+    final goalId = (jsonDecode(payloadJson) as Map)['goal_id'];
+    if (goalId is! String) return null;
+    final goal = await (_db.select(
+      _db.savingsGoals,
+    )..where((g) => g.id.equals(goalId))).getSingleOrNull();
+    // Never guess a currency: without the goal the amount is not shown.
+    return goal == null ? null : Currency.fromCode(goal.currencyCode);
+  }
+
   /// The compared fields of one wire payload (contracts/sync-rpc.md §1):
   /// money as a string (local) or a number (server).
-  static ConflictVersion _version(ConflictEntityType type, String json) {
+  static ConflictVersion _version(
+    ConflictEntityType type,
+    String json, [
+    Currency? goalCurrency,
+  ]) {
     final payload = (jsonDecode(json) as Map).cast<String, Object?>();
     final direction = switch (type) {
       ConflictEntityType.moneyTransaction =>
@@ -127,18 +154,46 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
         SyncWire.string(payload, 'type') == 'income'
             ? ConflictDirection.income
             : ConflictDirection.expense,
+      ConflictEntityType.savingsContribution =>
+        SyncWire.string(payload, 'type') == 'withdrawal'
+            ? ConflictDirection.withdrawal
+            : ConflictDirection.contribution,
     };
+    // A savings entry compares what the user typed; the goal-currency amount
+    // is derived from it and shown only when it tells the versions apart.
+    final isSavings = type == ConflictEntityType.savingsContribution;
     return ConflictVersion(
-      amount: Money.fromMinorUnits(
-        SyncWire.parseMoney(payload['amount_minor'], 'amount_minor'),
-        Currency.fromCode(SyncWire.string(payload, 'currency_code')),
-      ),
+      amount: isSavings
+          ? Money.fromMinorUnits(
+              SyncWire.parseMoney(
+                payload['entered_amount_minor_units'],
+                'entered_amount_minor_units',
+              ),
+              Currency.fromCode(
+                SyncWire.string(payload, 'entered_currency_code'),
+              ),
+            )
+          : Money.fromMinorUnits(
+              SyncWire.parseMoney(payload['amount_minor'], 'amount_minor'),
+              Currency.fromCode(SyncWire.string(payload, 'currency_code')),
+            ),
       date: DateTime.fromMillisecondsSinceEpoch(
-        SyncWire.parseInstant(payload['occurred_at'], 'occurred_at'),
+        isSavings
+            ? SyncWire.parseInstant(payload['date'], 'date')
+            : SyncWire.parseInstant(payload['occurred_at'], 'occurred_at'),
       ),
       direction: direction,
       note: SyncWire.stringOrNull(payload, 'note'),
       isDeleted: payload['deleted_at'] != null,
+      goalAmount: isSavings && goalCurrency != null
+          ? Money.fromMinorUnits(
+              SyncWire.parseMoney(
+                payload['amount_minor_units'],
+                'amount_minor_units',
+              ),
+              goalCurrency,
+            )
+          : null,
     );
   }
 
@@ -336,6 +391,7 @@ class CloudSyncRepositoryImpl implements CloudSyncRepository {
         SyncEntityType.savingsContribution => SyncItemKind.savingsContribution,
         SyncEntityType.savingsContributionAudit =>
           SyncItemKind.savingsContributionHistory,
+        SyncEntityType.financeEntryAudit => SyncItemKind.financeEntryHistory,
       },
   };
 

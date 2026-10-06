@@ -5,8 +5,21 @@ import '../../../../core/money/currency.dart';
 import '../../../people/domain/entities/person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
+import '../../domain/services/deletion_impact.dart';
 
 enum PersonDetailStatus { loading, success, failure }
+
+/// A delete the user asked for and has yet to confirm, with what it would
+/// leave behind (022 E6).
+class PendingDelete extends Equatable {
+  const PendingDelete({required this.transaction, required this.impact});
+
+  final MoneyTransaction transaction;
+  final DeletionImpact impact;
+
+  @override
+  List<Object?> get props => [transaction, impact];
+}
 
 /// Immutable state for [PersonDetailCubit] (constitution Principle IV).
 class PersonDetailState extends Equatable {
@@ -18,6 +31,7 @@ class PersonDetailState extends Equatable {
     this.occasionNames = const {},
     this.primaryCurrency = Currency.egp,
     this.failure,
+    this.pendingDelete,
   });
 
   final PersonDetailStatus status;
@@ -37,6 +51,9 @@ class PersonDetailState extends Equatable {
   final Currency primaryCurrency;
   final Failure? failure;
 
+  /// Set while the delete confirmation is open.
+  final PendingDelete? pendingDelete;
+
   bool get isLoading => status == PersonDetailStatus.loading;
 
   PersonDetailState copyWith({
@@ -47,6 +64,8 @@ class PersonDetailState extends Equatable {
     Map<String, String>? occasionNames,
     Currency? primaryCurrency,
     Failure? failure,
+    PendingDelete? pendingDelete,
+    bool clearPendingDelete = false,
   }) {
     return PersonDetailState(
       status: status ?? this.status,
@@ -56,6 +75,9 @@ class PersonDetailState extends Equatable {
       occasionNames: occasionNames ?? this.occasionNames,
       primaryCurrency: primaryCurrency ?? this.primaryCurrency,
       failure: failure,
+      pendingDelete: clearPendingDelete
+          ? null
+          : (pendingDelete ?? this.pendingDelete),
     );
   }
 
@@ -68,5 +90,6 @@ class PersonDetailState extends Equatable {
     occasionNames,
     primaryCurrency,
     failure,
+    pendingDelete,
   ];
 }

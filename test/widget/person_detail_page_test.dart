@@ -8,6 +8,7 @@ import 'package:daftary/features/transactions/domain/entities/money_transaction.
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/preview_transaction_deletion.dart';
 import 'package:daftary/features/currency/domain/usecases/watch_primary_currency.dart';
 import 'package:daftary/features/people/domain/usecases/watch_person.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
@@ -66,6 +67,10 @@ void main() {
         DeleteTransaction(transactionsRepository),
         watchPrimary(),
         transactionsRepository,
+        PreviewTransactionDeletion(
+          transactionsRepository,
+          getConversionContextWith(),
+        ),
       ),
     );
   });

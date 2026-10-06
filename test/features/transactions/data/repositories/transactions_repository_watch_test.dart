@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:daftary/core/database/app_database.dart' hide ExchangeRate;
 import 'package:daftary/core/date/app_clock.dart';
 import 'package:daftary/core/money/money.dart';
@@ -5,6 +7,7 @@ import 'package:daftary/features/currency/data/repositories/currency_repository_
 import 'package:daftary/features/currency/domain/usecases/get_conversion_context.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
+import 'package:daftary/features/transactions/domain/entities/transaction_audit_entry.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -129,5 +132,66 @@ void main() {
     await overview.waitFor(
       (r) => rightOf(r).totalOwedToUser == const Money.egp(1200),
     );
+  });
+
+  // 022 T056 (C3): the change history is readable and live.
+  group('watchAuditHistory', () {
+    test('create, edit (1,000 -> 800) and delete give three entries in '
+        'changedAt order; the edit keeps the previous amount', () async {
+      final created = rightOf(
+        await repository.addTransaction(
+          idempotencyKey: 'k1',
+          personId: 'p1',
+          amount: const Money.egp(100000),
+          direction: TransactionDirection.given,
+          date: DateTime(2026, 1, 1),
+        ),
+      );
+      final history = StreamRecorder(repository.watchAuditHistory(created.id));
+      addTearDown(history.cancel);
+      await history.waitFor((r) => rightOf(r).length == 1);
+
+      rightOf(
+        await repository.editTransaction(
+          transactionId: created.id,
+          amount: const Money.egp(80000),
+          direction: TransactionDirection.given,
+          date: DateTime(2026, 1, 1),
+        ),
+      );
+      await history.waitFor((r) => rightOf(r).length == 2);
+      await repository.deleteTransaction(created.id);
+      final entries = rightOf(
+        await history.waitFor((r) => rightOf(r).length == 3),
+      );
+
+      expect(entries.map((e) => e.changeType), [
+        AuditChangeType.created,
+        AuditChangeType.edited,
+        AuditChangeType.deleted,
+      ]);
+      final times = entries.map((e) => e.changedAt).toList();
+      expect([...times]..sort(), times);
+      final previous =
+          jsonDecode(entries[1].previousValuesJson!) as Map<String, dynamic>;
+      expect(previous['amountMinorUnits'], 100000);
+    });
+
+    test('only the requested transaction is returned', () async {
+      final a = rightOf(
+        await repository.addTransaction(
+          idempotencyKey: 'a',
+          personId: 'p1',
+          amount: const Money.egp(100),
+          direction: TransactionDirection.given,
+          date: DateTime(2026, 1, 1),
+        ),
+      );
+      await give(const Money.egp(200), 'b');
+
+      final entries = rightOf(await repository.watchAuditHistory(a.id).first);
+
+      expect(entries.map((e) => e.transactionId).toSet(), {a.id});
+    });
   });
 }

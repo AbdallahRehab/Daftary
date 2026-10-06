@@ -13,7 +13,12 @@ import '../../../../core/sync/sync_mapper_registry.dart';
 class ConflictResolutionSyncMapper extends SyncMapper<ConflictResolutionRow> {
   const ConflictResolutionSyncMapper();
 
-  static const entityTypes = {'money_transaction', 'finance_entry'};
+  /// 022 (A3): savings contributions can be in a manual conflict too.
+  static const entityTypes = {
+    'money_transaction',
+    'finance_entry',
+    'savings_contribution',
+  };
   static const sides = {'local', 'server'};
 
   @override

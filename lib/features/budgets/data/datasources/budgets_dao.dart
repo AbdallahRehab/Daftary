@@ -123,6 +123,14 @@ class BudgetsDao {
             ..limit(1))
           .getSingleOrNull();
 
+  /// Every active (not soft-deleted) budget, oldest month first (022 D1).
+  Future<List<db.Budget>> getAllActiveBudgets() {
+    return (_db.select(_db.budgets)
+          ..where((b) => b.deletedAt.isNull())
+          ..orderBy([(b) => db.OrderingTerm(expression: b.month)]))
+        .get();
+  }
+
   /// Active budgets with `fromMonth <= month <= toMonth`, oldest first.
   Future<List<db.Budget>> getActiveBudgetsBetween(
     String fromMonth,

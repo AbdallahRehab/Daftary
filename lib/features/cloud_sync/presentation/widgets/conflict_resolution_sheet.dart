@@ -61,6 +61,7 @@ class ConflictResolutionSheet extends StatelessWidget {
                         child: _VersionCard(
                           title: l10n.syncConflictMineLabel,
                           version: item.localSummary,
+                          showGoalAmount: item.showsGoalAmount,
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -68,6 +69,7 @@ class ConflictResolutionSheet extends StatelessWidget {
                         child: _VersionCard(
                           title: l10n.syncConflictTheirsLabel,
                           version: item.serverSummary,
+                          showGoalAmount: item.showsGoalAmount,
                         ),
                       ),
                     ],
@@ -107,10 +109,15 @@ class ConflictResolutionSheet extends StatelessWidget {
 }
 
 class _VersionCard extends StatelessWidget {
-  const _VersionCard({required this.title, required this.version});
+  const _VersionCard({
+    required this.title,
+    required this.version,
+    required this.showGoalAmount,
+  });
 
   final String title;
   final ConflictVersion version;
+  final bool showGoalAmount;
 
   @override
   Widget build(BuildContext context) {
@@ -122,44 +129,70 @@ class _VersionCard extends StatelessWidget {
       ConflictDirection.received => l10n.directionReceived,
       ConflictDirection.expense => l10n.financeTypeExpense,
       ConflictDirection.income => l10n.financeTypeIncome,
+      ConflictDirection.contribution => l10n.conflictDirectionContribution,
+      ConflictDirection.withdrawal => l10n.conflictDirectionWithdrawal,
     };
+    final amount = EgpFormatter(
+      locale: locale,
+    ).formatWithSymbol(version.amount);
+    final day = AppDateFormatter(locale: locale).format(version.date);
+    final goalAmount = version.goalAmount;
+    final goalLine = showGoalAmount && goalAmount != null
+        ? l10n.conflictGoalAmount(
+            EgpFormatter(locale: locale).formatWithSymbol(goalAmount),
+          )
+        : null;
     final note = version.note;
-    return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            title,
-            style: AppTypography.label.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+    // One announcement per version: whose it is, then its fields.
+    final spoken = [
+      title,
+      amount,
+      direction,
+      day,
+      ?goalLine,
+      if (note != null && note.isNotEmpty) note,
+      if (version.isDeleted) l10n.syncConflictDeletedLabel,
+    ].join(', ');
+    return Semantics(
+      container: true,
+      label: spoken,
+      child: ExcludeSemantics(
+        child: AppCard(
+          padding: const EdgeInsets.all(AppSpacing.md),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: AppTypography.label.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(amount, style: AppTypography.figure),
+              ),
+              if (goalLine != null) Text(goalLine, style: AppTypography.body),
+              Text(direction, style: AppTypography.body),
+              Text(
+                day,
+                style: AppTypography.bodyMuted.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              if (note != null && note.isNotEmpty)
+                Text(note, style: AppTypography.body),
+              if (version.isDeleted)
+                Text(
+                  l10n.syncConflictDeletedLabel,
+                  style: AppTypography.label.copyWith(color: colorScheme.error),
+                ),
+            ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              EgpFormatter(locale: locale).formatWithSymbol(version.amount),
-              style: AppTypography.figure,
-            ),
-          ),
-          Text(direction, style: AppTypography.body),
-          Text(
-            AppDateFormatter(locale: locale).format(version.date),
-            style: AppTypography.bodyMuted.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          if (note != null && note.isNotEmpty)
-            Text(note, style: AppTypography.body),
-          if (version.isDeleted)
-            Text(
-              l10n.syncConflictDeletedLabel,
-              style: AppTypography.label.copyWith(color: colorScheme.error),
-            ),
-        ],
+        ),
       ),
     );
   }

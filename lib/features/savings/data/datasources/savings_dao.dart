@@ -273,13 +273,25 @@ class SavingsDao {
     });
   }
 
-  /// Every audit row of [contributionId], oldest first.
+  /// 022 D1: every audit row of every contribution, oldest first.
+  Future<List<db.SavingsContributionAudit>> getAllAudits() {
+    return (_db.select(_db.savingsContributionAudits)..orderBy([
+          (a) => db.OrderingTerm(expression: a.changedAt),
+          (a) => db.OrderingTerm(expression: a.id),
+        ]))
+        .get();
+  }
+
+  /// Every audit row of [contributionId], oldest first (ties by id).
   Future<List<db.SavingsContributionAudit>> getAuditsForContribution(
     String contributionId,
   ) {
     return (_db.select(_db.savingsContributionAudits)
           ..where((a) => a.contributionId.equals(contributionId))
-          ..orderBy([(a) => db.OrderingTerm(expression: a.changedAt)]))
+          ..orderBy([
+            (a) => db.OrderingTerm(expression: a.changedAt),
+            (a) => db.OrderingTerm(expression: a.id),
+          ]))
         .get();
   }
 }

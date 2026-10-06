@@ -275,6 +275,8 @@ import '../../features/finance/data/repositories/finance_repository_impl.dart'
     as _i250;
 import '../../features/finance/data/sync/finance_category_sync_mapper.dart'
     as _i539;
+import '../../features/finance/data/sync/finance_entry_audit_sync_mapper.dart'
+    as _i728;
 import '../../features/finance/data/sync/finance_entry_sync_mapper.dart'
     as _i960;
 import '../../features/finance/domain/repositories/category_repository.dart'
@@ -305,6 +307,8 @@ import '../../features/finance/domain/usecases/seed_default_categories.dart'
 import '../../features/finance/domain/usecases/watch_categories.dart' as _i520;
 import '../../features/finance/domain/usecases/watch_category_breakdown.dart'
     as _i74;
+import '../../features/finance/domain/usecases/watch_entry_audit_history.dart'
+    as _i663;
 import '../../features/finance/domain/usecases/watch_finance_history.dart'
     as _i542;
 import '../../features/finance/domain/usecases/watch_finance_summary.dart'
@@ -559,6 +563,8 @@ import '../../features/savings/domain/usecases/log_contribution.dart' as _i1056;
 import '../../features/savings/domain/usecases/log_withdrawal.dart' as _i622;
 import '../../features/savings/domain/usecases/restore_savings_goal.dart'
     as _i383;
+import '../../features/savings/domain/usecases/watch_contribution_audit_history.dart'
+    as _i6;
 import '../../features/savings/domain/usecases/watch_goal_detail.dart' as _i995;
 import '../../features/savings/domain/usecases/watch_savings_overview.dart'
     as _i282;
@@ -608,10 +614,14 @@ import '../../features/transactions/domain/repositories/transactions_repository.
     as _i957;
 import '../../features/transactions/domain/usecases/add_transaction.dart'
     as _i5;
+import '../../features/transactions/domain/usecases/count_later_repayments.dart'
+    as _i592;
 import '../../features/transactions/domain/usecases/delete_transaction.dart'
     as _i645;
 import '../../features/transactions/domain/usecases/edit_transaction.dart'
     as _i554;
+import '../../features/transactions/domain/usecases/find_possible_duplicate.dart'
+    as _i522;
 import '../../features/transactions/domain/usecases/get_overview.dart' as _i943;
 import '../../features/transactions/domain/usecases/get_person_balance.dart'
     as _i750;
@@ -619,6 +629,8 @@ import '../../features/transactions/domain/usecases/get_person_balances.dart'
     as _i313;
 import '../../features/transactions/domain/usecases/get_person_history.dart'
     as _i610;
+import '../../features/transactions/domain/usecases/preview_transaction_deletion.dart'
+    as _i144;
 import '../../features/transactions/domain/usecases/record_repayment.dart'
     as _i426;
 import '../../features/transactions/domain/usecases/watch_overview.dart'
@@ -629,6 +641,8 @@ import '../../features/transactions/domain/usecases/watch_person_balances.dart'
     as _i330;
 import '../../features/transactions/domain/usecases/watch_person_history.dart'
     as _i210;
+import '../../features/transactions/domain/usecases/watch_transaction_audit_history.dart'
+    as _i718;
 import '../../features/transactions/presentation/cubit/person_detail_cubit.dart'
     as _i992;
 import '../../features/transactions/presentation/cubit/repayment_form_cubit.dart'
@@ -714,6 +728,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i539.FinanceCategorySyncMapper>(
       () => const _i539.FinanceCategorySyncMapper(),
     );
+    gh.lazySingleton<_i728.FinanceEntryAuditSyncMapper>(
+      () => const _i728.FinanceEntryAuditSyncMapper(),
+    );
     gh.lazySingleton<_i960.FinanceEntrySyncMapper>(
       () => const _i960.FinanceEntrySyncMapper(),
     );
@@ -771,6 +788,25 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i52.ExportDirectoryProvider>(
       () => const _i612.TemporaryExportDirectoryProvider(),
     );
+    gh.lazySingleton<_i834.SyncMapperRegistry>(
+      () => registerModule.syncMapperRegistry(
+        gh<_i334.PersonSyncMapper>(),
+        gh<_i315.MoneyTransactionSyncMapper>(),
+        gh<_i92.TransactionAuditSyncMapper>(),
+        gh<_i539.FinanceCategorySyncMapper>(),
+        gh<_i960.FinanceEntrySyncMapper>(),
+        gh<_i770.ExchangeRateSyncMapper>(),
+        gh<_i900.PrimaryCurrencySyncMapper>(),
+        gh<_i346.ConflictResolutionSyncMapper>(),
+        gh<_i1001.OccasionSyncMapper>(),
+        gh<_i56.BudgetSyncMapper>(),
+        gh<_i56.BudgetAllocationSyncMapper>(),
+        gh<_i1024.SavingsGoalSyncMapper>(),
+        gh<_i322.SavingsContributionSyncMapper>(),
+        gh<_i116.SavingsContributionAuditSyncMapper>(),
+        gh<_i728.FinanceEntryAuditSyncMapper>(),
+      ),
+    );
     gh.lazySingleton<_i933.DeviceLocaleProvider>(
       () => _i933.DeviceLocaleProviderImpl(),
     );
@@ -807,24 +843,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i12.LockoutPolicy>(
       () => const _i12.EscalatingLockoutPolicy(),
     );
-    gh.lazySingleton<_i834.SyncMapperRegistry>(
-      () => registerModule.syncMapperRegistry(
-        gh<_i334.PersonSyncMapper>(),
-        gh<_i315.MoneyTransactionSyncMapper>(),
-        gh<_i92.TransactionAuditSyncMapper>(),
-        gh<_i539.FinanceCategorySyncMapper>(),
-        gh<_i960.FinanceEntrySyncMapper>(),
-        gh<_i770.ExchangeRateSyncMapper>(),
-        gh<_i900.PrimaryCurrencySyncMapper>(),
-        gh<_i346.ConflictResolutionSyncMapper>(),
-        gh<_i1001.OccasionSyncMapper>(),
-        gh<_i56.BudgetSyncMapper>(),
-        gh<_i56.BudgetAllocationSyncMapper>(),
-        gh<_i1024.SavingsGoalSyncMapper>(),
-        gh<_i322.SavingsContributionSyncMapper>(),
-        gh<_i116.SavingsContributionAuditSyncMapper>(),
-      ),
-    );
     gh.factory<_i897.CalculateSavingsRate>(
       () => _i897.CalculateSavingsRate(gh<_i35.SavingsRateCalculator>()),
     );
@@ -839,9 +857,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i445.BundledEducationContentDataSource>(
       () => _i445.BundledEducationContentDataSource(gh<_i281.AssetBundle>()),
-    );
-    gh.lazySingleton<_i753.SyncRemoteDataSource>(
-      () => _i753.SupabaseSyncRemoteDataSource(gh<_i822.SupabaseInitializer>()),
     );
     gh.lazySingleton<_i68.BiometricService>(
       () => _i791.LocalAuthBiometricService(gh<_i152.LocalAuthentication>()),
@@ -867,6 +882,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i834.SyncMapperRegistry>(),
         gh<_i414.SyncLogger>(),
         gh<_i956.AppClock>(),
+      ),
+    );
+    gh.lazySingleton<_i753.SyncRemoteDataSource>(
+      () => _i753.SupabaseSyncRemoteDataSource(
+        gh<_i822.SupabaseInitializer>(),
+        gh<_i414.SyncLogger>(),
       ),
     );
     gh.lazySingleton<_i982.AppDatabase>(
@@ -1024,14 +1045,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i265.ContentLibraryCubit>(
       () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
     );
-    gh.factory<_i443.FinanceDao>(
-      () => _i443.FinanceDao(
-        gh<_i982.AppDatabase>(),
-        gh<_i840.SyncOutbox>(),
-        gh<_i539.FinanceCategorySyncMapper>(),
-        gh<_i960.FinanceEntrySyncMapper>(),
-      ),
-    );
     gh.lazySingleton<_i754.AIAssistantRepository>(
       () => _i988.AIAssistantRepositoryImpl(
         gh<_i931.AIAssistantDao>(),
@@ -1081,6 +1094,15 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i518.CategoryCubit>(
       () => _i518.CategoryCubit(gh<_i657.GetCategoryArticles>()),
+    );
+    gh.factory<_i443.FinanceDao>(
+      () => _i443.FinanceDao(
+        gh<_i982.AppDatabase>(),
+        gh<_i840.SyncOutbox>(),
+        gh<_i539.FinanceCategorySyncMapper>(),
+        gh<_i960.FinanceEntrySyncMapper>(),
+        gh<_i728.FinanceEntryAuditSyncMapper>(),
+      ),
     );
     gh.lazySingleton<_i500.AppLifecycleObserver>(
       () => _i500.AppLifecycleObserver(gh<_i439.AppLockStatusProvider>()),
@@ -1292,11 +1314,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i957.TransactionsRepository>()),
     );
+    gh.factory<_i592.CountLaterRepayments>(
+      () => _i592.CountLaterRepayments(gh<_i957.TransactionsRepository>()),
+    );
     gh.factory<_i645.DeleteTransaction>(
       () => _i645.DeleteTransaction(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i554.EditTransaction>(
       () => _i554.EditTransaction(gh<_i957.TransactionsRepository>()),
+    );
+    gh.factory<_i522.FindPossibleDuplicate>(
+      () => _i522.FindPossibleDuplicate(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i943.GetOverview>(
       () => _i943.GetOverview(gh<_i957.TransactionsRepository>()),
@@ -1324,6 +1352,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i210.WatchPersonHistory>(
       () => _i210.WatchPersonHistory(gh<_i957.TransactionsRepository>()),
+    );
+    gh.factory<_i718.WatchTransactionAuditHistory>(
+      () => _i718.WatchTransactionAuditHistory(
+        gh<_i957.TransactionsRepository>(),
+      ),
     );
     gh.factory<_i65.GetProactiveObservationTool>(
       () => _i65.GetProactiveObservationTool(
@@ -1381,6 +1414,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i520.WatchCategories>(
       () => _i520.WatchCategories(gh<_i228.CategoryRepository>()),
     );
+    gh.factory<_i144.PreviewTransactionDeletion>(
+      () => _i144.PreviewTransactionDeletion(
+        gh<_i957.TransactionsRepository>(),
+        gh<_i602.GetConversionContext>(),
+      ),
+    );
     gh.lazySingleton<_i855.BudgetsRepository>(
       () => _i249.BudgetsRepositoryImpl(
         gh<_i757.BudgetsDao>(),
@@ -1412,6 +1451,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1008.RestoreFinanceEntry>(
       () => _i1008.RestoreFinanceEntry(gh<_i137.FinanceRepository>()),
+    );
+    gh.factory<_i663.WatchEntryAuditHistory>(
+      () => _i663.WatchEntryAuditHistory(gh<_i137.FinanceRepository>()),
     );
     gh.factory<_i542.WatchFinanceHistory>(
       () => _i542.WatchFinanceHistory(gh<_i137.FinanceRepository>()),
@@ -1484,6 +1526,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i383.RestoreSavingsGoal>(
       () => _i383.RestoreSavingsGoal(gh<_i117.SavingsRepository>()),
     );
+    gh.factory<_i6.WatchContributionAuditHistory>(
+      () => _i6.WatchContributionAuditHistory(gh<_i117.SavingsRepository>()),
+    );
     gh.factory<_i995.WatchGoalDetail>(
       () => _i995.WatchGoalDetail(gh<_i117.SavingsRepository>()),
     );
@@ -1553,6 +1598,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i20.GetPossibleDuplicateForCandidate(
         gh<_i646.PeopleRepository>(),
         gh<_i769.FindPossibleDuplicatePerson>(),
+      ),
+    );
+    gh.factory<_i496.ExportUserData>(
+      () => _i496.ExportUserData(
+        gh<_i646.PeopleRepository>(),
+        gh<_i957.TransactionsRepository>(),
+        gh<_i137.FinanceRepository>(),
+        gh<_i228.CategoryRepository>(),
+        gh<_i674.SettingsRepository>(),
+        gh<_i52.ExportDirectoryProvider>(),
+        gh<_i72.OccasionsRepository>(),
+        gh<_i855.BudgetsRepository>(),
+        gh<_i117.SavingsRepository>(),
+        gh<_i87.CurrencyRepository>(),
       ),
     );
     gh.factory<_i109.CategoryManagementCubit>(
@@ -1651,16 +1710,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i462.WatchPerson>(
       () => _i462.WatchPerson(gh<_i646.PeopleRepository>()),
     );
-    gh.factory<_i496.ExportUserData>(
-      () => _i496.ExportUserData(
-        gh<_i646.PeopleRepository>(),
-        gh<_i957.TransactionsRepository>(),
-        gh<_i137.FinanceRepository>(),
-        gh<_i228.CategoryRepository>(),
-        gh<_i674.SettingsRepository>(),
-        gh<_i52.ExportDirectoryProvider>(),
-      ),
-    );
     gh.factory<_i1018.PersonListCubit>(
       () => _i1018.PersonListCubit(
         gh<_i277.WatchActivePeople>(),
@@ -1709,6 +1758,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i577.ChangeGlassAppearance>(),
       ),
     );
+    gh.factory<_i593.TransactionFormCubit>(
+      () => _i593.TransactionFormCubit(
+        gh<_i646.PeopleRepository>(),
+        gh<_i789.CreatePerson>(),
+        gh<_i5.AddTransaction>(),
+        gh<_i554.EditTransaction>(),
+        gh<_i903.GetPrimaryCurrency>(),
+        gh<_i522.FindPossibleDuplicate>(),
+      ),
+    );
     gh.factory<_i305.AcknowledgeSyncNotice>(
       () => _i305.AcknowledgeSyncNotice(gh<_i948.CloudSyncRepository>()),
     );
@@ -1743,13 +1802,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i451.GoalDetailCubit(
         gh<_i995.WatchGoalDetail>(),
         gh<_i772.DeleteContribution>(),
-      ),
-    );
-    gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
-      (personId, _) => _i34.RepaymentFormCubit(
-        gh<_i426.RecordRepayment>(),
-        gh<_i903.GetPrimaryCurrency>(),
-        personId,
       ),
     );
     gh.factory<_i552.AddBudgetCategoryAllocation>(
@@ -1901,6 +1953,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i394.ConfirmEmailCode>(),
       ),
     );
+    gh.factoryParam<_i34.RepaymentFormCubit, String, dynamic>(
+      (personId, _) => _i34.RepaymentFormCubit(
+        gh<_i426.RecordRepayment>(),
+        gh<_i903.GetPrimaryCurrency>(),
+        gh<_i221.WatchPersonBalance>(),
+        gh<_i132.WatchConversionContext>(),
+        gh<_i462.WatchPerson>(),
+        personId,
+      ),
+    );
     gh.factory<_i567.GetSavingsProjectionTool>(
       () => _i567.GetSavingsProjectionTool(
         gh<_i110.GetSavingsOverview>(),
@@ -1912,15 +1974,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i738.SyncNoticeCubit(
         gh<_i178.WatchSyncStatus>(),
         gh<_i305.AcknowledgeSyncNotice>(),
-      ),
-    );
-    gh.factory<_i593.TransactionFormCubit>(
-      () => _i593.TransactionFormCubit(
-        gh<_i646.PeopleRepository>(),
-        gh<_i789.CreatePerson>(),
-        gh<_i5.AddTransaction>(),
-        gh<_i554.EditTransaction>(),
-        gh<_i903.GetPrimaryCurrency>(),
       ),
     );
     gh.factory<_i1059.SavingsGoalActionsCubit>(
@@ -2058,6 +2111,17 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i958.GetOccasionsList>(),
       ),
     );
+    gh.factory<_i992.PersonDetailCubit>(
+      () => _i992.PersonDetailCubit(
+        gh<_i462.WatchPerson>(),
+        gh<_i221.WatchPersonBalance>(),
+        gh<_i210.WatchPersonHistory>(),
+        gh<_i645.DeleteTransaction>(),
+        gh<_i1028.WatchPrimaryCurrency>(),
+        gh<_i957.TransactionsRepository>(),
+        gh<_i144.PreviewTransactionDeletion>(),
+      ),
+    );
     gh.factory<_i39.NotificationSettingsCubit>(
       () => _i39.NotificationSettingsCubit(
         gh<_i203.SetNotificationPreferences>(),
@@ -2069,16 +2133,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i244.RecoverViaBiometric>(),
         gh<_i613.WipeAllLocalData>(),
         gh<_i807.OnboardingCubit>(),
-      ),
-    );
-    gh.factory<_i992.PersonDetailCubit>(
-      () => _i992.PersonDetailCubit(
-        gh<_i462.WatchPerson>(),
-        gh<_i221.WatchPersonBalance>(),
-        gh<_i210.WatchPersonHistory>(),
-        gh<_i645.DeleteTransaction>(),
-        gh<_i1028.WatchPrimaryCurrency>(),
-        gh<_i957.TransactionsRepository>(),
       ),
     );
     gh.factory<_i59.GetBudgetStatusTool>(

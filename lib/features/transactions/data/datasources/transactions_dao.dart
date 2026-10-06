@@ -80,6 +80,57 @@ class TransactionsDao {
         .get();
   }
 
+  /// The oldest non-deleted regular exchange (kind `initialExchange`, so
+  /// never a repayment or occasion contribution) for [personId] with
+  /// exactly this amount,
+  /// currency, direction and date (022 C4), or `null`.
+  Future<db.MoneyTransaction?> findActiveMatch({
+    required String personId,
+    required int amountMinorUnits,
+    required String currencyCode,
+    required String direction,
+    required int dateMillis,
+  }) {
+    return (_db.select(_db.moneyTransactions)
+          ..where(
+            (t) =>
+                t.personId.equals(personId) &
+                t.deletedAt.isNull() &
+                t.kind.equals('initialExchange') &
+                t.amountMinorUnits.equals(amountMinorUnits) &
+                t.currencyCode.equals(currencyCode) &
+                t.direction.equals(direction) &
+                t.date.equals(dateMillis),
+          )
+          ..orderBy([(t) => db.OrderingTerm(expression: t.createdAt)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
+  /// Non-deleted repayments of [personId] dated on or after [fromMillis],
+  /// excluding [excludingTransactionId] (022 E6).
+  Future<int> countRepaymentsOnOrAfter(
+    String personId,
+    int fromMillis, {
+    String? excludingTransactionId,
+  }) async {
+    final count = _db.moneyTransactions.id.count();
+    final query = _db.selectOnly(_db.moneyTransactions)
+      ..addColumns([count])
+      ..where(
+        _db.moneyTransactions.personId.equals(personId) &
+            _db.moneyTransactions.deletedAt.isNull() &
+            _db.moneyTransactions.kind.equals('repayment') &
+            _db.moneyTransactions.date.isBiggerOrEqualValue(fromMillis) &
+            (excludingTransactionId == null
+                ? const db.Constant(true)
+                : _db.moneyTransactions.id
+                      .equals(excludingTransactionId)
+                      .not()),
+      );
+    return (await query.map((row) => row.read(count)).getSingle()) ?? 0;
+  }
+
   /// Every non-deleted contribution row for [occasionId], oldest first
   /// (008 FR-007). Filtering on `occasion_id` lets SQLite use
   /// `idx_transactions_occasion_id` instead of scanning the whole table,
@@ -167,6 +218,28 @@ class TransactionsDao {
         _auditMapper.toWire(row),
       );
     });
+  }
+
+  /// 022 D1: every audit entry of every transaction, oldest first.
+  Future<List<db.TransactionAuditEntry>> getAllAuditEntries() {
+    return (_db.select(_db.transactionAuditEntries)..orderBy([
+          (a) => db.OrderingTerm(expression: a.changedAt),
+          (a) => db.OrderingTerm(expression: a.id),
+        ]))
+        .get();
+  }
+
+  /// 022 C3: every audit entry of [transactionId], oldest first. Read-only.
+  Future<List<db.TransactionAuditEntry>> getAuditEntriesFor(
+    String transactionId,
+  ) {
+    return (_db.select(_db.transactionAuditEntries)
+          ..where((a) => a.transactionId.equals(transactionId))
+          ..orderBy([
+            (a) => db.OrderingTerm(expression: a.changedAt),
+            (a) => db.OrderingTerm(expression: a.id),
+          ]))
+        .get();
   }
 
   /// Per-currency native nets for [personId] (currency code → minor

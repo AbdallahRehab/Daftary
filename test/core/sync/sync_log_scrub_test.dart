@@ -87,7 +87,15 @@ void main() {
   test('every required event is emitted', () async {
     await runEverything();
     final emitted = {...a.logger.names, ...b.logger.names};
-    expect(emitted, containsAll(SyncEvent.values));
+    // The unknown-type skip happens while the data source parses a raw
+    // page, which the in-memory remote never produces; it is covered by
+    // sync_remote_data_source_test.dart.
+    expect(
+      emitted,
+      containsAll(
+        SyncEvent.values.where((e) => e != SyncEvent.unknownEntitySkipped),
+      ),
+    );
   });
 
   test('no logged value carries an amount, a name, a note, a phone number, '

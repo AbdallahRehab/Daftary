@@ -4,6 +4,7 @@ import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../entities/category_breakdown_item.dart';
 import '../entities/finance_entry.dart';
+import '../entities/finance_entry_audit.dart';
 import '../entities/finance_entry_type.dart';
 import '../entities/finance_history_filter.dart';
 import '../entities/finance_summary.dart';
@@ -109,6 +110,16 @@ abstract class FinanceRepository {
     DateRange period, {
     FinanceEntryType? type,
   });
+
+  /// 022 D2: the live, read-only change history of one entry, oldest first.
+  /// An empty list means nothing has been recorded. Never writes.
+  Stream<Either<Failure, List<FinanceEntryAudit>>> watchEntryAuditHistory(
+    String entryId,
+  );
+
+  /// 022 D1: every history row of every entry, oldest first, including the
+  /// history of deleted entries. Plain read for the data export.
+  Future<Either<Failure, List<FinanceEntryAudit>>> getAllEntryAudits();
 
   /// 021: [hasAnyEntry], re-read whenever entries change (FR-031).
   Stream<Either<Failure, bool>> watchHasAnyEntry();

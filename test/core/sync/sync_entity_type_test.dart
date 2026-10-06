@@ -26,6 +26,7 @@ void main() {
         SyncEntityType.savingsGoal: 'savings_goal',
         SyncEntityType.savingsContribution: 'savings_contribution',
         SyncEntityType.savingsContributionAudit: 'savings_contribution_audit',
+        SyncEntityType.financeEntryAudit: 'finance_entry_audit',
       },
     );
   });
@@ -46,6 +47,7 @@ void main() {
         SyncEntityType.transactionAudit: 2,
         SyncEntityType.conflictResolution: 2,
         SyncEntityType.savingsContributionAudit: 2,
+        SyncEntityType.financeEntryAudit: 2,
         SyncEntityType.exchangeRate: 3,
         SyncEntityType.primaryCurrency: 3,
       },

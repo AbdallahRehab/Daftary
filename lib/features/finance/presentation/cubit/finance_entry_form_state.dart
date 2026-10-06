@@ -23,6 +23,7 @@ class FinanceEntryFormState extends Equatable {
     this.isLoadingCategories = false,
     this.selectedCategoryId,
     this.currency = Currency.egp,
+    this.pendingCurrency,
     DateTime? date,
     this.amountInput = '',
     this.note,
@@ -58,6 +59,10 @@ class FinanceEntryFormState extends Equatable {
   /// only the pre-load placeholder. Edit mode starts on the entry's own
   /// currency.
   final Currency currency;
+
+  /// 022 E3: in edit mode, a currency the user picked that is awaiting
+  /// confirmation. [currency] stays unchanged until it is confirmed.
+  final Currency? pendingCurrency;
   final DateTime date;
   final String amountInput;
   final String? note;
@@ -93,6 +98,8 @@ class FinanceEntryFormState extends Equatable {
     String? selectedCategoryId,
     bool clearSelectedCategory = false,
     Currency? currency,
+    Currency? pendingCurrency,
+    bool clearPendingCurrency = false,
     DateTime? date,
     String? amountInput,
     String? note,
@@ -117,6 +124,9 @@ class FinanceEntryFormState extends Equatable {
           ? null
           : (selectedCategoryId ?? this.selectedCategoryId),
       currency: currency ?? this.currency,
+      pendingCurrency: clearPendingCurrency
+          ? null
+          : (pendingCurrency ?? this.pendingCurrency),
       date: date ?? this.date,
       amountInput: amountInput ?? this.amountInput,
       note: note ?? this.note,
@@ -143,6 +153,7 @@ class FinanceEntryFormState extends Equatable {
     isLoadingCategories,
     selectedCategoryId,
     currency,
+    pendingCurrency,
     date,
     amountInput,
     note,

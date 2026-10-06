@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/currency_picker.dart';
@@ -116,82 +117,191 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
           ),
         ),
       ),
-      body: BlocConsumer<TransactionFormCubit, TransactionFormState>(
-        listenWhen: (previous, current) =>
-            previous.status != current.status ||
-            previous.duplicateMatches.isEmpty !=
-                current.duplicateMatches.isEmpty,
-        listener: (context, state) {
-          if (state.duplicateMatches.isNotEmpty) {
-            showDuplicateWarningSheet(
-              context,
-              matches: state.duplicateMatches,
-              onPickExisting: context
-                  .read<TransactionFormCubit>()
-                  .pickDuplicateMatch,
-              onCreateNewAnyway: context
-                  .read<TransactionFormCubit>()
-                  .confirmCreateDespitePendingDuplicate,
+      body: MultiBlocListener(
+        listeners: [
+          // 022 E3: confirm a currency change made while editing.
+          BlocListener<TransactionFormCubit, TransactionFormState>(
+            listenWhen: (previous, current) =>
+                previous.pendingCurrency != current.pendingCurrency &&
+                current.pendingCurrency != null,
+            listener: (context, state) =>
+                _confirmCurrencyChange(context, state),
+          ),
+          // 022 C4: ask before saving a possible duplicate.
+          BlocListener<TransactionFormCubit, TransactionFormState>(
+            listenWhen: (previous, current) =>
+                previous.possibleDuplicate != current.possibleDuplicate &&
+                current.possibleDuplicate != null,
+            listener: (context, state) => _confirmDuplicate(context),
+          ),
+        ],
+        child: _buildForm(context, l10n),
+      ),
+    );
+  }
+
+  Future<void> _confirmCurrencyChange(
+    BuildContext context,
+    TransactionFormState state,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cubit = context.read<TransactionFormCubit>();
+    final pending = state.pendingCurrency!;
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: l10n.editCurrencyConfirmTitle,
+      message: l10n.editCurrencyConfirmMessage(
+        state.amountInput,
+        state.currency.code,
+        pending.code,
+      ),
+      confirmLabel: l10n.commonConfirm,
+      cancelLabel: l10n.commonCancel,
+    );
+    if (cubit.isClosed) return;
+    if (confirmed) {
+      cubit.confirmCurrencyChange();
+    } else {
+      cubit.cancelCurrencyChange();
+    }
+  }
+
+  Future<void> _confirmDuplicate(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cubit = context.read<TransactionFormCubit>();
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: l10n.transactionDuplicateTitle,
+      message: l10n.transactionDuplicateMessage,
+      confirmLabel: l10n.commonSave,
+      cancelLabel: l10n.commonCancel,
+    );
+    if (cubit.isClosed) return;
+    if (confirmed) {
+      await cubit.confirmDuplicate();
+    } else {
+      cubit.cancelDuplicate();
+    }
+  }
+
+  Widget _buildForm(BuildContext context, AppLocalizations l10n) {
+    return BlocConsumer<TransactionFormCubit, TransactionFormState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.duplicateMatches.isEmpty != current.duplicateMatches.isEmpty,
+      listener: (context, state) {
+        if (state.duplicateMatches.isNotEmpty) {
+          showDuplicateWarningSheet(
+            context,
+            matches: state.duplicateMatches,
+            onPickExisting: context
+                .read<TransactionFormCubit>()
+                .pickDuplicateMatch,
+            onCreateNewAnyway: context
+                .read<TransactionFormCubit>()
+                .confirmCreateDespitePendingDuplicate,
+          );
+        }
+        if (state.status == TransactionFormStatus.success) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
+          final savedTransaction = state.savedTransaction;
+          Navigator.of(context).pop(savedTransaction);
+        } else if (state.status == TransactionFormStatus.failure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text(l10n.messageFor(state.failure))),
             );
-          }
-          if (state.status == TransactionFormStatus.success) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
-            final savedTransaction = state.savedTransaction;
-            Navigator.of(context).pop(savedTransaction);
-          } else if (state.status == TransactionFormStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text(l10n.messageFor(state.failure))),
-              );
-          }
-        },
-        builder: (context, state) {
-          final cubit = context.read<TransactionFormCubit>();
-          return SingleChildScrollView(
-            padding:
-                const EdgeInsets.all(AppSpacing.md) +
-                AppGlassInsets.of(context),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (!state.isEditMode)
-                  PersonPickerField(
-                    query: state.personQuery,
-                    results: state.personSearchResults,
-                    selectedPerson: state.selectedPerson,
-                    errorText: state.personSelectionRequired
-                        ? l10n.personRequiredError
-                        : state.personFailure == null
-                        ? null
-                        : l10n.messageFor(state.personFailure),
-                    onQueryChanged: cubit.onPersonQueryChanged,
-                    onPersonSelected: cubit.selectExistingPerson,
-                    onCreateNew: cubit.createNewPerson,
-                  )
-                else
-                  // The person is immutable once a transaction exists
-                  // (renaming happens on their own profile) — rendered as
-                  // a locked field rather than a live `TextField`, so it
-                  // never implies typing here would do anything.
-                  InputDecorator(
-                    decoration: InputDecoration(
-                      labelText: l10n.personLabel,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(AppRadius.md),
-                      ),
-                      suffixIcon: const Icon(Icons.lock_outline, size: 18),
+        }
+      },
+      builder: (context, state) {
+        final cubit = context.read<TransactionFormCubit>();
+        return SingleChildScrollView(
+          padding:
+              const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (!state.isEditMode)
+                PersonPickerField(
+                  query: state.personQuery,
+                  results: state.personSearchResults,
+                  selectedPerson: state.selectedPerson,
+                  errorText: state.personSelectionRequired
+                      ? l10n.personRequiredError
+                      : state.personFailure == null
+                      ? null
+                      : l10n.messageFor(state.personFailure),
+                  onQueryChanged: cubit.onPersonQueryChanged,
+                  onPersonSelected: cubit.selectExistingPerson,
+                  onCreateNew: cubit.createNewPerson,
+                )
+              else
+                // The person is immutable once a transaction exists
+                // (renaming happens on their own profile) — rendered as
+                // a locked field rather than a live `TextField`, so it
+                // never implies typing here would do anything.
+                InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: l10n.personLabel,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppRadius.md),
                     ),
-                    child: Text(
-                      state.selectedPerson?.name ?? '',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    suffixIcon: const Icon(Icons.lock_outline, size: 18),
+                  ),
+                  child: Text(
+                    state.selectedPerson?.name ?? '',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                const SizedBox(height: AppSpacing.md),
+                ),
+              const SizedBox(height: AppSpacing.md),
+              if (state.isEditMode &&
+                  state.kind == TransactionKind.repayment) ...[
+                // `kind` is immutable after creation (Clarifications), and
+                // a repayment's direction is fixed by the balance it
+                // settled (022 A1): shown as text, never as a control.
+                Semantics(
+                  label: l10n.repaymentDirectionLockedSemantics(
+                    state.direction == TransactionDirection.given
+                        ? l10n.directionGiven
+                        : l10n.directionReceived,
+                    l10n.repaymentDirectionLockedHint,
+                  ),
+                  child: ExcludeSemantics(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.lock_outline),
+                            const SizedBox(width: AppSpacing.sm),
+                            Text(
+                              state.direction == TransactionDirection.given
+                                  ? l10n.directionGiven
+                                  : l10n.directionReceived,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          l10n.repaymentDirectionLockedHint,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Chip(label: Text(l10n.repaymentLabel)),
+                ),
+              ] else
                 SegmentedButton<TransactionDirection>(
                   segments: [
                     ButtonSegment(
@@ -207,63 +317,52 @@ class _TransactionFormViewState extends State<_TransactionFormView> {
                   onSelectionChanged: (selection) =>
                       cubit.directionChanged(selection.first),
                 ),
-                // `kind` is immutable after creation (Clarifications) — in
-                // edit mode a repayment is shown read-only, never offered
-                // as an editable field.
-                if (state.isEditMode &&
-                    state.kind == TransactionKind.repayment) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: Chip(label: Text(l10n.repaymentLabel)),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  label: l10n.amountLabel,
-                  controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  errorText: state.amountInvalid
-                      ? l10n.amountInvalidError
-                      : null,
-                  onChanged: cubit.amountChanged,
+              const SizedBox(height: AppSpacing.md),
+              AppTextField(
+                label: l10n.amountLabel,
+                controller: _amountController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-                const SizedBox(height: AppSpacing.md),
-                CurrencyPicker(
-                  // Keyed by value: the underlying form field only reads
-                  // its initial value once, so a late-arriving primary-
-                  // currency default must rebuild it.
-                  key: ValueKey(state.currency),
-                  value: state.currency,
-                  onChanged: cubit.currencyChanged,
+                errorText: state.amountInvalid ? l10n.amountInvalidError : null,
+                onChanged: cubit.amountChanged,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              CurrencyPicker(
+                // Keyed by value: the underlying form field only reads
+                // its initial value once, so a late-arriving primary-
+                // currency default must rebuild it.
+                key: ValueKey(
+                  '${state.currency.code}_'
+                  '${state.pendingCurrency?.code}',
                 ),
-                const SizedBox(height: AppSpacing.md),
-                AppDateField(
-                  label: l10n.dateLabel,
-                  date: state.date,
-                  onDateChanged: cubit.dateChanged,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  label: l10n.noteLabel,
-                  controller: _noteController,
-                  maxLength: 500,
-                  maxLines: 3,
-                  onChanged: cubit.noteChanged,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.commonSave,
-                  isLoading: state.isSubmitting,
-                  onPressed: cubit.submit,
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+                value: state.currency,
+                onChanged: cubit.currencyChanged,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppDateField(
+                label: l10n.dateLabel,
+                date: state.date,
+                onDateChanged: cubit.dateChanged,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppTextField(
+                label: l10n.noteLabel,
+                controller: _noteController,
+                maxLength: 500,
+                maxLines: 3,
+                onChanged: cubit.noteChanged,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
+                label: l10n.commonSave,
+                isLoading: state.isSubmitting,
+                onPressed: cubit.submit,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

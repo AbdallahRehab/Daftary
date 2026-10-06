@@ -248,5 +248,6 @@ class DriftSyncApplier implements SyncApplier {
     SyncEntityType.savingsGoal => _db.savingsGoals,
     SyncEntityType.savingsContribution => _db.savingsContributions,
     SyncEntityType.savingsContributionAudit => _db.savingsContributionAudits,
+    SyncEntityType.financeEntryAudit => _db.financeEntryAudits,
   };
 }

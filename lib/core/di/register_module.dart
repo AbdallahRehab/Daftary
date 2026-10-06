@@ -11,6 +11,7 @@ import '../../features/currency/data/sync/exchange_rate_sync_mapper.dart';
 import '../../features/currency/data/sync/primary_currency_sync_mapper.dart';
 import '../../features/finance/data/sync/finance_category_sync_mapper.dart'
     show FinanceCategorySyncMapper, isPristineSeed;
+import '../../features/finance/data/sync/finance_entry_audit_sync_mapper.dart';
 import '../../features/finance/data/sync/finance_entry_sync_mapper.dart';
 import '../../features/people/data/sync/person_sync_mapper.dart';
 import '../../features/transactions/data/sync/money_transaction_sync_mapper.dart';
@@ -125,6 +126,7 @@ abstract class RegisterModule {
     SavingsGoalSyncMapper savingsGoal,
     SavingsContributionSyncMapper savingsContribution,
     SavingsContributionAuditSyncMapper savingsContributionAudit,
+    FinanceEntryAuditSyncMapper financeEntryAudit,
   ) => SyncMapperRegistry([
     person,
     moneyTransaction,
@@ -140,6 +142,7 @@ abstract class RegisterModule {
     savingsGoal,
     savingsContribution,
     savingsContributionAudit,
+    financeEntryAudit,
   ]);
 
   @lazySingleton

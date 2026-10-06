@@ -23,6 +23,7 @@ TableInfo<Table, Object?> _tableOf(AppDatabase db, SyncEntityType type) =>
       SyncEntityType.savingsGoal => db.savingsGoals,
       SyncEntityType.savingsContribution => db.savingsContributions,
       SyncEntityType.savingsContributionAudit => db.savingsContributionAudits,
+      SyncEntityType.financeEntryAudit => db.financeEntryAudits,
     };
 
 /// Whether [mapper] maps the rows of [table] (its row type is the table's
@@ -112,6 +113,10 @@ void main() {
       SyncEntityType.savingsContributionAudit: _mapsRowsOf(
         db.savingsContributionAudits,
         registry.mapperFor(SyncEntityType.savingsContributionAudit),
+      ),
+      SyncEntityType.financeEntryAudit: _mapsRowsOf(
+        db.financeEntryAudits,
+        registry.mapperFor(SyncEntityType.financeEntryAudit),
       ),
     };
     expect(checks.keys.toSet(), SyncEntityType.values.toSet());

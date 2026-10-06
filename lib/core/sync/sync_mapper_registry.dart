@@ -130,6 +130,34 @@ abstract final class SyncWire {
       '${local.month.toString().padLeft(2, '0')}-'
       '${local.day.toString().padLeft(2, '0')}';
 
+  static final _day = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$');
+
+  /// B1: the local midnight (epoch ms) of the calendar day in [dayField]
+  /// (`yyyy-MM-dd`), whatever this device's time zone is. The day is what the
+  /// user picked; rebuilding it from the UTC instant would shift it by the
+  /// difference between the two devices' offsets. Falls back to
+  /// [instantField] when the day is missing (rows written before it was
+  /// sent); a malformed day is a [FormatException].
+  static int parseLocalDay(
+    Map<String, Object?> json, {
+    String dayField = 'occurred_on',
+    String instantField = 'occurred_at',
+  }) {
+    final value = json[dayField];
+    if (value == null) return parseInstant(json[instantField], instantField);
+    final match = value is String ? _day.firstMatch(value) : null;
+    if (match == null) return _bad(dayField, value);
+    final year = int.parse(match.group(1)!);
+    final month = int.parse(match.group(2)!);
+    final day = int.parse(match.group(3)!);
+    final local = DateTime(year, month, day);
+    // `DateTime` rolls an impossible day (2026-02-30) over to the next month.
+    if (local.year != year || local.month != month || local.day != day) {
+      return _bad(dayField, value);
+    }
+    return local.millisecondsSinceEpoch;
+  }
+
   /// The latest non-null of [epochMs] — a record's last client change.
   static int latest(List<int?> epochMs) =>
       epochMs.whereType<int>().reduce((a, b) => a > b ? a : b);

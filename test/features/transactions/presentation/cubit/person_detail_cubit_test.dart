@@ -9,6 +9,7 @@ import 'package:daftary/features/transactions/domain/entities/money_transaction.
 import 'package:daftary/features/transactions/domain/entities/person_balance.dart';
 import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/preview_transaction_deletion.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_person_balance.dart';
 import 'package:daftary/features/transactions/domain/usecases/watch_person_history.dart';
 import 'package:daftary/features/transactions/presentation/cubit/person_detail_cubit.dart';
@@ -63,6 +64,10 @@ void main() {
         DeleteTransaction(transactionsRepository),
         watchPrimary(primary),
         transactionsRepository,
+        PreviewTransactionDeletion(
+          transactionsRepository,
+          getConversionContextWith(primary: primary),
+        ),
       );
 
   blocTest<PersonDetailCubit, PersonDetailState>(
@@ -432,4 +437,130 @@ void main() {
       expect(cubit.state.occasionNames, isEmpty);
     },
   );
+
+  group('E6 requestDelete', () {
+    final given = MoneyTransaction(
+      id: 'g1',
+      idempotencyKey: 'k',
+      personId: 'p1',
+      amount: const Money.egp(100000),
+      direction: TransactionDirection.given,
+      kind: TransactionKind.initialExchange,
+      date: DateTime(2026, 1, 1),
+      createdAt: now,
+    );
+
+    // Gave 1,000, then a 400 repayment came back: net +600.
+    Future<PersonDetailCubit> loaded() async {
+      when(
+        () => peopleRepository.getPersonById('p1'),
+      ).thenAnswer((_) async => Right(ahmed));
+      when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+        (_) async => const Right(
+          PersonBalance(
+            personId: 'p1',
+            net: Money.egp(60000),
+            currencyNets: [Money.egp(60000)],
+          ),
+        ),
+      );
+      when(
+        () => transactionsRepository.getPersonHistory('p1'),
+      ).thenAnswer((_) async => Right([given]));
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      await cubit.subscribe('p1');
+      return cubit;
+    }
+
+    void stubCount(Either<Failure, int> result) => when(
+      () => transactionsRepository.countLaterRepayments(
+        'p1',
+        any(),
+        excludingTransactionId: any(named: 'excludingTransactionId'),
+      ),
+    ).thenAnswer((_) async => result);
+
+    setUpAll(() => registerFallbackValue(DateTime(2026)));
+
+    test('deleting the 1,000 row with a later 400 repayment: 1 later '
+        'repayment and the result "you owe 400.00"', () async {
+      stubCount(const Right(1));
+      final cubit = await loaded();
+
+      await cubit.requestDelete(given);
+
+      final pending = cubit.state.pendingDelete;
+      expect(pending?.transaction, given);
+      expect(pending?.impact.laterRepaymentCount, 1);
+      expect(pending?.impact.resultingNet, const Money.egp(-40000));
+    });
+
+    test('confirmDelete deletes once and clears the pending state', () async {
+      stubCount(const Right(1));
+      when(
+        () => transactionsRepository.deleteTransaction('g1'),
+      ).thenAnswer((_) async => const Right(unit));
+      final cubit = await loaded();
+      await cubit.requestDelete(given);
+
+      await cubit.confirmDelete();
+
+      expect(cubit.state.pendingDelete, isNull);
+      verify(() => transactionsRepository.deleteTransaction('g1')).called(1);
+    });
+
+    test('cancelDelete deletes nothing', () async {
+      stubCount(const Right(1));
+      final cubit = await loaded();
+      await cubit.requestDelete(given);
+
+      cubit.cancelDelete();
+
+      expect(cubit.state.pendingDelete, isNull);
+      verifyNever(() => transactionsRepository.deleteTransaction(any()));
+    });
+
+    test(
+      'closing the cubit while the dialog is pending does not throw',
+      () async {
+        stubCount(const Right(1));
+        final cubit = await loaded();
+        await cubit.requestDelete(given);
+
+        await cubit.close();
+
+        cubit.cancelDelete();
+        await cubit.confirmDelete();
+      },
+    );
+
+    test('a double tap computes the impact once', () async {
+      stubCount(const Right(0));
+      final cubit = await loaded();
+
+      await Future.wait([
+        cubit.requestDelete(given),
+        cubit.requestDelete(given),
+      ]);
+
+      verify(
+        () => transactionsRepository.countLaterRepayments(
+          'p1',
+          any(),
+          excludingTransactionId: any(named: 'excludingTransactionId'),
+        ),
+      ).called(1);
+    });
+
+    test('a failed read is surfaced, not swallowed', () async {
+      stubCount(Left(CacheFailure('boom')));
+      final cubit = await loaded();
+
+      await cubit.requestDelete(given);
+
+      expect(cubit.state.pendingDelete, isNull);
+      expect(cubit.state.failure, isA<CacheFailure>());
+    });
+  });
 }

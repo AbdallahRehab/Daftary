@@ -136,9 +136,10 @@ select ok(
      from unnest(array['occasion','budget','budget_allocation']) t),
   'sync_pull carries occasion, budget and budget_allocation');
 
--- There is no DELETE policy: a plain delete removes nothing (sync_delete_all
--- is the only way rows ever leave).
-delete from public.occasions;
+-- There is no delete path besides sync_delete_all. Since 024 the privilege
+-- itself is revoked, so a plain delete is refused outright.
+select throws_ok($$delete from public.occasions$$, '42501', null,
+  'authenticated cannot DELETE occasions (024)');
 select is((select count(*) from public.occasions), 1::bigint, 'no delete path besides sync_delete_all');
 
 -- Another account sees nothing of it.

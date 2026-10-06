@@ -740,6 +740,30 @@ abstract class AppLocalizations {
   /// **'Create new person anyway'**
   String get duplicateCreateNew;
 
+  /// Title of the confirmation shown when the currency of an existing transaction or entry is changed while editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Change currency?'**
+  String get editCurrencyConfirmTitle;
+
+  /// Body of the edit-currency confirmation: the typed amount is kept as is in the new currency, not converted.
+  ///
+  /// In en, this message translates to:
+  /// **'The amount will be recorded as {amount} {to} with no conversion from {from}. Are you sure?'**
+  String editCurrencyConfirmMessage(String amount, String from, String to);
+
+  /// Title of the confirmation shown when a new transaction matches an existing one (same person, amount, currency, direction and date).
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate'**
+  String get transactionDuplicateTitle;
+
+  /// Body of the possible-duplicate transaction confirmation. Saving is never blocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You already recorded this same amount with this person on this date. Save it again?'**
+  String get transactionDuplicateMessage;
+
   /// No description provided for @transactionFormCreateTitle.
   ///
   /// In en, this message translates to:
@@ -2054,6 +2078,24 @@ abstract class AppLocalizations {
   /// **'Deleted'**
   String get syncConflictDeletedLabel;
 
+  /// Secondary line of a savings version in the sync conflict sheet: the amount converted into the goal's currency.
+  ///
+  /// In en, this message translates to:
+  /// **'In the goal: {amount}'**
+  String conflictGoalAmount(String amount);
+
+  /// Direction label of a savings entry in the sync conflict sheet: money added to a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution'**
+  String get conflictDirectionContribution;
+
+  /// Direction label of a savings entry in the sync conflict sheet: money taken out of a goal.
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawal'**
+  String get conflictDirectionWithdrawal;
+
   /// Error shown when resolving a sync conflict failed.
   ///
   /// In en, this message translates to:
@@ -2329,6 +2371,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Savings entry history'**
   String get syncKindSavingsContributionHistory;
+
+  /// Record type label.
+  ///
+  /// In en, this message translates to:
+  /// **'Income and expense history'**
+  String get syncKindFinanceEntryHistory;
 
   /// Why a change was refused.
   ///
@@ -6591,6 +6639,136 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to goal'**
   String get savingsWhatIfBackAction;
+
+  /// Hint under the locked direction when editing a repayment.
+  ///
+  /// In en, this message translates to:
+  /// **'A repayment\'s direction is set by the balance. To change it, delete the repayment and record it again.'**
+  String get repaymentDirectionLockedHint;
+
+  /// Screen-reader label for the locked direction of a repayment being edited.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction: {direction}, locked. {hint}'**
+  String repaymentDirectionLockedSemantics(String direction, String hint);
+
+  /// Outstanding amount shown on the repayment form.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining: {amount}'**
+  String repaymentOutstanding(String amount);
+
+  /// Title of the dialog shown before a repayment larger than the outstanding balance is saved.
+  ///
+  /// In en, this message translates to:
+  /// **'This is more than what\'s left'**
+  String get repaymentFlipConfirmTitle;
+
+  /// Confirmation shown when a repayment is larger than the outstanding balance. direction is 'owe' when the user will owe the person, otherwise the person will owe the user.
+  ///
+  /// In en, this message translates to:
+  /// **'{direction, select, owe{You will owe {name} {amount}} other{{name} will owe you {amount}}}'**
+  String repaymentFlipConfirmMessage(
+    String direction,
+    String name,
+    String amount,
+  );
+
+  /// Shown instead of a number when a balance preview needs an exchange rate that is not set.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable until an exchange rate is set'**
+  String get repaymentPreviewUnavailable;
+
+  /// Warning in the delete dialog when repayments were recorded after the transaction; result is the balance that would remain.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 repayment was recorded after this one} other{{count} repayments were recorded after this one}}. If you delete this one, the balance becomes: {result}'**
+  String deleteLaterRepaymentsWarning(int count, String result);
+
+  /// Title of the read-only sheet listing a record's earlier versions.
+  ///
+  /// In en, this message translates to:
+  /// **'Change history'**
+  String get changeHistoryTitle;
+
+  /// Change-history row label: the record was first saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get changeHistoryCreated;
+
+  /// Change-history row label: the record was edited.
+  ///
+  /// In en, this message translates to:
+  /// **'Edited'**
+  String get changeHistoryEdited;
+
+  /// Change-history row label: the record was deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get changeHistoryDeleted;
+
+  /// Change-history row label: the record was restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get changeHistoryRestored;
+
+  /// Shown in the change-history sheet when there are no entries.
+  ///
+  /// In en, this message translates to:
+  /// **'No changes have been recorded for this entry yet.'**
+  String get changeHistoryEmpty;
+
+  /// Change-history field name for the note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get changeHistoryNoteField;
+
+  /// Change-history field name for the direction (gave or received).
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get changeHistoryDirectionField;
+
+  /// Change-history field name for an entry's kind (income or expense).
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get changeHistoryTypeField;
+
+  /// Shown in the change-history sheet when loading fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load the change history. Please try again.'**
+  String get changeHistoryLoadError;
+
+  /// Screen-reader label for one change-history row: the change kind, its date and the earlier values.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}, {date}. {details}'**
+  String changeHistoryRowSemantics(String label, String date, String details);
+
+  /// Change-history line for a value that changed: field is its name, from the earlier value, to the new one.
+  ///
+  /// In en, this message translates to:
+  /// **'{field}: {from} → {to}'**
+  String changeHistoryChange(String field, String from, String to);
+
+  /// Change-history field name for a value as it was when the record was deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{field} when deleted'**
+  String changeHistoryValueAtDeletion(String field);
+
+  /// Shown in a change-history line where a value was empty (for example a cleared or newly added note).
+  ///
+  /// In en, this message translates to:
+  /// **'(none)'**
+  String get changeHistoryNoValue;
 }
 
 class _AppLocalizationsDelegate

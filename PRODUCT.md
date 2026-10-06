@@ -26,7 +26,7 @@ People-first, broader finance. Unlike a generic expense tracker or ledger app, D
 
 ## Operating Context
 
-- Local-first, offline-only, single-device: all data lives on-device in a Drift/SQLite database. There is no backend, sync, account, or authentication, and the roadmap confirms none is planned; cloud backup/sync and family/shared finances are dropped from the roadmap.
+- Local-first: all data lives on-device in a Drift/SQLite database and every money feature works fully offline. **Optional cloud sync (021)** exists: the user can link an email account (one-time code) and sync their own data to Supabase through an outbox with revision-based push/pull, manual conflict resolution for money records, and append-only change history. Sync is off unless the user turns it on. Family/shared finances remain out of scope (one user, one account).
 - Bilingual: Arabic and English are both first-class, with full RTL support required for Arabic (not a translated LTR layout).
 - Navigation: bottom navigation shell with People, Overview, and Settings as top-level destinations; other modules are entered from these.
 - Implemented modules:
@@ -37,17 +37,18 @@ People-first, broader finance. Unlike a generic expense tracker or ledger app, D
   - **Insights & reminders** (017): local notifications computed deterministically from the user's real stored data, with per-category controls, quiet hours, cooldowns, and deep links. Never fabricated or generic.
   - **Multi-currency** (018): every amount carries an ISO 4217 currency (EGP by default and always present). The user sets a primary currency and enters exchange rates by hand; there are no live rates. Aggregates convert to the primary currency, individual records keep their original currency, and a missing rate blocks a total with a clear message instead of guessing.
   - **Settings**: language, theme (light/dark), currency, notifications. **Onboarding**: a first-launch intro.
-- Spec'd but not yet built (design decisions should extend toward these without rework): Occasions / social money (008), on-device OCR paper entry (009), household budgets (010), savings goals (011), Home Dashboard evolving Overview with quick actions and insights (012), reports & data/privacy controls (013), AI financial assistant (014), app lock/security (015). See `specs/` and `specs/ROADMAP-PLAN.md`.
+  - **Occasions / social money** (008), **on-device OCR paper entry** (009, review-and-confirm before saving), **household budgets** (010), **savings goals** (011), **Home Dashboard** (012), **reports, data export and delete-all-data** (013), **AI financial assistant** (014, bring-your-own key, figures come only from deterministic tools), **app lock** (015), **splash** (019), **liquid-glass UI** (020) and **optional cloud sync** (021) are all built.
+- Audit and remediation of financial correctness: `specs/022-financial-trust-audit/` (audit.md, backlog, owner decisions). See `specs/` and `specs/ROADMAP-PLAN.md`.
 - In-progress side work may exist in `.kilo/worktrees/` (another tool's worktrees) — never edit those paths.
 
 ## Capabilities and Constraints
 
 - Design and UI work does not change business logic, repository behavior, data models, DB schema, or navigation structure. If a UX improvement genuinely requires one of those, flag it before making the change.
-- No accounts or multi-user concept exist; never design screens that assume one.
+- One user per account: the optional sync account exists only to back up and sync the user's own data. There is no multi-user or shared-ledger concept; never design screens that assume one.
 - Design system decisions (tokens, components, patterns) are written generically enough to serve every module — current and planned — without a per-module visual language.
 - Honesty over filler: insights, reminders, dashboard sections, and any AI output show only real, deterministically computed observations or an honest empty state — never fake, static, or placeholder "insights."
-- AI assistant (planned): bring-your-own API key stored in on-device secure storage, no Daftary backend. AI output is non-authoritative and never presented as fact about the user's money.
-- OCR (planned): on-device recognition only (ML Kit / Vision), never cloud.
+- AI assistant: bring-your-own API key stored in on-device secure storage, no Daftary backend. AI output is non-authoritative and never presented as fact about the user's money.
+- OCR: on-device recognition only (ML Kit / Vision), never cloud.
 - Financial education never gives personalized investment recommendations and never reads the user's data to personalize advice.
 - Money is stored as integer minor units with an explicit currency; Arabic-Indic digits are accepted on input.
 - Platform: unified Material 3 across Android and iOS (see `## Platform`); do not fork the visual language per OS.

@@ -1,5 +1,6 @@
 import 'package:daftary/core/database/app_database.dart'
     hide isNull, isNotNull, ExchangeRate, MoneyTransaction;
+import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
@@ -701,7 +702,11 @@ void main() {
 
       expect(
         balance,
-        const PersonBalance(personId: 'p1', net: Money.egp(150000)),
+        const PersonBalance(
+          personId: 'p1',
+          net: Money.egp(150000),
+          currencyNets: [Money.egp(150000)],
+        ),
       );
     });
 
@@ -1011,6 +1016,356 @@ void main() {
       final result = await repository.getOccasionNamesForPerson(personId);
 
       expect(result.getOrElse((_) => throw StateError('x')), isEmpty);
+    });
+  });
+  group('A1 repayment direction is fixed', () {
+    Future<MoneyTransaction> seedRepayment() async {
+      await repository.addTransaction(
+        idempotencyKey: 'seed',
+        personId: personId,
+        amount: const Money.egp(100000),
+        direction: TransactionDirection.given,
+        date: DateTime(2026, 1, 1),
+      );
+      final result = await repository.recordRepayment(
+        idempotencyKey: 'rep',
+        personId: personId,
+        amount: const Money.egp(40000),
+        date: DateTime(2026, 1, 2),
+      );
+      return result.getOrElse((_) => throw StateError('expected Right'));
+    }
+
+    test('changing the direction of a repayment is a ValidationFailure and '
+        'writes nothing', () async {
+      final repayment = await seedRepayment();
+      final auditsBefore = await db.select(db.transactionAuditEntries).get();
+      final outboxBefore = await db.select(db.syncOutboxEntries).get();
+
+      final result = await repository.editTransaction(
+        transactionId: repayment.id,
+        amount: repayment.amount,
+        direction: TransactionDirection.given,
+        date: repayment.date,
+      );
+
+      expect(result.getLeft().toNullable(), isA<ValidationFailure>());
+      final row = await (db.select(
+        db.moneyTransactions,
+      )..where((t) => t.id.equals(repayment.id))).getSingle();
+      expect(row.direction, 'received');
+      expect(row.editedAt, isNull);
+      expect(
+        await db.select(db.transactionAuditEntries).get(),
+        hasLength(auditsBefore.length),
+      );
+      expect(
+        await db.select(db.syncOutboxEntries).get(),
+        hasLength(outboxBefore.length),
+      );
+    });
+
+    test('changing amount, date and note of a repayment still works', () async {
+      final repayment = await seedRepayment();
+
+      final result = await repository.editTransaction(
+        transactionId: repayment.id,
+        amount: const Money.egp(25000),
+        direction: repayment.direction,
+        date: DateTime(2026, 1, 3),
+        note: 'fixed',
+      );
+
+      final updated = result.getOrElse((_) => throw StateError('x'));
+      expect(updated.amount, const Money.egp(25000));
+      expect(updated.note, 'fixed');
+      expect(updated.direction, TransactionDirection.received);
+    });
+
+    test('changing the direction of an initial exchange still works', () async {
+      final added = await repository.addTransaction(
+        idempotencyKey: 'k',
+        personId: personId,
+        amount: const Money.egp(1000),
+        direction: TransactionDirection.given,
+        date: DateTime(2026, 1, 1),
+      );
+      final tx = added.getOrElse((_) => throw StateError('x'));
+
+      final result = await repository.editTransaction(
+        transactionId: tx.id,
+        amount: tx.amount,
+        direction: TransactionDirection.received,
+        date: tx.date,
+      );
+
+      expect(result.isRight(), isTrue);
+    });
+
+    test(
+      'changing the direction of an occasion contribution still works',
+      () async {
+        await db
+            .into(db.occasions)
+            .insert(
+              OccasionsCompanion.insert(
+                id: 'o1',
+                idempotencyKey: 'occ-o1',
+                name: 'Wedding',
+                date: DateTime(2026, 1, 1).millisecondsSinceEpoch,
+                type: 'wedding',
+                createdAt: DateTime(2026).millisecondsSinceEpoch,
+                updatedAt: DateTime(2026).millisecondsSinceEpoch,
+              ),
+            );
+        final added = await repository.addOccasionContribution(
+          idempotencyKey: 'c1',
+          personId: personId,
+          occasionId: 'o1',
+          amount: const Money.egp(1000),
+          direction: TransactionDirection.received,
+          countsTowardBalance: true,
+          date: DateTime(2026, 1, 2),
+        );
+        final tx = added.getOrElse((_) => throw StateError('x'));
+
+        final result = await repository.editTransaction(
+          transactionId: tx.id,
+          amount: tx.amount,
+          direction: TransactionDirection.given,
+          date: tx.date,
+        );
+
+        expect(result.isRight(), isTrue);
+      },
+    );
+  });
+
+  group('B2 repayment against a blocked balance', () {
+    test('opposite-direction blocked balance and a repayment currency with no '
+        'net is RatesMissingFailure and inserts no row', () async {
+      // Single-currency (EGP-only) repository: USD amounts are blocked.
+      await repository.addTransaction(
+        idempotencyKey: 'a',
+        personId: personId,
+        amount: Money.fromMinorUnits(100, Currency.usd),
+        direction: TransactionDirection.given,
+        date: DateTime(2026, 1, 1),
+      );
+      await repository.addTransaction(
+        idempotencyKey: 'b',
+        personId: personId,
+        amount: const Money.egp(100000),
+        direction: TransactionDirection.received,
+        date: DateTime(2026, 1, 1),
+      );
+      final before = await db.select(db.moneyTransactions).get();
+
+      final result = await repository.recordRepayment(
+        idempotencyKey: 'rep',
+        personId: personId,
+        amount: Money.fromMinorUnits(5000, Currency.gbp),
+        date: DateTime(2026, 1, 2),
+      );
+
+      expect(result.getLeft().toNullable(), isA<RatesMissingFailure>());
+      expect(
+        await db.select(db.moneyTransactions).get(),
+        hasLength(before.length),
+      );
+    });
+  });
+
+  group('E6 countLaterRepayments', () {
+    Future<MoneyTransaction> add(
+      String key,
+      TransactionDirection direction,
+      DateTime date, {
+      String? person,
+      int minor = 100000,
+    }) async => (await repository.addTransaction(
+      idempotencyKey: key,
+      personId: person ?? personId,
+      amount: Money.egp(minor),
+      direction: direction,
+      date: date,
+    )).getOrElse((_) => throw StateError('x'));
+
+    Future<MoneyTransaction> repay(
+      String key,
+      DateTime date, {
+      String? person,
+    }) async => (await repository.recordRepayment(
+      idempotencyKey: key,
+      personId: person ?? personId,
+      amount: const Money.egp(40000),
+      date: date,
+    )).getOrElse((_) => throw StateError('x'));
+
+    Future<int> count(
+      DateTime from, {
+      String? person,
+      String? excluding,
+    }) async => (await repository.countLaterRepayments(
+      person ?? personId,
+      from,
+      excludingTransactionId: excluding,
+    )).getOrElse((_) => throw StateError('x'));
+
+    setUp(() async {
+      await testPeopleDao(
+        db,
+      ).insertPerson(id: 'p2', name: 'Mona', createdAt: DateTime(2026));
+    });
+
+    test(
+      'counts only active repayments of this person on or after the '
+      'date, excluding the row itself, other kinds and deleted rows',
+      () async {
+        final given = await add(
+          'g',
+          TransactionDirection.given,
+          DateTime(2026, 1, 1),
+        );
+        await repay('r1', DateTime(2026, 1, 5));
+        final r2 = await repay('r2', DateTime(2026, 1, 6));
+        await repository.deleteTransaction(r2.id);
+        await repay('r0', DateTime(2025, 12, 31));
+        await add('later', TransactionDirection.given, DateTime(2026, 2, 1));
+
+        expect(await count(given.date, excluding: given.id), 1);
+      },
+    );
+
+    test('another person\'s repayment never counts', () async {
+      final given = await add(
+        'g',
+        TransactionDirection.given,
+        DateTime(2026, 1, 1),
+      );
+      await add(
+        'og',
+        TransactionDirection.given,
+        DateTime(2026, 1, 1),
+        person: 'p2',
+      );
+      await repay('or', DateTime(2026, 1, 5), person: 'p2');
+
+      expect(await count(given.date, excluding: given.id), 0);
+      expect(await count(given.date, person: 'p2'), 1);
+    });
+
+    test(
+      'a repayment dated the same day as the row counts (boundary)',
+      () async {
+        final given = await add(
+          'g',
+          TransactionDirection.given,
+          DateTime(2026, 1, 1),
+        );
+        await repay('same', DateTime(2026, 1, 1));
+
+        expect(await count(given.date, excluding: given.id), 1);
+        expect(await count(DateTime(2026, 1, 2), excluding: given.id), 0);
+      },
+    );
+
+    test('deleting a repayment: itself is excluded, another repayment on '
+        'the same date is counted', () async {
+      await add('g', TransactionDirection.given, DateTime(2026, 1, 1));
+      final first = await repay('r1', DateTime(2026, 1, 5));
+      await repay('r2', DateTime(2026, 1, 5));
+
+      expect(await count(first.date, excluding: first.id), 1);
+      // Without the exclusion the row counts itself too.
+      expect(await count(first.date), 2);
+    });
+  });
+
+  group('C4 findPossibleDuplicate', () {
+    final day = DateTime(2026, 3, 10);
+
+    Future<MoneyTransaction> add(
+      String key, {
+      Money amount = const Money.egp(50000),
+      TransactionDirection direction = TransactionDirection.given,
+      DateTime? date,
+      String? person,
+    }) async => (await repository.addTransaction(
+      idempotencyKey: key,
+      personId: person ?? personId,
+      amount: amount,
+      direction: direction,
+      date: date ?? day,
+    )).getOrElse((_) => throw StateError('x'));
+
+    Future<MoneyTransaction?> find({
+      Money amount = const Money.egp(50000),
+      TransactionDirection direction = TransactionDirection.given,
+      DateTime? date,
+      String? person,
+    }) async => (await repository.findPossibleDuplicate(
+      person ?? personId,
+      amount,
+      direction,
+      date ?? day,
+    )).getOrElse((_) => throw StateError('x'));
+
+    test('same person, amount, currency, direction and date matches an '
+        'active row', () async {
+      final existing = await add('a');
+
+      final match = await find(date: DateTime(2026, 3, 10, 18, 30));
+
+      expect(match?.id, existing.id);
+    });
+
+    test('a received row matches a received lookup', () async {
+      final existing = await add('r', direction: TransactionDirection.received);
+
+      final match = await find(direction: TransactionDirection.received);
+
+      expect(match?.id, existing.id);
+    });
+
+    test('a repayment with the same day, amount and direction is not a '
+        'match (only regular exchanges are compared)', () async {
+      await add('g', amount: const Money.egp(90000));
+      final repayment = (await repository.recordRepayment(
+        idempotencyKey: 'rp',
+        personId: personId,
+        amount: const Money.egp(40000),
+        date: day,
+      )).getOrElse((_) => throw StateError('x'));
+
+      expect(
+        await find(amount: repayment.amount, direction: repayment.direction),
+        isNull,
+      );
+    });
+
+    test('a soft-deleted row is ignored', () async {
+      final existing = await add('a');
+      await repository.deleteTransaction(existing.id);
+
+      expect(await find(), isNull);
+    });
+
+    test('a different amount, currency, direction, date or person is '
+        'not a match', () async {
+      await testPeopleDao(
+        db,
+      ).insertPerson(id: 'p2', name: 'Mona', createdAt: DateTime(2026));
+      await add('a');
+
+      expect(await find(amount: const Money.egp(50001)), isNull);
+      expect(
+        await find(amount: const Money.fromMinorUnits(50000, Currency.usd)),
+        isNull,
+      );
+      expect(await find(direction: TransactionDirection.received), isNull);
+      expect(await find(date: DateTime(2026, 3, 11)), isNull);
+      expect(await find(person: 'p2'), isNull);
     });
   });
 }

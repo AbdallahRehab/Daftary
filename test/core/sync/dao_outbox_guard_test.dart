@@ -235,48 +235,75 @@ void main() {
     group('entries', () {
       setUp(() => finance.insertCategory(category('c1')));
 
+      EntryAuditDraft audit(String change) =>
+          EntryAuditDraft(id: 'a-$change', changeType: change, changedAt: 1);
+
+      /// 022 D2: every entry write queues the entry upsert and, from the
+      /// same transaction, one `finance_entry_audit` upsert.
+      Future<void> expectEntryAndAuditOps(Future<void> Function() write) async {
+        await clearOutbox();
+        await write();
+        final queued = await ops();
+        expect(
+          queued.map((o) => '${o.entityType}:${o.opType}').toList()..sort(),
+          [
+            '${SyncEntityType.financeEntryAudit.wire}:upsert',
+            '${SyncEntityType.financeEntry.wire}:upsert',
+          ]..sort(),
+        );
+        expect(queued.every((o) => o.status == OutboxStatus.pending), isTrue);
+      }
+
       test('insertEntryIdempotent queues an upsert for a new key, and '
           'nothing for a repeated key', () async {
-        await expectOneOp(
-          () => finance.insertEntryIdempotent(entry('e1', 'k1')),
-          SyncEntityType.financeEntry,
-          OutboxOpType.upsert,
+        await expectEntryAndAuditOps(
+          () => finance.insertEntryIdempotent(
+            entry('e1', 'k1'),
+            audit: audit('created'),
+          ),
         );
 
         await clearOutbox();
-        final again = await finance.insertEntryIdempotent(entry('e2', 'k1'));
+        final again = await finance.insertEntryIdempotent(
+          entry('e2', 'k1'),
+          audit: audit('created2'),
+        );
         expect(again.id, 'e1');
         expect(await ops(), isEmpty);
       });
 
       test('updateEntry queues a finance_entry upsert', () async {
-        await finance.insertEntryIdempotent(entry('e1', 'k1'));
-        await expectOneOp(
+        await finance.insertEntryIdempotent(
+          entry('e1', 'k1'),
+          audit: audit('created'),
+        );
+        await expectEntryAndAuditOps(
           () => finance.updateEntry(
             'e1',
             const FinanceEntriesCompanion(amountMinorUnits: Value(9900)),
+            audit: (_) => audit('edited'),
           ),
-          SyncEntityType.financeEntry,
-          OutboxOpType.upsert,
         );
       });
 
       test('softDeleteEntry queues a finance_entry upsert', () async {
-        await finance.insertEntryIdempotent(entry('e1', 'k1'));
-        await expectOneOp(
-          () => finance.softDeleteEntry('e1', at),
-          SyncEntityType.financeEntry,
-          OutboxOpType.upsert,
+        await finance.insertEntryIdempotent(
+          entry('e1', 'k1'),
+          audit: audit('created'),
+        );
+        await expectEntryAndAuditOps(
+          () => finance.softDeleteEntry('e1', at, audit: audit('deleted')),
         );
       });
 
       test('restoreEntry queues a finance_entry upsert', () async {
-        await finance.insertEntryIdempotent(entry('e1', 'k1'));
-        await finance.softDeleteEntry('e1', at);
-        await expectOneOp(
-          () => finance.restoreEntry('e1'),
-          SyncEntityType.financeEntry,
-          OutboxOpType.upsert,
+        await finance.insertEntryIdempotent(
+          entry('e1', 'k1'),
+          audit: audit('created'),
+        );
+        await finance.softDeleteEntry('e1', at, audit: audit('deleted'));
+        await expectEntryAndAuditOps(
+          () => finance.restoreEntry('e1', audit: audit('restored')),
         );
       });
     });

@@ -38,6 +38,7 @@ extension DataWipe on AppDatabase {
       // finance / budgets
       await delete(budgetCategoryAllocations).go();
       await delete(budgets).go();
+      await delete(financeEntryAudits).go();
       await delete(financeEntries).go();
       await delete(financeCategories).go();
       // savings goals (011): audits → contributions → goals.

@@ -1,5 +1,6 @@
-/// Normalizes Arabic-Indic numerals (٠-٩) and the Arabic decimal separator
-/// (٫) to their Western equivalents (0-9, `.`) so both numeral systems are
+/// Normalizes Arabic-Indic numerals (٠-٩), the Arabic decimal separator (٫)
+/// and the Arabic thousands separator (٬, U+066C) to their Western
+/// equivalents (0-9, `.`, `,`) so both numeral systems are
 /// accepted as equivalent input everywhere an amount is parsed (FR-023).
 class NumeralParser {
   const NumeralParser._();
@@ -7,8 +8,8 @@ class NumeralParser {
   static const String _arabicIndicDigits = '٠١٢٣٤٥٦٧٨٩';
   static const String _westernDigits = '0123456789';
 
-  /// Converts any Arabic-Indic digits (and the Arabic decimal separator)
-  /// found in [input] to their Western equivalents. Western-digit input is
+  /// Converts any Arabic-Indic digits (and the Arabic decimal and thousands
+  /// separators) found in [input] to their Western equivalents. Western-digit input is
   /// returned unchanged.
   static String toWesternDigits(String input) {
     final buffer = StringBuffer();
@@ -19,6 +20,8 @@ class NumeralParser {
         buffer.write(_westernDigits[arabicIndex]);
       } else if (char == '٫') {
         buffer.write('.');
+      } else if (char == '٬') {
+        buffer.write(',');
       } else {
         buffer.write(char);
       }

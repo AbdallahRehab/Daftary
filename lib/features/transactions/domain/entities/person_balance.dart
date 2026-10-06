@@ -21,9 +21,12 @@ enum RelationshipStatus { theyOweYou, youOweThem, settled }
 /// converted at 1:1 nor partially summed (FR-009).
 class PersonBalance extends Equatable {
   /// A fully-known balance, [net] in the primary currency.
-  const PersonBalance({required this.personId, required Money this.net})
-    : nativeNets = const [],
-      missingRatesFor = const [];
+  const PersonBalance({
+    required this.personId,
+    required Money this.net,
+    this.currencyNets = const [],
+  }) : nativeNets = const [],
+       missingRatesFor = const [];
 
   /// A balance that cannot be totalled because [missingRatesFor] have no
   /// exchange rate into the primary currency.
@@ -31,7 +34,8 @@ class PersonBalance extends Equatable {
     required this.personId,
     required this.nativeNets,
     required this.missingRatesFor,
-  }) : net = null;
+  }) : net = null,
+       currencyNets = nativeNets;
 
   final String personId;
 
@@ -45,6 +49,14 @@ class PersonBalance extends Equatable {
   /// Only populated when [isBlocked]: the distinct currencies lacking a
   /// rate into the primary currency.
   final List<Currency> missingRatesFor;
+
+  /// The non-zero per-currency nets behind this balance, each in its own
+  /// currency, for every balance (known or blocked). Lets a projection
+  /// (a repayment preview, a delete warning) adjust one currency and
+  /// re-total with `PersonBalanceCalculator` — so it rounds exactly as the
+  /// saved balance will. Empty when unknown (hand-built balances): callers
+  /// then fall back to [net].
+  final List<Money> currencyNets;
 
   bool get isBlocked => net == null;
 
@@ -75,5 +87,11 @@ class PersonBalance extends Equatable {
   }
 
   @override
-  List<Object?> get props => [personId, net, nativeNets, missingRatesFor];
+  List<Object?> get props => [
+    personId,
+    net,
+    nativeNets,
+    missingRatesFor,
+    currencyNets,
+  ];
 }

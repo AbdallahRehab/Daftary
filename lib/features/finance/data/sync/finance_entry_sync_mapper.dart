@@ -45,7 +45,7 @@ class FinanceEntrySyncMapper extends SyncMapper<FinanceEntry> {
     type: SyncWire.oneOf(json, 'type', types),
     amountMinorUnits: SyncWire.parseMoney(json['amount_minor'], 'amount_minor'),
     currencyCode: Value(SyncWire.string(json, 'currency_code')),
-    date: SyncWire.parseInstant(json['occurred_at'], 'occurred_at'),
+    date: SyncWire.parseLocalDay(json),
     note: Value(SyncWire.stringOrNull(json, 'note')),
     createdAt: SyncWire.parseFirstInstant(json, const [
       'client_created_at',

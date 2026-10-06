@@ -137,13 +137,15 @@ select is(
                     '20000000-0000-4000-8000-000000000003')),
   0::bigint, 'over-length ops are not ledgered');
 
--- A short unknown type is still ledgered as before (bounded).
+-- A short unknown type is answered unknown_entity but, since 026, NOT
+-- ledgered: a type the server learns later (a mis-ordered rollout) must be
+-- re-evaluated on replay instead of replaying the old rejection.
 select pg_temp.push('unk', jsonb_build_array(jsonb_build_object(
   'op_id', '20000000-0000-4000-8000-000000000004', 'entity_type', 'no_such_type',
   'op_type', 'upsert', 'entity_id', 'e1', 'base_revision', null, 'payload', '{}'::jsonb)));
 select is(pg_temp.res('unk') ->> 'reason', 'unknown_entity', 'a short unknown type is still unknown_entity');
 select is((select count(*) from public.sync_operations where op_id = '20000000-0000-4000-8000-000000000004'),
-  1::bigint, 'a short unknown type is still ledgered');
+  0::bigint, 'a short unknown type is not ledgered (026)');
 
 select throws_ok(
   $$select public.sync_push('d0d0d0d0-0000-4000-8000-000000000001', repeat('9', 41), 'android', '[]'::jsonb)$$,

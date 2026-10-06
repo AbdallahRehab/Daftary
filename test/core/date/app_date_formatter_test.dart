@@ -15,6 +15,23 @@ void main() {
     await initializeDateFormatting('ar_u_nu_latn');
   });
 
+  group('AppDateFormatter.formatDateTime', () {
+    final stamp = DateTime(2026, 3, 15, 14, 5);
+
+    test('en has the date and the time of day', () {
+      final out = AppDateFormatter(locale: 'en').formatDateTime(stamp);
+      expect(out, contains('2026'));
+      expect(out, contains('2:05'));
+    });
+
+    test('ar uses Western digits throughout', () {
+      final out = AppDateFormatter(locale: 'ar').formatDateTime(stamp);
+      expect(RegExp(r'[٠-٩]').hasMatch(out), isFalse);
+      expect(out, contains('2026'));
+      expect(out, contains('2:05'));
+    });
+  });
+
   group('AppDateFormatter', () {
     test('formats under the en locale', () {
       final formatted = AppDateFormatter(locale: 'en').format(date);

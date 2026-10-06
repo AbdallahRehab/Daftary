@@ -1,0 +1,72 @@
+﻿## PEOPLE
+id,name,phone_number,relationship_tag,notes,avatar_path,is_archived,created_at,updated_at
+ahmed,ahmed,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+karim,karim,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+mona,mona,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+nadia,nadia,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+omar,omar,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+salma,salma,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+sara,sara,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+tom,tom,,,,,false,2026-01-01T00:00:00.000,2026-01-01T00:00:00.000
+laila,laila,,,,,true,2026-01-01T00:00:00.000,2026-10-05T19:59:54.661
+
+## TRANSACTIONS
+id,person_id,amount_minor_units,amount,currency_code,direction,kind,date,note,occasion_id,counts_toward_balance,source,ocr_scan_id,created_at,edited_at
+95beb8ac-11f6-4909-a600-01adeeaa5d4d,ahmed,50000,500.00,EGP,received,occasionContribution,2026-09-20T00:00:00.000,,6fb34ac7-1813-44aa-b039-1069cf560a98,true,manual,,2026-10-05T19:59:54.689,
+1bcb1d7f-c168-41e6-8a6c-5be20a8884da,ahmed,40000,400.00,EGP,given,occasionContribution,2026-09-20T00:00:00.000,,00d3ff7a-bd7a-48cb-974a-f45a2d9a645c,false,manual,,2026-10-05T19:59:54.696,
+f6ab223d-5efc-4cbd-9387-32cf9ce6eeef,ahmed,200000,2000.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.641,
+8526bba9-8201-4497-a445-e883ed5e8afb,ahmed,50000,500.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.643,
+4a83fd41-b716-4f15-9966-b8dcd6817013,karim,20000,200.00,EGP,given,occasionContribution,2026-09-20T00:00:00.000,,6fb34ac7-1813-44aa-b039-1069cf560a98,true,manual,,2026-10-05T19:59:54.693,
+2dfbc893-c879-4e55-9ef0-bba45cc78327,karim,75000,750.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.646,
+cc6f847d-c070-4a21-b465-a6207812c382,karim,75000,750.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.648,
+9f6e1fe2-cf90-4f8e-bfb1-4d78b4c155b4,mona,30000,300.00,EGP,received,occasionContribution,2026-09-20T00:00:00.000,,6fb34ac7-1813-44aa-b039-1069cf560a98,true,manual,,2026-10-05T19:59:54.691,
+ec86da64-2682-48ae-b105-43897b30fdad,mona,200000,2000.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.631,
+ca694f1d-6d09-47f8-9883-f782784bd58c,mona,50000,500.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.638,
+998020e7-668e-46e7-9688-562a27926f17,nadia,100000,1000.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.669,
+b3609bf0-a198-4b50-978e-e32238977fac,nadia,40000,400.00,EGP,received,repayment,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.676,
+4cea566f-a33c-4f48-974d-2873a831c4a2,omar,10000,100.00,USD,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.665,
+9210a8f7-b89e-4b11-9423-379c228ec9bc,omar,100000,1000.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.667,
+ec9e155b-b0c7-4212-8797-f0b328151a76,salma,40000,400.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.651,
+06f60288-7540-43a2-8995-45048d4b8a83,salma,40000,400.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.653,
+c24173fa-6d3c-4d00-b605-f5afe9fb4274,sara,10000,100.00,USD,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.656,
+5f8ac3ec-8e55-4de3-b2e1-162600b3055b,tom,5000,50.00,GBP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.683,
+3e62f3f3-48e6-42b9-bc1e-8ba9778c2f2d,tom,100000,1000.00,EGP,received,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.684,
+edfde043-2a84-476f-93a5-76cc17bea7f8,laila,150000,1500.00,EGP,given,initialExchange,2026-10-05T00:00:00.000,,,true,manual,,2026-10-05T19:59:54.659,
+
+## FINANCE_ENTRIES
+id,type,category_id,category_name,amount_minor_units,amount,currency_code,date,note,created_at,edited_at
+53f1bfb1-c0d3-4382-b374-e81a9bdbb5aa,expense,seed_groceries,Groceries,99999,999.99,EGP,2026-11-01T00:00:00.000,,2026-10-05T19:59:54.706,
+d57ae679-176d-41fa-a17d-3454af927e15,expense,seed_family,Family,25000,250.00,EGP,2026-10-31T00:00:00.000,,2026-10-05T19:59:54.703,
+a2382968-8838-4e0a-bf61-01beea819f4e,expense,seed_medical,Medical,8000,80.00,EGP,2026-10-06T00:00:00.000,,2026-10-05T19:59:54.705,
+be590f42-46d7-4a36-a724-99879a124ae3,expense,seed_transportation,Transportation,30000,300.00,EGP,2026-10-04T00:00:00.000,,2026-10-05T19:59:54.702,
+e2c65634-78e4-4de3-8a2a-8285c884e2ca,expense,seed_groceries,Groceries,120000,1200.00,EGP,2026-10-03T00:00:00.000,,2026-10-05T19:59:54.701,
+c08125b1-5d73-453d-ad43-9abaad5bdce5,expense,seed_rent,Rent,90000,900.00,EGP,2026-10-02T00:00:00.000,,2026-10-05T19:59:54.704,
+e5e71dac-0094-4470-a071-354411b55e62,income,seed_salary,Salary,1000000,10000.00,EGP,2026-10-01T00:00:00.000,,2026-10-05T19:59:54.698,
+
+## CATEGORIES
+id,name,type,icon,is_default,is_archived,created_at,updated_at
+seed_bonus,Bonus,income,bonus,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_business,Business,income,business,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_freelance,Freelance,income,freelance,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_gift,Gift,income,gift,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_other_income,Other Income,income,other_income,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_salary,Salary,income,salary,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_education,Education,expense,education,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_electricity,Electricity,expense,electricity,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_entertainment,Entertainment,expense,entertainment,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_family,Family,expense,family,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_fuel,Fuel,expense,fuel,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_groceries,Groceries,expense,groceries,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_internet,Internet,expense,internet,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_medical,Medical,expense,medical,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_other,Other,expense,other,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_phone,Phone,expense,phone,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_rent,Rent,expense,rent,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_restaurants,Restaurants,expense,restaurants,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_shopping,Shopping,expense,shopping,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_subscriptions,Subscriptions,expense,subscriptions,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_transportation,Transportation,expense,transportation,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+seed_water,Water,expense,water,true,false,2026-10-05T19:59:54.600,2026-10-05T19:59:54.600
+
+## SETTINGS
+key,value

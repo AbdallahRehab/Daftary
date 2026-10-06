@@ -366,6 +366,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get duplicateCreateNew => 'إنشاء شخص جديد على أي حال';
 
   @override
+  String get editCurrencyConfirmTitle => 'تغيير العملة؟';
+
+  @override
+  String editCurrencyConfirmMessage(String amount, String from, String to) {
+    return 'المبلغ هيتسجل $amount $to من غير تحويل من $from — متأكد؟';
+  }
+
+  @override
+  String get transactionDuplicateTitle => 'ممكن يكون مكرر';
+
+  @override
+  String get transactionDuplicateMessage =>
+      'إنت سجلت نفس المبلغ ده مع الشخص ده في نفس اليوم. تحب تسجله تاني؟';
+
+  @override
   String get transactionFormCreateTitle => 'تسجيل معاملة';
 
   @override
@@ -1119,6 +1134,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncConflictDeletedLabel => 'محذوف';
 
   @override
+  String conflictGoalAmount(String amount) {
+    return 'في الهدف: $amount';
+  }
+
+  @override
+  String get conflictDirectionContribution => 'إيداع في الهدف';
+
+  @override
+  String get conflictDirectionWithdrawal => 'سحب من الهدف';
+
+  @override
   String get syncConflictResolveFailed => 'تعذّر حل التعارض. حاول مرة أخرى.';
 
   @override
@@ -1279,6 +1305,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncKindSavingsContributionHistory => 'سجل مبلغ الادخار';
+
+  @override
+  String get syncKindFinanceEntryHistory => 'سجل الدخل والمصروفات';
 
   @override
   String get syncFailedReasonPersonHasTransactions =>
@@ -3729,4 +3758,100 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get savingsWhatIfBackAction => 'العودة إلى الهدف';
+
+  @override
+  String get repaymentDirectionLockedHint =>
+      'اتجاه السداد بيتحدد من الرصيد. لتغييره احذف السداد وسجّله تاني';
+
+  @override
+  String repaymentDirectionLockedSemantics(String direction, String hint) {
+    return 'الاتجاه: $direction، مقفول. $hint';
+  }
+
+  @override
+  String repaymentOutstanding(String amount) {
+    return 'المتبقي: $amount';
+  }
+
+  @override
+  String get repaymentFlipConfirmTitle => 'المبلغ أكتر من المتبقي';
+
+  @override
+  String repaymentFlipConfirmMessage(
+    String direction,
+    String name,
+    String amount,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(direction, {
+      'owe': 'هتبقى مديون لـ $name بـ $amount',
+      'other': '$name هيبقى مديون لك بـ $amount',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get repaymentPreviewUnavailable => 'مش متاح لحد ما تحدد سعر الصرف';
+
+  @override
+  String deleteLaterRepaymentsWarning(int count, String result) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'فيه $count سداد اتسجلوا بعد المعاملة دي',
+      many: 'فيه $count سداد اتسجلوا بعد المعاملة دي',
+      few: 'فيه $count سدادات اتسجلت بعد المعاملة دي',
+      two: 'فيه سدادين اتسجلوا بعد المعاملة دي',
+      one: 'فيه سداد واحد اتسجل بعد المعاملة دي',
+    );
+    return '$_temp0. لو حذفتها الرصيد هيبقى: $result';
+  }
+
+  @override
+  String get changeHistoryTitle => 'سجل التعديلات';
+
+  @override
+  String get changeHistoryCreated => 'تمت الإضافة';
+
+  @override
+  String get changeHistoryEdited => 'تم التعديل';
+
+  @override
+  String get changeHistoryDeleted => 'تم الحذف';
+
+  @override
+  String get changeHistoryRestored => 'تمت الاستعادة';
+
+  @override
+  String get changeHistoryEmpty => 'لسه مفيش تعديلات متسجّلة على العملية دي.';
+
+  @override
+  String get changeHistoryNoteField => 'الملاحظة';
+
+  @override
+  String get changeHistoryDirectionField => 'النوع';
+
+  @override
+  String get changeHistoryTypeField => 'النوع';
+
+  @override
+  String get changeHistoryLoadError =>
+      'مقدرناش نحمّل سجل التعديلات. جرّب تاني.';
+
+  @override
+  String changeHistoryRowSemantics(String label, String date, String details) {
+    return '$label، $date. $details';
+  }
+
+  @override
+  String changeHistoryChange(String field, String from, String to) {
+    return '$field: ⁨$from⁩ ← ⁨$to⁩';
+  }
+
+  @override
+  String changeHistoryValueAtDeletion(String field) {
+    return '$field وقت الحذف';
+  }
+
+  @override
+  String get changeHistoryNoValue => '(فاضي)';
 }

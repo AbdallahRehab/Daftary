@@ -177,6 +177,16 @@ void main() {
           ),
         );
     await db
+        .into(db.financeEntryAudits)
+        .insert(
+          FinanceEntryAuditsCompanion.insert(
+            id: 'fa1',
+            financeEntryId: 'f1',
+            changeType: 'created',
+            changedAt: t,
+          ),
+        );
+    await db
         .into(db.budgets)
         .insert(
           BudgetsCompanion.insert(

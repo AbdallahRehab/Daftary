@@ -5,7 +5,8 @@ import '../../../../core/money/money.dart';
 /// The financial record types that can be in a manual conflict (FR-035).
 enum ConflictEntityType {
   moneyTransaction('money_transaction'),
-  financeEntry('finance_entry');
+  financeEntry('finance_entry'),
+  savingsContribution('savings_contribution');
 
   const ConflictEntityType(this.wire);
 
@@ -21,8 +22,16 @@ enum ConflictEntityType {
 }
 
 /// The money flow of one version: a transaction is given or received, a
-/// finance entry is an expense or an income.
-enum ConflictDirection { given, received, expense, income }
+/// finance entry is an expense or an income, a savings entry is a
+/// contribution or a withdrawal.
+enum ConflictDirection {
+  given,
+  received,
+  expense,
+  income,
+  contribution,
+  withdrawal,
+}
 
 /// Which version the user keeps when resolving a conflict.
 enum ConflictChoice { keepMine, keepTheirs }
@@ -37,16 +46,28 @@ class ConflictVersion extends Equatable {
     required this.direction,
     this.note,
     this.isDeleted = false,
+    this.goalAmount,
   });
 
   final Money amount;
+
+  /// A savings entry only: the amount in the goal's currency, which can
+  /// differ between versions while the typed [amount] is equal.
+  final Money? goalAmount;
   final DateTime date;
   final ConflictDirection direction;
   final String? note;
   final bool isDeleted;
 
   @override
-  List<Object?> get props => [amount, date, direction, note, isDeleted];
+  List<Object?> get props => [
+    amount,
+    goalAmount,
+    date,
+    direction,
+    note,
+    isDeleted,
+  ];
 }
 
 /// 021: one open conflict on a financial record, with both versions
@@ -69,6 +90,17 @@ class SyncConflictItem extends Equatable {
   /// The version on the server ("theirs").
   final ConflictVersion serverSummary;
   final DateTime detectedAt;
+
+  /// Whether the cards must also show the goal-currency amount: the typed
+  /// amounts are equal (or in different currencies) yet the versions differ.
+  bool get showsGoalAmount {
+    final local = localSummary;
+    final server = serverSummary;
+    if (local.goalAmount == null || server.goalAmount == null) return false;
+    if (local.amount.currency != server.amount.currency) return true;
+    return local.amount == server.amount &&
+        local.goalAmount != server.goalAmount;
+  }
 
   @override
   List<Object?> get props => [

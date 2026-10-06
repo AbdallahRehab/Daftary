@@ -10,14 +10,25 @@ import '../money/numeral_parser.dart';
 /// even under Arabic (FR-011).
 class AppDateFormatter {
   AppDateFormatter({String locale = 'en'})
-    : _format = _formatFor(numeralLocaleFor(locale));
+    : _resolved = numeralLocaleFor(locale),
+      _format = _formatFor(numeralLocaleFor(locale));
 
   final DateFormat _format;
+  late final DateFormat _dateTimeFormat = _dateTimeFor(_resolved);
+  final String _resolved;
 
   // `DateFormat` construction does real locale-data lookup — not free, and
   // this is routinely constructed fresh per widget build (T107's lesson
   // for `EgpFormatter` applies here too), so cache per resolved locale.
   static final Map<String, DateFormat> _cache = {};
+
+  static final Map<String, DateFormat> _dateTimeCache = {};
+
+  static DateFormat _dateTimeFor(String resolvedLocale) =>
+      _dateTimeCache.putIfAbsent(
+        resolvedLocale,
+        () => DateFormat.yMd(resolvedLocale).add_jm(),
+      );
 
   static DateFormat _formatFor(String resolvedLocale) =>
       _cache.putIfAbsent(resolvedLocale, () => DateFormat.yMd(resolvedLocale));
@@ -36,4 +47,9 @@ class AppDateFormatter {
   /// requirement regardless of that resolution quirk.
   String format(DateTime date) =>
       NumeralParser.toWesternDigits(_format.format(date));
+
+  /// Like [format] plus the time of day (`y/M/d` and `h:mm a`), still with
+  /// Western digits (022 C3 change-history timestamps).
+  String formatDateTime(DateTime date) =>
+      NumeralParser.toWesternDigits(_dateTimeFormat.format(date));
 }

@@ -52,7 +52,12 @@ void main() {
     expect(item.serverSummary.amount, const Money.egp(9999));
     expect(item.serverSummary.note, 'from the other phone');
     expect(item.localSummary.direction, ConflictDirection.given);
-    expect(item.localSummary.date, DateTime.fromMillisecondsSinceEpoch(1000));
+    // B1: the first sync restored the local row's date as its calendar day.
+    final created = DateTime.fromMillisecondsSinceEpoch(1000);
+    expect(
+      item.localSummary.date,
+      DateTime(created.year, created.month, created.day),
+    );
     expect(item.localSummary.isDeleted, isFalse);
   });
 

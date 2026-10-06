@@ -100,7 +100,7 @@ void main() {
     addTearDown(db.close);
 
     final row = await db.select(db.moneyTransactions).getSingle();
-    expect(raw.select('PRAGMA user_version').single.values.single, 11);
+    expect(raw.select('PRAGMA user_version').single.values.single, 12);
     expect(schemaOf(raw), await freshSchema());
     // The existing row reads as what it always was.
     expect(row.currencyCode, 'USD');
@@ -128,7 +128,7 @@ void main() {
     addTearDown(db.close);
     await db.customSelect('SELECT 1').get();
 
-    expect(raw.select('PRAGMA user_version').single.values.single, 11);
+    expect(raw.select('PRAGMA user_version').single.values.single, 12);
     expect(schemaOf(raw), await freshSchema());
     // main's steps ran: the pre-merge amounts are labelled EGP (018) and the
     // budget, planned when EGP was the only currency, is in EGP too.

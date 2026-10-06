@@ -31,6 +31,7 @@ void main() {
         'SYNC_ABORTED',
         'SYNC_MIGRATION_ENQUEUED',
         'SYNC_CURSOR_ADVANCED',
+        'SYNC_UNKNOWN_ENTITY_SKIPPED',
       ],
     );
   });

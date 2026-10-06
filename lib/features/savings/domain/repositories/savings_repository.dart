@@ -3,8 +3,10 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
 import '../entities/savings_contribution.dart';
+import '../entities/savings_contribution_audit.dart';
 import '../entities/savings_goal.dart';
 import '../entities/savings_goal_detail.dart';
+import '../entities/savings_goal_with_contributions.dart';
 import '../entities/savings_overview.dart';
 
 /// Offline-first Domain/Data boundary for [SavingsGoal] and
@@ -118,6 +120,17 @@ abstract class SavingsRepository {
   /// its non-deleted history in chronological order (FR-008).
   Future<Either<Failure, SavingsGoalDetail>> getGoalDetail(String goalId);
 
+  /// 022 D1: every goal, archived ones included and soft-deleted ones left
+  /// out, each with its non-deleted entries, oldest goal first. A plain read
+  /// for the data export: no progress, no conversion.
+  Future<Either<Failure, List<SavingsGoalWithContributions>>>
+  getAllGoalsWithContributions();
+
+  /// 022 D1: every contribution audit row (edit or delete), oldest first,
+  /// including those of deleted entries. A plain read for the data export.
+  Future<Either<Failure, List<SavingsContributionAudit>>>
+  getAllContributionAudits();
+
   /// Every active goal — archived ones too with [includeArchived] — with
   /// progress in its own currency, plus a combined total converted into the
   /// primary currency at read time (FR-019). Goals needing a missing rate
@@ -130,6 +143,11 @@ abstract class SavingsRepository {
   /// Live [getGoalDetail]: re-emits whenever the goal, its entries, a rate
   /// or the primary currency changes, including changes applied by sync.
   Stream<Either<Failure, SavingsGoalDetail>> watchGoalDetail(String goalId);
+
+  /// 022 C3: the append-only edit/delete history of [contributionId],
+  /// oldest first by `changedAt`, live. Read-only.
+  Stream<Either<Failure, List<SavingsContributionAudit>>>
+  watchContributionAuditHistory(String contributionId);
 
   /// Live [getSavingsOverview], on the same triggers.
   Stream<Either<Failure, SavingsOverview>> watchSavingsOverview({

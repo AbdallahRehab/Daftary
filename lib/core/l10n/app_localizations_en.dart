@@ -374,6 +374,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get duplicateCreateNew => 'Create new person anyway';
 
   @override
+  String get editCurrencyConfirmTitle => 'Change currency?';
+
+  @override
+  String editCurrencyConfirmMessage(String amount, String from, String to) {
+    return 'The amount will be recorded as $amount $to with no conversion from $from. Are you sure?';
+  }
+
+  @override
+  String get transactionDuplicateTitle => 'Possible duplicate';
+
+  @override
+  String get transactionDuplicateMessage =>
+      'You already recorded this same amount with this person on this date. Save it again?';
+
+  @override
   String get transactionFormCreateTitle => 'Record transaction';
 
   @override
@@ -1128,6 +1143,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncConflictDeletedLabel => 'Deleted';
 
   @override
+  String conflictGoalAmount(String amount) {
+    return 'In the goal: $amount';
+  }
+
+  @override
+  String get conflictDirectionContribution => 'Contribution';
+
+  @override
+  String get conflictDirectionWithdrawal => 'Withdrawal';
+
+  @override
   String get syncConflictResolveFailed =>
       'Couldn\'t resolve the conflict. Try again.';
 
@@ -1287,6 +1313,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncKindSavingsContributionHistory => 'Savings entry history';
+
+  @override
+  String get syncKindFinanceEntryHistory => 'Income and expense history';
 
   @override
   String get syncFailedReasonPersonHasTransactions =>
@@ -3749,4 +3778,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savingsWhatIfBackAction => 'Back to goal';
+
+  @override
+  String get repaymentDirectionLockedHint =>
+      'A repayment\'s direction is set by the balance. To change it, delete the repayment and record it again.';
+
+  @override
+  String repaymentDirectionLockedSemantics(String direction, String hint) {
+    return 'Direction: $direction, locked. $hint';
+  }
+
+  @override
+  String repaymentOutstanding(String amount) {
+    return 'Remaining: $amount';
+  }
+
+  @override
+  String get repaymentFlipConfirmTitle => 'This is more than what\'s left';
+
+  @override
+  String repaymentFlipConfirmMessage(
+    String direction,
+    String name,
+    String amount,
+  ) {
+    String _temp0 = intl.Intl.selectLogic(direction, {
+      'owe': 'You will owe $name $amount',
+      'other': '$name will owe you $amount',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get repaymentPreviewUnavailable =>
+      'Unavailable until an exchange rate is set';
+
+  @override
+  String deleteLaterRepaymentsWarning(int count, String result) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count repayments were recorded after this one',
+      one: '1 repayment was recorded after this one',
+    );
+    return '$_temp0. If you delete this one, the balance becomes: $result';
+  }
+
+  @override
+  String get changeHistoryTitle => 'Change history';
+
+  @override
+  String get changeHistoryCreated => 'Created';
+
+  @override
+  String get changeHistoryEdited => 'Edited';
+
+  @override
+  String get changeHistoryDeleted => 'Deleted';
+
+  @override
+  String get changeHistoryRestored => 'Restored';
+
+  @override
+  String get changeHistoryEmpty =>
+      'No changes have been recorded for this entry yet.';
+
+  @override
+  String get changeHistoryNoteField => 'Note';
+
+  @override
+  String get changeHistoryDirectionField => 'Direction';
+
+  @override
+  String get changeHistoryTypeField => 'Type';
+
+  @override
+  String get changeHistoryLoadError =>
+      'Couldn\'t load the change history. Please try again.';
+
+  @override
+  String changeHistoryRowSemantics(String label, String date, String details) {
+    return '$label, $date. $details';
+  }
+
+  @override
+  String changeHistoryChange(String field, String from, String to) {
+    return '$field: $from → $to';
+  }
+
+  @override
+  String changeHistoryValueAtDeletion(String field) {
+    return '$field when deleted';
+  }
+
+  @override
+  String get changeHistoryNoValue => '(none)';
 }

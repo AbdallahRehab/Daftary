@@ -7,10 +7,13 @@ import 'package:daftary/core/sync/remote/supabase_initializer.dart';
 import 'package:daftary/core/sync/remote/sync_error_mapper.dart';
 import 'package:daftary/core/sync/remote/sync_remote_data_source.dart';
 import 'package:daftary/core/sync/sync_entity_type.dart';
+import 'package:daftary/core/sync/sync_logger.dart';
 import 'package:daftary/core/sync/sync_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../fakes/sync_test_doubles.dart';
 
 class _MockClient extends Mock implements SupabaseClient {}
 
@@ -68,7 +71,10 @@ void main() {
         }),
       );
     });
-    final source = SupabaseSyncRemoteDataSource(_Initializer(client));
+    final source = SupabaseSyncRemoteDataSource(
+      _Initializer(client),
+      RecordingSyncLogger(),
+    );
 
     final results = await source.push([op], device);
     expect(results, [const PushApplied('op-1', revision: 57)]);
@@ -239,18 +245,41 @@ void main() {
   );
 
   group('pull (T067)', () {
-    test('calls rpc(sync_pull) with the cursor and the page size', () async {
-      String? function;
-      Map<String, Object?>? params;
-      final source = SupabaseSyncRemoteDataSource.withRpc((f, p) async {
-        function = f;
-        params = p;
-        return {'changes': <Object?>[], 'max_revision': 7, 'has_more': false};
-      });
-      final page = await source.pull(since: 7, limit: 50);
-      expect(function, 'sync_pull');
-      expect(params, {'p_since': 7, 'p_limit': 50});
-      expect(page, const PullPage(changes: [], maxRevision: 7, hasMore: false));
+    test(
+      'calls rpc(sync_pull_v2) with the cursor and the page size (022 D2: '
+      'R2 receives finance_entry_audit rows; v1.0.1 and R1 keep sync_pull)',
+      () async {
+        String? function;
+        Map<String, Object?>? params;
+        final source = SupabaseSyncRemoteDataSource.withRpc((f, p) async {
+          function = f;
+          params = p;
+          return {'changes': <Object?>[], 'max_revision': 7, 'has_more': false};
+        });
+        final page = await source.pull(since: 7, limit: 50);
+        expect(function, 'sync_pull_v2');
+        expect(params, {'p_since': 7, 'p_limit': 50});
+        expect(
+          page,
+          const PullPage(changes: [], maxRevision: 7, hasMore: false),
+        );
+      },
+    );
+
+    test('a finance_entry_audit change is parsed, not skipped as unknown '
+        '(022 D2)', () {
+      final page = parsePullResponse({
+        'changes': [
+          {
+            'entity_type': 'finance_entry_audit',
+            'revision': 9,
+            'row': {'id': 'a1', 'revision': 9},
+          },
+        ],
+        'max_revision': 9,
+        'has_more': false,
+      }, since: 0);
+      expect(page.changes.single.entityType, SyncEntityType.financeEntryAudit);
     });
 
     test('parses changes in order, with money and revisions as numbers', () {
@@ -286,6 +315,81 @@ void main() {
       ]);
     });
 
+    test('S0: an unknown entity_type is skipped, the rest applies and the '
+        'cursor uses the raw page', () {
+      final skipped = <String>[];
+      final page = parsePullResponse(
+        {
+          'changes': [
+            {
+              'entity_type': 'person',
+              'revision': 43,
+              'row': {'id': 'p1'},
+            },
+            {
+              'entity_type': 'future_type',
+              'revision': 44,
+              'row': {'id': 'f1', 'secret': 'amount 123'},
+            },
+            {
+              'entity_type': 'money_transaction',
+              'revision': 45,
+              'row': {'id': 't1'},
+            },
+          ],
+          'has_more': false,
+        },
+        since: 42,
+        onUnknownType: skipped.add,
+      );
+      expect(page.changes.map((c) => c.revision), [43, 45]);
+      expect(page.maxRevision, 45);
+      expect(skipped, ['future_type']);
+    });
+
+    test('S0: a page of only unknown types still advances the cursor', () {
+      final page = parsePullResponse({
+        'changes': [
+          {
+            'entity_type': 'future_type',
+            'revision': 50,
+            'row': {'id': 'f'},
+          },
+          {
+            'entity_type': 'other_type',
+            'revision': 51,
+            'row': {'id': 'g'},
+          },
+        ],
+        'has_more': false,
+      }, since: 42);
+      expect(page.changes, isEmpty);
+      expect(page.maxRevision, 51);
+    });
+
+    test('S0: pull logs the skipped type name only', () async {
+      final logger = RecordingSyncLogger();
+      final source = SupabaseSyncRemoteDataSource.withRpc(
+        (_, _) async => {
+          'changes': [
+            {
+              'entity_type': 'future_type',
+              'revision': 9,
+              'row': {'id': 'f1', 'amount': 'private'},
+            },
+          ],
+          'max_revision': 9,
+          'has_more': false,
+        },
+        logger: logger,
+      );
+      final page = await source.pull(since: 5);
+      expect(page.changes, isEmpty);
+      expect(page.maxRevision, 9);
+      expect(logger.names, [SyncEvent.unknownEntitySkipped]);
+      expect(logger.events.single.$2, {SyncLogField.entityType: 'future_type'});
+    });
+
     test('an empty page keeps the cursor', () {
       final page = parsePullResponse({
         'changes': <Object?>[],
@@ -299,16 +403,6 @@ void main() {
         null,
         {'changes': 'x', 'has_more': false},
         {'changes': <Object?>[]},
-        {
-          'changes': [
-            {
-              'entity_type': 'spaceship',
-              'revision': 1,
-              'row': <String, Object?>{},
-            },
-          ],
-          'has_more': false,
-        },
         {
           'changes': [
             {'entity_type': 'person', 'revision': 1},

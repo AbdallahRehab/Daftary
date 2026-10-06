@@ -1,12 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/money/currency_formatter.dart';
 import '../../../../core/money/money.dart';
 import '../../../../core/money/numeral_parser.dart';
+import '../../../../core/error/failure.dart';
+import '../../../currency/domain/entities/conversion_context.dart';
 import '../../../currency/domain/usecases/get_primary_currency.dart';
+import '../../../currency/domain/usecases/watch_conversion_context.dart';
+import '../../../people/domain/entities/person.dart';
+import '../../../people/domain/usecases/watch_person.dart';
+import '../../domain/entities/person_balance.dart';
+import '../../domain/services/repayment_preview.dart';
 import '../../domain/usecases/record_repayment.dart';
+import '../../domain/usecases/watch_person_balance.dart';
 import 'repayment_form_state.dart';
 
 /// Pre-bound to a known [personId] (opened from that person's detail page),
@@ -17,6 +28,9 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
   RepaymentFormCubit(
     this._recordRepayment,
     this._getPrimaryCurrency,
+    this._watchPersonBalance,
+    this._watchConversionContext,
+    this._watchPerson,
     @factoryParam String personId,
   ) : super(
         RepaymentFormState(
@@ -27,6 +41,108 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
 
   final RecordRepayment _recordRepayment;
   final GetPrimaryCurrency _getPrimaryCurrency;
+  final WatchPersonBalance _watchPersonBalance;
+  final WatchConversionContext _watchConversionContext;
+  final WatchPerson _watchPerson;
+
+  final _subscriptions = <StreamSubscription<void>>[];
+  Either<Failure, PersonBalance>? _balance;
+  Either<Failure, ConversionContext>? _context;
+
+  /// 022 A2: follows the live balance and conversion rates so the form can
+  /// show what is outstanding and what a repayment would leave. Cancelled
+  /// in [close].
+  void subscribe() {
+    for (final s in _subscriptions) {
+      unawaited(s.cancel());
+    }
+    _subscriptions
+      ..clear()
+      ..addAll([
+        _watchPersonBalance(state.personId).listen(
+          (result) {
+            _balance = result;
+            _refresh();
+          },
+          onError: (Object error) {
+            _balance = Left(CacheFailure('Failed to read balance: $error'));
+            _refresh();
+          },
+        ),
+        _watchConversionContext().listen(
+          (result) {
+            _context = result;
+            _refresh();
+          },
+          onError: (Object error) {
+            _context = Left(CacheFailure('Failed to read rates: $error'));
+            _refresh();
+          },
+        ),
+        _watchPerson(state.personId).listen(
+          (result) => result.match(
+            (_) {},
+            (Person person) => emit(state.copyWith(personName: person.name)),
+          ),
+          // The name only labels the preview; losing it is not an error.
+          onError: (Object _) {},
+        ),
+      ]);
+  }
+
+  @override
+  Future<void> close() async {
+    for (final s in _subscriptions) {
+      await s.cancel();
+    }
+    _subscriptions.clear();
+    return super.close();
+  }
+
+  Money? _typedAmount([String? text, Currency? currency]) {
+    try {
+      final parsed = CurrencyFormatter(
+        currency: currency ?? state.currency,
+      ).parse(NumeralParser.toWesternDigits(text ?? state.amountInput));
+      return parsed.isPositive ? parsed : null;
+    } on FormatException {
+      return null;
+    }
+  }
+
+  /// Recomputes the loaded flag and the preview from the latest inputs.
+  void _refresh({String? amountInput, Currency? currency}) {
+    if (isClosed) return;
+    final balance = _balance;
+    final context = _context;
+    if (balance == null || context == null) return;
+    final known = balance.toNullable();
+    final contextValue = context.toNullable();
+    // A failed read must be visible, and saving stays off until both reads
+    // succeed, so the flip confirmation can never be skipped.
+    final failure =
+        balance.getLeft().toNullable() ?? context.getLeft().toNullable();
+    final amount = _typedAmount(amountInput, currency);
+    final preview = known == null || contextValue == null || amount == null
+        ? null
+        : RepaymentPreview.of(known, amount, contextValue);
+    emit(
+      state.copyWith(
+        balance: known,
+        balanceLoaded: failure == null,
+        preview: preview,
+        clearPreview: preview == null,
+        failure: failure,
+        clearFailure:
+            failure == null && state.status == RepaymentFormStatus.failure,
+        status: failure != null
+            ? RepaymentFormStatus.failure
+            : (state.status == RepaymentFormStatus.failure
+                  ? RepaymentFormStatus.editing
+                  : null),
+      ),
+    );
+  }
 
   /// Defaults the currency picker to the current primary currency (018
   /// FR-003). A no-op once the user has picked a currency.
@@ -34,10 +150,10 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
     if (state.currencyChosenByUser) return;
     final result = await _getPrimaryCurrency();
     if (isClosed || state.currencyChosenByUser) return;
-    result.match(
-      (_) {},
-      (setting) => emit(state.copyWith(currency: setting.currency)),
-    );
+    result.match((_) {}, (setting) {
+      emit(state.copyWith(currency: setting.currency));
+      _refresh();
+    });
   }
 
   void currencyChanged(Currency currency) {
@@ -48,10 +164,12 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
         clearAmountError: true,
       ),
     );
+    _refresh(currency: currency);
   }
 
   void amountChanged(String text) {
     emit(state.copyWith(amountInput: text, clearAmountError: true));
+    _refresh(amountInput: text);
   }
 
   void dateChanged(DateTime date) {
@@ -63,7 +181,7 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
   }
 
   Future<void> submit() async {
-    if (state.isSubmitting) return;
+    if (state.isSubmitting || !state.balanceLoaded) return;
 
     final Money amount;
     try {
@@ -80,6 +198,26 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
       return;
     }
 
+    if (state.preview?.flips ?? false) {
+      // Over-repaying reverses who owes whom: ask first (022 A2).
+      emit(state.copyWith(needsFlipConfirmation: true));
+      return;
+    }
+    await _save(amount);
+  }
+
+  /// The user accepted the balance reversal; saves with the same
+  /// idempotency key as the first attempt.
+  Future<void> confirmFlip() async {
+    final amount = _typedAmount();
+    emit(state.copyWith(needsFlipConfirmation: false));
+    if (amount == null || state.isSubmitting) return;
+    await _save(amount);
+  }
+
+  void cancelFlip() => emit(state.copyWith(needsFlipConfirmation: false));
+
+  Future<void> _save(Money amount) async {
     emit(
       state.copyWith(
         status: RepaymentFormStatus.submitting,
@@ -95,6 +233,7 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
       note: state.note,
     );
 
+    if (isClosed) return;
     result.match(
       (failure) => emit(
         state.copyWith(status: RepaymentFormStatus.failure, failure: failure),

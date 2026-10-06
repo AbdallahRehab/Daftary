@@ -1,7 +1,13 @@
-import 'package:daftary/core/database/app_database.dart';
+import 'dart:convert';
+
+import 'package:daftary/core/database/app_database.dart'
+    hide FinanceEntry, isNull;
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
+import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
+import 'package:daftary/features/finance/domain/entities/finance_entry_audit.dart'
+    show FinanceAuditChange;
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -215,6 +221,197 @@ void main() {
         db.financeEntries,
       )..where((t) => t.id.equals(added.id))).getSingle();
       expect(row.currencyCode, 'SAR');
+    });
+  });
+
+  group('change history (022 D2, T063)', () {
+    Future<List<FinanceEntryAudit>> auditsOf(String entryId) =>
+        (db.select(db.financeEntryAudits)
+              ..where((a) => a.financeEntryId.equals(entryId))
+              ..orderBy([(a) => OrderingTerm(expression: a.changedAt)]))
+            .get();
+
+    Future<FinanceEntry> add({
+      String key = 'audit-1',
+      String categoryId = expenseCategoryId,
+      FinanceEntryType type = FinanceEntryType.expense,
+      int minor = 30000,
+    }) async => (await repository.addEntry(
+      idempotencyKey: key,
+      categoryId: categoryId,
+      type: type,
+      amount: Money.egp(minor),
+      date: DateTime(2026, 1, 15),
+      note: 'first',
+    )).toNullable()!;
+
+    Future<void> tick() =>
+        Future<void>.delayed(const Duration(milliseconds: 3));
+
+    test('add appends one `created` row with no previous values', () async {
+      final entry = await add();
+
+      final audits = await auditsOf(entry.id);
+      expect(audits, hasLength(1));
+      expect(audits.single.changeType, 'created');
+      expect(audits.single.previousValuesJson, isNull);
+    });
+
+    test('a retried add (idempotency key) appends no second row', () async {
+      final entry = await add();
+      await add();
+
+      expect(await auditsOf(entry.id), hasLength(1));
+    });
+
+    test('edit 300 -> 450 appends one `edited` row holding 30000', () async {
+      final entry = await add();
+      await tick();
+
+      await repository.editEntry(
+        entryId: entry.id,
+        categoryId: expenseCategoryId,
+        amount: const Money.egp(45000),
+        date: DateTime(2026, 1, 15),
+        note: 'first',
+      );
+
+      final audits = await auditsOf(entry.id);
+      expect(audits.map((a) => a.changeType), ['created', 'edited']);
+      final previous =
+          jsonDecode(audits.last.previousValuesJson!) as Map<String, Object?>;
+      expect(previous['amountMinorUnits'], 30000);
+      expect(previous['currencyCode'], 'EGP');
+      expect(previous['type'], 'expense');
+      expect(previous['categoryId'], expenseCategoryId);
+      // A calendar day, so it reads the same in any time zone.
+      expect(previous['date'], '2026-01-15');
+      expect(previous['note'], 'first');
+    });
+
+    test('editing an expense into an income category keeps the previous '
+        'type and category (RF-08)', () async {
+      final entry = await add();
+
+      final edited = (await repository.editEntry(
+        entryId: entry.id,
+        categoryId: incomeCategoryId,
+        amount: const Money.egp(30000),
+        date: DateTime(2026, 1, 15),
+      )).toNullable()!;
+
+      expect(edited.type, FinanceEntryType.income);
+      final audits = await auditsOf(entry.id);
+      expect(audits.last.changeType, 'edited');
+      final previous =
+          jsonDecode(audits.last.previousValuesJson!) as Map<String, Object?>;
+      expect(previous['type'], 'expense');
+      expect(previous['categoryId'], expenseCategoryId);
+    });
+
+    test('delete appends one `deleted` row; restore one `restored` row; '
+        'a no-op restore appends none', () async {
+      final entry = await add();
+
+      await tick();
+      await repository.deleteEntry(entry.id);
+      await tick();
+      await repository.restoreEntry(entry.id);
+      await repository.restoreEntry(entry.id);
+
+      final audits = await auditsOf(entry.id);
+      expect(audits.map((a) => a.changeType), [
+        'created',
+        'deleted',
+        'restored',
+      ]);
+    });
+
+    test('a failed edit appends nothing and every audit row is queued as '
+        '`finance_entry_audit`', () async {
+      final entry = await add();
+      await repository.editEntry(
+        entryId: entry.id,
+        categoryId: 'missing-category',
+        amount: const Money.egp(1),
+        date: DateTime(2026, 1, 15),
+      );
+      expect(await auditsOf(entry.id), hasLength(1));
+
+      final outbox = await (db.select(
+        db.syncOutboxEntries,
+      )..where((o) => o.entityType.equals('finance_entry_audit'))).get();
+      expect(outbox, hasLength(1));
+      expect(outbox.single.entityId, (await auditsOf(entry.id)).single.id);
+    });
+
+    test('audit and entry change commit atomically: if the audit write '
+        'fails the entry is unchanged', () async {
+      final entry = await add();
+      await db.customStatement('DROP TABLE finance_entry_audits');
+
+      final result = await repository.editEntry(
+        entryId: entry.id,
+        categoryId: expenseCategoryId,
+        amount: const Money.egp(99900),
+        date: DateTime(2026, 1, 15),
+      );
+
+      expect(result.isLeft(), isTrue);
+      final row = await (db.select(
+        db.financeEntries,
+      )..where((t) => t.id.equals(entry.id))).getSingle();
+      expect(row.amountMinorUnits, 30000);
+    });
+
+    test('a double delete appends exactly one `deleted` row and queues one '
+        'audit op for it', () async {
+      final entry = await add();
+
+      final first = await repository.deleteEntry(entry.id);
+      final second = await repository.deleteEntry(entry.id);
+
+      expect(first.isRight(), isTrue);
+      expect(second.isLeft(), isTrue);
+      final audits = await auditsOf(entry.id);
+      expect(audits.where((a) => a.changeType == 'deleted'), hasLength(1));
+    });
+
+    test('an edit of a deleted entry appends nothing', () async {
+      final entry = await add();
+      await repository.deleteEntry(entry.id);
+
+      final result = await repository.editEntry(
+        entryId: entry.id,
+        categoryId: expenseCategoryId,
+        amount: const Money.egp(1),
+        date: DateTime(2026, 1, 15),
+      );
+
+      expect(result.isLeft(), isTrue);
+      expect((await auditsOf(entry.id)).map((a) => a.changeType).toSet(), {
+        'created',
+        'deleted',
+      });
+    });
+
+    test('watchEntryAuditHistory emits the rows oldest first (T069)', () async {
+      final entry = await add();
+      await tick();
+      await repository.editEntry(
+        entryId: entry.id,
+        categoryId: expenseCategoryId,
+        amount: const Money.egp(45000),
+        date: DateTime(2026, 1, 15),
+      );
+
+      final history = (await repository.watchEntryAuditHistory(entry.id).first)
+          .toNullable()!;
+      expect(history.map((a) => a.changeType), [
+        FinanceAuditChange.created,
+        FinanceAuditChange.edited,
+      ]);
+      expect(history.first.previousValuesJson, isNull);
     });
   });
 }

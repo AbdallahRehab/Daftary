@@ -17,7 +17,11 @@ enum SyncEvent {
   syncCompleted('SYNC_COMPLETED'),
   syncAborted('SYNC_ABORTED', level: 1000),
   migrationEnqueued('SYNC_MIGRATION_ENQUEUED'),
-  cursorAdvanced('SYNC_CURSOR_ADVANCED');
+  cursorAdvanced('SYNC_CURSOR_ADVANCED'),
+
+  /// S0: a pulled row of a record type this app version does not know was
+  /// skipped. Logs the type name only.
+  unknownEntitySkipped('SYNC_UNKNOWN_ENTITY_SKIPPED');
 
   const SyncEvent(this.logName, {this.level = 800});
 

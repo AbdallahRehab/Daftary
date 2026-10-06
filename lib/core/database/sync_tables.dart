@@ -157,6 +157,12 @@ class SyncState extends Table {
       boolean().withDefault(const Constant(false))();
   BoolColumn get initialUploadDone =>
       boolean().withDefault(const Constant(false))();
+
+  /// 022 B1 repair (research R7): set, together with a reset of
+  /// [lastPulledRevision] to 0, the first time the fixed app syncs, so every
+  /// server row is re-applied once through the corrected date mapping.
+  BoolColumn get b1RepullDone => boolean().withDefault(const Constant(false))();
+
   IntColumn get lastAttemptAt => integer().nullable()();
   IntColumn get lastSuccessAt => integer().nullable()();
 

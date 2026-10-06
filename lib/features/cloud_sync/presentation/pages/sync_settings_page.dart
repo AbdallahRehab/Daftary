@@ -304,6 +304,8 @@ class _ConflictsSection extends StatelessWidget {
                         l10n.syncKindTransaction,
                       ConflictEntityType.financeEntry =>
                         l10n.syncKindFinanceEntry,
+                      ConflictEntityType.savingsContribution =>
+                        l10n.syncKindSavingsContribution,
                     }),
                     subtitle: Text(
                       l10n.syncConflictItemSubtitle(
@@ -375,6 +377,7 @@ class _FailedSection extends StatelessWidget {
         SyncItemKind.savingsContribution => l10n.syncKindSavingsContribution,
         SyncItemKind.savingsContributionHistory =>
           l10n.syncKindSavingsContributionHistory,
+        SyncItemKind.financeEntryHistory => l10n.syncKindFinanceEntryHistory,
       };
 
   static String _reason(AppLocalizations l10n, SyncFailedReason reason) =>

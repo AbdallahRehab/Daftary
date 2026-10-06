@@ -136,6 +136,36 @@
   "duplicateWarningMessage": "Someone with a similar name is already in your list. Is this the same person?",
   "duplicateUseExisting": "Use existing person",
   "duplicateCreateNew": "Create new person anyway",
+  "editCurrencyConfirmTitle": "Change currency?",
+  "@editCurrencyConfirmTitle": {
+    "description": "Title of the confirmation shown when the currency of an existing transaction or entry is changed while editing."
+  },
+  "editCurrencyConfirmMessage": "The amount will be recorded as {amount} {to} with no conversion from {from}. Are you sure?",
+  "@editCurrencyConfirmMessage": {
+    "description": "Body of the edit-currency confirmation: the typed amount is kept as is in the new currency, not converted.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "The amount as typed, e.g. 1,500.00"
+      },
+      "from": {
+        "type": "String",
+        "description": "The original currency code"
+      },
+      "to": {
+        "type": "String",
+        "description": "The newly picked currency code"
+      }
+    }
+  },
+  "transactionDuplicateTitle": "Possible duplicate",
+  "@transactionDuplicateTitle": {
+    "description": "Title of the confirmation shown when a new transaction matches an existing one (same person, amount, currency, direction and date)."
+  },
+  "transactionDuplicateMessage": "You already recorded this same amount with this person on this date. Save it again?",
+  "@transactionDuplicateMessage": {
+    "description": "Body of the possible-duplicate transaction confirmation. Saving is never blocked."
+  },
   "transactionFormCreateTitle": "Record transaction",
   "transactionFormEditTitle": "Edit transaction",
   "amountLabel": "Amount",
@@ -646,6 +676,23 @@
   "@syncConflictDeletedLabel": {
     "description": "Marker shown when one of the two versions deletes the record."
   },
+  "conflictGoalAmount": "In the goal: {amount}",
+  "@conflictGoalAmount": {
+    "description": "Secondary line of a savings version in the sync conflict sheet: the amount converted into the goal's currency.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "conflictDirectionContribution": "Contribution",
+  "@conflictDirectionContribution": {
+    "description": "Direction label of a savings entry in the sync conflict sheet: money added to a goal."
+  },
+  "conflictDirectionWithdrawal": "Withdrawal",
+  "@conflictDirectionWithdrawal": {
+    "description": "Direction label of a savings entry in the sync conflict sheet: money taken out of a goal."
+  },
   "syncConflictResolveFailed": "Couldn't resolve the conflict. Try again.",
   "@syncConflictResolveFailed": {
     "description": "Error shown when resolving a sync conflict failed."
@@ -829,6 +876,10 @@
   "syncKindSavingsGoal": "Savings goal",
   "syncKindSavingsContribution": "Savings entry",
   "syncKindSavingsContributionHistory": "Savings entry history",
+  "syncKindFinanceEntryHistory": "Income and expense history",
+  "@syncKindFinanceEntryHistory": {
+    "description": "Record type label."
+  },
   "@syncKindConflictResolution": {
     "description": "Record type label."
   },
@@ -2591,5 +2642,148 @@
   "savingsWhatIfBackAction": "Back to goal",
   "@savingsWhatIfBackAction": {
     "description": "011 what-if: return to the goal page."
+  },
+  "repaymentDirectionLockedHint": "A repayment's direction is set by the balance. To change it, delete the repayment and record it again.",
+  "@repaymentDirectionLockedHint": {
+    "description": "Hint under the locked direction when editing a repayment."
+  },
+  "repaymentDirectionLockedSemantics": "Direction: {direction}, locked. {hint}",
+  "@repaymentDirectionLockedSemantics": {
+    "description": "Screen-reader label for the locked direction of a repayment being edited.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "hint": {
+        "type": "String"
+      }
+    }
+  },
+  "repaymentOutstanding": "Remaining: {amount}",
+  "@repaymentOutstanding": {
+    "description": "Outstanding amount shown on the repayment form.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "repaymentFlipConfirmTitle": "This is more than what's left",
+  "@repaymentFlipConfirmTitle": {
+    "description": "Title of the dialog shown before a repayment larger than the outstanding balance is saved."
+  },
+  "repaymentFlipConfirmMessage": "{direction, select, owe{You will owe {name} {amount}} other{{name} will owe you {amount}}}",
+  "@repaymentFlipConfirmMessage": {
+    "description": "Confirmation shown when a repayment is larger than the outstanding balance. direction is 'owe' when the user will owe the person, otherwise the person will owe the user.",
+    "placeholders": {
+      "direction": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "repaymentPreviewUnavailable": "Unavailable until an exchange rate is set",
+  "@repaymentPreviewUnavailable": {
+    "description": "Shown instead of a number when a balance preview needs an exchange rate that is not set."
+  },
+  "deleteLaterRepaymentsWarning": "{count, plural, =1{1 repayment was recorded after this one} other{{count} repayments were recorded after this one}}. If you delete this one, the balance becomes: {result}",
+  "@deleteLaterRepaymentsWarning": {
+    "description": "Warning in the delete dialog when repayments were recorded after the transaction; result is the balance that would remain.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "result": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryTitle": "Change history",
+  "@changeHistoryTitle": {
+    "description": "Title of the read-only sheet listing a record's earlier versions."
+  },
+  "changeHistoryCreated": "Created",
+  "@changeHistoryCreated": {
+    "description": "Change-history row label: the record was first saved."
+  },
+  "changeHistoryEdited": "Edited",
+  "@changeHistoryEdited": {
+    "description": "Change-history row label: the record was edited."
+  },
+  "changeHistoryDeleted": "Deleted",
+  "@changeHistoryDeleted": {
+    "description": "Change-history row label: the record was deleted."
+  },
+  "changeHistoryRestored": "Restored",
+  "@changeHistoryRestored": {
+    "description": "Change-history row label: the record was restored."
+  },
+  "changeHistoryEmpty": "No changes have been recorded for this entry yet.",
+  "@changeHistoryEmpty": {
+    "description": "Shown in the change-history sheet when there are no entries."
+  },
+  "changeHistoryNoteField": "Note",
+  "@changeHistoryNoteField": {
+    "description": "Change-history field name for the note."
+  },
+  "changeHistoryDirectionField": "Direction",
+  "@changeHistoryDirectionField": {
+    "description": "Change-history field name for the direction (gave or received)."
+  },
+  "changeHistoryTypeField": "Type",
+  "@changeHistoryTypeField": {
+    "description": "Change-history field name for an entry's kind (income or expense)."
+  },
+  "changeHistoryLoadError": "Couldn't load the change history. Please try again.",
+  "@changeHistoryLoadError": {
+    "description": "Shown in the change-history sheet when loading fails."
+  },
+  "changeHistoryRowSemantics": "{label}, {date}. {details}",
+  "@changeHistoryRowSemantics": {
+    "description": "Screen-reader label for one change-history row: the change kind, its date and the earlier values.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryChange": "{field}: {from} → {to}",
+  "@changeHistoryChange": {
+    "description": "Change-history line for a value that changed: field is its name, from the earlier value, to the new one.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryValueAtDeletion": "{field} when deleted",
+  "@changeHistoryValueAtDeletion": {
+    "description": "Change-history field name for a value as it was when the record was deleted.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryNoValue": "(none)",
+  "@changeHistoryNoValue": {
+    "description": "Shown in a change-history line where a value was empty (for example a cleared or newly added note)."
   }
 }

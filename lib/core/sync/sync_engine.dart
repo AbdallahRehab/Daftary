@@ -133,6 +133,7 @@ class SyncEngine {
       return _callFailed(error, const [], started);
     }
     await _checkOwner(state.ownerId, uid);
+    await _startB1Repull(state.b1RepullDone);
 
     final device = DeviceInfo(
       deviceId: state.deviceId,
@@ -219,6 +220,22 @@ class SyncEngine {
       fields: {SyncLogField.durationMs: _elapsedMs(started)},
     );
     return SyncCycleOutcome.completed;
+  }
+
+  /// 022 B1 repair (research R7): rows downloaded before the date fix stay
+  /// one day off, because the download position only moves forward. The
+  /// first cycle of the fixed app puts the position back to 0, once, so the
+  /// whole account is applied again through the corrected mapping. The
+  /// position reset and the flag are one write, so a pull that fails midway
+  /// resumes from where it got to instead of starting over.
+  ///
+  /// The applier keeps skipping rows with pending or conflicted operations,
+  /// so local work is never overwritten.
+  Future<void> _startB1Repull(bool alreadyDone) async {
+    if (alreadyDone) return;
+    await _store.writeState(
+      (s) => s.copyWith(lastPulledRevision: 0, b1RepullDone: true),
+    );
   }
 
   /// T069: the cursor and the queued data belong to one account.

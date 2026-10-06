@@ -432,6 +432,36 @@ class BudgetsRepositoryImpl implements BudgetsRepository {
   ) => _db.watchEither(_monthTables, () => getBudgetForMonth(month));
 
   @override
+  Future<Either<Failure, List<Budget>>> getAllBudgets() async {
+    try {
+      final rows = await _dao.getAllActiveBudgets();
+      return Right([for (final row in rows) row.toDomain()]);
+    } catch (e) {
+      return Left(CacheFailure('Failed to load budgets: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BudgetCategoryAllocation>>>
+  getAllAllocations() async {
+    try {
+      final budgets = await _dao.getAllActiveBudgets();
+      final allocations = await _dao.getAllocationsForBudgets([
+        for (final budget in budgets) budget.id,
+      ]);
+      final currencies = {
+        for (final budget in budgets) budget.id: _currencyOfRow(budget),
+      };
+      return Right([
+        for (final row in allocations)
+          row.toDomain(currencies[row.budgetId] ?? Currency.egp),
+      ]);
+    } catch (e) {
+      return Left(CacheFailure('Failed to load budget allocations: $e'));
+    }
+  }
+
+  @override
   Future<Either<Failure, Budget?>> getMostRecentBudgetBefore(
     String month,
   ) async {

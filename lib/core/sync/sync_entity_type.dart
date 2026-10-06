@@ -19,7 +19,9 @@ enum SyncEntityType {
   // 011 Savings Goals (migration 023).
   savingsGoal('savings_goal', 0),
   savingsContribution('savings_contribution', 1),
-  savingsContributionAudit('savings_contribution_audit', 2);
+  savingsContributionAudit('savings_contribution_audit', 2),
+  // 022 D2 (migration 026): income/expense change history.
+  financeEntryAudit('finance_entry_audit', 2);
 
   const SyncEntityType(this.wire, this.rank);
 
@@ -28,7 +30,7 @@ enum SyncEntityType {
 
   /// The outbox `depends_on_rank`: 0 = person, category, occasion, budget
   /// or savings goal, 1 = transaction, entry, budget allocation or savings
-  /// contribution, 2 = audit (transaction or savings contribution) or
+  /// contribution, 2 = audit (transaction, savings contribution or finance entry) or
   /// conflict resolution, 3 = rate or primary currency.
   final int rank;
 

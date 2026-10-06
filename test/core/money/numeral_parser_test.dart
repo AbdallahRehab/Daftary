@@ -13,6 +13,10 @@ void main() {
       expect(NumeralParser.toWesternDigits('١٥٠٫٥٠'), '150.50');
     });
 
+    test('converts the Arabic thousands separator to a comma (RF-07)', () {
+      expect(NumeralParser.toWesternDigits('١٬٥٠٠'), '1,500');
+    });
+
     test('leaves Western-digit input unchanged', () {
       expect(NumeralParser.toWesternDigits('150.50'), '150.50');
     });

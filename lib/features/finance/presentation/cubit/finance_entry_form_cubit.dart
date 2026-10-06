@@ -49,8 +49,39 @@ class FinanceEntryFormCubit extends Cubit<FinanceEntryFormState> {
   }
 
   /// The user picked a different currency for this entry (018 FR-001).
+  ///
+  /// 022 E3: while editing, the change is held as `pendingCurrency` until
+  /// the user confirms "recorded without conversion".
   void currencyChanged(Currency currency) {
+    if (state.isEditMode) {
+      if (currency == state.currency) {
+        emit(state.copyWith(clearPendingCurrency: true));
+      } else {
+        emit(state.copyWith(pendingCurrency: currency));
+      }
+      return;
+    }
     emit(state.copyWith(currency: currency, clearAmountError: true));
+  }
+
+  /// Applies the currency awaiting confirmation (022 E3). The digits stay
+  /// as typed; no conversion happens.
+  void confirmCurrencyChange() {
+    final pending = state.pendingCurrency;
+    if (pending == null) return;
+    emit(
+      state.copyWith(
+        currency: pending,
+        clearPendingCurrency: true,
+        clearAmountError: true,
+      ),
+    );
+  }
+
+  /// Drops the currency awaiting confirmation, keeping the original.
+  void cancelCurrencyChange() {
+    if (state.pendingCurrency == null) return;
+    emit(state.copyWith(clearPendingCurrency: true));
   }
 
   /// Swaps the form between income and expense (T031). The category set is

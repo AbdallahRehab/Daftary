@@ -99,8 +99,8 @@ void main() {
       db.appSettings,
     )..where((t) => t.id.equals('singleton'))).getSingle();
 
-    expect(db.schemaVersion, 11);
-    expect(raw.select('PRAGMA user_version').single.values.single, 11);
+    expect(db.schemaVersion, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 12);
     final columns = [
       for (final c in raw.select('PRAGMA table_info("app_settings")'))
         c['name'] as String,

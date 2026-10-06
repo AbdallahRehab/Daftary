@@ -33,3 +33,11 @@ jobs:
 
       - name: Test
         run: flutter test --reporter=github
+
+      # 022 B1: sync date mapping must be correct whatever the machine time
+      # zone; these suites are re-run in UTC so a regression can't hide behind
+      # a developer's local zone.
+      - name: Test sync in UTC
+        env:
+          TZ: UTC
+        run: flutter test --reporter=github test/core/sync test/features/transactions/data/sync test/features/finance/data/sync

@@ -66,4 +66,61 @@ void main() {
       );
     });
   });
+
+  group('SyncWire.parseLocalDay (B1)', () {
+    test('turns occurred_on into local midnight of that calendar day', () {
+      expect(
+        SyncWire.parseLocalDay({'occurred_on': '2026-10-01'}),
+        DateTime(2026, 10, 1).millisecondsSinceEpoch,
+      );
+    });
+
+    test('ignores occurred_at and the offset when occurred_on is present', () {
+      expect(
+        SyncWire.parseLocalDay({
+          'occurred_on': '2026-10-01',
+          'occurred_at': '2026-09-30T21:00:00Z',
+          'tz_offset_minutes': 180,
+        }),
+        DateTime(2026, 10, 1).millisecondsSinceEpoch,
+      );
+    });
+
+    test('falls back to occurred_at when occurred_on is missing', () {
+      expect(
+        SyncWire.parseLocalDay({'occurred_at': '2026-09-30T21:00:00Z'}),
+        DateTime.utc(2026, 9, 30, 21).millisecondsSinceEpoch,
+      );
+    });
+
+    test('a malformed day is a FormatException', () {
+      for (final bad in <Object?>[
+        '2026-13-01',
+        '2026-10',
+        'x',
+        5,
+        '2026-02-30',
+      ]) {
+        expect(
+          () => SyncWire.parseLocalDay({
+            'occurred_on': bad,
+            'occurred_at': '2026-09-30T21:00:00Z',
+          }),
+          throwsFormatException,
+          reason: '$bad',
+        );
+      }
+    });
+
+    test('honours custom field names', () {
+      expect(
+        SyncWire.parseLocalDay(
+          {'d': '2026-10-01'},
+          dayField: 'd',
+          instantField: 'i',
+        ),
+        DateTime(2026, 10, 1).millisecondsSinceEpoch,
+      );
+    });
+  });
 }

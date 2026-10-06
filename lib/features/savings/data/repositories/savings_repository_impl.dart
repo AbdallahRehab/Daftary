@@ -14,15 +14,16 @@ import '../../../currency/domain/entities/exchange_rate.dart';
 import '../../../currency/domain/services/currency_converter.dart';
 import '../../../currency/domain/usecases/get_conversion_context.dart';
 import '../../domain/entities/savings_contribution.dart';
-import '../../domain/entities/savings_contribution_audit.dart'
-    show ContributionAuditChange;
+import '../../domain/entities/savings_contribution_audit.dart';
 import '../../domain/entities/savings_failures.dart';
 import '../../domain/entities/savings_goal.dart';
 import '../../domain/entities/savings_goal_detail.dart';
+import '../../domain/entities/savings_goal_with_contributions.dart';
 import '../../domain/entities/savings_overview.dart';
 import '../../domain/repositories/savings_repository.dart';
 import '../../domain/services/savings_calculator.dart';
 import '../datasources/savings_dao.dart';
+import '../models/savings_contribution_audit_mapper.dart';
 import '../models/savings_contribution_mapper.dart';
 import '../models/savings_goal_mapper.dart';
 
@@ -565,6 +566,56 @@ class SavingsRepositoryImpl implements SavingsRepository {
   @override
   Stream<Either<Failure, SavingsGoalDetail>> watchGoalDetail(String goalId) =>
       _db.watchEither(_detailTables, () => getGoalDetail(goalId));
+
+  @override
+  Future<Either<Failure, List<SavingsGoalWithContributions>>>
+  getAllGoalsWithContributions() async {
+    try {
+      final goals = await _dao.transaction(() async {
+        final rows = await _dao.getGoals(includeArchived: true);
+        return [
+          for (final row in rows)
+            SavingsGoalWithContributions(
+              goal: row.toDomain(),
+              contributions: [
+                for (final entry in await _dao.getHistoryForGoal(row.id))
+                  entry.toDomain(),
+              ],
+            ),
+        ];
+      });
+      return Right(goals);
+    } catch (e) {
+      return Left(CacheFailure('Failed to load savings goals: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<SavingsContributionAudit>>>
+  getAllContributionAudits() async {
+    try {
+      final rows = await _dao.getAllAudits();
+      return Right([for (final row in rows) row.toDomain()]);
+    } catch (e) {
+      return Left(CacheFailure('Failed to load change history: $e'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, List<SavingsContributionAudit>>>
+  watchContributionAuditHistory(String contributionId) =>
+      _db.watchEither({_db.savingsContributionAudits}, () async {
+        try {
+          final rows = await _dao.getAuditsForContribution(contributionId);
+          return Right<Failure, List<SavingsContributionAudit>>(
+            rows.map((r) => r.toDomain()).toList(),
+          );
+        } catch (e) {
+          return Left<Failure, List<SavingsContributionAudit>>(
+            CacheFailure('Failed to load change history: $e'),
+          );
+        }
+      });
 
   // --------------------------------------------------------------- helpers
 

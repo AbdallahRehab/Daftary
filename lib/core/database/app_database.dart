@@ -9,9 +9,11 @@ import 'package:path_provider/path_provider.dart';
 
 import '../sync/sync_bootstrap.dart';
 import 'finance_category_seed.dart';
+import 'migrations/migration_guards.dart';
 import 'migrations/v7_currency_support.dart';
 import 'migrations/v9_sync_support.dart';
 import 'migrations/v10_merge_features.dart';
+import 'migrations/v12_finance_entry_audits.dart';
 import 'sync_tables.dart';
 
 export 'sync_tables.dart';
@@ -245,6 +247,24 @@ class CandidateEntries extends Table {
 class TransactionAuditEntries extends Table {
   TextColumn get id => text()();
   TextColumn get transactionId => text().references(MoneyTransactions, #id)();
+  TextColumn get changeType => text()();
+  TextColumn get previousValuesJson => text().nullable()();
+  IntColumn get changedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// 022 D2: append-only history of a [FinanceEntries] row, mirroring
+/// [TransactionAuditEntries]. Written in the same transaction as each
+/// create, edit, delete and restore. `changeType` is one of `created`,
+/// `edited`, `deleted`, `restored`; `previousValuesJson` holds the values
+/// before an edit (amount, currency, type, category, date, note) and is
+/// null for every other change.
+@TableIndex(name: 'idx_finance_audit_entry_id', columns: {#financeEntryId})
+class FinanceEntryAudits extends Table {
+  TextColumn get id => text()();
+  TextColumn get financeEntryId => text().references(FinanceEntries, #id)();
   TextColumn get changeType => text()();
   TextColumn get previousValuesJson => text().nullable()();
   IntColumn get changedAt => integer()();
@@ -716,6 +736,7 @@ class AiSettings extends Table {
     SavingsGoals,
     SavingsContributions,
     SavingsContributionAudits,
+    FinanceEntryAudits,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -732,7 +753,7 @@ class AppDatabase extends _$AppDatabase {
   final SyncBootstrap? _syncBootstrap;
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -788,16 +809,28 @@ class AppDatabase extends _$AppDatabase {
       if (from < 11) {
         // 011 Savings Goals: purely additive — three new tables and their
         // indexes, no existing table touched. One transaction, so a failure
-        // leaves the file at v10 and the next open retries cleanly.
+        // leaves the file at v10 and the next open retries cleanly. Every object
+        // is guarded, so a file that got past this step without advancing
+        // its version also re-opens.
         await transaction(() async {
-          await m.createTable(savingsGoals);
-          await m.createTable(savingsContributions);
-          await m.createTable(savingsContributionAudits);
-          await m.createIndex(idxSavingsGoalsIdempotencyKey);
-          await m.createIndex(idxSavingsContributionsIdempotencyKey);
-          await m.createIndex(idxSavingsContributionsGoalId);
-          await m.createIndex(idxSavingsContributionAuditsContributionId);
+          await ensureTable(this, m, savingsGoals);
+          await ensureTable(this, m, savingsContributions);
+          await ensureTable(this, m, savingsContributionAudits);
+          await ensureIndex(this, m, idxSavingsGoalsIdempotencyKey);
+          await ensureIndex(this, m, idxSavingsContributionsIdempotencyKey);
+          await ensureIndex(this, m, idxSavingsContributionsGoalId);
+          await ensureIndex(
+            this,
+            m,
+            idxSavingsContributionAuditsContributionId,
+          );
         });
+      }
+      if (from < 12) {
+        // 022 D2 + B1 repair: purely additive (finance_entry_audits and
+        // sync_state.b1_repull_done), no existing row touched
+        // (v12_finance_entry_audits.dart).
+        await migrateToFinanceEntryAudits(this, m);
       }
     },
     beforeOpen: (details) async {

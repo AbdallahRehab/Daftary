@@ -7,6 +7,7 @@ import '../../../../core/sync/sync_entity_type.dart';
 import '../../domain/entities/finance_entry_type.dart';
 import '../../domain/entities/finance_history_filter.dart';
 import '../sync/finance_category_sync_mapper.dart';
+import '../sync/finance_entry_audit_sync_mapper.dart';
 import '../sync/finance_entry_sync_mapper.dart';
 
 /// One category's aggregate in one currency within a period, straight off
@@ -44,6 +45,24 @@ class SummaryTotalRow {
   final int totalMinorUnits;
 }
 
+/// The audit row to append in the same transaction as one entry change
+/// (022 D2). The DAO fills in the entry id.
+class EntryAuditDraft {
+  const EntryAuditDraft({
+    required this.id,
+    required this.changeType,
+    required this.changedAt,
+    this.previousValuesJson,
+  });
+
+  final String id;
+
+  /// `created` | `edited` | `deleted` | `restored`.
+  final String changeType;
+  final String? previousValuesJson;
+  final int changedAt;
+}
+
 /// Direct `drift` access to `finance_categories` and `finance_entries`.
 ///
 /// Every total is computed by a SQL aggregate rather than by summing a
@@ -60,12 +79,19 @@ class SummaryTotalRow {
 /// and records nothing.
 @injectable
 class FinanceDao {
-  FinanceDao(this._db, this._outbox, this._categoryMapper, this._entryMapper);
+  FinanceDao(
+    this._db,
+    this._outbox,
+    this._categoryMapper,
+    this._entryMapper,
+    this._auditMapper,
+  );
 
   final db.AppDatabase _db;
   final SyncOutbox _outbox;
   final FinanceCategorySyncMapper _categoryMapper;
   final FinanceEntrySyncMapper _entryMapper;
+  final FinanceEntryAuditSyncMapper _auditMapper;
 
   /// Queues an upsert of entry [id]'s current row. Must run inside a
   /// transaction.
@@ -77,6 +103,30 @@ class FinanceDao {
       _entryMapper.toWire(row),
     );
     return row;
+  }
+
+  /// Appends [draft] to the history of entry [entryId] and queues it for
+  /// upload. Must run inside the transaction of the change it records.
+  Future<void> _appendAudit(String entryId, EntryAuditDraft draft) async {
+    await _db
+        .into(_db.financeEntryAudits)
+        .insert(
+          db.FinanceEntryAuditsCompanion.insert(
+            id: draft.id,
+            financeEntryId: entryId,
+            changeType: draft.changeType,
+            previousValuesJson: db.Value(draft.previousValuesJson),
+            changedAt: draft.changedAt,
+          ),
+        );
+    final row = await (_db.select(
+      _db.financeEntryAudits,
+    )..where((a) => a.id.equals(draft.id))).getSingle();
+    await _outbox.recordUpsert(
+      SyncEntityType.financeEntryAudit,
+      draft.id,
+      _auditMapper.toWire(row),
+    );
   }
 
   /// Queues an upsert of category [id]'s current row. Must run inside a
@@ -96,6 +146,10 @@ class FinanceDao {
   /// 021: fires now and after every burst of writes to `finance_entries`.
   Stream<void> entriesChanged() => _db.changesOf({_db.financeEntries});
 
+  /// 022 D2: fires now and after every burst of writes to
+  /// `finance_entry_audits`.
+  Stream<void> entryAuditsChanged() => _db.changesOf({_db.financeEntryAudits});
+
   /// 021: fires now and after every burst of writes to
   /// `finance_categories`.
   Stream<void> categoriesChanged() => _db.changesOf({_db.financeCategories});
@@ -112,9 +166,13 @@ class FinanceDao {
   /// exists (unique index — FR-021), the already-persisted row is returned
   /// instead of erroring, and nothing is queued for upload. Mirrors
   /// `TransactionsDao.insertTransactionIdempotent`.
+  ///
+  /// 022 D2: a newly inserted row also appends [audit] (`created`) in the
+  /// same transaction; a retried insert appends nothing.
   Future<db.FinanceEntry> insertEntryIdempotent(
-    db.FinanceEntriesCompanion companion,
-  ) {
+    db.FinanceEntriesCompanion companion, {
+    required EntryAuditDraft audit,
+  }) {
     final idempotencyKey = companion.idempotencyKey.value;
     return _db.transaction(() async {
       final existing = await getEntryByIdempotencyKey(idempotencyKey);
@@ -126,6 +184,7 @@ class FinanceDao {
         inserted.id,
         _entryMapper.toWire(inserted),
       );
+      await _appendAudit(inserted.id, audit);
       return inserted;
     });
   }
@@ -140,44 +199,90 @@ class FinanceDao {
     _db.financeEntries,
   )..where((t) => t.id.equals(id))).getSingleOrNull();
 
-  Future<db.FinanceEntry> updateEntry(
+  /// Applies [companion] and appends the `edited` audit built by [audit]
+  /// from the row as it was *inside this transaction*, in one transaction.
+  /// Returns null, and writes nothing, when the entry is missing or already
+  /// deleted.
+  Future<db.FinanceEntry?> updateEntry(
     String id,
-    db.FinanceEntriesCompanion companion,
-  ) {
+    db.FinanceEntriesCompanion companion, {
+    required EntryAuditDraft Function(db.FinanceEntry previous) audit,
+  }) {
     return _db.transaction(() async {
+      final previous = await getEntryById(id);
+      if (previous == null || previous.deletedAt != null) return null;
       await (_db.update(
         _db.financeEntries,
       )..where((t) => t.id.equals(id))).write(companion);
-      return _recordEntryUpsert(id);
+      final row = await _recordEntryUpsert(id);
+      await _appendAudit(id, audit(previous));
+      return row;
     });
   }
 
-  /// A soft delete uploads as an upsert carrying `deleted_at`.
-  Future<void> softDeleteEntry(String id, DateTime deletedAt) {
+  /// A soft delete uploads as an upsert carrying `deleted_at`. Appends
+  /// [audit] (`deleted`) in the same transaction. Only an active entry is
+  /// deleted: returns false, writing nothing, when it is missing or already
+  /// deleted (so a double delete leaves one audit row).
+  Future<bool> softDeleteEntry(
+    String id,
+    DateTime deletedAt, {
+    required EntryAuditDraft audit,
+  }) {
     return _db.transaction(() async {
       final updated =
           await (_db.update(
             _db.financeEntries,
-          )..where((t) => t.id.equals(id))).write(
+          )..where((t) => t.id.equals(id) & t.deletedAt.isNull())).write(
             db.FinanceEntriesCompanion(
               deletedAt: db.Value(deletedAt.millisecondsSinceEpoch),
             ),
           );
-      if (updated > 0) await _recordEntryUpsert(id);
+      if (updated == 0) return false;
+      await _recordEntryUpsert(id);
+      await _appendAudit(id, audit);
+      return true;
     });
   }
 
   /// Un-sets the soft-delete tombstone (research.md Decision 8's undo).
-  Future<void> restoreEntry(String id) {
+  /// Appends [audit] (`restored`) in the same transaction. Only a deleted
+  /// entry is restored: returns false, writing nothing, otherwise.
+  Future<bool> restoreEntry(String id, {required EntryAuditDraft audit}) {
     return _db.transaction(() async {
       final updated =
           await (_db.update(
             _db.financeEntries,
-          )..where((t) => t.id.equals(id))).write(
+          )..where((t) => t.id.equals(id) & t.deletedAt.isNotNull())).write(
             const db.FinanceEntriesCompanion(deletedAt: db.Value(null)),
           );
-      if (updated > 0) await _recordEntryUpsert(id);
+      if (updated == 0) return false;
+      await _recordEntryUpsert(id);
+      await _appendAudit(id, audit);
+      return true;
     });
+  }
+
+  /// 022 D2: every history row of entry [entryId], oldest first. Read-only.
+  Future<List<db.FinanceEntryAudit>> getAuditsForEntry(String entryId) {
+    return (_db.select(_db.financeEntryAudits)
+          ..where((a) => a.financeEntryId.equals(entryId))
+          ..orderBy([
+            (a) => db.OrderingTerm(expression: a.changedAt),
+            // Same-millisecond rows are ordered by id (deterministic across devices).
+            (a) => db.OrderingTerm(expression: a.id),
+          ]))
+        .get();
+  }
+
+  /// 022 D1: every history row of every entry, oldest first, for the export.
+  Future<List<db.FinanceEntryAudit>> getAllAudits() {
+    return (_db.select(_db.financeEntryAudits)..orderBy([
+          (a) => db.OrderingTerm(expression: a.changedAt),
+          // Same-millisecond rows are ordered by id (deterministic across devices).
+          (a) => db.OrderingTerm(expression: a.id),
+        ]))
+        .get();
   }
 
   /// Filtered, paginated history, newest date first, soft-deleted rows

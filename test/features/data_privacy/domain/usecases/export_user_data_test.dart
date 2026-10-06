@@ -5,13 +5,17 @@ import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/data_privacy/domain/entities/export_result.dart';
 import 'package:daftary/features/data_privacy/domain/services/export_directory_provider.dart';
 import 'package:daftary/features/data_privacy/domain/usecases/export_user_data.dart';
+import 'package:daftary/features/budgets/domain/repositories/budgets_repository.dart';
+import 'package:daftary/features/currency/domain/repositories/currency_repository.dart';
 import 'package:daftary/features/finance/domain/entities/category.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
 import 'package:daftary/features/finance/domain/repositories/category_repository.dart';
 import 'package:daftary/features/finance/domain/repositories/finance_repository.dart';
+import 'package:daftary/features/occasions/domain/repositories/occasions_repository.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
+import 'package:daftary/features/savings/domain/repositories/savings_repository.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:daftary/features/settings/domain/repositories/settings_repository.dart';
@@ -32,6 +36,14 @@ class MockCategoryRepository extends Mock implements CategoryRepository {}
 
 class MockSettingsRepository extends Mock implements SettingsRepository {}
 
+class MockOccasionsRepository extends Mock implements OccasionsRepository {}
+
+class MockBudgetsRepository extends Mock implements BudgetsRepository {}
+
+class MockSavingsRepository extends Mock implements SavingsRepository {}
+
+class MockCurrencyRepository extends Mock implements CurrencyRepository {}
+
 class _FixedDirectory implements ExportDirectoryProvider {
   _FixedDirectory(this.directory);
 
@@ -51,6 +63,10 @@ void main() {
   late MockFinanceRepository finance;
   late MockCategoryRepository categories;
   late MockSettingsRepository settings;
+  late MockOccasionsRepository occasions;
+  late MockBudgetsRepository budgets;
+  late MockSavingsRepository savings;
+  late MockCurrencyRepository currency;
   late Directory dir;
   late ExportUserData exportUserData;
 
@@ -133,6 +149,34 @@ void main() {
         includeArchived: true,
       ),
     ).thenAnswer((_) async => const Right([]));
+    // 022 D1: the reads behind the appended sections.
+    when(
+      () => occasions.getOccasionsList(
+        filter: any(named: 'filter'),
+        includeArchived: any(named: 'includeArchived'),
+      ),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => budgets.getAllBudgets(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => budgets.getAllAllocations(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => savings.getAllGoalsWithContributions(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => savings.getAllContributionAudits(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => currency.getExchangeRates(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => transactions.getAllAuditEntries(),
+    ).thenAnswer((_) async => const Right([]));
+    when(
+      () => finance.getAllEntryAudits(),
+    ).thenAnswer((_) async => const Right([]));
     when(
       () => settings.getLanguagePreference(),
     ).thenAnswer((_) async => const Right(null));
@@ -184,6 +228,10 @@ void main() {
     verifyNoMoreInteractions(finance);
     verifyNoMoreInteractions(categories);
     verifyNoMoreInteractions(settings);
+    verifyNoMoreInteractions(occasions);
+    verifyNoMoreInteractions(budgets);
+    verifyNoMoreInteractions(savings);
+    verifyNoMoreInteractions(currency);
   }
 
   /// Everything in the export directory — used to prove nothing complete-
@@ -199,6 +247,10 @@ void main() {
     finance = MockFinanceRepository();
     categories = MockCategoryRepository();
     settings = MockSettingsRepository();
+    occasions = MockOccasionsRepository();
+    budgets = MockBudgetsRepository();
+    savings = MockSavingsRepository();
+    currency = MockCurrencyRepository();
     dir = Directory.systemTemp.createTempSync('export_user_data_test');
     exportUserData = ExportUserData(
       people,
@@ -207,6 +259,10 @@ void main() {
       categories,
       settings,
       _FixedDirectory(dir),
+      occasions,
+      budgets,
+      savings,
+      currency,
     );
   });
 
@@ -246,6 +302,15 @@ void main() {
       ).called(1);
       verify(() => settings.getLanguagePreference()).called(1);
       verify(() => settings.getThemeModePreference()).called(1);
+      // 022 D1: one plain read per appended section source.
+      verify(() => occasions.getOccasionsList(includeArchived: true)).called(1);
+      verify(() => budgets.getAllBudgets()).called(1);
+      verify(() => budgets.getAllAllocations()).called(1);
+      verify(() => savings.getAllGoalsWithContributions()).called(1);
+      verify(() => savings.getAllContributionAudits()).called(1);
+      verify(() => currency.getExchangeRates()).called(1);
+      verify(() => transactions.getAllAuditEntries()).called(1);
+      verify(() => finance.getAllEntryAudits()).called(1);
       verifyOnlyExistingReads();
 
       expect(result.sectionCounts, {
@@ -254,6 +319,16 @@ void main() {
         'FinanceEntries': 1,
         'Categories': 2,
         'Settings': 2,
+        'Occasions': 0,
+        'OccasionContributions': 0,
+        'Budgets': 0,
+        'BudgetAllocations': 0,
+        'SavingsGoals': 0,
+        'SavingsContributions': 0,
+        'ExchangeRates': 0,
+        'TransactionChanges': 0,
+        'SavingsContributionChanges': 0,
+        'FinanceEntryChanges': 0,
       });
       expect(result.totalRecords, 10);
     });
@@ -273,6 +348,7 @@ void main() {
 
       verify(() => finance.getHistory(limit: size, offset: 0)).called(1);
       verify(() => finance.getHistory(limit: size, offset: size)).called(1);
+      verify(() => finance.getAllEntryAudits()).called(1);
       verifyNoMoreInteractions(finance);
       expect(result.sectionCounts['FinanceEntries'], size + 2);
     });
@@ -396,6 +472,24 @@ void main() {
           () => settings.getThemeModePreference(),
         ).thenAnswer((_) async => const Left(CacheFailure('x'))),
       ),
+      (
+        'budgets',
+        () => when(
+          () => budgets.getAllAllocations(),
+        ).thenAnswer((_) async => const Left(CacheFailure('x'))),
+      ),
+      (
+        'savings history',
+        () => when(
+          () => savings.getAllContributionAudits(),
+        ).thenAnswer((_) async => const Left(CacheFailure('x'))),
+      ),
+      (
+        'transaction history',
+        () => when(
+          () => transactions.getAllAuditEntries(),
+        ).thenAnswer((_) async => const Left(CacheFailure('x'))),
+      ),
     ]) {
       test('a $label failure is a Left with no file left behind', () async {
         stubPopulated();
@@ -421,6 +515,10 @@ void main() {
           categories,
           settings,
           _FixedDirectory(missing),
+          occasions,
+          budgets,
+          savings,
+          currency,
         );
 
         final result = await exportUserData();

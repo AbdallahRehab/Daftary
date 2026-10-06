@@ -13,6 +13,7 @@ import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
 import '../../domain/repositories/transactions_repository.dart';
 import '../../domain/usecases/delete_transaction.dart';
+import '../../domain/usecases/preview_transaction_deletion.dart';
 import '../../domain/usecases/watch_person_balance.dart';
 import '../../domain/usecases/watch_person_history.dart';
 import 'person_detail_state.dart';
@@ -34,6 +35,7 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
     this._deleteTransaction,
     this._watchPrimaryCurrency,
     this._transactionsRepository,
+    this._previewDeletion,
   ) : super(const PersonDetailState());
 
   final WatchPerson _watchPerson;
@@ -46,6 +48,8 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
   /// pure labelling detail of the history already fetched, carrying no
   /// business rule of their own.
   final TransactionsRepository _transactionsRepository;
+  final PreviewTransactionDeletion _previewDeletion;
+  var _requestingDelete = false;
 
   String? _personId;
   final _subscriptions = <StreamSubscription<void>>[];
@@ -145,6 +149,53 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
       );
     }
     _completeFirstResult();
+  }
+
+  /// 022 E6: works out what deleting [transaction] would leave (later
+  /// repayments and the resulting balance) and exposes it as
+  /// `state.pendingDelete` for the confirmation. Ignored while another
+  /// request is open or in flight.
+  // Known limitation: the confirmation shows the impact computed when it
+  // was requested. If the balance changes while the dialog is open (a
+  // sync), the open dialog is not refreshed; the delete itself is still
+  // correct because the repository re-reads everything.
+  Future<void> requestDelete(MoneyTransaction transaction) async {
+    final balance = state.balance;
+    if (_requestingDelete || state.pendingDelete != null || balance == null) {
+      return;
+    }
+    _requestingDelete = true;
+    try {
+      final result = await _previewDeletion(transaction, balance);
+      if (isClosed) return;
+      result.match(
+        (failure) => emit(state.copyWith(failure: failure)),
+        (impact) => emit(
+          state.copyWith(
+            pendingDelete: PendingDelete(
+              transaction: transaction,
+              impact: impact,
+            ),
+          ),
+        ),
+      );
+    } finally {
+      _requestingDelete = false;
+    }
+  }
+
+  void cancelDelete() {
+    if (isClosed) return;
+    emit(state.copyWith(clearPendingDelete: true));
+  }
+
+  /// The user confirmed the pending delete.
+  Future<void> confirmDelete() async {
+    if (isClosed) return;
+    final pending = state.pendingDelete;
+    if (pending == null) return;
+    emit(state.copyWith(clearPendingDelete: true));
+    await deleteTransaction(pending.transaction.id);
   }
 
   /// Soft-deletes [transactionId] (after the caller has already shown the

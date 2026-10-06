@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 
-/// The five sections one export file is made of, in file order
-/// (research.md Decision 4).
+/// The sections one export file is made of, in file order (research.md
+/// Decision 4). The first five are the original export; 022 D1 appends ten
+/// after them, so the original bytes never change.
 ///
 /// [key] names the section in [ExportResult.sectionCounts]; [marker] is the
 /// `## MARKER` line that opens the section inside the CSV file.
@@ -10,7 +11,23 @@ enum ExportSection {
   transactions('Transactions', 'TRANSACTIONS'),
   financeEntries('FinanceEntries', 'FINANCE_ENTRIES'),
   categories('Categories', 'CATEGORIES'),
-  settings('Settings', 'SETTINGS');
+  settings('Settings', 'SETTINGS'),
+  occasions('Occasions', 'OCCASIONS'),
+
+  /// By reference: the transaction, occasion and person ids and whether it
+  /// counts toward the balance. The amounts are in TRANSACTIONS.
+  occasionContributions('OccasionContributions', 'OCCASION_CONTRIBUTIONS'),
+  budgets('Budgets', 'BUDGETS'),
+  budgetAllocations('BudgetAllocations', 'BUDGET_ALLOCATIONS'),
+  savingsGoals('SavingsGoals', 'SAVINGS_GOALS'),
+  savingsContributions('SavingsContributions', 'SAVINGS_CONTRIBUTIONS'),
+  exchangeRates('ExchangeRates', 'EXCHANGE_RATES'),
+  transactionChanges('TransactionChanges', 'TRANSACTION_CHANGES'),
+  savingsContributionChanges(
+    'SavingsContributionChanges',
+    'SAVINGS_CONTRIBUTION_CHANGES',
+  ),
+  financeEntryChanges('FinanceEntryChanges', 'FINANCE_ENTRY_CHANGES');
 
   const ExportSection(this.key, this.marker);
 

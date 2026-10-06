@@ -26,6 +26,7 @@ class FinanceEntryListTile extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
+    this.onEditedTap,
     this.conflictBadge,
   });
 
@@ -47,6 +48,10 @@ class FinanceEntryListTile extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+
+  /// 022 D2: tapping the "Edited" marker opens the change history. Null
+  /// leaves the marker as plain text.
+  final VoidCallback? onEditedTap;
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +102,12 @@ class FinanceEntryListTile extends StatelessWidget {
           if (entry.isEdited) ...[
             const SizedBox(width: AppSpacing.xs),
             Flexible(
-              child: Text(
-                '(${l10n.editedLabel})',
-                style: AppTypography.bodyMuted.copyWith(
-                  color: onSurfaceVariant,
-                ),
-                overflow: TextOverflow.ellipsis,
+              child: _EditedMarker(
+                label: '(${l10n.editedLabel})',
+                semanticLabel: l10n.editedLabel,
+                tooltip: l10n.changeHistoryTitle,
+                color: onSurfaceVariant,
+                onTap: onEditedTap,
               ),
             ),
           ],
@@ -170,3 +175,45 @@ class FinanceEntryListTile extends StatelessWidget {
 }
 
 enum _EntryAction { edit, delete }
+
+/// The "Edited" marker; a 48dp-tall button when [onTap] is set (022 D2),
+/// like the transaction and savings rows.
+class _EditedMarker extends StatelessWidget {
+  const _EditedMarker({
+    required this.label,
+    required this.semanticLabel,
+    required this.tooltip,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final String semanticLabel;
+  final String tooltip;
+  final Color color;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Text(
+      label,
+      style: AppTypography.bodyMuted.copyWith(color: color),
+      overflow: TextOverflow.ellipsis,
+    );
+    if (onTap == null) return text;
+    return Semantics(
+      button: true,
+      label: '$semanticLabel, $tooltip',
+      excludeSemantics: true,
+      child: InkWell(
+        key: const ValueKey('edited-marker'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
+          child: Center(widthFactor: 1, child: text),
+        ),
+      ),
+    );
+  }
+}

@@ -8,6 +8,7 @@ import 'package:daftary/features/currency/data/sync/exchange_rate_sync_mapper.da
 import 'package:daftary/features/currency/data/sync/primary_currency_sync_mapper.dart';
 import 'package:daftary/features/finance/data/datasources/finance_dao.dart';
 import 'package:daftary/features/finance/data/sync/finance_category_sync_mapper.dart';
+import 'package:daftary/features/finance/data/sync/finance_entry_audit_sync_mapper.dart';
 import 'package:daftary/features/finance/data/sync/finance_entry_sync_mapper.dart';
 import 'package:daftary/features/occasions/data/datasources/occasions_dao.dart';
 import 'package:daftary/features/occasions/data/sync/occasion_sync_mapper.dart';
@@ -43,6 +44,7 @@ FinanceDao testFinanceDao(AppDatabase db) => FinanceDao(
   testOutbox(db),
   const FinanceCategorySyncMapper(),
   const FinanceEntrySyncMapper(),
+  const FinanceEntryAuditSyncMapper(),
 );
 
 CurrencyDao testCurrencyDao(AppDatabase db) => CurrencyDao(

@@ -18,6 +18,7 @@ import '../cubit/goal_detail_cubit.dart';
 import '../cubit/goal_detail_state.dart';
 import '../cubit/savings_goal_actions_cubit.dart';
 import '../savings_routes.dart';
+import '../widgets/contribution_change_history.dart';
 import '../widgets/contribution_list_tile.dart';
 import '../widgets/goal_progress_card.dart';
 import '../widgets/savings_failure_message.dart';
@@ -156,6 +157,8 @@ class GoalDetailView extends StatelessWidget {
                               key: ValueKey(entry.id),
                               entry: entry,
                               goalCurrency: goal.currency,
+                              onEditedTap: () =>
+                                  showContributionChangeHistory(context, entry),
                               onAction: (action) =>
                                   _onEntryAction(context, entry, action),
                             );

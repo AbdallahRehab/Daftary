@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/currency.dart';
+import '../../domain/entities/person_balance.dart';
+import '../../domain/services/repayment_preview.dart';
 
 enum RepaymentFormStatus { editing, submitting, success, failure }
 
@@ -18,6 +20,11 @@ class RepaymentFormState extends Equatable {
     this.note,
     this.amountInvalid = false,
     this.failure,
+    this.balance,
+    this.balanceLoaded = false,
+    this.personName,
+    this.preview,
+    this.needsFlipConfirmation = false,
   }) : date = date ?? DateTime.now();
 
   final String personId;
@@ -40,6 +47,21 @@ class RepaymentFormState extends Equatable {
   final bool amountInvalid;
   final Failure? failure;
 
+  /// The person's live balance, once known (022 A2).
+  final PersonBalance? balance;
+
+  /// True once both the balance and the conversion context have emitted;
+  /// saving is a no-op before that.
+  final bool balanceLoaded;
+  final String? personName;
+
+  /// What the typed amount would do to the balance; `null` while nothing
+  /// is typed or the data has not loaded.
+  final RepaymentPreview? preview;
+
+  /// The typed amount reverses the balance and awaits the user's answer.
+  final bool needsFlipConfirmation;
+
   bool get isSubmitting => status == RepaymentFormStatus.submitting;
 
   RepaymentFormState copyWith({
@@ -53,6 +75,12 @@ class RepaymentFormState extends Equatable {
     bool clearAmountError = false,
     Failure? failure,
     bool clearFailure = false,
+    PersonBalance? balance,
+    bool? balanceLoaded,
+    String? personName,
+    RepaymentPreview? preview,
+    bool clearPreview = false,
+    bool? needsFlipConfirmation,
   }) {
     return RepaymentFormState(
       personId: personId,
@@ -67,6 +95,12 @@ class RepaymentFormState extends Equatable {
           ? false
           : (amountInvalid ?? this.amountInvalid),
       failure: clearFailure ? null : (failure ?? this.failure),
+      balance: balance ?? this.balance,
+      balanceLoaded: balanceLoaded ?? this.balanceLoaded,
+      personName: personName ?? this.personName,
+      preview: clearPreview ? null : (preview ?? this.preview),
+      needsFlipConfirmation:
+          needsFlipConfirmation ?? this.needsFlipConfirmation,
     );
   }
 
@@ -82,5 +116,10 @@ class RepaymentFormState extends Equatable {
     note,
     amountInvalid,
     failure,
+    balance,
+    balanceLoaded,
+    personName,
+    preview,
+    needsFlipConfirmation,
   ];
 }

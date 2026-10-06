@@ -36,7 +36,11 @@ class PersonBalanceCalculator {
       rates: context.rates,
     );
     return switch (result) {
-      SumTotal(:final value) => PersonBalance(personId: personId, net: value),
+      SumTotal(:final value) => PersonBalance(
+        personId: personId,
+        net: value,
+        currencyNets: nativeNets,
+      ),
       SumBlocked(:final missingRatesFor) => PersonBalance.blocked(
         personId: personId,
         nativeNets: nativeNets,

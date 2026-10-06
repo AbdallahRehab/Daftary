@@ -101,25 +101,30 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
     final contextResult = await _conversionContext();
     return contextResult.fold(left, (context) async {
       try {
-        final direction = await _repaymentDirection(
+        final directionResult = await _repaymentDirection(
           personId,
           amount.currency,
           context,
         );
-        final companion = db.MoneyTransactionsCompanion.insert(
-          id: _uuid.v4(),
-          idempotencyKey: idempotencyKey,
-          personId: personId,
-          amountMinorUnits: amount.minorUnits,
-          currencyCode: db.Value(amount.currency.code),
-          direction: direction.dbValue,
-          kind: TransactionKind.repayment.dbValue,
-          date: _dateOnlyMillis(date),
-          note: db.Value(note),
-          createdAt: DateTime.now().millisecondsSinceEpoch,
+        return await directionResult.match(
+          (failure) async => Left<Failure, MoneyTransaction>(failure),
+          (direction) async {
+            final companion = db.MoneyTransactionsCompanion.insert(
+              id: _uuid.v4(),
+              idempotencyKey: idempotencyKey,
+              personId: personId,
+              amountMinorUnits: amount.minorUnits,
+              currencyCode: db.Value(amount.currency.code),
+              direction: direction.dbValue,
+              kind: TransactionKind.repayment.dbValue,
+              date: _dateOnlyMillis(date),
+              note: db.Value(note),
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+            );
+            final row = await _insertWithCreatedAudit(companion);
+            return Right<Failure, MoneyTransaction>(row.toDomain());
+          },
         );
-        final row = await _insertWithCreatedAudit(companion);
-        return Right(row.toDomain());
       } catch (e) {
         return Left(CacheFailure('Failed to record repayment: $e'));
       }
@@ -141,6 +146,12 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       final existing = await _dao.getById(transactionId);
       if (existing == null || existing.deletedAt != null) {
         return const Left(NotFoundFailure('Transaction not found'));
+      }
+      // A repayment's direction is derived from the balance when it is
+      // recorded; editing it would silently grow the debt (022 A1).
+      if (existing.kind == TransactionKind.repayment.dbValue &&
+          direction.dbValue != existing.direction) {
+        return const Left(ValidationFailure('Repayment direction is fixed'));
       }
       final previousValuesJson = jsonEncode({
         'amountMinorUnits': existing.amountMinorUnits,
@@ -175,6 +186,46 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       return Right(updated.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to edit transaction: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, int>> countLaterRepayments(
+    String personId,
+    DateTime fromDate, {
+    String? excludingTransactionId,
+  }) async {
+    try {
+      return Right(
+        await _dao.countRepaymentsOnOrAfter(
+          personId,
+          _dateOnlyMillis(fromDate),
+          excludingTransactionId: excludingTransactionId,
+        ),
+      );
+    } catch (e) {
+      return Left(CacheFailure('Failed to count later repayments: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, MoneyTransaction?>> findPossibleDuplicate(
+    String personId,
+    Money amount,
+    TransactionDirection direction,
+    DateTime date,
+  ) async {
+    try {
+      final row = await _dao.findActiveMatch(
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: amount.currency.code,
+        direction: direction.dbValue,
+        dateMillis: _dateOnlyMillis(date),
+      );
+      return Right(row?.toDomain());
+    } catch (e) {
+      return Left(CacheFailure('Failed to look for a duplicate: $e'));
     }
   }
 
@@ -358,22 +409,32 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   /// otherwise you *give* (FR-011). When the converted balance is blocked
   /// and its direction unknown (opposite-direction currencies), the sign of
   /// the balance in the repayment's own [currency] decides instead.
-  Future<TransactionDirection> _repaymentDirection(
+  Future<Either<Failure, TransactionDirection>> _repaymentDirection(
     String personId,
     Currency currency,
     ConversionContext context,
   ) async {
     final balance = await _balanceFor(personId, context);
-    final status =
-        balance.status ??
-        (balance.nativeNets
-                .where((m) => m.currency == currency)
-                .any((m) => m.isPositive)
-            ? RelationshipStatus.theyOweYou
-            : RelationshipStatus.youOweThem);
-    return status == RelationshipStatus.theyOweYou
-        ? TransactionDirection.received
-        : TransactionDirection.given;
+    var status = balance.status;
+    if (status == null) {
+      final inCurrency = balance.nativeNets.where(
+        (m) => m.currency == currency,
+      );
+      // Opposite-direction currencies with a missing rate and nothing owed
+      // in the repayment's own currency: the direction is a guess, so ask
+      // for the rate instead of recording "given" (022 B2).
+      if (inCurrency.isEmpty) {
+        return Left(RatesMissingFailure(balance.missingRatesFor));
+      }
+      status = inCurrency.any((m) => m.isPositive)
+          ? RelationshipStatus.theyOweYou
+          : RelationshipStatus.youOweThem;
+    }
+    return Right(
+      status == RelationshipStatus.theyOweYou
+          ? TransactionDirection.received
+          : TransactionDirection.given,
+    );
   }
 
   /// Every table a converted balance depends on: amounts, the people they
@@ -391,6 +452,33 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
   ) => _db.watchEither({
     _db.moneyTransactions,
   }, () => getPersonHistory(personId));
+
+  @override
+  Future<Either<Failure, List<TransactionAuditEntry>>>
+  getAllAuditEntries() async {
+    try {
+      final rows = await _dao.getAllAuditEntries();
+      return Right([for (final row in rows) row.toDomain()]);
+    } catch (e) {
+      return Left(CacheFailure('Failed to load change history: $e'));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, List<TransactionAuditEntry>>> watchAuditHistory(
+    String transactionId,
+  ) => _db.watchEither({_db.transactionAuditEntries}, () async {
+    try {
+      final rows = await _dao.getAuditEntriesFor(transactionId);
+      return Right<Failure, List<TransactionAuditEntry>>(
+        rows.map((r) => r.toDomain()).toList(),
+      );
+    } catch (e) {
+      return Left<Failure, List<TransactionAuditEntry>>(
+        CacheFailure('Failed to load change history: $e'),
+      );
+    }
+  });
 
   @override
   Stream<Either<Failure, PersonBalance>> watchPersonBalance(String personId) =>

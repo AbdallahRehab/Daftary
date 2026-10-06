@@ -54,7 +54,7 @@ class MoneyTransactionSyncMapper extends SyncMapper<MoneyTransaction> {
     currencyCode: Value(SyncWire.string(json, 'currency_code')),
     direction: SyncWire.oneOf(json, 'direction', directions),
     kind: SyncWire.oneOf(json, 'kind', kinds),
-    date: SyncWire.parseInstant(json['occurred_at'], 'occurred_at'),
+    date: SyncWire.parseLocalDay(json),
     note: Value(SyncWire.stringOrNull(json, 'note')),
     occasionId: Value(SyncWire.stringOrNull(json, 'occasion_id')),
     // A row the server stored before 022 has none of these: it was an

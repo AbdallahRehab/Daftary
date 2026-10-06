@@ -501,4 +501,113 @@ void main() {
       },
     );
   });
+
+  group('E3 currency change while editing', () {
+    final existing = FinanceEntry(
+      id: 'e9',
+      idempotencyKey: 'k',
+      categoryId: groceries.id,
+      type: FinanceEntryType.expense,
+      amount: const Money.egp(15050),
+      date: now,
+      createdAt: now,
+    );
+
+    Future<FinanceEntryFormCubit> editing() async {
+      final cubit = buildCubit();
+      await cubit.loadForEdit(existing, groceries);
+      return cubit;
+    }
+
+    test(
+      'edit mode: picking another currency only sets pendingCurrency',
+      () async {
+        final cubit = await editing();
+        cubit.currencyChanged(Currency.usd);
+
+        expect(cubit.state.pendingCurrency, Currency.usd);
+        expect(cubit.state.currency, Currency.egp);
+        await cubit.close();
+      },
+    );
+
+    test(
+      'confirmCurrencyChange applies it and clears the pending one',
+      () async {
+        final cubit = await editing();
+        cubit
+          ..currencyChanged(Currency.usd)
+          ..confirmCurrencyChange();
+
+        expect(cubit.state.currency, Currency.usd);
+        expect(cubit.state.pendingCurrency, isNull);
+        await cubit.close();
+      },
+    );
+
+    test('cancelCurrencyChange clears it and keeps the original', () async {
+      final cubit = await editing();
+      cubit
+        ..currencyChanged(Currency.usd)
+        ..cancelCurrencyChange();
+
+      expect(cubit.state.currency, Currency.egp);
+      expect(cubit.state.pendingCurrency, isNull);
+      await cubit.close();
+    });
+
+    Future<Money> savedAfter(void Function(FinanceEntryFormCubit) steps) async {
+      when(
+        () => editFinanceEntry(
+          entryId: any(named: 'entryId'),
+          categoryId: any(named: 'categoryId'),
+          amount: any(named: 'amount'),
+          date: any(named: 'date'),
+          note: any(named: 'note'),
+        ),
+      ).thenAnswer((_) async => Right(savedEntry));
+      final cubit = await editing();
+      steps(cubit);
+      await cubit.submit();
+      await cubit.close();
+      return verify(
+            () => editFinanceEntry(
+              entryId: any(named: 'entryId'),
+              categoryId: any(named: 'categoryId'),
+              amount: captureAny(named: 'amount'),
+              date: any(named: 'date'),
+              note: any(named: 'note'),
+            ),
+          ).captured.single
+          as Money;
+    }
+
+    test(
+      'edit 150.50 EGP, pick USD, confirm, submit saves 150.50 USD',
+      () async {
+        final saved = await savedAfter(
+          (c) => c
+            ..currencyChanged(Currency.usd)
+            ..confirmCurrencyChange(),
+        );
+
+        expect(saved, const Money.fromMinorUnits(15050, Currency.usd));
+      },
+    );
+
+    test('submit while a currency is pending uses the original currency, '
+        'never the pending one', () async {
+      final saved = await savedAfter((c) => c.currencyChanged(Currency.usd));
+
+      expect(saved, const Money.egp(15050));
+    });
+
+    test('create mode: the currency is applied immediately', () async {
+      final cubit = buildCubit()..currencyChanged(Currency.usd);
+
+      expect(cubit.state.currency, Currency.usd);
+      expect(cubit.state.pendingCurrency, isNull);
+      await cubit.close();
+    });
+  });
 }

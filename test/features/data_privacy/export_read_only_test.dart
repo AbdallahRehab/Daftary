@@ -4,20 +4,14 @@ import 'package:daftary/core/database/app_database.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/data_privacy/domain/services/export_directory_provider.dart';
 import 'package:daftary/features/data_privacy/domain/usecases/export_user_data.dart';
-import 'package:daftary/features/finance/data/repositories/category_repository_impl.dart';
-import 'package:daftary/features/finance/data/repositories/finance_repository_impl.dart';
 import 'package:daftary/features/finance/domain/entities/finance_entry_type.dart';
-import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
-import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';
 import 'package:daftary/features/settings/data/datasources/settings_dao.dart';
 import 'package:daftary/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
-import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../helpers/test_daos.dart';
+import '../../helpers/catalogue_fixtures.dart';
 
 class _FixedDirectory implements ExportDirectoryProvider {
   _FixedDirectory(this.directory);
@@ -32,35 +26,32 @@ class _FixedDirectory implements ExportDirectoryProvider {
 /// before and after an export, proven against real repositories over one
 /// in-memory SQLite database rather than mocks.
 void main() {
+  late CatalogueEnv env;
   late AppDatabase db;
   late Directory dir;
   late ExportUserData exportUserData;
 
   setUp(() async {
-    db = AppDatabase.forTesting(NativeDatabase.memory());
+    env = await CatalogueEnv.open();
+    db = env.db;
     dir = Directory.systemTemp.createTempSync('export_read_only_test');
 
-    final people = PeopleRepositoryImpl(
-      testPeopleDao(db),
-      const FindPossibleDuplicatePerson(),
-      db,
-    );
-    final transactions = TransactionsRepositoryImpl(
-      testTransactionsDao(db),
-      db,
-    );
-    final financeDao = testFinanceDao(db);
-    final finance = FinanceRepositoryImpl(financeDao);
-    final categories = CategoryRepositoryImpl(financeDao);
+    final people = env.people;
+    final transactions = env.transactions;
+    final finance = env.finance;
     final settings = SettingsRepositoryImpl(SettingsDao(db));
 
     exportUserData = ExportUserData(
       people,
       transactions,
       finance,
-      categories,
+      env.categories,
       settings,
       _FixedDirectory(dir),
+      env.occasions,
+      env.budgets,
+      env.savings,
+      env.currency,
     );
 
     final ahmed = (await people.createPerson(
@@ -103,7 +94,7 @@ void main() {
   });
 
   tearDown(() async {
-    await db.close();
+    await env.close();
     dir.deleteSync(recursive: true);
   });
 
@@ -158,6 +149,18 @@ void main() {
       'FinanceEntries': 1,
       'Categories': categoryCount,
       'Settings': 2,
+      'Occasions': 0,
+      'OccasionContributions': 0,
+      'Budgets': 0,
+      'BudgetAllocations': 0,
+      'SavingsGoals': 0,
+      'SavingsContributions': 0,
+      'ExchangeRates': 0,
+      // The edit left one transaction audit row and each of the two
+      // transactions a `created` one; the entry has its `created` row.
+      'TransactionChanges': 3,
+      'SavingsContributionChanges': 0,
+      'FinanceEntryChanges': 1,
     });
   });
 }

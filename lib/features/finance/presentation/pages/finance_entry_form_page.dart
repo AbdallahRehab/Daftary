@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/app_button.dart';
+import '../../../../core/design_system/app_confirm_dialog.dart';
 import '../../../../core/design_system/app_date_field.dart';
 import '../../../../core/design_system/app_text_field.dart';
 import '../../../../core/design_system/currency_picker.dart';
@@ -124,119 +125,153 @@ class _FinanceEntryFormViewState extends State<_FinanceEntryFormView> {
               builder: (context, title) => Text(title),
             ),
       ),
-      body: BlocConsumer<FinanceEntryFormCubit, FinanceEntryFormState>(
+      body: BlocListener<FinanceEntryFormCubit, FinanceEntryFormState>(
+        // 022 E3: confirm a currency change made while editing.
         listenWhen: (previous, current) =>
-            previous.status != current.status ||
-            previous.amountInput != current.amountInput ||
-            previous.note != current.note,
-        listener: (context, state) {
-          _syncControllers(state);
-          if (state.status == FinanceEntryFormStatus.success) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
-            Navigator.of(context).pop(state.savedEntry);
-          } else if (state.status == FinanceEntryFormStatus.failure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(content: Text(l10n.messageFor(state.failure))),
-              );
-          }
-        },
-        builder: (context, state) {
-          final cubit = context.read<FinanceEntryFormCubit>();
-          return SingleChildScrollView(
-            padding:
-                const EdgeInsets.all(AppSpacing.md) +
-                AppGlassInsets.of(context),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SegmentedButton<FinanceEntryType>(
-                  segments: [
-                    ButtonSegment(
-                      value: FinanceEntryType.expense,
-                      label: Text(l10n.financeTypeExpense),
-                      icon: const Icon(Icons.north_east, size: 16),
-                    ),
-                    ButtonSegment(
-                      value: FinanceEntryType.income,
-                      label: Text(l10n.financeTypeIncome),
-                      icon: const Icon(Icons.south_west, size: 16),
-                    ),
-                  ],
-                  selected: {state.type},
-                  onSelectionChanged: (selection) =>
-                      unawaited(cubit.typeChanged(selection.first)),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  label: l10n.amountLabel,
-                  controller: _amountController,
-                  // Arabic-Indic digits are normalized on parse
-                  // (`NumeralParser`), so both numeral systems are typeable
-                  // here (FR-024).
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  errorText: state.amountInvalid
-                      ? l10n.amountInvalidError
-                      : null,
-                  onChanged: cubit.amountChanged,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                // 018 FR-003: defaults to the primary currency (new entry)
-                // or the entry's own currency (edit), both resolved by the
-                // cubit. Keyed on the value because the dropdown only reads
-                // its initial value once, and the default arrives async.
-                CurrencyPicker(
-                  key: ValueKey(
-                    'finance_entry_currency_${state.currency.code}',
-                  ),
-                  value: state.currency,
-                  onChanged: cubit.currencyChanged,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppDateField(
-                  label: l10n.dateLabel,
-                  date: state.date,
-                  onDateChanged: cubit.dateChanged,
-                  // Future dates are accepted as planned/scheduled entries
-                  // (FR-001).
-                  lastDate: DateTime(DateTime.now().year + 5),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                CategoryPickerField(
-                  categories: state.categories,
-                  type: state.type,
-                  selectedCategoryId: state.selectedCategoryId,
-                  isLoading: state.isLoadingCategories,
-                  errorText: state.categorySelectionRequired
-                      ? l10n.financeCategoryRequiredError
-                      : null,
-                  onCategorySelected: cubit.categorySelected,
-                  onManageCategories: () => context.push('/finance/categories'),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  label: l10n.noteLabel,
-                  maxLength: 500,
-                  controller: _noteController,
-                  maxLines: 3,
-                  onChanged: cubit.noteChanged,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.commonSave,
-                  isLoading: state.isSubmitting,
-                  onPressed: cubit.submit,
-                ),
-              ],
-            ),
-          );
-        },
+            previous.pendingCurrency != current.pendingCurrency &&
+            current.pendingCurrency != null,
+        listener: _confirmCurrencyChange,
+        child: _buildForm(context, l10n),
       ),
+    );
+  }
+
+  Future<void> _confirmCurrencyChange(
+    BuildContext context,
+    FinanceEntryFormState state,
+  ) async {
+    final l10n = AppLocalizations.of(context)!;
+    final cubit = context.read<FinanceEntryFormCubit>();
+    final confirmed = await showAppConfirmDialog(
+      context,
+      title: l10n.editCurrencyConfirmTitle,
+      message: l10n.editCurrencyConfirmMessage(
+        state.amountInput,
+        state.currency.code,
+        state.pendingCurrency!.code,
+      ),
+      confirmLabel: l10n.commonConfirm,
+      cancelLabel: l10n.commonCancel,
+    );
+    if (cubit.isClosed) return;
+    if (confirmed) {
+      cubit.confirmCurrencyChange();
+    } else {
+      cubit.cancelCurrencyChange();
+    }
+  }
+
+  Widget _buildForm(BuildContext context, AppLocalizations l10n) {
+    return BlocConsumer<FinanceEntryFormCubit, FinanceEntryFormState>(
+      listenWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.amountInput != current.amountInput ||
+          previous.note != current.note,
+      listener: (context, state) {
+        _syncControllers(state);
+        if (state.status == FinanceEntryFormStatus.success) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
+          Navigator.of(context).pop(state.savedEntry);
+        } else if (state.status == FinanceEntryFormStatus.failure) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(content: Text(l10n.messageFor(state.failure))),
+            );
+        }
+      },
+      builder: (context, state) {
+        final cubit = context.read<FinanceEntryFormCubit>();
+        return SingleChildScrollView(
+          padding:
+              const EdgeInsets.all(AppSpacing.md) + AppGlassInsets.of(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SegmentedButton<FinanceEntryType>(
+                segments: [
+                  ButtonSegment(
+                    value: FinanceEntryType.expense,
+                    label: Text(l10n.financeTypeExpense),
+                    icon: const Icon(Icons.north_east, size: 16),
+                  ),
+                  ButtonSegment(
+                    value: FinanceEntryType.income,
+                    label: Text(l10n.financeTypeIncome),
+                    icon: const Icon(Icons.south_west, size: 16),
+                  ),
+                ],
+                selected: {state.type},
+                onSelectionChanged: (selection) =>
+                    unawaited(cubit.typeChanged(selection.first)),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppTextField(
+                label: l10n.amountLabel,
+                controller: _amountController,
+                // Arabic-Indic digits are normalized on parse
+                // (`NumeralParser`), so both numeral systems are typeable
+                // here (FR-024).
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                errorText: state.amountInvalid ? l10n.amountInvalidError : null,
+                onChanged: cubit.amountChanged,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              // 018 FR-003: defaults to the primary currency (new entry)
+              // or the entry's own currency (edit), both resolved by the
+              // cubit. Keyed on the value because the dropdown only reads
+              // its initial value once, and the default arrives async.
+              CurrencyPicker(
+                key: ValueKey(
+                  'finance_entry_currency_${state.currency.code}'
+                  '_${state.pendingCurrency?.code}',
+                ),
+                value: state.currency,
+                onChanged: cubit.currencyChanged,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppDateField(
+                label: l10n.dateLabel,
+                date: state.date,
+                onDateChanged: cubit.dateChanged,
+                // Future dates are accepted as planned/scheduled entries
+                // (FR-001).
+                lastDate: DateTime(DateTime.now().year + 5),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              CategoryPickerField(
+                categories: state.categories,
+                type: state.type,
+                selectedCategoryId: state.selectedCategoryId,
+                isLoading: state.isLoadingCategories,
+                errorText: state.categorySelectionRequired
+                    ? l10n.financeCategoryRequiredError
+                    : null,
+                onCategorySelected: cubit.categorySelected,
+                onManageCategories: () => context.push('/finance/categories'),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppTextField(
+                label: l10n.noteLabel,
+                maxLength: 500,
+                controller: _noteController,
+                maxLines: 3,
+                onChanged: cubit.noteChanged,
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              AppButton(
+                label: l10n.commonSave,
+                isLoading: state.isSubmitting,
+                onPressed: cubit.submit,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

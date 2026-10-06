@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +28,7 @@ import '../cubit/person_detail_state.dart';
 import '../widgets/balance_amount_text.dart';
 import '../widgets/balance_status_badge.dart';
 import '../widgets/delete_transaction_confirm_dialog.dart';
+import '../widgets/transaction_change_history.dart';
 import '../widgets/transaction_list_tile.dart';
 import 'transaction_edit_page.dart';
 
@@ -90,10 +93,15 @@ class _PersonDetailView extends StatelessWidget {
       ),
       body: BlocConsumer<PersonDetailCubit, PersonDetailState>(
         listenWhen: (previous, current) =>
-            current.status == PersonDetailStatus.success &&
-            current.failure != null &&
-            previous.failure != current.failure,
+            (current.status == PersonDetailStatus.success &&
+                current.failure != null &&
+                previous.failure != current.failure) ||
+            (previous.pendingDelete == null && current.pendingDelete != null),
         listener: (context, state) {
+          if (state.pendingDelete != null) {
+            unawaited(_showDeleteDialog(context, state));
+            return;
+          }
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -248,8 +256,13 @@ class _PersonDetailView extends StatelessWidget {
                               state.occasionNames[transaction.occasionId],
                           onTap: () =>
                               _editTransaction(context, transaction, person),
-                          onDelete: () =>
-                              _deleteTransaction(context, transaction.id),
+                          onEditedTap: () => showTransactionChangeHistory(
+                            context,
+                            transaction,
+                          ),
+                          onDelete: () => context
+                              .read<PersonDetailCubit>()
+                              .requestDelete(transaction),
                           conflictBadge: conflict == null
                               ? null
                               : ConflictBadge(
@@ -295,13 +308,23 @@ class _PersonDetailView extends StatelessWidget {
     extra: TransactionEditArgs(transaction: transaction, person: person),
   );
 
-  Future<void> _deleteTransaction(
+  Future<void> _showDeleteDialog(
     BuildContext context,
-    String transactionId,
+    PersonDetailState state,
   ) async {
-    final confirmed = await showDeleteTransactionConfirmDialog(context);
-    if (confirmed && context.mounted) {
-      await context.read<PersonDetailCubit>().deleteTransaction(transactionId);
+    final pending = state.pendingDelete;
+    if (pending == null) return;
+    final cubit = context.read<PersonDetailCubit>();
+    final confirmed = await showDeleteTransactionConfirmDialog(
+      context,
+      laterRepaymentCount: pending.impact.laterRepaymentCount,
+      personName: state.person?.name,
+      resultingNet: pending.impact.resultingNet,
+    );
+    if (confirmed) {
+      await cubit.confirmDelete();
+    } else {
+      cubit.cancelDelete();
     }
   }
 }

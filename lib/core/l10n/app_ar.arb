@@ -107,6 +107,36 @@
   "duplicateWarningMessage": "يوجد في قائمتك شخص باسم مشابه. هل هو الشخص نفسه؟",
   "duplicateUseExisting": "استخدام الشخص الموجود",
   "duplicateCreateNew": "إنشاء شخص جديد على أي حال",
+  "editCurrencyConfirmTitle": "تغيير العملة؟",
+  "@editCurrencyConfirmTitle": {
+    "description": "Title of the confirmation shown when the currency of an existing transaction or entry is changed while editing."
+  },
+  "editCurrencyConfirmMessage": "المبلغ هيتسجل {amount} {to} من غير تحويل من {from} — متأكد؟",
+  "@editCurrencyConfirmMessage": {
+    "description": "Body of the edit-currency confirmation: the typed amount is kept as is in the new currency, not converted.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "description": "The amount as typed, e.g. 1,500.00"
+      },
+      "from": {
+        "type": "String",
+        "description": "The original currency code"
+      },
+      "to": {
+        "type": "String",
+        "description": "The newly picked currency code"
+      }
+    }
+  },
+  "transactionDuplicateTitle": "ممكن يكون مكرر",
+  "@transactionDuplicateTitle": {
+    "description": "Title of the confirmation shown when a new transaction matches an existing one (same person, amount, currency, direction and date)."
+  },
+  "transactionDuplicateMessage": "إنت سجلت نفس المبلغ ده مع الشخص ده في نفس اليوم. تحب تسجله تاني؟",
+  "@transactionDuplicateMessage": {
+    "description": "Body of the possible-duplicate transaction confirmation. Saving is never blocked."
+  },
   "transactionFormCreateTitle": "تسجيل معاملة",
   "transactionFormEditTitle": "تعديل المعاملة",
   "amountLabel": "المبلغ",
@@ -326,6 +356,9 @@
   "syncConflictKeepMine": "الاحتفاظ بنسختي",
   "syncConflictKeepTheirs": "الاحتفاظ بالنسخة الأخرى",
   "syncConflictDeletedLabel": "محذوف",
+  "conflictGoalAmount": "في الهدف: {amount}",
+  "conflictDirectionContribution": "إيداع في الهدف",
+  "conflictDirectionWithdrawal": "سحب من الهدف",
   "syncConflictResolveFailed": "تعذّر حل التعارض. حاول مرة أخرى.",
   "syncSettingsTitle": "النسخ الاحتياطي والمزامنة",
   "syncStatusUpToDate": "كل شيء محدَّث",
@@ -372,6 +405,7 @@
   "syncKindSavingsGoal": "هدف ادخار",
   "syncKindSavingsContribution": "مبلغ ادخار",
   "syncKindSavingsContributionHistory": "سجل مبلغ الادخار",
+  "syncKindFinanceEntryHistory": "سجل الدخل والمصروفات",
   "syncFailedReasonPersonHasTransactions": "لهذا الشخص معاملات على جهاز آخر.",
   "syncFailedReasonCategoryTypeMismatch": "نوع هذه الفئة لا يطابق قيودها.",
   "syncFailedReasonInvalid": "تعذّر على السحابة قبول هذا التغيير.",
@@ -1375,5 +1409,92 @@
   "savingsWhatIfAppliedMessage": "تم تحديث خطة هدفك.",
   "savingsWhatIfAchievedTitle": "تم تحقيق الهدف",
   "savingsWhatIfAchievedMessage": "لقد حققت هذا الهدف بالفعل، فلم يتبقَّ شيء للتخطيط له.",
-  "savingsWhatIfBackAction": "العودة إلى الهدف"
+  "savingsWhatIfBackAction": "العودة إلى الهدف",
+  "repaymentDirectionLockedHint": "اتجاه السداد بيتحدد من الرصيد. لتغييره احذف السداد وسجّله تاني",
+  "repaymentDirectionLockedSemantics": "الاتجاه: {direction}، مقفول. {hint}",
+  "repaymentOutstanding": "المتبقي: {amount}",
+  "repaymentFlipConfirmTitle": "المبلغ أكتر من المتبقي",
+  "repaymentFlipConfirmMessage": "{direction, select, owe{هتبقى مديون لـ {name} بـ {amount}} other{{name} هيبقى مديون لك بـ {amount}}}",
+  "repaymentPreviewUnavailable": "مش متاح لحد ما تحدد سعر الصرف",
+  "deleteLaterRepaymentsWarning": "{count, plural, =1{فيه سداد واحد اتسجل بعد المعاملة دي} =2{فيه سدادين اتسجلوا بعد المعاملة دي} few{فيه {count} سدادات اتسجلت بعد المعاملة دي} many{فيه {count} سداد اتسجلوا بعد المعاملة دي} other{فيه {count} سداد اتسجلوا بعد المعاملة دي}}. لو حذفتها الرصيد هيبقى: {result}",
+  "changeHistoryTitle": "سجل التعديلات",
+  "@changeHistoryTitle": {
+    "description": "Title of the read-only sheet listing a record's earlier versions."
+  },
+  "changeHistoryCreated": "تمت الإضافة",
+  "@changeHistoryCreated": {
+    "description": "Change-history row label: the record was first saved."
+  },
+  "changeHistoryEdited": "تم التعديل",
+  "@changeHistoryEdited": {
+    "description": "Change-history row label: the record was edited."
+  },
+  "changeHistoryDeleted": "تم الحذف",
+  "@changeHistoryDeleted": {
+    "description": "Change-history row label: the record was deleted."
+  },
+  "changeHistoryRestored": "تمت الاستعادة",
+  "@changeHistoryRestored": {
+    "description": "Change-history row label: the record was restored."
+  },
+  "changeHistoryEmpty": "لسه مفيش تعديلات متسجّلة على العملية دي.",
+  "@changeHistoryEmpty": {
+    "description": "Shown in the change-history sheet when there are no entries."
+  },
+  "changeHistoryNoteField": "الملاحظة",
+  "@changeHistoryNoteField": {
+    "description": "Change-history field name for the note."
+  },
+  "changeHistoryDirectionField": "النوع",
+  "@changeHistoryDirectionField": {
+    "description": "Change-history field name for the direction (gave or received)."
+  },
+  "changeHistoryTypeField": "النوع",
+  "changeHistoryLoadError": "مقدرناش نحمّل سجل التعديلات. جرّب تاني.",
+  "@changeHistoryLoadError": {
+    "description": "Shown in the change-history sheet when loading fails."
+  },
+  "changeHistoryRowSemantics": "{label}، {date}. {details}",
+  "@changeHistoryRowSemantics": {
+    "description": "Screen-reader label for one change-history row: the change kind, its date and the earlier values.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryChange": "{field}: ⁨{from}⁩ ← ⁨{to}⁩",
+  "@changeHistoryChange": {
+    "description": "Change-history line for a value that changed: field is its name, from the earlier value, to the new one.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryValueAtDeletion": "{field} وقت الحذف",
+  "@changeHistoryValueAtDeletion": {
+    "description": "Change-history field name for a value as it was when the record was deleted.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "changeHistoryNoValue": "(فاضي)",
+  "@changeHistoryNoValue": {
+    "description": "Shown in a change-history line where a value was empty (for example a cleared or newly added note)."
+  }
 }

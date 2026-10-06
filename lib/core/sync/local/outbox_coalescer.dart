@@ -101,6 +101,7 @@ const _neverCoalesced = {
   SyncEntityType.transactionAudit,
   SyncEntityType.conflictResolution,
   SyncEntityType.savingsContributionAudit,
+  SyncEntityType.financeEntryAudit,
 };
 
 /// The coalescing rules of data-model.md §5 (FR-025), as a pure function.

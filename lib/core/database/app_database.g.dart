@@ -8519,6 +8519,21 @@ class $SyncStateTable extends SyncState
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _b1RepullDoneMeta = const VerificationMeta(
+    'b1RepullDone',
+  );
+  @override
+  late final GeneratedColumn<bool> b1RepullDone = GeneratedColumn<bool>(
+    'b1_repull_done',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("b1_repull_done" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _lastAttemptAtMeta = const VerificationMeta(
     'lastAttemptAt',
   );
@@ -8573,6 +8588,7 @@ class $SyncStateTable extends SyncState
     lastPulledRevision,
     bootstrapEnqueued,
     initialUploadDone,
+    b1RepullDone,
     lastAttemptAt,
     lastSuccessAt,
     consecutiveFailures,
@@ -8648,6 +8664,15 @@ class $SyncStateTable extends SyncState
         initialUploadDone.isAcceptableOrUnknown(
           data['initial_upload_done']!,
           _initialUploadDoneMeta,
+        ),
+      );
+    }
+    if (data.containsKey('b1_repull_done')) {
+      context.handle(
+        _b1RepullDoneMeta,
+        b1RepullDone.isAcceptableOrUnknown(
+          data['b1_repull_done']!,
+          _b1RepullDoneMeta,
         ),
       );
     }
@@ -8728,6 +8753,10 @@ class $SyncStateTable extends SyncState
         DriftSqlType.bool,
         data['${effectivePrefix}initial_upload_done'],
       )!,
+      b1RepullDone: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}b1_repull_done'],
+      )!,
       lastAttemptAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}last_attempt_at'],
@@ -8775,6 +8804,11 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
   /// only guard against a second bootstrap (data-model.md §3).
   final bool bootstrapEnqueued;
   final bool initialUploadDone;
+
+  /// 022 B1 repair (research R7): set, together with a reset of
+  /// [lastPulledRevision] to 0, the first time the fixed app syncs, so every
+  /// server row is re-applied once through the corrected date mapping.
+  final bool b1RepullDone;
   final int? lastAttemptAt;
   final int? lastSuccessAt;
 
@@ -8790,6 +8824,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
     required this.lastPulledRevision,
     required this.bootstrapEnqueued,
     required this.initialUploadDone,
+    required this.b1RepullDone,
     this.lastAttemptAt,
     this.lastSuccessAt,
     required this.consecutiveFailures,
@@ -8808,6 +8843,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
     map['last_pulled_revision'] = Variable<int>(lastPulledRevision);
     map['bootstrap_enqueued'] = Variable<bool>(bootstrapEnqueued);
     map['initial_upload_done'] = Variable<bool>(initialUploadDone);
+    map['b1_repull_done'] = Variable<bool>(b1RepullDone);
     if (!nullToAbsent || lastAttemptAt != null) {
       map['last_attempt_at'] = Variable<int>(lastAttemptAt);
     }
@@ -8833,6 +8869,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
       lastPulledRevision: Value(lastPulledRevision),
       bootstrapEnqueued: Value(bootstrapEnqueued),
       initialUploadDone: Value(initialUploadDone),
+      b1RepullDone: Value(b1RepullDone),
       lastAttemptAt: lastAttemptAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastAttemptAt),
@@ -8860,6 +8897,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
       lastPulledRevision: serializer.fromJson<int>(json['lastPulledRevision']),
       bootstrapEnqueued: serializer.fromJson<bool>(json['bootstrapEnqueued']),
       initialUploadDone: serializer.fromJson<bool>(json['initialUploadDone']),
+      b1RepullDone: serializer.fromJson<bool>(json['b1RepullDone']),
       lastAttemptAt: serializer.fromJson<int?>(json['lastAttemptAt']),
       lastSuccessAt: serializer.fromJson<int?>(json['lastSuccessAt']),
       consecutiveFailures: serializer.fromJson<int>(
@@ -8880,6 +8918,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
       'lastPulledRevision': serializer.toJson<int>(lastPulledRevision),
       'bootstrapEnqueued': serializer.toJson<bool>(bootstrapEnqueued),
       'initialUploadDone': serializer.toJson<bool>(initialUploadDone),
+      'b1RepullDone': serializer.toJson<bool>(b1RepullDone),
       'lastAttemptAt': serializer.toJson<int?>(lastAttemptAt),
       'lastSuccessAt': serializer.toJson<int?>(lastSuccessAt),
       'consecutiveFailures': serializer.toJson<int>(consecutiveFailures),
@@ -8896,6 +8935,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
     int? lastPulledRevision,
     bool? bootstrapEnqueued,
     bool? initialUploadDone,
+    bool? b1RepullDone,
     Value<int?> lastAttemptAt = const Value.absent(),
     Value<int?> lastSuccessAt = const Value.absent(),
     int? consecutiveFailures,
@@ -8909,6 +8949,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
     lastPulledRevision: lastPulledRevision ?? this.lastPulledRevision,
     bootstrapEnqueued: bootstrapEnqueued ?? this.bootstrapEnqueued,
     initialUploadDone: initialUploadDone ?? this.initialUploadDone,
+    b1RepullDone: b1RepullDone ?? this.b1RepullDone,
     lastAttemptAt: lastAttemptAt.present
         ? lastAttemptAt.value
         : this.lastAttemptAt,
@@ -8938,6 +8979,9 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
       initialUploadDone: data.initialUploadDone.present
           ? data.initialUploadDone.value
           : this.initialUploadDone,
+      b1RepullDone: data.b1RepullDone.present
+          ? data.b1RepullDone.value
+          : this.b1RepullDone,
       lastAttemptAt: data.lastAttemptAt.present
           ? data.lastAttemptAt.value
           : this.lastAttemptAt,
@@ -8964,6 +9008,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
           ..write('lastPulledRevision: $lastPulledRevision, ')
           ..write('bootstrapEnqueued: $bootstrapEnqueued, ')
           ..write('initialUploadDone: $initialUploadDone, ')
+          ..write('b1RepullDone: $b1RepullDone, ')
           ..write('lastAttemptAt: $lastAttemptAt, ')
           ..write('lastSuccessAt: $lastSuccessAt, ')
           ..write('consecutiveFailures: $consecutiveFailures, ')
@@ -8982,6 +9027,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
     lastPulledRevision,
     bootstrapEnqueued,
     initialUploadDone,
+    b1RepullDone,
     lastAttemptAt,
     lastSuccessAt,
     consecutiveFailures,
@@ -8999,6 +9045,7 @@ class SyncStateRow extends DataClass implements Insertable<SyncStateRow> {
           other.lastPulledRevision == this.lastPulledRevision &&
           other.bootstrapEnqueued == this.bootstrapEnqueued &&
           other.initialUploadDone == this.initialUploadDone &&
+          other.b1RepullDone == this.b1RepullDone &&
           other.lastAttemptAt == this.lastAttemptAt &&
           other.lastSuccessAt == this.lastSuccessAt &&
           other.consecutiveFailures == this.consecutiveFailures &&
@@ -9014,6 +9061,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
   final Value<int> lastPulledRevision;
   final Value<bool> bootstrapEnqueued;
   final Value<bool> initialUploadDone;
+  final Value<bool> b1RepullDone;
   final Value<int?> lastAttemptAt;
   final Value<int?> lastSuccessAt;
   final Value<int> consecutiveFailures;
@@ -9028,6 +9076,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
     this.lastPulledRevision = const Value.absent(),
     this.bootstrapEnqueued = const Value.absent(),
     this.initialUploadDone = const Value.absent(),
+    this.b1RepullDone = const Value.absent(),
     this.lastAttemptAt = const Value.absent(),
     this.lastSuccessAt = const Value.absent(),
     this.consecutiveFailures = const Value.absent(),
@@ -9043,6 +9092,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
     this.lastPulledRevision = const Value.absent(),
     this.bootstrapEnqueued = const Value.absent(),
     this.initialUploadDone = const Value.absent(),
+    this.b1RepullDone = const Value.absent(),
     this.lastAttemptAt = const Value.absent(),
     this.lastSuccessAt = const Value.absent(),
     this.consecutiveFailures = const Value.absent(),
@@ -9059,6 +9109,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
     Expression<int>? lastPulledRevision,
     Expression<bool>? bootstrapEnqueued,
     Expression<bool>? initialUploadDone,
+    Expression<bool>? b1RepullDone,
     Expression<int>? lastAttemptAt,
     Expression<int>? lastSuccessAt,
     Expression<int>? consecutiveFailures,
@@ -9075,6 +9126,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
         'last_pulled_revision': lastPulledRevision,
       if (bootstrapEnqueued != null) 'bootstrap_enqueued': bootstrapEnqueued,
       if (initialUploadDone != null) 'initial_upload_done': initialUploadDone,
+      if (b1RepullDone != null) 'b1_repull_done': b1RepullDone,
       if (lastAttemptAt != null) 'last_attempt_at': lastAttemptAt,
       if (lastSuccessAt != null) 'last_success_at': lastSuccessAt,
       if (consecutiveFailures != null)
@@ -9093,6 +9145,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
     Value<int>? lastPulledRevision,
     Value<bool>? bootstrapEnqueued,
     Value<bool>? initialUploadDone,
+    Value<bool>? b1RepullDone,
     Value<int?>? lastAttemptAt,
     Value<int?>? lastSuccessAt,
     Value<int>? consecutiveFailures,
@@ -9108,6 +9161,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
       lastPulledRevision: lastPulledRevision ?? this.lastPulledRevision,
       bootstrapEnqueued: bootstrapEnqueued ?? this.bootstrapEnqueued,
       initialUploadDone: initialUploadDone ?? this.initialUploadDone,
+      b1RepullDone: b1RepullDone ?? this.b1RepullDone,
       lastAttemptAt: lastAttemptAt ?? this.lastAttemptAt,
       lastSuccessAt: lastSuccessAt ?? this.lastSuccessAt,
       consecutiveFailures: consecutiveFailures ?? this.consecutiveFailures,
@@ -9143,6 +9197,9 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
     if (initialUploadDone.present) {
       map['initial_upload_done'] = Variable<bool>(initialUploadDone.value);
     }
+    if (b1RepullDone.present) {
+      map['b1_repull_done'] = Variable<bool>(b1RepullDone.value);
+    }
     if (lastAttemptAt.present) {
       map['last_attempt_at'] = Variable<int>(lastAttemptAt.value);
     }
@@ -9172,6 +9229,7 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateRow> {
           ..write('lastPulledRevision: $lastPulledRevision, ')
           ..write('bootstrapEnqueued: $bootstrapEnqueued, ')
           ..write('initialUploadDone: $initialUploadDone, ')
+          ..write('b1RepullDone: $b1RepullDone, ')
           ..write('lastAttemptAt: $lastAttemptAt, ')
           ..write('lastSuccessAt: $lastSuccessAt, ')
           ..write('consecutiveFailures: $consecutiveFailures, ')
@@ -15808,6 +15866,396 @@ class SavingsContributionAuditsCompanion
   }
 }
 
+class $FinanceEntryAuditsTable extends FinanceEntryAudits
+    with TableInfo<$FinanceEntryAuditsTable, FinanceEntryAudit> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $FinanceEntryAuditsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _financeEntryIdMeta = const VerificationMeta(
+    'financeEntryId',
+  );
+  @override
+  late final GeneratedColumn<String> financeEntryId = GeneratedColumn<String>(
+    'finance_entry_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES finance_entries (id)',
+    ),
+  );
+  static const VerificationMeta _changeTypeMeta = const VerificationMeta(
+    'changeType',
+  );
+  @override
+  late final GeneratedColumn<String> changeType = GeneratedColumn<String>(
+    'change_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _previousValuesJsonMeta =
+      const VerificationMeta('previousValuesJson');
+  @override
+  late final GeneratedColumn<String> previousValuesJson =
+      GeneratedColumn<String>(
+        'previous_values_json',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _changedAtMeta = const VerificationMeta(
+    'changedAt',
+  );
+  @override
+  late final GeneratedColumn<int> changedAt = GeneratedColumn<int>(
+    'changed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    financeEntryId,
+    changeType,
+    previousValuesJson,
+    changedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'finance_entry_audits';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<FinanceEntryAudit> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('finance_entry_id')) {
+      context.handle(
+        _financeEntryIdMeta,
+        financeEntryId.isAcceptableOrUnknown(
+          data['finance_entry_id']!,
+          _financeEntryIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_financeEntryIdMeta);
+    }
+    if (data.containsKey('change_type')) {
+      context.handle(
+        _changeTypeMeta,
+        changeType.isAcceptableOrUnknown(data['change_type']!, _changeTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_changeTypeMeta);
+    }
+    if (data.containsKey('previous_values_json')) {
+      context.handle(
+        _previousValuesJsonMeta,
+        previousValuesJson.isAcceptableOrUnknown(
+          data['previous_values_json']!,
+          _previousValuesJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('changed_at')) {
+      context.handle(
+        _changedAtMeta,
+        changedAt.isAcceptableOrUnknown(data['changed_at']!, _changedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_changedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  FinanceEntryAudit map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return FinanceEntryAudit(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      financeEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}finance_entry_id'],
+      )!,
+      changeType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}change_type'],
+      )!,
+      previousValuesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}previous_values_json'],
+      ),
+      changedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}changed_at'],
+      )!,
+    );
+  }
+
+  @override
+  $FinanceEntryAuditsTable createAlias(String alias) {
+    return $FinanceEntryAuditsTable(attachedDatabase, alias);
+  }
+}
+
+class FinanceEntryAudit extends DataClass
+    implements Insertable<FinanceEntryAudit> {
+  final String id;
+  final String financeEntryId;
+  final String changeType;
+  final String? previousValuesJson;
+  final int changedAt;
+  const FinanceEntryAudit({
+    required this.id,
+    required this.financeEntryId,
+    required this.changeType,
+    this.previousValuesJson,
+    required this.changedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['finance_entry_id'] = Variable<String>(financeEntryId);
+    map['change_type'] = Variable<String>(changeType);
+    if (!nullToAbsent || previousValuesJson != null) {
+      map['previous_values_json'] = Variable<String>(previousValuesJson);
+    }
+    map['changed_at'] = Variable<int>(changedAt);
+    return map;
+  }
+
+  FinanceEntryAuditsCompanion toCompanion(bool nullToAbsent) {
+    return FinanceEntryAuditsCompanion(
+      id: Value(id),
+      financeEntryId: Value(financeEntryId),
+      changeType: Value(changeType),
+      previousValuesJson: previousValuesJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(previousValuesJson),
+      changedAt: Value(changedAt),
+    );
+  }
+
+  factory FinanceEntryAudit.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return FinanceEntryAudit(
+      id: serializer.fromJson<String>(json['id']),
+      financeEntryId: serializer.fromJson<String>(json['financeEntryId']),
+      changeType: serializer.fromJson<String>(json['changeType']),
+      previousValuesJson: serializer.fromJson<String?>(
+        json['previousValuesJson'],
+      ),
+      changedAt: serializer.fromJson<int>(json['changedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'financeEntryId': serializer.toJson<String>(financeEntryId),
+      'changeType': serializer.toJson<String>(changeType),
+      'previousValuesJson': serializer.toJson<String?>(previousValuesJson),
+      'changedAt': serializer.toJson<int>(changedAt),
+    };
+  }
+
+  FinanceEntryAudit copyWith({
+    String? id,
+    String? financeEntryId,
+    String? changeType,
+    Value<String?> previousValuesJson = const Value.absent(),
+    int? changedAt,
+  }) => FinanceEntryAudit(
+    id: id ?? this.id,
+    financeEntryId: financeEntryId ?? this.financeEntryId,
+    changeType: changeType ?? this.changeType,
+    previousValuesJson: previousValuesJson.present
+        ? previousValuesJson.value
+        : this.previousValuesJson,
+    changedAt: changedAt ?? this.changedAt,
+  );
+  FinanceEntryAudit copyWithCompanion(FinanceEntryAuditsCompanion data) {
+    return FinanceEntryAudit(
+      id: data.id.present ? data.id.value : this.id,
+      financeEntryId: data.financeEntryId.present
+          ? data.financeEntryId.value
+          : this.financeEntryId,
+      changeType: data.changeType.present
+          ? data.changeType.value
+          : this.changeType,
+      previousValuesJson: data.previousValuesJson.present
+          ? data.previousValuesJson.value
+          : this.previousValuesJson,
+      changedAt: data.changedAt.present ? data.changedAt.value : this.changedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceEntryAudit(')
+          ..write('id: $id, ')
+          ..write('financeEntryId: $financeEntryId, ')
+          ..write('changeType: $changeType, ')
+          ..write('previousValuesJson: $previousValuesJson, ')
+          ..write('changedAt: $changedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    financeEntryId,
+    changeType,
+    previousValuesJson,
+    changedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is FinanceEntryAudit &&
+          other.id == this.id &&
+          other.financeEntryId == this.financeEntryId &&
+          other.changeType == this.changeType &&
+          other.previousValuesJson == this.previousValuesJson &&
+          other.changedAt == this.changedAt);
+}
+
+class FinanceEntryAuditsCompanion extends UpdateCompanion<FinanceEntryAudit> {
+  final Value<String> id;
+  final Value<String> financeEntryId;
+  final Value<String> changeType;
+  final Value<String?> previousValuesJson;
+  final Value<int> changedAt;
+  final Value<int> rowid;
+  const FinanceEntryAuditsCompanion({
+    this.id = const Value.absent(),
+    this.financeEntryId = const Value.absent(),
+    this.changeType = const Value.absent(),
+    this.previousValuesJson = const Value.absent(),
+    this.changedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  FinanceEntryAuditsCompanion.insert({
+    required String id,
+    required String financeEntryId,
+    required String changeType,
+    this.previousValuesJson = const Value.absent(),
+    required int changedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       financeEntryId = Value(financeEntryId),
+       changeType = Value(changeType),
+       changedAt = Value(changedAt);
+  static Insertable<FinanceEntryAudit> custom({
+    Expression<String>? id,
+    Expression<String>? financeEntryId,
+    Expression<String>? changeType,
+    Expression<String>? previousValuesJson,
+    Expression<int>? changedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (financeEntryId != null) 'finance_entry_id': financeEntryId,
+      if (changeType != null) 'change_type': changeType,
+      if (previousValuesJson != null)
+        'previous_values_json': previousValuesJson,
+      if (changedAt != null) 'changed_at': changedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  FinanceEntryAuditsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? financeEntryId,
+    Value<String>? changeType,
+    Value<String?>? previousValuesJson,
+    Value<int>? changedAt,
+    Value<int>? rowid,
+  }) {
+    return FinanceEntryAuditsCompanion(
+      id: id ?? this.id,
+      financeEntryId: financeEntryId ?? this.financeEntryId,
+      changeType: changeType ?? this.changeType,
+      previousValuesJson: previousValuesJson ?? this.previousValuesJson,
+      changedAt: changedAt ?? this.changedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (financeEntryId.present) {
+      map['finance_entry_id'] = Variable<String>(financeEntryId.value);
+    }
+    if (changeType.present) {
+      map['change_type'] = Variable<String>(changeType.value);
+    }
+    if (previousValuesJson.present) {
+      map['previous_values_json'] = Variable<String>(previousValuesJson.value);
+    }
+    if (changedAt.present) {
+      map['changed_at'] = Variable<int>(changedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('FinanceEntryAuditsCompanion(')
+          ..write('id: $id, ')
+          ..write('financeEntryId: $financeEntryId, ')
+          ..write('changeType: $changeType, ')
+          ..write('previousValuesJson: $previousValuesJson, ')
+          ..write('changedAt: $changedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -15857,6 +16305,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $SavingsContributionsTable(this);
   late final $SavingsContributionAuditsTable savingsContributionAudits =
       $SavingsContributionAuditsTable(this);
+  late final $FinanceEntryAuditsTable financeEntryAudits =
+      $FinanceEntryAuditsTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -15989,6 +16439,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_savings_contribution_audits_contribution_id',
     'CREATE INDEX idx_savings_contribution_audits_contribution_id ON savings_contribution_audits (contribution_id)',
   );
+  late final Index idxFinanceAuditEntryId = Index(
+    'idx_finance_audit_entry_id',
+    'CREATE INDEX idx_finance_audit_entry_id ON finance_entry_audits (finance_entry_id)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -16022,6 +16476,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     savingsGoals,
     savingsContributions,
     savingsContributionAudits,
+    financeEntryAudits,
     idxPeopleNormalizedName,
     idxPeopleArchived,
     idxTransactionsPersonId,
@@ -16055,6 +16510,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     idxSavingsContributionsIdempotencyKey,
     idxSavingsContributionsGoalId,
     idxSavingsContributionAuditsContributionId,
+    idxFinanceAuditEntryId,
   ];
 }
 
@@ -19293,6 +19749,28 @@ final class $$FinanceEntriesTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$FinanceEntryAuditsTable, List<FinanceEntryAudit>>
+  _financeEntryAuditsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.financeEntryAudits,
+        aliasName:
+            'finance_entries__id__finance_entry_audits__finance_entry_id',
+      );
+
+  $$FinanceEntryAuditsTableProcessedTableManager get financeEntryAuditsRefs {
+    final manager = $$FinanceEntryAuditsTableTableManager(
+      $_db,
+      $_db.financeEntryAudits,
+    ).filter((f) => f.financeEntryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _financeEntryAuditsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$FinanceEntriesTableFilterComposer
@@ -19375,6 +19853,31 @@ class $$FinanceEntriesTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> financeEntryAuditsRefs(
+    Expression<bool> Function($$FinanceEntryAuditsTableFilterComposer f) f,
+  ) {
+    final $$FinanceEntryAuditsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.financeEntryAudits,
+      getReferencedColumn: (t) => t.financeEntryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntryAuditsTableFilterComposer(
+            $db: $db,
+            $table: $db.financeEntryAudits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -19529,6 +20032,32 @@ class $$FinanceEntriesTableAnnotationComposer
         );
     return composer;
   }
+
+  Expression<T> financeEntryAuditsRefs<T extends Object>(
+    Expression<T> Function($$FinanceEntryAuditsTableAnnotationComposer a) f,
+  ) {
+    final $$FinanceEntryAuditsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.financeEntryAudits,
+          getReferencedColumn: (t) => t.financeEntryId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$FinanceEntryAuditsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.financeEntryAudits,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$FinanceEntriesTableTableManager
@@ -19544,7 +20073,7 @@ class $$FinanceEntriesTableTableManager
           $$FinanceEntriesTableUpdateCompanionBuilder,
           (FinanceEntry, $$FinanceEntriesTableReferences),
           FinanceEntry,
-          PrefetchHooks Function({bool categoryId})
+          PrefetchHooks Function({bool categoryId, bool financeEntryAuditsRefs})
         > {
   $$FinanceEntriesTableTableManager(
     _$AppDatabase db,
@@ -19623,48 +20152,74 @@ class $$FinanceEntriesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({categoryId = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (categoryId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.categoryId,
-                                referencedTable: $$FinanceEntriesTableReferences
-                                    ._categoryIdTable(db),
-                                referencedColumn:
-                                    $$FinanceEntriesTableReferences
-                                        ._categoryIdTable(db)
-                                        .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({categoryId = false, financeEntryAuditsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (financeEntryAuditsRefs) db.financeEntryAudits,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (categoryId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.categoryId,
+                                    referencedTable:
+                                        $$FinanceEntriesTableReferences
+                                            ._categoryIdTable(db),
+                                    referencedColumn:
+                                        $$FinanceEntriesTableReferences
+                                            ._categoryIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (financeEntryAuditsRefs)
+                        await $_getPrefetchedData<
+                          FinanceEntry,
+                          $FinanceEntriesTable,
+                          FinanceEntryAudit
+                        >(
+                          currentTable: table,
+                          referencedTable: $$FinanceEntriesTableReferences
+                              ._financeEntryAuditsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$FinanceEntriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).financeEntryAuditsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.financeEntryId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -19681,7 +20236,7 @@ typedef $$FinanceEntriesTableProcessedTableManager =
       $$FinanceEntriesTableUpdateCompanionBuilder,
       (FinanceEntry, $$FinanceEntriesTableReferences),
       FinanceEntry,
-      PrefetchHooks Function({bool categoryId})
+      PrefetchHooks Function({bool categoryId, bool financeEntryAuditsRefs})
     >;
 typedef $$NotificationPreferencesTableCreateCompanionBuilder =
     NotificationPreferencesCompanion Function({
@@ -21776,6 +22331,7 @@ typedef $$SyncStateTableCreateCompanionBuilder =
       Value<int> lastPulledRevision,
       Value<bool> bootstrapEnqueued,
       Value<bool> initialUploadDone,
+      Value<bool> b1RepullDone,
       Value<int?> lastAttemptAt,
       Value<int?> lastSuccessAt,
       Value<int> consecutiveFailures,
@@ -21792,6 +22348,7 @@ typedef $$SyncStateTableUpdateCompanionBuilder =
       Value<int> lastPulledRevision,
       Value<bool> bootstrapEnqueued,
       Value<bool> initialUploadDone,
+      Value<bool> b1RepullDone,
       Value<int?> lastAttemptAt,
       Value<int?> lastSuccessAt,
       Value<int> consecutiveFailures,
@@ -21845,6 +22402,11 @@ class $$SyncStateTableFilterComposer
 
   ColumnFilters<bool> get initialUploadDone => $composableBuilder(
     column: $table.initialUploadDone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get b1RepullDone => $composableBuilder(
+    column: $table.b1RepullDone,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -21918,6 +22480,11 @@ class $$SyncStateTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get b1RepullDone => $composableBuilder(
+    column: $table.b1RepullDone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get lastAttemptAt => $composableBuilder(
     column: $table.lastAttemptAt,
     builder: (column) => ColumnOrderings(column),
@@ -21977,6 +22544,11 @@ class $$SyncStateTableAnnotationComposer
 
   GeneratedColumn<bool> get initialUploadDone => $composableBuilder(
     column: $table.initialUploadDone,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get b1RepullDone => $composableBuilder(
+    column: $table.b1RepullDone,
     builder: (column) => column,
   );
 
@@ -22040,6 +22612,7 @@ class $$SyncStateTableTableManager
                 Value<int> lastPulledRevision = const Value.absent(),
                 Value<bool> bootstrapEnqueued = const Value.absent(),
                 Value<bool> initialUploadDone = const Value.absent(),
+                Value<bool> b1RepullDone = const Value.absent(),
                 Value<int?> lastAttemptAt = const Value.absent(),
                 Value<int?> lastSuccessAt = const Value.absent(),
                 Value<int> consecutiveFailures = const Value.absent(),
@@ -22054,6 +22627,7 @@ class $$SyncStateTableTableManager
                 lastPulledRevision: lastPulledRevision,
                 bootstrapEnqueued: bootstrapEnqueued,
                 initialUploadDone: initialUploadDone,
+                b1RepullDone: b1RepullDone,
                 lastAttemptAt: lastAttemptAt,
                 lastSuccessAt: lastSuccessAt,
                 consecutiveFailures: consecutiveFailures,
@@ -22070,6 +22644,7 @@ class $$SyncStateTableTableManager
                 Value<int> lastPulledRevision = const Value.absent(),
                 Value<bool> bootstrapEnqueued = const Value.absent(),
                 Value<bool> initialUploadDone = const Value.absent(),
+                Value<bool> b1RepullDone = const Value.absent(),
                 Value<int?> lastAttemptAt = const Value.absent(),
                 Value<int?> lastSuccessAt = const Value.absent(),
                 Value<int> consecutiveFailures = const Value.absent(),
@@ -22084,6 +22659,7 @@ class $$SyncStateTableTableManager
                 lastPulledRevision: lastPulledRevision,
                 bootstrapEnqueued: bootstrapEnqueued,
                 initialUploadDone: initialUploadDone,
+                b1RepullDone: b1RepullDone,
                 lastAttemptAt: lastAttemptAt,
                 lastSuccessAt: lastSuccessAt,
                 consecutiveFailures: consecutiveFailures,
@@ -26909,6 +27485,347 @@ typedef $$SavingsContributionAuditsTableProcessedTableManager =
       SavingsContributionAudit,
       PrefetchHooks Function({bool contributionId})
     >;
+typedef $$FinanceEntryAuditsTableCreateCompanionBuilder =
+    FinanceEntryAuditsCompanion Function({
+      required String id,
+      required String financeEntryId,
+      required String changeType,
+      Value<String?> previousValuesJson,
+      required int changedAt,
+      Value<int> rowid,
+    });
+typedef $$FinanceEntryAuditsTableUpdateCompanionBuilder =
+    FinanceEntryAuditsCompanion Function({
+      Value<String> id,
+      Value<String> financeEntryId,
+      Value<String> changeType,
+      Value<String?> previousValuesJson,
+      Value<int> changedAt,
+      Value<int> rowid,
+    });
+
+final class $$FinanceEntryAuditsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $FinanceEntryAuditsTable,
+          FinanceEntryAudit
+        > {
+  $$FinanceEntryAuditsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $FinanceEntriesTable _financeEntryIdTable(_$AppDatabase db) =>
+      db.financeEntries.createAlias(
+        'finance_entry_audits__finance_entry_id__finance_entries__id',
+      );
+
+  $$FinanceEntriesTableProcessedTableManager get financeEntryId {
+    final $_column = $_itemColumn<String>('finance_entry_id')!;
+
+    final manager = $$FinanceEntriesTableTableManager(
+      $_db,
+      $_db.financeEntries,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_financeEntryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$FinanceEntryAuditsTableFilterComposer
+    extends Composer<_$AppDatabase, $FinanceEntryAuditsTable> {
+  $$FinanceEntryAuditsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get changeType => $composableBuilder(
+    column: $table.changeType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get previousValuesJson => $composableBuilder(
+    column: $table.previousValuesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get changedAt => $composableBuilder(
+    column: $table.changedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$FinanceEntriesTableFilterComposer get financeEntryId {
+    final $$FinanceEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.financeEntryId,
+      referencedTable: $db.financeEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.financeEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinanceEntryAuditsTableOrderingComposer
+    extends Composer<_$AppDatabase, $FinanceEntryAuditsTable> {
+  $$FinanceEntryAuditsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get changeType => $composableBuilder(
+    column: $table.changeType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get previousValuesJson => $composableBuilder(
+    column: $table.previousValuesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get changedAt => $composableBuilder(
+    column: $table.changedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$FinanceEntriesTableOrderingComposer get financeEntryId {
+    final $$FinanceEntriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.financeEntryId,
+      referencedTable: $db.financeEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.financeEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinanceEntryAuditsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $FinanceEntryAuditsTable> {
+  $$FinanceEntryAuditsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get changeType => $composableBuilder(
+    column: $table.changeType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get previousValuesJson => $composableBuilder(
+    column: $table.previousValuesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get changedAt =>
+      $composableBuilder(column: $table.changedAt, builder: (column) => column);
+
+  $$FinanceEntriesTableAnnotationComposer get financeEntryId {
+    final $$FinanceEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.financeEntryId,
+      referencedTable: $db.financeEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$FinanceEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.financeEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$FinanceEntryAuditsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $FinanceEntryAuditsTable,
+          FinanceEntryAudit,
+          $$FinanceEntryAuditsTableFilterComposer,
+          $$FinanceEntryAuditsTableOrderingComposer,
+          $$FinanceEntryAuditsTableAnnotationComposer,
+          $$FinanceEntryAuditsTableCreateCompanionBuilder,
+          $$FinanceEntryAuditsTableUpdateCompanionBuilder,
+          (FinanceEntryAudit, $$FinanceEntryAuditsTableReferences),
+          FinanceEntryAudit,
+          PrefetchHooks Function({bool financeEntryId})
+        > {
+  $$FinanceEntryAuditsTableTableManager(
+    _$AppDatabase db,
+    $FinanceEntryAuditsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$FinanceEntryAuditsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$FinanceEntryAuditsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$FinanceEntryAuditsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> financeEntryId = const Value.absent(),
+                Value<String> changeType = const Value.absent(),
+                Value<String?> previousValuesJson = const Value.absent(),
+                Value<int> changedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceEntryAuditsCompanion(
+                id: id,
+                financeEntryId: financeEntryId,
+                changeType: changeType,
+                previousValuesJson: previousValuesJson,
+                changedAt: changedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String financeEntryId,
+                required String changeType,
+                Value<String?> previousValuesJson = const Value.absent(),
+                required int changedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => FinanceEntryAuditsCompanion.insert(
+                id: id,
+                financeEntryId: financeEntryId,
+                changeType: changeType,
+                previousValuesJson: previousValuesJson,
+                changedAt: changedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$FinanceEntryAuditsTable, FinanceEntryAudit>(
+                    table,
+                  ),
+                  $$FinanceEntryAuditsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({financeEntryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (financeEntryId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.financeEntryId,
+                                referencedTable:
+                                    $$FinanceEntryAuditsTableReferences
+                                        ._financeEntryIdTable(db),
+                                referencedColumn:
+                                    $$FinanceEntryAuditsTableReferences
+                                        ._financeEntryIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$FinanceEntryAuditsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $FinanceEntryAuditsTable,
+      FinanceEntryAudit,
+      $$FinanceEntryAuditsTableFilterComposer,
+      $$FinanceEntryAuditsTableOrderingComposer,
+      $$FinanceEntryAuditsTableAnnotationComposer,
+      $$FinanceEntryAuditsTableCreateCompanionBuilder,
+      $$FinanceEntryAuditsTableUpdateCompanionBuilder,
+      (FinanceEntryAudit, $$FinanceEntryAuditsTableReferences),
+      FinanceEntryAudit,
+      PrefetchHooks Function({bool financeEntryId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -26984,4 +27901,6 @@ class $AppDatabaseManager {
         _db,
         _db.savingsContributionAudits,
       );
+  $$FinanceEntryAuditsTableTableManager get financeEntryAudits =>
+      $$FinanceEntryAuditsTableTableManager(_db, _db.financeEntryAudits);
 }

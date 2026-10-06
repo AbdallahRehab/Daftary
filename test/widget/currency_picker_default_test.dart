@@ -28,6 +28,9 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../features/transactions/helpers/currency_test_doubles.dart';
+import '../features/transactions/helpers/duplicate_test_doubles.dart';
+import '../features/transactions/helpers/repayment_form_test_doubles.dart'
+    hide MockRecordRepayment;
 
 class _MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -101,13 +104,14 @@ void main() {
         _MockAddTransaction(),
         _MockEditTransaction(),
         getPrimaryCurrencyReturning(primary),
+        findPossibleDuplicateReturning(),
       ),
     );
     getIt.registerFactoryParam<RepaymentFormCubit, String, void>(
-      (personId, _) => repaymentCubit = RepaymentFormCubit(
-        _MockRecordRepayment(),
-        getPrimaryCurrencyReturning(primary),
-        personId,
+      (personId, _) => repaymentCubit = repaymentCubitWith(
+        recordRepayment: _MockRecordRepayment(),
+        primary: primary,
+        personId: personId,
       ),
     );
     getIt.registerFactory<FinanceEntryFormCubit>(

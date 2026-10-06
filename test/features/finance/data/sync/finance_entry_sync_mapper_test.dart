@@ -26,6 +26,12 @@ void main() {
     deletedAt: 1790000200000,
   );
 
+  /// B1: a date is a calendar day, so a download restores local midnight.
+  int dayOf(int epochMs) {
+    final d = DateTime.fromMillisecondsSinceEpoch(epochMs);
+    return DateTime(d.year, d.month, d.day).millisecondsSinceEpoch;
+  }
+
   test('is the finance_entry mapper', () {
     expect(mapper.type, SyncEntityType.financeEntry);
   });
@@ -55,8 +61,33 @@ void main() {
     ]) {
       expect(
         mapper.fromWire(overTheWire(mapper.toWire(r))),
-        r.toCompanion(false),
+        r.copyWith(date: dayOf(r.date)).toCompanion(false),
       );
     }
+  });
+
+  test('B1: fromWire builds the date from occurred_on, in any device time '
+      'zone', () {
+    final wire = {
+      ...overTheWire(mapper.toWire(row)),
+      'occurred_on': '2026-10-01',
+      'occurred_at': '2026-09-30T21:00:00.000Z',
+      'tz_offset_minutes': 180,
+    };
+    expect(
+      DateTime.fromMillisecondsSinceEpoch(mapper.fromWire(wire).date.value),
+      DateTime(2026, 10, 1),
+    );
+  });
+
+  test('B1: without occurred_on the date comes from occurred_at', () {
+    final wire = {
+      ...overTheWire(mapper.toWire(row)),
+      'occurred_at': '2026-09-30T21:00:00.000Z',
+    }..remove('occurred_on');
+    expect(
+      mapper.fromWire(wire).date.value,
+      DateTime.utc(2026, 9, 30, 21).millisecondsSinceEpoch,
+    );
   });
 }

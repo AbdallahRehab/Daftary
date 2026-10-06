@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/people_failures.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
@@ -14,6 +15,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/currency_test_doubles.dart';
+import '../../helpers/duplicate_test_doubles.dart';
 
 class MockPeopleRepository extends Mock implements PeopleRepository {}
 
@@ -28,6 +30,7 @@ void main() {
   late MockCreatePerson createPerson;
   late MockAddTransaction addTransaction;
   late MockEditTransaction editTransaction;
+  late MockFindPossibleDuplicate findPossibleDuplicate;
 
   final now = DateTime(2026, 1, 1);
   final ahmed = Person(
@@ -59,6 +62,7 @@ void main() {
     createPerson = MockCreatePerson();
     addTransaction = MockAddTransaction();
     editTransaction = MockEditTransaction();
+    findPossibleDuplicate = findPossibleDuplicateReturning();
   });
 
   TransactionFormCubit buildCubit() => TransactionFormCubit(
@@ -67,6 +71,7 @@ void main() {
     addTransaction,
     editTransaction,
     getPrimaryCurrencyReturning(),
+    findPossibleDuplicate,
   );
 
   blocTest<TransactionFormCubit, TransactionFormState>(
@@ -284,6 +289,7 @@ void main() {
           addTransaction,
           editTransaction,
           getPrimaryCurrencyReturning(primary),
+          findPossibleDuplicate,
         );
 
     void stubAdd() {
@@ -382,5 +388,303 @@ void main() {
         expect(cubit.state.amountInput, '19.99');
       },
     );
+  });
+
+  group('E3 currency change while editing', () {
+    final existing = MoneyTransaction(
+      id: 't1',
+      idempotencyKey: 'k',
+      personId: 'p1',
+      amount: const Money.egp(150000),
+      direction: TransactionDirection.given,
+      kind: TransactionKind.initialExchange,
+      date: now,
+      createdAt: now,
+    );
+
+    TransactionFormCubit editing() =>
+        buildCubit()..loadForEdit(existing, ahmed);
+
+    test('edit mode: picking another currency only sets pendingCurrency', () {
+      final cubit = editing()..currencyChanged(Currency.usd);
+
+      expect(cubit.state.pendingCurrency, Currency.usd);
+      expect(cubit.state.currency, Currency.egp);
+      cubit.close();
+    });
+
+    test('edit mode: picking the current currency sets nothing', () {
+      final cubit = editing()..currencyChanged(Currency.egp);
+
+      expect(cubit.state.pendingCurrency, isNull);
+      cubit.close();
+    });
+
+    test('confirmCurrencyChange applies it and clears the pending one', () {
+      final cubit = editing()
+        ..currencyChanged(Currency.usd)
+        ..confirmCurrencyChange();
+
+      expect(cubit.state.currency, Currency.usd);
+      expect(cubit.state.pendingCurrency, isNull);
+      expect(cubit.state.amountInput, '1,500.00');
+      cubit.close();
+    });
+
+    test('cancelCurrencyChange clears it and keeps the original', () {
+      final cubit = editing()
+        ..currencyChanged(Currency.usd)
+        ..cancelCurrencyChange();
+
+      expect(cubit.state.currency, Currency.egp);
+      expect(cubit.state.pendingCurrency, isNull);
+      cubit.close();
+    });
+
+    final small = MoneyTransaction(
+      id: 't1',
+      idempotencyKey: 'k',
+      personId: 'p1',
+      amount: const Money.egp(15050),
+      direction: TransactionDirection.given,
+      kind: TransactionKind.initialExchange,
+      date: now,
+      createdAt: now,
+    );
+
+    Future<Money> savedAfter(
+      TransactionFormCubit cubit,
+      void Function(TransactionFormCubit) steps,
+    ) async {
+      when(
+        () => editTransaction(
+          transactionId: any(named: 'transactionId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+          note: any(named: 'note'),
+        ),
+      ).thenAnswer((_) async => Right(savedTransaction));
+      steps(cubit);
+      await cubit.submit();
+      return verify(
+            () => editTransaction(
+              transactionId: any(named: 'transactionId'),
+              amount: captureAny(named: 'amount'),
+              direction: any(named: 'direction'),
+              date: any(named: 'date'),
+              note: any(named: 'note'),
+            ),
+          ).captured.single
+          as Money;
+    }
+
+    test(
+      'edit 150.50 EGP, pick USD, confirm, submit saves 150.50 USD',
+      () async {
+        final cubit = buildCubit()..loadForEdit(small, ahmed);
+
+        final saved = await savedAfter(
+          cubit,
+          (c) => c
+            ..currencyChanged(Currency.usd)
+            ..confirmCurrencyChange(),
+        );
+
+        expect(saved, const Money.fromMinorUnits(15050, Currency.usd));
+        await cubit.close();
+      },
+    );
+
+    test('submit while a currency is pending uses the original currency, '
+        'never the pending one', () async {
+      final cubit = buildCubit()..loadForEdit(small, ahmed);
+
+      final saved = await savedAfter(
+        cubit,
+        (c) => c.currencyChanged(Currency.usd),
+      );
+
+      expect(saved, const Money.egp(15050));
+      await cubit.close();
+    });
+
+    test('create mode: the currency is applied immediately', () {
+      final cubit = buildCubit()..currencyChanged(Currency.usd);
+
+      expect(cubit.state.currency, Currency.usd);
+      expect(cubit.state.pendingCurrency, isNull);
+      cubit.close();
+    });
+  });
+
+  group('C4 possible duplicate', () {
+    final match = MoneyTransaction(
+      id: 'old',
+      idempotencyKey: 'old-key',
+      personId: 'p1',
+      amount: const Money.egp(20000),
+      direction: TransactionDirection.given,
+      kind: TransactionKind.initialExchange,
+      date: now,
+      createdAt: now,
+    );
+
+    TransactionFormCubit ready() {
+      when(
+        () => addTransaction(
+          idempotencyKey: any(named: 'idempotencyKey'),
+          personId: any(named: 'personId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+          note: any(named: 'note'),
+        ),
+      ).thenAnswer((_) async => Right(savedTransaction));
+      return buildCubit()
+        ..selectExistingPerson(ahmed)
+        ..amountChanged('200');
+    }
+
+    void verifyAdds(int times, {String? key}) {
+      Future<Object?> call() => addTransaction(
+        idempotencyKey: key ?? any(named: 'idempotencyKey'),
+        personId: any(named: 'personId'),
+        amount: any(named: 'amount'),
+        direction: any(named: 'direction'),
+        date: any(named: 'date'),
+        note: any(named: 'note'),
+      );
+      if (times == 0) {
+        verifyNever(call);
+      } else {
+        verify(call).called(times);
+      }
+    }
+
+    test('a match in create mode emits possibleDuplicate and saves '
+        'nothing yet', () async {
+      stubFindPossibleDuplicate(findPossibleDuplicate, match);
+      final cubit = ready();
+
+      await cubit.submit();
+
+      expect(cubit.state.possibleDuplicate, match);
+      expect(cubit.state.isSubmitting, isFalse);
+      verifyAdds(0);
+      await cubit.close();
+    });
+
+    test('confirmDuplicate saves exactly one row with the same '
+        'idempotency key', () async {
+      stubFindPossibleDuplicate(findPossibleDuplicate, match);
+      final cubit = ready();
+      final key = cubit.state.idempotencyKey;
+
+      await cubit.submit();
+      await cubit.confirmDuplicate();
+
+      expect(cubit.state.possibleDuplicate, isNull);
+      expect(cubit.state.isSuccess, isTrue);
+      verifyAdds(1, key: key);
+      await cubit.close();
+    });
+
+    test('cancelDuplicate clears the prompt and saves nothing, and the '
+        'form can be saved again (never blocked)', () async {
+      stubFindPossibleDuplicate(findPossibleDuplicate, match);
+      final cubit = ready();
+
+      await cubit.submit();
+      cubit.cancelDuplicate();
+
+      expect(cubit.state.possibleDuplicate, isNull);
+      verifyAdds(0);
+
+      await cubit.submit();
+      expect(cubit.state.possibleDuplicate, match);
+      await cubit.confirmDuplicate();
+      verifyAdds(1);
+      await cubit.close();
+    });
+
+    test('no match saves straight away', () async {
+      final cubit = ready();
+
+      await cubit.submit();
+
+      expect(cubit.state.isSuccess, isTrue);
+      verifyAdds(1);
+      await cubit.close();
+    });
+
+    test('a failed lookup never blocks the save', () async {
+      when(
+        () => findPossibleDuplicate(
+          personId: any(named: 'personId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+        ),
+      ).thenAnswer((_) async => const Left(CacheFailure('boom')));
+      final cubit = ready();
+
+      await cubit.submit();
+
+      expect(cubit.state.isSuccess, isTrue);
+      verifyAdds(1);
+      await cubit.close();
+    });
+
+    test('CHK100: a rapid double tap still records exactly one row', () async {
+      final cubit = ready();
+
+      await Future.wait([cubit.submit(), cubit.submit()]);
+
+      verifyAdds(1);
+      await cubit.close();
+    });
+
+    test(
+      'a rapid double tap on a duplicate asks once and saves nothing',
+      () async {
+        stubFindPossibleDuplicate(findPossibleDuplicate, match);
+        final cubit = ready();
+
+        await Future.wait([cubit.submit(), cubit.submit()]);
+        await cubit.confirmDuplicate();
+        await cubit.confirmDuplicate();
+
+        verifyAdds(1);
+        await cubit.close();
+      },
+    );
+
+    test('edit mode never looks for a duplicate', () async {
+      stubFindPossibleDuplicate(findPossibleDuplicate, match);
+      when(
+        () => editTransaction(
+          transactionId: any(named: 'transactionId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+          note: any(named: 'note'),
+        ),
+      ).thenAnswer((_) async => Right(savedTransaction));
+      final cubit = buildCubit()..loadForEdit(match, ahmed);
+
+      await cubit.submit();
+
+      verifyNever(
+        () => findPossibleDuplicate(
+          personId: any(named: 'personId'),
+          amount: any(named: 'amount'),
+          direction: any(named: 'direction'),
+          date: any(named: 'date'),
+        ),
+      );
+      expect(cubit.state.isSuccess, isTrue);
+      await cubit.close();
+    });
   });
 }

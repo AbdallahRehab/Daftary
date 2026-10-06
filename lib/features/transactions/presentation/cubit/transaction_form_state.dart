@@ -26,6 +26,8 @@ class TransactionFormState extends Equatable {
     this.amountInput = '',
     this.currency = Currency.egp,
     this.currencyChosenByUser = false,
+    this.pendingCurrency,
+    this.possibleDuplicate,
     this.note,
     this.amountInvalid = false,
     this.personFailure,
@@ -66,6 +68,14 @@ class TransactionFormState extends Equatable {
   /// True once the user picked a currency themselves, so a late-arriving
   /// primary-currency default never overwrites their choice.
   final bool currencyChosenByUser;
+
+  /// 022 E3: in edit mode, a currency the user picked that is awaiting
+  /// confirmation. [currency] stays unchanged until it is confirmed.
+  final Currency? pendingCurrency;
+
+  /// 022 C4: an active row with the same person, amount, currency,
+  /// direction and date, held while the user decides whether to save anyway.
+  final MoneyTransaction? possibleDuplicate;
   final String? note;
 
   /// Set by this cubit's own client-side "amount must be > 0" check
@@ -97,6 +107,10 @@ class TransactionFormState extends Equatable {
     String? amountInput,
     Currency? currency,
     bool? currencyChosenByUser,
+    Currency? pendingCurrency,
+    bool clearPendingCurrency = false,
+    MoneyTransaction? possibleDuplicate,
+    bool clearPossibleDuplicate = false,
     String? note,
     bool? amountInvalid,
     bool clearAmountError = false,
@@ -127,6 +141,12 @@ class TransactionFormState extends Equatable {
       amountInput: amountInput ?? this.amountInput,
       currency: currency ?? this.currency,
       currencyChosenByUser: currencyChosenByUser ?? this.currencyChosenByUser,
+      pendingCurrency: clearPendingCurrency
+          ? null
+          : (pendingCurrency ?? this.pendingCurrency),
+      possibleDuplicate: clearPossibleDuplicate
+          ? null
+          : (possibleDuplicate ?? this.possibleDuplicate),
       note: note ?? this.note,
       amountInvalid: clearAmountError
           ? false
@@ -159,6 +179,8 @@ class TransactionFormState extends Equatable {
     amountInput,
     currency,
     currencyChosenByUser,
+    pendingCurrency,
+    possibleDuplicate,
     note,
     amountInvalid,
     personFailure,

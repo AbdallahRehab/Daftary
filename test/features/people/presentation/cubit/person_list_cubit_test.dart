@@ -118,6 +118,43 @@ void main() {
   );
 
   blocTest<PersonListCubit, PersonListState>(
+    'clearFilters resets the name query and the status filter and reloads '
+    'the unfiltered list',
+    build: buildCubit,
+    setUp: () {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      ).thenAnswer((_) async => const Right([]));
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([sara]));
+      when(() => transactionsRepository.getPersonBalance('p2')).thenAnswer(
+        (_) async =>
+            const Right(PersonBalance(personId: 'p2', net: Money.egp(-50000))),
+      );
+    },
+    act: (cubit) async {
+      cubit
+        ..nameQueryChanged('zzz')
+        ..statusFilterChanged(RelationshipStatus.settled);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      cubit.clearFilters();
+    },
+    wait: const Duration(milliseconds: 20),
+    verify: (cubit) {
+      expect(cubit.state.nameQuery, '');
+      expect(cubit.state.statusFilter, isNull);
+      expect(cubit.state.items.single.person.name, 'Sara');
+    },
+  );
+
+  blocTest<PersonListCubit, PersonListState>(
     'statusFilterChanged filters active people by RelationshipStatus (FR-019)',
     build: buildCubit,
     setUp: () {

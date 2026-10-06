@@ -215,4 +215,91 @@ void main() {
       }
     });
   });
+
+  const cap = 99999999999999;
+
+  group('TS-SAVINGS-12 SC-004 near the 12-digit cap', () {
+    test('target 999,999,999,999.99, contribution 0.01: current 1, remaining '
+        '99999999999998; after the delete current 0', () async {
+      final goal = await env.goal(target: cap);
+      final contribution = unwrapOrThrow(
+        await env.savings.logContribution(
+          idempotencyKey: env.nextKey(),
+          goalId: goal.id,
+          amount: const Money.egp(1),
+          date: catalogueToday,
+        ),
+      );
+
+      var progress = (await detailOf(goal.id)).progress;
+      expect(progress.currentAmountMinorUnits, 1);
+      expect(progress.remainingMinorUnits, 99999999999998);
+
+      unwrapOrThrow(await env.savings.deleteContribution(contribution.id));
+
+      progress = (await detailOf(goal.id)).progress;
+      expect(progress.currentAmountMinorUnits, 0);
+      expect(progress.remainingMinorUnits, cap);
+    });
+
+    test('contributing exactly the near-cap target achieves the goal with '
+        'remaining 0', () async {
+      final goal = await env.goal(target: cap);
+      await env.contribute(goal.id, cap);
+
+      final progress = (await detailOf(goal.id)).progress;
+
+      expect(progress.isAchieved, isTrue);
+      expect(progress.currentAmountMinorUnits, cap);
+      expect(progress.remainingMinorUnits, 0);
+    });
+
+    test('two near-cap contributions sum exactly: current 199999999999998, '
+        'remaining 0 (never negative)', () async {
+      final goal = await env.goal(target: cap);
+      await env.contribute(goal.id, cap);
+      await env.contribute(goal.id, cap);
+
+      final progress = (await detailOf(goal.id)).progress;
+
+      expect(progress.currentAmountMinorUnits, 199999999999998);
+      expect(progress.remainingMinorUnits, 0);
+    });
+  });
+
+  group('TS-SAVINGS SC-004 one minor unit, edit and withdraw', () {
+    test('contribution 0.01 edited to 0.02, then a 0.01 withdrawal', () async {
+      final goal = await env.goal();
+      final contribution = unwrapOrThrow(
+        await env.savings.logContribution(
+          idempotencyKey: env.nextKey(),
+          goalId: goal.id,
+          amount: const Money.egp(1),
+          date: catalogueToday,
+        ),
+      );
+      expect((await detailOf(goal.id)).progress.currentAmountMinorUnits, 1);
+
+      unwrapOrThrow(
+        await env.savings.editContribution(
+          contributionId: contribution.id,
+          amount: const Money.egp(2),
+          date: catalogueToday,
+        ),
+      );
+      expect((await detailOf(goal.id)).progress.currentAmountMinorUnits, 2);
+
+      unwrapOrThrow(
+        await env.savings.logWithdrawal(
+          idempotencyKey: env.nextKey(),
+          goalId: goal.id,
+          amount: const Money.egp(1),
+          date: catalogueToday,
+        ),
+      );
+      final progress = (await detailOf(goal.id)).progress;
+      expect(progress.currentAmountMinorUnits, 1);
+      expect(progress.remainingMinorUnits, 1199999);
+    });
+  });
 }

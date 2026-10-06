@@ -21,14 +21,14 @@ UI: in edit mode, a repayment shows direction as read-only text plus a hint: "to
 | They owe you 1,000.00 EGP | 1,500.00 EGP | saved silently; the balance flips | **confirmation** ("You will owe Ahmed 500.00") → saved on confirm, nothing on cancel |
 | They owe you 10,000.00 EGP, USD = 48.50 | 100.00 USD | saved | the preview says 5,150.00 EGP remains (converted with the balance's own rates) |
 | They owe you 10,000.00 EGP, no GBP rate | 50.00 GBP | saved | preview `blocked` (no number shown); saving is still allowed |
-| Blocked on a rate | any | saved | per-currency outstanding amounts shown; no flip preview; saved |
+| Blocked on a rate | any | saved | opposite-direction balance: "Unavailable until an exchange rate is set" instead of any number (per-currency magnitudes without their direction would read as one total); no flip preview; saved. Same-direction blocked balances still show their per-currency amounts |
 
 ## A3 + S0 — `sync_push` for `savings_contribution` (migration 025)
 
 | `p_app_version` | Upsert with a stale `base_revision` | Before | After |
 | --- | --- | --- | --- |
-| below R1 (e.g. `1.0.1`) | yes | applied (last write wins) | **unchanged**: applied (last write wins) |
-| R1 or later | yes | applied (last write wins) | **`conflict`**: the op is blocked and shown in the sync conflicts list |
+| below 1.1.0 (e.g. `1.0.1`) | yes | applied (last write wins) | **unchanged**: applied (last write wins) |
+| 1.1.0 or later | yes | applied (last write wins) | **`conflict`**: the op is blocked and shown in the sync conflicts list |
 | any | current `base_revision` | applied | applied |
 | any | same `op_id` replayed | ledger result | unchanged |
 
@@ -36,9 +36,9 @@ UI: in edit mode, a repayment shows direction as read-only text plus a hint: "to
 
 | Situation | Before | After |
 | --- | --- | --- |
-| R1+ app downloads a page containing an unknown `entity_type` | the whole page fails (`FormatException`) | the unknown row is skipped and logged without data; the other rows are applied; the cursor advances past it |
+| 1.1.0+ app downloads a page containing an unknown `entity_type` | the whole page fails (`FormatException`) | the unknown row is skipped and logged without data; the other rows are applied; the cursor advances past it |
 | v1.0.1 calls `sync_pull(bigint,int)` after 026 | — | gets exactly today's types; never `finance_entry_audit` |
-| R2 calls `sync_pull_v2(bigint,int)` | — | gets every type, including `finance_entry_audit` |
+| 1.1.0 calls `sync_pull_v2(bigint,int)` | — | gets every type, including `finance_entry_audit` |
 | v1.0.1 calls `sync_pull(bigint,int)` after 025 | — | `conflict_resolution` rows whose `entity_type` is `savings_contribution` are not served (v1.0.1 rejects them and the page would fail). When v1.0.1 is retired, a later migration drops this filter and bumps those rows' revisions (a no-op update firing `sync_stamp`); otherwise devices already past the cursor never receive them. |
 
 ## B1 — Download of `money_transaction` and `finance_entry`

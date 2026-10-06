@@ -1,6 +1,7 @@
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
@@ -80,8 +81,9 @@ void main() {
     await changes.close();
   });
 
-  Widget wrap(Widget child) {
+  Widget wrap(Widget child, {Locale? locale}) {
     return MaterialApp(
+      locale: locale,
       theme: buildLightTheme(),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -182,4 +184,38 @@ void main() {
       expect(find.text('Ahmed owes you 25.00 USD'), findsOneWidget);
     },
   );
+
+  testWidgets('Arabic: the status sentence, the amount with its currency and '
+      'right-to-left direction (RTL-09)', (tester) async {
+    when(
+      () => peopleRepository.getPersonById('p1'),
+    ).thenAnswer((_) async => Right(ahmed));
+    when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+      (_) async =>
+          const Right(PersonBalance(personId: 'p1', net: Money.egp(150000))),
+    );
+    when(
+      () => transactionsRepository.getPersonHistory('p1'),
+    ).thenAnswer((_) async => const Right([]));
+
+    await tester.pumpWidget(
+      wrap(const PersonDetailPage(personId: 'p1'), locale: const Locale('ar')),
+    );
+    await tester.pumpAndSettle();
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    final amount = EgpFormatter(
+      locale: 'ar',
+    ).formatWithSymbol(const Money.egp(150000));
+    expect(amount, contains('EGP'));
+    expect(
+      find.text(l10n.personDetailTheyOweYou('Ahmed', amount)),
+      findsOneWidget,
+    );
+    expect(
+      Directionality.of(tester.element(find.byType(PersonDetailPage))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -562,5 +562,27 @@ void main() {
       expect(cubit.state.pendingDelete, isNull);
       expect(cubit.state.failure, isA<CacheFailure>());
     });
+
+    test('before the balance has loaded it falls back to the plain '
+        'confirmation: no impact, no later-repayment read (T103)', () async {
+      final cubit = buildCubit();
+      addTearDown(cubit.close);
+      expect(cubit.state.balance, isNull);
+
+      await cubit.requestDelete(given);
+
+      final pending = cubit.state.pendingDelete;
+      expect(pending, isNotNull);
+      expect(pending!.transaction, given);
+      expect(pending.impact.laterRepaymentCount, 0);
+      expect(pending.impact.resultingNet, isNull);
+      verifyNever(
+        () => transactionsRepository.countLaterRepayments(
+          any(),
+          any(),
+          excludingTransactionId: any(named: 'excludingTransactionId'),
+        ),
+      );
+    });
   });
 }

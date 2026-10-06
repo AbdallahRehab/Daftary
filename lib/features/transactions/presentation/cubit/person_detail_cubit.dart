@@ -12,6 +12,7 @@ import '../../../people/domain/usecases/watch_person.dart';
 import '../../domain/entities/money_transaction.dart';
 import '../../domain/entities/person_balance.dart';
 import '../../domain/repositories/transactions_repository.dart';
+import '../../domain/services/deletion_impact.dart';
 import '../../domain/usecases/delete_transaction.dart';
 import '../../domain/usecases/preview_transaction_deletion.dart';
 import '../../domain/usecases/watch_person_balance.dart';
@@ -153,7 +154,8 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
 
   /// 022 E6: works out what deleting [transaction] would leave (later
   /// repayments and the resulting balance) and exposes it as
-  /// `state.pendingDelete` for the confirmation. Ignored while another
+  /// `state.pendingDelete` for the confirmation (a plain confirmation with
+  /// no impact while the balance is still loading). Ignored while another
   /// request is open or in flight.
   // Known limitation: the confirmation shows the impact computed when it
   // was requested. If the balance changes while the dialog is open (a
@@ -161,7 +163,21 @@ class PersonDetailCubit extends Cubit<PersonDetailState> {
   // correct because the repository re-reads everything.
   Future<void> requestDelete(MoneyTransaction transaction) async {
     final balance = state.balance;
-    if (_requestingDelete || state.pendingDelete != null || balance == null) {
+    if (_requestingDelete || state.pendingDelete != null) return;
+    if (balance == null) {
+      // The balance has not loaded yet: ask the plain "cannot be undone"
+      // question with no impact preview rather than ignoring the tap.
+      emit(
+        state.copyWith(
+          pendingDelete: PendingDelete(
+            transaction: transaction,
+            impact: const DeletionImpact(
+              laterRepaymentCount: 0,
+              resultingNet: null,
+            ),
+          ),
+        ),
+      );
       return;
     }
     _requestingDelete = true;

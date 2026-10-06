@@ -39,8 +39,9 @@ GoRouter _buildTestRouter() {
   );
 }
 
-Widget _wrap() {
+Widget _wrap({Locale? locale}) {
   return MaterialApp.router(
+    locale: locale,
     routerConfig: _buildTestRouter(),
     theme: buildLightTheme(),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -170,4 +171,27 @@ void main() {
       ).called(2);
     },
   );
+
+  testWidgets('Arabic: the archived list renders its Arabic title and '
+      'restore action right-to-left (RTL-09; the page shows no balance or '
+      'amount)', (tester) async {
+    when(
+      () => peopleRepository.searchArchivedPeople(
+        nameQuery: any(named: 'nameQuery'),
+      ),
+    ).thenAnswer((_) async => Right([ahmed]));
+
+    await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    expect(find.text(l10n.archivedPeopleTitle), findsOneWidget);
+    expect(find.text('Ahmed'), findsOneWidget);
+    expect(find.text(l10n.restoreAction), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.byType(ArchivedPeoplePage))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }

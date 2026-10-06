@@ -14,7 +14,7 @@ Flutter (Dart SDK ^3.10.0, pinned to Flutter 3.47.0 via fvm), Material 3, `flutt
 
 ## Users
 
-Individual Egyptian users (Arabic-first, English-supported) who exchange money informally with people in their life — friends, family, colleagues — and need to remember who owes them and who they owe, and who increasingly want a simple picture of their own money too (income, spending, plans). The target user has no accounting or bookkeeping background; the product must feel like "someone who remembers my money for me," not a ledger app for professionals. [Inferred from docs/project.txt master brief and the app's terminology; confirmed by the app being local-first with no auth/backend, i.e., built for a single individual's own device.]
+Individual Egyptian users (Arabic-first, English-supported) who exchange money informally with people in their life — friends, family, colleagues — and need to remember who owes them and who they owe, and who increasingly want a simple picture of their own money too (income, spending, plans). The target user has no accounting or bookkeeping background; the product must feel like "someone who remembers my money for me," not a ledger app for professionals. [Inferred from docs/project.txt master brief and the app's terminology; confirmed by the app being local-first and fully usable offline without an account, with only an optional email-linked cloud sync (021), i.e., built for a single individual's own data.]
 
 ## Product Purpose
 
@@ -73,7 +73,7 @@ People-first, broader finance. Unlike a generic expense tracker or ledger app, D
 2. People come first. A person's balance status (owed / owing / settled) must be understandable at a glance, in both languages, both themes, and any currency, without reading numbers carefully. Finance modules support this core and never crowd it out.
 3. Arabic is a first-class experience, not a mirrored translation — RTL layout, alignment, icon direction, numerals, and copy tone are each verified independently, not assumed from the LTR version.
 4. One consistent design language across every module: one spacing system, one component set, one interaction pattern per action type (destructive, confirm, form, etc.).
-5. Private and honest by default — nothing leaves the device, the UI never suggests cloud sync or accounts, and every number, insight, or reminder is real or clearly absent.
+5. Private and honest by default — data stays on the device unless the user opts in to the optional email-linked cloud sync or to the bring-your-own-key AI assistant, the app is fully usable offline without an account and never pressures the user to create one, and every number, insight, or reminder is real or clearly absent.
 
 ## Accessibility & Inclusion
 

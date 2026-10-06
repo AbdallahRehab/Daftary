@@ -63,7 +63,7 @@ These were checked so the plan does not "fix" working behavior (FR-001, constitu
 - **Alternatives**: Storing UTC dates locally (rejected: a migration that touches every row, and a bigger blast radius).
 
 ### R3 — Move `savings_contribution` to the `financial` conflict policy
-- **Decision**: A new forward migration (`025_…`) replaces the push function so that `savings_contribution` uses `v_policy := 'financial'` **only for app versions that can show the conflict** (`p_app_version` of at least R1; see R6). The client conflict list and resolution sheet learn to render that entity type.
+- **Decision**: A new forward migration (`025_…`) replaces the push function so that `savings_contribution` uses `v_policy := 'financial'` **only for app versions that can show the conflict** (`p_app_version` of at least 1.1.0; see R6). The client conflict list and resolution sheet learn to render that entity type.
 - **Rationale**: This is the same mechanism already proven for two entity types (smallest correct change). Migrations are never edited in place (repo convention).
 - **Alternatives**: Leave it as last-write-wins and only show the audit history (rejected: the spec Clarification says a silent last-write-wins on money is P0).
 

@@ -81,13 +81,16 @@ void main() {
     await personController.close();
   });
 
-  RepaymentFormCubit buildCubit() => RepaymentFormCubit(
+  RepaymentFormCubit buildCubit({
+    void Function(String message, {Object? error})? log,
+  }) => RepaymentFormCubit(
     recordRepayment,
     getPrimaryCurrencyReturning(),
     watchBalance,
     watchContext,
     watchPerson,
     'p1',
+    log: log,
   );
 
   Future<void> settle() => Future<void>.delayed(Duration.zero);
@@ -251,6 +254,99 @@ void main() {
     expect(cubit.state.balanceLoaded, isTrue);
     expect(cubit.state.failure, isNull);
     expect(cubit.state.status, RepaymentFormStatus.editing);
+    await cubit.close();
+  });
+
+  test('balanceLoadFailed is false while loading, true after a failed read '
+      'and false again once it loads (T096)', () async {
+    final cubit = buildCubit()..subscribe();
+    expect(cubit.state.balanceLoadFailed, isFalse);
+
+    balanceController.add(Left(CacheFailure('boom')));
+    contextController.add(const Right(ConversionContext.egpOnly));
+    await settle();
+    expect(cubit.state.balanceLoadFailed, isTrue);
+
+    balanceController.add(Right(owed(100000)));
+    await settle();
+    expect(cubit.state.balanceLoadFailed, isFalse);
+    await cubit.close();
+  });
+
+  test('a failed save is not a balance load failure (T096)', () async {
+    when(
+      () => recordRepayment(
+        idempotencyKey: any(named: 'idempotencyKey'),
+        personId: any(named: 'personId'),
+        amount: any(named: 'amount'),
+        date: any(named: 'date'),
+        note: any(named: 'note'),
+      ),
+    ).thenAnswer((_) async => Left(CacheFailure('save failed')));
+    final cubit = buildCubit()..subscribe();
+    balanceController.add(Right(owed(100000)));
+    contextController.add(const Right(ConversionContext.egpOnly));
+    await settle();
+    cubit.amountChanged('10');
+    await cubit.submit();
+
+    expect(cubit.state.failure, isA<CacheFailure>());
+    expect(cubit.state.balanceLoadFailed, isFalse);
+    await cubit.close();
+  });
+
+  test('a WatchPerson failure keeps the fallback label, does not break '
+      'the form and is logged once per failure (T102)', () async {
+    final logged = <({String message, Object? error})>[];
+    final cubit = buildCubit(
+      log: (message, {error}) => logged.add((message: message, error: error)),
+    )..subscribe();
+    balanceController.add(Right(owed(100000)));
+    contextController.add(const Right(ConversionContext.egpOnly));
+
+    personController.add(Left(CacheFailure('no person')));
+    personController.addError(StateError('stream broke'));
+    await settle();
+
+    expect(cubit.state.personName, isNull);
+    expect(cubit.state.balanceLoaded, isTrue);
+    expect(cubit.state.failure, isNull);
+    expect(logged, hasLength(2));
+    expect(logged[0].error, 'no person');
+    expect(logged[1].error, isA<StateError>());
+    await cubit.close();
+  });
+
+  test('subscribe() again after a failed read resets to loading, then '
+      'loads (T096 retry)', () async {
+    final cubit = buildCubit()..subscribe();
+    balanceController.add(Left(CacheFailure('boom')));
+    contextController.add(const Right(ConversionContext.egpOnly));
+    await settle();
+    expect(cubit.state.balanceLoadFailed, isTrue);
+
+    final retryBalance = StreamController<Either<Failure, PersonBalance>>();
+    final retryContext = StreamController<Either<Failure, ConversionContext>>();
+    addTearDown(retryBalance.close);
+    addTearDown(retryContext.close);
+    when(() => watchBalance('p1')).thenAnswer((_) => retryBalance.stream);
+    when(() => watchContext()).thenAnswer((_) => retryContext.stream);
+    when(() => watchPerson('p1')).thenAnswer((_) => const Stream.empty());
+
+    cubit.subscribe();
+    await settle();
+    // The failed streams were cancelled, so a late emission cannot leak in.
+    expect(balanceController.hasListener, isFalse);
+    expect(contextController.hasListener, isFalse);
+    expect(cubit.state.balanceLoaded, isFalse);
+    expect(cubit.state.failure, isNull);
+    expect(cubit.state.balanceLoadFailed, isFalse);
+    expect(cubit.state.status, RepaymentFormStatus.editing);
+
+    retryBalance.add(Right(owed(100000)));
+    retryContext.add(const Right(ConversionContext.egpOnly));
+    await settle();
+    expect(cubit.state.balanceLoaded, isTrue);
     await cubit.close();
   });
 }

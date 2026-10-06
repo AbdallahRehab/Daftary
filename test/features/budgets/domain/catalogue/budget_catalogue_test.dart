@@ -285,4 +285,78 @@ void main() {
       expect((await foodLine()).actualAmountMinorUnits, historySum);
     });
   });
+
+  const cap = 99999999999999;
+
+  group('TS-BUDGET-14 SC-004 near the 12-digit cap', () {
+    test('Food planned 999,999,999,999.99, spent 0.01: on track, remaining '
+        '99999999999998; after the delete spent 0', () async {
+      await env.budget('2026-12', {catFood: cap});
+      final entry = await env.expense(catFood, 1, DateTime(2026, 12, 10));
+
+      final line = await foodLine('2026-12');
+      expect(line.plannedAmountMinorUnits, cap);
+      expect(line.actualAmountMinorUnits, 1);
+      expect(line.remainingMinorUnits, 99999999999998);
+      expect(line.status, BudgetCategoryStatus.onTrack);
+
+      unwrapOrThrow(await env.finance.deleteEntry(entry.id));
+
+      final after = await foodLine('2026-12');
+      expect(after.actualAmountMinorUnits, 0);
+      expect(after.remainingMinorUnits, cap);
+    });
+
+    test('spending exactly the near-cap plan: remaining 0, near full; one '
+        'unit more is over budget (-1)', () async {
+      await env.budget('2026-12', {catFood: cap});
+      await env.expense(catFood, cap, DateTime(2026, 12, 10));
+
+      var line = await foodLine('2026-12');
+      expect(line.remainingMinorUnits, 0);
+      expect(line.status, BudgetCategoryStatus.nearFull);
+
+      await env.expense(catFood, 1, DateTime(2026, 12, 11));
+
+      line = await foodLine('2026-12');
+      expect(line.actualAmountMinorUnits, cap + 1);
+      expect(line.remainingMinorUnits, -1);
+      expect(line.status, BudgetCategoryStatus.overBudget);
+    });
+
+    test('two near-cap planned lines sum to 199999999999998 in the '
+        'overall figure', () async {
+      await env.budget('2026-12', {catFood: cap, catTransport: cap});
+      await env.expense(catFood, 1, DateTime(2026, 12, 10));
+
+      final summary = await summaryFor('2026-12');
+
+      expect(summary.totalPlannedMinorUnits, 199999999999998);
+      expect(summary.totalActualMinorUnits, 1);
+      expect(summary.totalRemainingMinorUnits, 199999999999997);
+    });
+  });
+
+  group('TS-BUDGET SC-004 one minor unit edit and delete', () {
+    test('Food spent 0.01 => edited to 0.02 => deleted', () async {
+      final entry = await env.expense(catFood, 1, DateTime(2026, 10, 10));
+      expect((await foodLine()).actualAmountMinorUnits, 1);
+      expect((await foodLine()).remainingMinorUnits, 199999);
+
+      unwrapOrThrow(
+        await env.finance.editEntry(
+          entryId: entry.id,
+          categoryId: entry.categoryId,
+          amount: const Money.egp(2),
+          date: entry.date,
+        ),
+      );
+      expect((await foodLine()).actualAmountMinorUnits, 2);
+
+      unwrapOrThrow(await env.finance.deleteEntry(entry.id));
+      final line = await foodLine();
+      expect(line.actualAmountMinorUnits, 0);
+      expect(line.remainingMinorUnits, 200000);
+    });
+  });
 }

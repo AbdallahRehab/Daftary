@@ -83,6 +83,14 @@ class AppSpacing {
   static const double xxl = 48;
 }
 
+/// Fixed sizes shared across components.
+class AppSizes {
+  const AppSizes._();
+
+  /// The smallest touch target for anything tappable (WCAG / Material 48dp).
+  static const double minTouchTarget = 48;
+}
+
 /// Material 3 window size classes (by available width, never by device
 /// model) plus the content width cap used once a screen stops being
 /// phone-shaped. Compact < [medium] ≤ medium < [expanded] ≤ expanded.

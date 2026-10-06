@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/date/app_date_formatter.dart';
+import '../../../../core/design_system/change_history/app_edited_marker.dart';
 import '../../../../core/design_system/currency_indicator_chip.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
@@ -102,11 +103,14 @@ class FinanceEntryListTile extends StatelessWidget {
           if (entry.isEdited) ...[
             const SizedBox(width: AppSpacing.xs),
             Flexible(
-              child: _EditedMarker(
+              child: AppEditedMarker(
                 label: '(${l10n.editedLabel})',
                 semanticLabel: l10n.editedLabel,
                 tooltip: l10n.changeHistoryTitle,
-                color: onSurfaceVariant,
+                style: AppTypography.bodyMuted.copyWith(
+                  color: onSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
                 onTap: onEditedTap,
               ),
             ),
@@ -175,45 +179,3 @@ class FinanceEntryListTile extends StatelessWidget {
 }
 
 enum _EntryAction { edit, delete }
-
-/// The "Edited" marker; a 48dp-tall button when [onTap] is set (022 D2),
-/// like the transaction and savings rows.
-class _EditedMarker extends StatelessWidget {
-  const _EditedMarker({
-    required this.label,
-    required this.semanticLabel,
-    required this.tooltip,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final String semanticLabel;
-  final String tooltip;
-  final Color color;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final text = Text(
-      label,
-      style: AppTypography.bodyMuted.copyWith(color: color),
-      overflow: TextOverflow.ellipsis,
-    );
-    if (onTap == null) return text;
-    return Semantics(
-      button: true,
-      label: '$semanticLabel, $tooltip',
-      excludeSemantics: true,
-      child: InkWell(
-        key: const ValueKey('edited-marker'),
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48, minWidth: 48),
-          child: Center(widthFactor: 1, child: text),
-        ),
-      ),
-    );
-  }
-}

@@ -282,6 +282,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'أضف شخصًا لتبدأ في تتبع الأموال التي تعطيها أو تستلمها معه.';
 
   @override
+  String get peopleNoMatchTitle => 'لا يوجد أشخاص مطابقون';
+
+  @override
+  String get peopleNoMatchMessage =>
+      'لا يوجد أشخاص يطابقون بحثك أو عامل التصفية. جرّب اسمًا أو حالة مختلفة.';
+
+  @override
+  String get peopleClearFiltersAction => 'مسح البحث وعامل التصفية';
+
+  @override
   String get archivedPeopleAction => 'الأشخاص المؤرشفون';
 
   @override
@@ -3791,6 +3801,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get repaymentPreviewUnavailable => 'مش متاح لحد ما تحدد سعر الصرف';
+
+  @override
+  String get repaymentBalanceLoadError => 'تعذّر تحميل المبلغ المتبقي.';
+
+  @override
+  String get repaymentBalanceLoading => 'جارٍ تحميل المبلغ المتبقي';
 
   @override
   String deleteLaterRepaymentsWarning(int count, String result) {

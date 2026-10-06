@@ -1,6 +1,7 @@
 import 'package:daftary/core/design_system/currency_indicator_chip.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:daftary/features/transactions/presentation/widgets/transaction_list_tile.dart';
@@ -207,5 +208,38 @@ void main() {
 
       expect(find.byKey(const Key('currency_chip_EGP')), findsOneWidget);
     });
+  });
+
+  testWidgets('Arabic: direction label, amount with its currency and '
+      'right-to-left direction (RTL-09)', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('ar'),
+        theme: buildLightTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: TransactionListTile(
+            transaction: buildTransaction(
+              direction: TransactionDirection.received,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    final amount = EgpFormatter(
+      locale: 'ar',
+    ).formatWithSymbol(const Money.egp(1000));
+    expect(amount, contains('EGP'));
+    expect(find.text(l10n.directionReceived), findsOneWidget);
+    expect(find.text(amount), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.byType(TransactionListTile))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
   });
 }

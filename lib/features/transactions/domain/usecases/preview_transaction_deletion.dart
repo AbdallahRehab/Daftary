@@ -21,11 +21,14 @@ class PreviewTransactionDeletion {
     MoneyTransaction transaction,
     PersonBalance balance,
   ) async {
-    final count = await _repository.countLaterRepayments(
-      transaction.personId,
-      transaction.date,
-      excludingTransactionId: transaction.id,
-    );
+    // Only a non-repayment row can have repayments recorded "against" it.
+    final count = transaction.kind == TransactionKind.repayment
+        ? const Right<Failure, int>(0)
+        : await _repository.countLaterRepayments(
+            transaction.personId,
+            transaction.date,
+            excludingTransactionId: transaction.id,
+          );
     return count.match(
       (failure) async => Left<Failure, DeletionImpact>(failure),
       (laterRepayments) async => (await _getContext()).map(

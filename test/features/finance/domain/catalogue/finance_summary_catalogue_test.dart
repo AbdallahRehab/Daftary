@@ -155,4 +155,59 @@ void main() {
       expect(sum, 150000);
     });
   });
+
+  const cap = 99999999999999;
+
+  group('TS-FIN-14 SC-004 near the 12-digit cap', () {
+    test('income 0.01, expense 999,999,999,999.99 => net -99999999999998, '
+        'no overflow', () async {
+      await env.income(1, DateTime(2026, 10, 1));
+      await env.expense(catFood, cap, DateTime(2026, 10, 3));
+
+      final summary = await summaryOf(october);
+
+      expect(summary.totalIncome, const Money.egp(1));
+      expect(summary.totalExpense, const Money.egp(cap));
+      expect(summary.net, const Money.egp(1 - cap));
+      expect(summary.net!.minorUnits, -99999999999998);
+    });
+
+    test('two near-cap expenses sum exactly to 199999999999998', () async {
+      await env.expense(catFood, cap, DateTime(2026, 10, 3));
+      await env.expense(catTransport, cap, DateTime(2026, 10, 4));
+
+      final summary = await summaryOf(october);
+
+      expect(summary.totalExpense, const Money.egp(199999999999998));
+      expect(summary.net, const Money.egp(-199999999999998));
+      final breakdown = unwrapOrThrow(await env.categoryBreakdown(october));
+      expect(
+        breakdown.items.fold<int>(0, (s, i) => s + i.total!.minorUnits),
+        199999999999998,
+      );
+    });
+  });
+
+  group('TS-FIN SC-004 one minor unit, edit and delete', () {
+    test('expense 0.01 => net -1; edit to 0.02 => -2; delete => 0', () async {
+      final entry = await env.expense(catFood, 1, DateTime(2026, 10, 3));
+      expect((await summaryOf(october)).net, const Money.egp(-1));
+
+      unwrapOrThrow(
+        await env.finance.editEntry(
+          entryId: entry.id,
+          categoryId: entry.categoryId,
+          amount: const Money.egp(2),
+          date: entry.date,
+        ),
+      );
+      expect((await summaryOf(october)).totalExpense, const Money.egp(2));
+      expect((await summaryOf(october)).net, const Money.egp(-2));
+
+      unwrapOrThrow(await env.finance.deleteEntry(entry.id));
+      final after = await summaryOf(october);
+      expect(after.totalExpense, const Money.egp(0));
+      expect(after.net, const Money.egp(0));
+    });
+  });
 }

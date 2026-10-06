@@ -210,4 +210,106 @@ void main() {
       },
     );
   });
+
+  const cap = 99999999999999;
+
+  group('TS-OCCASION-08 SC-004 one minor unit', () {
+    test(
+      'received 0.01 from Ahmed only: received 1, given 0, more received',
+      () async {
+        final wedding = await env.occasion();
+        await env.contribution(
+          wedding.id,
+          'ahmed',
+          1,
+          TransactionDirection.received,
+        );
+
+        final summary = (await detail(wedding.id)).summary;
+
+        expect(summary.totalReceived, const Money.egp(1));
+        expect(summary.totalGiven, const Money.egp(0));
+        expect(summary.net, const Money.egp(1));
+        expect(summary.settlementStatus, SettlementStatus.moreReceived);
+      },
+    );
+  });
+
+  group('TS-OCCASION-09 SC-004 near the 12-digit cap', () {
+    test('received cap and gave cap: net 0, settled', () async {
+      final wedding = await env.occasion();
+      await env.contribution(
+        wedding.id,
+        'ahmed',
+        cap,
+        TransactionDirection.received,
+      );
+      await env.contribution(
+        wedding.id,
+        'karim',
+        cap,
+        TransactionDirection.given,
+      );
+
+      final summary = (await detail(wedding.id)).summary;
+
+      expect(summary.totalReceived, const Money.egp(cap));
+      expect(summary.totalGiven, const Money.egp(cap));
+      expect(summary.net, const Money.egp(0));
+      expect(summary.settlementStatus, SettlementStatus.settled);
+    });
+
+    test('two near-cap received rows sum to 199999999999998 exactly', () async {
+      final wedding = await env.occasion();
+      await env.contribution(
+        wedding.id,
+        'ahmed',
+        cap,
+        TransactionDirection.received,
+      );
+      await env.contribution(
+        wedding.id,
+        'mona',
+        cap,
+        TransactionDirection.received,
+      );
+
+      final summary = (await detail(wedding.id)).summary;
+
+      expect(summary.totalReceived, const Money.egp(199999999999998));
+      expect(summary.net, const Money.egp(199999999999998));
+    });
+  });
+
+  group('TS-OCCASION SC-004 edit and remove effects', () {
+    test('a near-cap contribution edited to 0.01, then removed', () async {
+      final wedding = await env.occasion();
+      final row = await env.contribution(
+        wedding.id,
+        'ahmed',
+        cap,
+        TransactionDirection.received,
+      );
+
+      unwrapOrThrow(
+        await env.occasions.editParticipantContribution(
+          transactionId: row.id,
+          amount: const Money.egp(1),
+          direction: row.direction,
+          date: row.date,
+        ),
+      );
+      expect(
+        (await detail(wedding.id)).summary.totalReceived,
+        const Money.egp(1),
+      );
+      expect(await env.net('ahmed'), -1);
+
+      unwrapOrThrow(await env.occasions.removeParticipantContribution(row.id));
+      final summary = (await detail(wedding.id)).summary;
+      expect(summary.totalReceived, const Money.egp(0));
+      expect(summary.settlementStatus, SettlementStatus.settled);
+      expect(await env.net('ahmed'), 0);
+    });
+  });
 }

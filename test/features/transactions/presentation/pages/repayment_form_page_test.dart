@@ -272,4 +272,151 @@ void main() {
     );
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('shows a spinner with a label while the balance loads (T096)', (
+    tester,
+  ) async {
+    getIt.registerFactoryParam<RepaymentFormCubit, String, void>(
+      (personId, _) =>
+          repaymentCubitWith(recordRepayment: record, personId: personId),
+    );
+    await pump(tester);
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.bySemanticsLabel("Loading what's outstanding"), findsOneWidget);
+    expect(find.textContaining('Remaining:'), findsNothing);
+  });
+
+  testWidgets('a failed balance read shows an inline error; Try again '
+      're-subscribes and shows the amount (T096)', (tester) async {
+    var calls = 0;
+    final watchBalance = MockWatchPersonBalance();
+    when(() => watchBalance(any())).thenAnswer((_) {
+      calls++;
+      return Stream<Either<Failure, PersonBalance>>.value(
+        calls == 1
+            ? Left(CacheFailure('boom'))
+            : const Right(PersonBalance(personId: 'p1', net: Money.egp(5000))),
+      );
+    });
+    final watchContext = MockWatchConversionContext();
+    when(() => watchContext()).thenAnswer(
+      (_) => Stream<Either<Failure, ConversionContext>>.value(
+        const Right(ConversionContext.egpOnly),
+      ),
+    );
+    final watchPerson = MockWatchPerson();
+    when(
+      () => watchPerson(any()),
+    ).thenAnswer((_) => Stream<Either<Failure, Person>>.value(Right(ahmed)));
+    getIt.registerFactoryParam<RepaymentFormCubit, String, void>(
+      (personId, _) => RepaymentFormCubit(
+        record,
+        getPrimaryCurrencyReturning(),
+        watchBalance,
+        watchContext,
+        watchPerson,
+        personId,
+      ),
+    );
+    await pump(tester);
+
+    expect(find.text("Couldn't load what's outstanding."), findsOneWidget);
+    // The inline error is the only message: no snackbar repeats it.
+    expect(find.byType(SnackBar), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNull,
+    );
+
+    await tester.tap(find.text('Try again'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(calls, 2);
+    expect(find.text("Couldn't load what's outstanding."), findsNothing);
+    expect(find.textContaining('50.00'), findsOneWidget);
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNotNull,
+    );
+  });
+
+  testWidgets('Arabic: the load error and Try again render right-to-left', (
+    tester,
+  ) async {
+    final watchBalance = MockWatchPersonBalance();
+    when(() => watchBalance(any())).thenAnswer(
+      (_) => Stream<Either<Failure, PersonBalance>>.value(
+        Left(CacheFailure('boom')),
+      ),
+    );
+    final watchContext = MockWatchConversionContext();
+    when(() => watchContext()).thenAnswer(
+      (_) => Stream<Either<Failure, ConversionContext>>.value(
+        const Right(ConversionContext.egpOnly),
+      ),
+    );
+    final watchPerson = MockWatchPerson();
+    when(() => watchPerson(any())).thenAnswer((_) => const Stream.empty());
+    getIt.registerFactoryParam<RepaymentFormCubit, String, void>(
+      (personId, _) => RepaymentFormCubit(
+        record,
+        getPrimaryCurrencyReturning(),
+        watchBalance,
+        watchContext,
+        watchPerson,
+        personId,
+      ),
+    );
+    await pump(tester, locale: 'ar');
+
+    expect(find.text('تعذّر تحميل المبلغ المتبقي.'), findsOneWidget);
+    expect(find.text('حاول مرة أخرى'), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.text('حاول مرة أخرى'))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('opposite-direction balance blocked on a rate: preview '
+      'unavailable, no numbers, save stays allowed (T098)', (tester) async {
+    getIt.registerFactoryParam<RepaymentFormCubit, String, void>(
+      (personId, _) => repaymentCubitWith(
+        recordRepayment: record,
+        personId: personId,
+        balance: Stream<Either<Failure, PersonBalance>>.value(
+          const Right(
+            PersonBalance.blocked(
+              personId: 'p1',
+              nativeNets: [
+                Money.egp(100000),
+                Money.fromMinorUnits(-30000, Currency.usd),
+              ],
+              missingRatesFor: [Currency.usd],
+            ),
+          ),
+        ),
+        context: Stream<Either<Failure, ConversionContext>>.value(
+          const Right(ConversionContext.egpOnly),
+        ),
+        person: Stream<Either<Failure, Person>>.value(Right(ahmed)),
+      ),
+    );
+    await pump(tester);
+
+    expect(
+      find.text('Unavailable until an exchange rate is set'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Remaining:'), findsNothing);
+    expect(find.textContaining('1,000.00'), findsNothing);
+    expect(find.textContaining('300.00'), findsNothing);
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton)).onPressed,
+      isNotNull,
+    );
+  });
 }

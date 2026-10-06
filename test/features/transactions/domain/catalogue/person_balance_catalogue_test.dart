@@ -212,4 +212,90 @@ void main() {
       expect(await env.net('ahmed'), -40000);
     });
   });
+
+  // SC-004 boundary cases: 12-digit cap = 999,999,999,999.99 EGP.
+  const cap = 99999999999999;
+
+  group('TS-BAL-12 SC-004 near the 12-digit cap', () {
+    test('gave 999,999,999,999.99 => net +99999999999999, they owe you, no '
+        'overflow', () async {
+      await env.give('ahmed', cap);
+
+      final balance = unwrapOrThrow(
+        await env.transactions.getPersonBalance('ahmed'),
+      );
+      expect(balance.net, const Money.egp(cap));
+      expect(balance.status, RelationshipStatus.theyOweYou);
+    });
+
+    test('two near-cap gives sum exactly (the total is not capped or '
+        'wrapped): +199999999999998', () async {
+      await env.give('ahmed', cap);
+      await env.give('ahmed', cap);
+
+      expect(await env.net('ahmed'), 199999999999998);
+    });
+
+    test('near-cap given minus near-cap received settles to exactly 0 and '
+        'one unit short leaves +1', () async {
+      await env.give('ahmed', cap);
+      await env.receive('ahmed', cap - 1);
+      expect(await env.net('ahmed'), 1);
+
+      await env.receive('ahmed', 1);
+      expect(await env.net('ahmed'), 0);
+    });
+
+    test('edit a near-cap row down to 0.01, then delete it', () async {
+      final row = await env.give('ahmed', cap);
+
+      unwrapOrThrow(
+        await env.transactions.editTransaction(
+          transactionId: row.id,
+          amount: const Money.egp(1),
+          direction: row.direction,
+          date: row.date,
+        ),
+      );
+      expect(await env.net('ahmed'), 1);
+
+      unwrapOrThrow(await env.transactions.deleteTransaction(row.id));
+      expect(await env.net('ahmed'), 0);
+    });
+  });
+
+  group('TS-BAL SC-004 one minor unit', () {
+    test('gave 0.01 => +1, they owe you; received 0.01 => -1, you owe '
+        'them', () async {
+      await env.give('mona', 1);
+      await env.receive('karim', 1);
+
+      expect(await env.net('mona'), 1);
+      expect(await env.net('karim'), -1);
+      final karim = unwrapOrThrow(
+        await env.transactions.getPersonBalance('karim'),
+      );
+      expect(karim.status, RelationshipStatus.youOweThem);
+    });
+  });
+
+  group('TS-BAL-11 CHK020 rate change re-values a USD balance', () {
+    test('100.00 USD given: 4,850.00 EGP at 48.50, then 5,000.00 EGP at '
+        '50.00 (⏸ Q2: pins current behaviour)', () async {
+      await env.setRate(Currency.usd, 48.5);
+      await env.give('sara', 10000, currency: Currency.usd);
+      expect(await env.net('sara'), 485000);
+
+      await env.setRate(Currency.usd, 50);
+
+      expect(await env.net('sara'), 500000);
+      final history = unwrapOrThrow(
+        await env.transactions.getPersonHistory('sara'),
+      );
+      expect(
+        history.single.amount,
+        const Money.fromMinorUnits(10000, Currency.usd),
+      );
+    });
+  });
 }

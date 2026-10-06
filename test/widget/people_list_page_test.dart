@@ -2,6 +2,7 @@ import 'package:daftary/core/design_system/app_text_field.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
+import 'package:daftary/core/money/egp_formatter.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/people/domain/repositories/people_repository.dart';
@@ -59,8 +60,9 @@ GoRouter _buildTestRouter() {
   );
 }
 
-Widget _wrap() {
+Widget _wrap({Locale? locale}) {
   return MaterialApp.router(
+    locale: locale,
     routerConfig: _buildTestRouter(),
     theme: buildLightTheme(),
     localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -314,4 +316,145 @@ void main() {
       expect(find.text('Sara'), findsOneWidget);
     },
   );
+
+  testWidgets('Arabic: the status label, the amount with its currency and '
+      'right-to-left direction (RTL-09)', (tester) async {
+    when(
+      () => peopleRepository.searchActivePeople(
+        nameQuery: any(named: 'nameQuery'),
+        statusFilter: any(named: 'statusFilter'),
+      ),
+    ).thenAnswer((_) async => Right([ahmed]));
+    when(() => transactionsRepository.getPersonBalance('p1')).thenAnswer(
+      (_) async =>
+          const Right(PersonBalance(personId: 'p1', net: Money.egp(150000))),
+    );
+
+    await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+    await tester.pumpAndSettle();
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    final amount = EgpFormatter(
+      locale: 'ar',
+    ).formatWithSymbol(const Money.egp(150000));
+    expect(amount, contains('EGP'));
+    expect(find.text('Ahmed'), findsOneWidget);
+    expect(find.text(l10n.filterTheyOweYou), findsWidgets);
+    expect(find.text(amount), findsOneWidget);
+    expect(
+      Directionality.of(tester.element(find.byType(PeopleListPage))),
+      TextDirection.rtl,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  group('T097 no-match state', () {
+    void stubNoPeople() {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      ).thenAnswer((_) async => const Right([]));
+    }
+
+    Future<void> search(WidgetTester tester, String hint, String q) async {
+      await tester.enterText(
+        find.ancestor(of: find.text(hint), matching: find.byType(TextField)),
+        q,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    for (final locale in ['en', 'ar']) {
+      testWidgets('[$locale] an empty result under a name query says no '
+          'match, not "no people yet"', (tester) async {
+        stubNoPeople();
+        await tester.pumpWidget(_wrap(locale: Locale(locale)));
+        await tester.pumpAndSettle();
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(PeopleListPage)),
+        )!;
+        expect(find.text(l10n.emptyPeopleTitle), findsOneWidget);
+
+        await search(tester, l10n.searchPeopleHint, 'zzz');
+
+        expect(find.text(l10n.peopleNoMatchTitle), findsOneWidget);
+        expect(find.text(l10n.peopleNoMatchMessage), findsOneWidget);
+        expect(find.text(l10n.emptyPeopleTitle), findsNothing);
+        expect(
+          Directionality.of(tester.element(find.text(l10n.peopleNoMatchTitle))),
+          locale == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+        );
+      });
+
+      testWidgets('[$locale] an empty result under a status filter says no '
+          'match', (tester) async {
+        stubNoPeople();
+        await tester.pumpWidget(_wrap(locale: Locale(locale)));
+        await tester.pumpAndSettle();
+        final l10n = AppLocalizations.of(
+          tester.element(find.byType(PeopleListPage)),
+        )!;
+
+        await tester.tap(find.text(l10n.filterSettled));
+        await tester.pumpAndSettle();
+
+        expect(find.text(l10n.peopleNoMatchTitle), findsOneWidget);
+        expect(find.text(l10n.emptyPeopleTitle), findsNothing);
+      });
+    }
+
+    testWidgets('Clear filters empties the search box and the filter and '
+        'brings the list back', (tester) async {
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: any(named: 'nameQuery'),
+          statusFilter: any(named: 'statusFilter'),
+        ),
+      ).thenAnswer((_) async => const Right([]));
+      when(
+        () => peopleRepository.searchActivePeople(
+          nameQuery: null,
+          statusFilter: null,
+        ),
+      ).thenAnswer((_) async => Right([ahmed]));
+      await tester.pumpWidget(_wrap(locale: const Locale('en')));
+      await tester.pumpAndSettle();
+      await search(tester, 'Search people', 'zzz');
+      await tester.tap(find.text('Settled'));
+      await tester.pumpAndSettle();
+      expect(find.text('No matching people'), findsOneWidget);
+
+      await tester.tap(find.text('Clear search and filter'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ahmed'), findsOneWidget);
+      expect(find.text('zzz'), findsNothing);
+      expect(find.text('No matching people'), findsNothing);
+      final chip = tester.widget<ChoiceChip>(
+        find.widgetWithText(ChoiceChip, 'All'),
+      );
+      expect(chip.selected, isTrue);
+    });
+
+    testWidgets('Arabic: the clear action is offered', (tester) async {
+      stubNoPeople();
+      await tester.pumpWidget(_wrap(locale: const Locale('ar')));
+      await tester.pumpAndSettle();
+      final l10n = AppLocalizations.of(
+        tester.element(find.byType(PeopleListPage)),
+      )!;
+      await search(tester, l10n.searchPeopleHint, 'zzz');
+      expect(find.text(l10n.peopleClearFiltersAction), findsOneWidget);
+    });
+
+    testWidgets('English copy', (tester) async {
+      stubNoPeople();
+      await tester.pumpWidget(_wrap(locale: const Locale('en')));
+      await tester.pumpAndSettle();
+      await search(tester, 'Search people', 'zzz');
+      expect(find.text('No matching people'), findsOneWidget);
+    });
+  });
 }

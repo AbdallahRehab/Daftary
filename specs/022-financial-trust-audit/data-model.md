@@ -35,7 +35,7 @@ Everything else stays exactly as it is. The current model (integer minor units, 
 
 | Item | Change |
 | --- | --- |
-| A3 + S0 | Migration `025`: in `sync_push`, `savings_contribution` uses `financial` when `p_app_version ≥ R1`, otherwise `lww` (today's behavior for v1.0.1). It adds the helper `public.app_version_at_least(p_version text, p_min text) returns boolean`, which compares dotted numeric versions; a null or unparsable version counts as false. No table change. |
+| A3 + S0 | Migration `025`: in `sync_push`, `savings_contribution` uses `financial` when `p_app_version ≥ 1.1.0`, otherwise `lww` (today's behavior for v1.0.1). It adds the helper `public.app_version_at_least(p_version text, p_min text) returns boolean`, which compares dotted numeric versions; a null or unparsable version counts as false. No table change. |
 | S0 + D2 | Migration `026`: `sync_pull(bigint,int)` keeps today's set of types exactly (no `finance_entry_audit`). The new `sync_pull_v2(bigint,int)`, with the same grants, returns every type. |
 
 ### 2.3 Schema changes (each becomes its own reviewed migration)

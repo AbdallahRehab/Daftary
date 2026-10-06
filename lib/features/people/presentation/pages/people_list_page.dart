@@ -33,8 +33,21 @@ class PeopleListPage extends StatelessWidget {
   }
 }
 
-class _PeopleListView extends StatelessWidget {
+class _PeopleListView extends StatefulWidget {
   const _PeopleListView();
+
+  @override
+  State<_PeopleListView> createState() => _PeopleListViewState();
+}
+
+class _PeopleListViewState extends State<_PeopleListView> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +118,7 @@ class _PeopleListView extends StatelessWidget {
                   ) +
                   AppGlassInsets.of(context).copyWith(bottom: 0),
               child: AppTextField(
+                controller: _searchController,
                 label: l10n.searchPeopleHint,
                 suffixIcon: const Icon(Icons.search),
                 onChanged: (query) =>
@@ -183,6 +197,22 @@ class _PeopleListView extends StatelessWidget {
                     actionLabel: l10n.commonRetry,
                     onAction: () =>
                         context.read<PersonListCubit>().resubscribe(),
+                  );
+                }
+                if (state.items.isEmpty &&
+                    (state.nameQuery.trim().isNotEmpty ||
+                        state.statusFilter != null)) {
+                  // 022 E7: a search or filter is active and nothing matches —
+                  // not the same as having no people yet.
+                  return AppEmptyView(
+                    icon: Icons.search_off,
+                    title: l10n.peopleNoMatchTitle,
+                    message: l10n.peopleNoMatchMessage,
+                    actionLabel: l10n.peopleClearFiltersAction,
+                    onAction: () {
+                      _searchController.clear();
+                      context.read<PersonListCubit>().clearFilters();
+                    },
                   );
                 }
                 if (state.items.isEmpty) {

@@ -77,12 +77,23 @@ jobs:
 
       - run: flutter pub get
 
-      - name: Build APK
+      - name: Validate app version
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           if [ "$GITHUB_REF_TYPE" != "tag" ]; then
             VERSION="$(grep '^version:' pubspec.yaml | sed 's/version: *//; s/+.*//')"
           fi
+          # DAFTARY_APP_VERSION gates the server's savings-conflict policy
+          # (migration 025); anything but a plain x.y.z would silently fall
+          # back to last-write-wins.
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::App version '$VERSION' (from '$GITHUB_REF_NAME') is empty or not x.y.z; refusing to build."
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Build APK
+        run: |
           flutter build apk --release \
             --build-name="$VERSION" \
             --build-number="$GITHUB_RUN_NUMBER" \

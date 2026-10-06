@@ -60,7 +60,9 @@ class _RepaymentFormView extends StatelessWidget {
                 ..hideCurrentSnackBar()
                 ..showSnackBar(SnackBar(content: Text(l10n.savedConfirmation)));
               Navigator.of(context).pop(true);
-            } else if (state.status == RepaymentFormStatus.failure) {
+            } else if (state.status == RepaymentFormStatus.failure &&
+                !state.balanceLoadFailed) {
+              // A failed balance read has its own inline error and retry.
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(
@@ -163,9 +165,44 @@ class _BalanceSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final balance = state.balance;
-    if (balance == null) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context)!;
+    if (state.balanceLoadFailed) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.repaymentBalanceLoadError,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: context.read<RepaymentFormCubit>().subscribe,
+              child: Text(l10n.commonRetry),
+            ),
+          ],
+        ),
+      );
+    }
+    final balance = state.balance;
+    if (!state.balanceLoaded || balance == null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: SizedBox.square(
+            dimension: AppSpacing.lg,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              semanticsLabel: l10n.repaymentBalanceLoading,
+            ),
+          ),
+        ),
+      );
+    }
     final locale = Localizations.localeOf(context).languageCode;
     final formatter = EgpFormatter(locale: locale);
     final net = balance.net;

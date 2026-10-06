@@ -58,7 +58,10 @@ class SyncCycleOutcome extends Equatable {
 String syncDevicePlatform() =>
     defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
 
-/// Supplied at build time next to the cloud config; diagnostics only.
+/// Supplied at build time (`--dart-define=DAFTARY_APP_VERSION=x.y.z`) next to
+/// the cloud config. The server (migration 025) uses it to choose the
+/// savings-contribution conflict policy; builds without the define report
+/// 'unknown' and get last-write-wins.
 const syncAppVersion = String.fromEnvironment(
   'DAFTARY_APP_VERSION',
   defaultValue: 'unknown',

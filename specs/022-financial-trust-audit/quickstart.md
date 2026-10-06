@@ -52,18 +52,15 @@
 3. Ship app **1.1.0**, built with `--dart-define=DAFTARY_APP_VERSION=1.1.0` (the release workflow does this).
 
 Never ship 1.1.0 before 026 is live: the app downloads through `sync_pull_v2`, which only 026 creates.
-   **R1 = 1.1.0** (`pubspec.yaml` `version: 1.1.0+3`). Migration 025 compares `p_app_version` against `'1.1.0'`. The app reports its version through `--dart-define=DAFTARY_APP_VERSION` (`syncAppVersion`), which `.github/workflows/release-android.yml` now passes from the tag; a build without it reports `unknown` and stays last-write-wins. Pre-release tags such as `v1.1.0-rc1` are unparsable for `app_version_at_least`, so they also stay last-write-wins. Debug and CI builds report `unknown` (last-write-wins) unless built with `--dart-define=DAFTARY_APP_VERSION=1.1.0`. The `config/supabase.*.json` files carry the project URL and key, so the define is not added there.
-2. `supabase db push` migration **025** (its version string is `1.1.0`, R1).
-3. `supabase db push` migration **026**.
-4. Ship **R2** (D2 history, which calls `sync_pull_v2`).
+The app version is **1.1.0** (`pubspec.yaml` `version: 1.1.0+3`). Migration 025 compares `p_app_version` against `'1.1.0'`. The app reports its version through `--dart-define=DAFTARY_APP_VERSION` (`syncAppVersion`), which `.github/workflows/release-android.yml` now passes from the tag; a build without it reports `unknown` and stays last-write-wins. `release-android.yml` refuses to build pre-release tags such as `v1.1.0-rc1`; a manual build with such a version is unparsable for `app_version_at_least` and stays last-write-wins. Debug and CI builds report `unknown` (last-write-wins) unless built with `--dart-define=DAFTARY_APP_VERSION=1.1.0`. The `config/supabase.*.json` files carry the project URL and key, so the define is not added there. Any iOS or manual release build must also pass `--dart-define=DAFTARY_APP_VERSION=<x.y.z>` (for example `1.1.0`); without it the build reports `unknown` and the savings-conflict policy silently stays last-write-wins.
 
 ## SQL checks (dev project, SQL editor, signed in as a test user)
 
 | Check | How | Expected |
 | --- | --- | --- |
 | Old app keeps last-write-wins (025) | Call `sync_push` twice for the same savings contribution, the second time with a stale `base_revision` and `p_app_version = '1.0.1'` | The second result is `applied` |
-| New app gets conflicts (025) | Same, with `p_app_version` = R1 | The second result is `conflict` |
-| Old download unchanged (026) | Insert a finance-entry audit through R2, then call `sync_pull(0, 500)` | No row has `entity_type = 'finance_entry_audit'` |
+| New app gets conflicts (025) | Same, with `p_app_version = '1.1.0'` | The second result is `conflict` |
+| Old download unchanged (026) | Insert a finance-entry audit through 1.1.0, then call `sync_pull(0, 500)` | No row has `entity_type = 'finance_entry_audit'` |
 | New download complete (026) | `sync_pull_v2(0, 500)` | It includes the `finance_entry_audit` rows |
 | RLS on the new table (026) | As user B, `select * from finance_entry_audits` for user A's rows | 0 rows; inserting for A fails |
 

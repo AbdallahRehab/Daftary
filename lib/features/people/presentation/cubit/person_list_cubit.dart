@@ -130,6 +130,12 @@ class PersonListCubit extends Cubit<PersonListState> {
     subscribe();
   }
 
+  /// Resets the name search and the status filter, then reloads.
+  void clearFilters() {
+    emit(state.copyWith(nameQuery: '', clearStatusFilter: true));
+    subscribe();
+  }
+
   void statusFilterChanged(RelationshipStatus? filter) {
     emit(
       state.copyWith(statusFilter: filter, clearStatusFilter: filter == null),

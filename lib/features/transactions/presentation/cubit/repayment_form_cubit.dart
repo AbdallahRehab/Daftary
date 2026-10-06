@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fpdart/fpdart.dart';
@@ -31,19 +32,25 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
     this._watchPersonBalance,
     this._watchConversionContext,
     this._watchPerson,
-    @factoryParam String personId,
-  ) : super(
-        RepaymentFormState(
-          personId: personId,
-          idempotencyKey: const Uuid().v4(),
-        ),
-      );
+    @factoryParam String personId, {
+    @ignoreParam void Function(String message, {Object? error})? log,
+  }) : _log = log ?? _developerLog,
+       super(
+         RepaymentFormState(
+           personId: personId,
+           idempotencyKey: const Uuid().v4(),
+         ),
+       );
 
   final RecordRepayment _recordRepayment;
   final GetPrimaryCurrency _getPrimaryCurrency;
   final WatchPersonBalance _watchPersonBalance;
   final WatchConversionContext _watchConversionContext;
   final WatchPerson _watchPerson;
+  final void Function(String message, {Object? error}) _log;
+
+  static void _developerLog(String message, {Object? error}) =>
+      developer.log(message, name: 'daftary.repayment', error: error);
 
   final _subscriptions = <StreamSubscription<void>>[];
   Either<Failure, PersonBalance>? _balance;
@@ -53,6 +60,19 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
   /// show what is outstanding and what a repayment would leave. Cancelled
   /// in [close].
   void subscribe() {
+    // A retry starts from "loading": drop the last results and any failed
+    // read so the form shows its spinner until fresh data arrives.
+    _balance = null;
+    _context = null;
+    emit(
+      state.copyWith(
+        balanceLoaded: false,
+        clearFailure: true,
+        status: state.status == RepaymentFormStatus.failure
+            ? RepaymentFormStatus.editing
+            : null,
+      ),
+    );
     for (final s in _subscriptions) {
       unawaited(s.cancel());
     }
@@ -81,14 +101,21 @@ class RepaymentFormCubit extends Cubit<RepaymentFormState> {
         ),
         _watchPerson(state.personId).listen(
           (result) => result.match(
-            (_) {},
+            (failure) => _logPersonFailure(failure.message),
             (Person person) => emit(state.copyWith(personName: person.name)),
           ),
-          // The name only labels the preview; losing it is not an error.
-          onError: (Object _) {},
+          // The name only labels the preview, so the generic label stays;
+          // the failure is logged rather than shown.
+          onError: (Object error) => _logPersonFailure(error),
         ),
       ]);
   }
+
+  void _logPersonFailure(Object error) => _log(
+    'RepaymentFormCubit: could not read the person name; keeping the '
+    'generic label',
+    error: error,
+  );
 
   @override
   Future<void> close() async {

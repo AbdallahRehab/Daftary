@@ -342,7 +342,7 @@ Both migrations are safe before any 1.1.0 install exists: 025 only switches savi
 
 ---
 
-## Phase 9: User Story 7 — Sync and date integrity, release R1 (P1)
+## Phase 9: User Story 7 — Sync and date integrity, release 1.1.0 (P1)
 
 **Goal**: Plan S0, A3 and B1, without breaking v1.0.1. **Independent test**: CHK110, CHK111, CHK163, CHK164 and CHK165.
 
@@ -431,10 +431,11 @@ Both migrations are safe before any 1.1.0 install exists: 025 only switches savi
   - **Accept**: Green, and `sync_engine_conflict_test.dart` is unchanged and green.
   - **Tests**: this is the test
   - **Deps**: T051
-- [x] T054 [US7] Prepare release R1: set `version: 1.1.0+3` in `pubspec.yaml`, and record "R1 = 1.1.0" in `specs/022-financial-trust-audit/quickstart.md`
+- [x] T054 [US7] Prepare release 1.1.0: set `version: 1.1.0+3` in `pubspec.yaml`, and record the 1.1.0 version in `specs/022-financial-trust-audit/quickstart.md`
   - **Type · Priority · Layer**: Chore · P0 · Release
   - **Expected**: A fixed version string that migration 025 compares against.
   - **Accept**: `DeviceInfo.appVersion` reports `1.1.0` in a debug build (check the existing device-info test).
+  - **Note (convergence T090)**: the savings-conflict gate (025) is met only for builds that pass `--dart-define=DAFTARY_APP_VERSION=<x.y.z>`; the Android release workflow now enforces this, and iOS or manual builds must pass it themselves.
   - **Tests**: the existing device-info test
   - **Deps**: T046–T053
 - [x] T055 [US7] Create `supabase/migrations/20261005090000_025_savings_contribution_conflicts.sql`
@@ -443,7 +444,7 @@ Both migrations are safe before any 1.1.0 install exists: 025 only switches savi
     - Adds `public.app_version_at_least(p_version text, p_min text) returns boolean` (`immutable`). It splits each version on `.` and `+`, compares the numeric parts, and returns false when either version is null or unparsable.
     - Includes `create or replace function public.sync_push(uuid, text, text, jsonb)`, copied **verbatim** from `20260930090000_023_savings_goals_sync.sql`. The only change: in the `savings_contribution` branch, `v_policy := case when public.app_version_at_least(p_app_version, '1.1.0') then 'financial' else 'lww' end`.
     - Repeats the comment, revoke and grant statements exactly.
-  - **Accept**: Diffing against 023 shows only the helper and that line. **You deploy it after R1 has shipped** (rollout step 2). The quickstart SQL checks show `applied` for 1.0.1 and `conflict` for 1.1.0.
+  - **Accept**: Diffing against 023 shows only the helper and that line. **You deploy it before app 1.1.0 is released** (rollout: 025, then 026, then app 1.1.0). The quickstart SQL checks show `applied` for 1.0.1 and `conflict` for 1.1.0.
   - **Tests**: quickstart SQL checks plus T053
   - **Deps**: T054
 
@@ -451,11 +452,11 @@ Both migrations are safe before any 1.1.0 install exists: 025 only switches savi
 
 **Result (2026-10-06)**: format exit 0; analyze no issues; full suite 4,022 passed / 1 skipped (opt-in fixture regeneration) / 0 failed; `TZ=UTC` sync suites 266 passed; no `Known fail` skips remain.
 
-**Checkpoint**: R1 can be released. Then you deploy 025. CHK110, CHK111, CHK163 (025 part), CHK164 and CHK165 pass.
+**Checkpoint**: deploy 025, then 026, then release app 1.1.0. CHK110, CHK111, CHK163 (025 part), CHK164 and CHK165 pass.
 
 ---
 
-## Phase 10: User Story 8 — Traceability and complete export, release R2 (P2; D2 is P1)
+## Phase 10: User Story 8 — Traceability and complete export, release 1.1.0 (P2; D2 is P1)
 
 **Goal**: Plan C3, D2 and D1. **Independent test**: CHK079, CHK087, CHK088, CHK094 and CHK163 (026 part).
 
@@ -546,12 +547,12 @@ Both migrations are safe before any 1.1.0 install exists: 025 only switches savi
     - `sync_push` copied verbatim from 025, plus `when 'finance_entry_audit'` (policy `append`, business fields `finance_entry_id, change_type, previous_values, changed_at`).
     - `sync_pull(bigint,int)` **unchanged in output** (an explicit filter excludes `finance_entry_audit`).
     - A new `sync_pull_v2(bigint,int)` returns every type, with the same grants.
-  - **Accept**: The diff shows only these additions. **You deploy it before R2** (rollout step 3). All quickstart SQL checks for 026 pass, including RLS (CHK148).
+  - **Accept**: The diff shows only these additions. **You deploy it after 025 and before app 1.1.0 is released** (rollout step 2). All quickstart SQL checks for 026 pass, including RLS (CHK148).
   - **Tests**: quickstart SQL checks
   - **Deps**: T055
-- [x] T068 [US8] R2 client: call `sync_pull_v2` in `lib/core/sync/remote/sync_remote_data_source.dart`, and update `test/core/sync/fakes/fake_sync_remote.dart` and `test/core/sync/remote/sync_remote_data_source_test.dart` (the RPC name is checked)
+- [x] T068 [US8] 1.1.0 client: call `sync_pull_v2` in `lib/core/sync/remote/sync_remote_data_source.dart`, and update `test/core/sync/fakes/fake_sync_remote.dart` and `test/core/sync/remote/sync_remote_data_source_test.dart` (the RPC name is checked)
   - **Type · Priority · Layer**: Sync · P1 · Data
-  - **Expected**: R2 receives history rows, and v1.0.1 and R1 never do.
+  - **Expected**: 1.1.0 receives history rows, and v1.0.1 never does.
   - **Accept**: Tests pass. CHK163 (026 part) passes on devices after rollout.
   - **Tests**: remote data source test
   - **Deps**: T065, T067
@@ -700,16 +701,15 @@ Phase 1 ─► Phase 2 catalogue (blocks US6–US9)
   ├─► US1 ─► US2 ─► US3
   │     └─► US4 (T022 ─► T023 owner sign-off) ─► US5
   ├─► US6 ledger fixes (no schema, no sync)
-  ├─► US7 S0 + B1 + A3 client ─► T054 release R1 ─► T055 migration 025 (you deploy)
-  ├─► US8 C3 ─► D2 (T064–T066) ─► T067 migration 026 (you deploy) ─► T068 release R2 ─► D1
+  ├─► US7 S0 + B1 + A3 client ─► T054 version 1.1.0 ─► T055 migration 025 (you deploy)
+  ├─► US8 C3 ─► D2 (T064–T066) ─► T067 migration 026 (you deploy) ─► T068 1.1.0 client ─► D1
   └─► US9 (T077/T078 wait for T023 sign-off)
 Phase 12 after the stories chosen for release
 ```
 
 - **Release grouping**:
-  - **R1 (1.1.0)** = US6, US7 and US9, plus C3's read-only history sheet (T056–T062) if it is ready.
-  - **R2** = all of D2 (T063–T069) and D1 (T070–T072).
-  - D2 ships whole in R2. Its history rows must never be uploaded before migration 026 exists, and 026 is deployed before R2 is released.
+  - **1.1.0 (single release)** = US6, US7, US8 and US9: all of D2 (T063–T069), D1 (T070–T072) and C3's history sheet (T056–T062).
+  - Rollout order: deploy 025 → deploy 026 → release app 1.1.0. D2's history rows must never be uploaded before migration 026 exists, and 026 is deployed before 1.1.0 is released.
 - **Migrations**: 025 (T055) before 026 (T067), because 026 copies 025's `sync_push`.
 
 ## Parallel Opportunities
@@ -724,13 +724,34 @@ Phase 12 after the stories chosen for release
 ## Implementation Strategy
 
 1. **MVP**: T001–T018. The audit findings are backed by a green catalogue.
-2. **R1**: US6, US7 and US9 (E3/E5/C4, plus E1 once T023 is signed off). Release 1.1.0, then deploy 025.
+2. **Release 1.1.0 (part 1)**: US6, US7 and US9 (E3/E5/C4, plus E1 once T023 is signed off). Do not release yet; 025 and 026 must be deployed first.
 3. **Audit completion**: US2–US5 in parallel with the fixes.
-4. **R2**: US8. Deploy 026, then release R2.
+4. **Release 1.1.0 (part 2)**: US8. Deploy 025, then 026, then release app 1.1.0.
 5. **After Q1–Q3**: run `/speckit-tasks` again, or open a new feature, for C1, C2 and the A2 variant.
 
 ## Notes
 
-- **Task count**: 88. By phase: Setup 2 · Foundational 10 · US1 6 · US2 2 · US3 1 · US4 2 · US5 2 · US6 15 · US7 15 · US8 17 · US9 8 · Polish 8.
+- **Task count**: 104. By phase: Setup 2 · Foundational 10 · US1 6 · US2 2 · US3 1 · US4 2 · US5 2 · US6 15 · US7 15 · US8 17 · US9 8 · Polish 8 · Convergence 16.
 - **Failing-first pairs**: A1 (T026/T027 → T032/T035), A2 (T028/T029 → T033/T036), B2 (T030 → T038), E6 (T031 → T039), S0 (T041 → T046), B1 (T042/T043/T044 → T047/T048/T049), A3 (T045 → T050/T051), D2 (T063 → T066), D1 (T070 → T072), RF-07 (T073 → T074), E3 (T075 → T076), E1 (T077 → T078), C4 (T079 → T080).
 - **No new runtime dependencies.** Three forward migrations (025, 026, plus the v12 Drift migration). Applied migrations are never edited.
+
+## Phase 13: Convergence
+
+Added by `/speckit-converge` on 2026-10-06 against e58d9ff. There are no CRITICAL (constitution) findings. P = remediation priority.
+
+- [X] T089 [P0] Rewrite every stale R1/R2 rollout statement to the binding order "deploy 025 → deploy 026 → release app 1.1.0" in specs/022-financial-trust-audit/tasks.md (T055 Accept, Phase 9 checkpoint, T067 Accept, T068, Dependencies, Release grouping, Implementation Strategy), specs/022-financial-trust-audit/plan.md (A3 and D2 "Depends on") and specs/022-financial-trust-audit/quickstart.md (delete the duplicate list after the binding order; "R1"/"R2" → "1.1.0" in the SQL-check table) and specs/022-financial-trust-audit/contracts/behavior-changes.md (A3/S0 tables) per plan: S0 / CHK163 (contradicts)
+- [X] T090 [P1] Make the 1.1.0 savings-conflict gate impossible to lose in release builds: fail .github/workflows/release-android.yml when the tag-derived DAFTARY_APP_VERSION is missing or not a plain x.y.z, replace the stale "diagnostics only" comment on syncAppVersion in lib/core/sync/sync_engine.dart, record in quickstart.md that any iOS or manual release build must pass --dart-define=DAFTARY_APP_VERSION, and correct the T054 Accept note per plan: A3 / S0 / T054 (partial)
+- [X] T091 [P2] Add the SC-004 boundary cases (near the 12-digit cap, one minor unit, edit, delete) to the calculation catalogue: TS-BAL-12, TS-OVERVIEW-07, TS-REPAY-12 plus a CHK027 kind-immutability case, TS-OCCASION-08/09, TS-FIN-14, TS-BUDGET-14, TS-SAVINGS-12, and a CHK020 current-behaviour case marked ⏸ Q2, in test/features/*/domain/catalogue/ per plan: F2 / SC-004 / CHK027 / CHK020 (partial)
+- [X] T092 [P2] Add one Arabic/RTL case each to test/widget/person_detail_page_test.dart, people_list_page_test.dart, balance_status_badge_test.dart, transaction_list_tile_test.dart and archived_people_page_test.dart, asserting the status sentence, the amount with its currency and TextDirection.rtl per plan: F4 / audit RTL-09 (missing)
+- [ ] T093 [P2] Add a deleteDataWarningMessage row to the audit.md §8 table now. Then, blocked on T023: correct the exportDescription and deleteDataWarningMessage values in both ARB files so they list exactly the D1 export sections and everything data_wipe.dart deletes, with an assertion in test/core/l10n/terminology_consistency_test.dart per plan: E8 / RF-10 / RF-11 (missing) — §8 row added; ARB change blocked on T023
+- [X] T094 [P2] Restate PRODUCT.md's user section ("local-first with no auth/backend") and design principle ("nothing leaves the device…") against the optional email-linked cloud sync per plan: G1 / T081 / FR-003 (partial)
+- [X] T095 [P2] Refresh audit.md to the branch state: §1 and §20 A3/D2 (SQL passed locally, 316 tests, T067 ticked); re-map §17.1 rows TS-EXPORT-02, TS-HISTORY-03/04, TS-EDIT-04, TS-EDIT-06, TS-DUP-04, TS-SYNC-05, TS-AMOUNT-02 and TS-DELETE-05 to their test files; recount §17.2 per T019 / CHK079 / CHK087 / CHK088 / CHK092 / CHK094 / CHK103 / CHK111 / CHK117 / CHK167 (partial)
+- [X] T096 [P2] Give the repayment form a loading state for the outstanding amount and an inline localized error with a retry that re-subscribes (repayment_form_page.dart _BalanceSummary, repayment_form_cubit.dart, new ARB keys in both locales), with widget tests per Constitution (Complete UI States) / plan: A2 (partial)
+- [X] T097 [P3] Show a distinct "no matching people" state when a name query or status filter is active in lib/features/people/presentation/pages/people_list_page.dart (new ARB keys in both locales), with AR and EN widget tests per plan: E7 / CHK132 (missing)
+- [X] T098 [P3] For an opposite-direction balance blocked on a missing rate, show the per-currency outstanding nets in the repayment form _BalanceSummary, or amend the "Blocked on a rate" row of contracts/behavior-changes.md A2 to the implemented behaviour, plus a widget test per contracts/behavior-changes.md A2 (partial) — done by amending the contract row: per-currency magnitudes for opposite-direction nets carry no direction and would read as one total, so the form shows "Unavailable until an exchange rate is set" (save allowed); widget test added
+- [X] T099 [P3] Wire onEditedTap to showTransactionChangeHistory for the TransactionListTile in lib/features/ocr/presentation/pages/scan_detail_page.dart, with a widget test per US8/AC1 / CHK087 (partial)
+- [X] T100 [P3] Limit the later-repayments delete warning to non-repayment rows (skip countLaterRepayments when kind == repayment) in preview_transaction_deletion.dart, with a test per plan: E6 (unrequested)
+- [X] T101 [P3] Extract one AppEditedMarker (48dp touch target from a design-system token, semantics label and tooltip) into lib/core/design_system/change_history/, and replace the copies in transaction_list_tile.dart, finance_entry_list_tile.dart and contribution_list_tile.dart per Constitution (design system, no duplication) (partial)
+- [X] T102 [P3] Stop swallowing WatchPerson failures in repayment_form_cubit.dart: keep the personLabel fallback and log the failure through the app logger, with a cubit test per Constitution VII (partial)
+- [X] T103 [P3] When the balance is not yet loaded, make PersonDetailCubit.requestDelete fall back to the plain delete confirmation instead of ignoring the tap, with a cubit test per Constitution (Complete UI States) / plan: E6 (partial)
+- [ ] T104 [P2] (Deferred, not caused by 022) The macOS integration run fails 29 tests in 10 of the 13 integration_test files, and main (c86e2df) fails the same tests plus 2 more in finance_flows_test. Root cause: lib/core/routing/main_shell.dart switches to a NavigationRail at ≥ AppBreakpoints.medium (600dp), and the default macOS window is wider than that, while the tests look for the phone layout (NavigationBar destinations, FABs). Fix: give the integration suite a compact surface (set tester.view.physicalSize/devicePixelRatio in a shared integration_test helper) or run it on an Android emulator; then re-run all 13 files per quickstart.md / T017 (pre-existing test-harness gap)

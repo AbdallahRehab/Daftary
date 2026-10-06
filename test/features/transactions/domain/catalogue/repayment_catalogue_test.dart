@@ -134,4 +134,68 @@ void main() {
       expect(after, hasLength(before.length));
     });
   });
+
+  const cap = 99999999999999;
+
+  group('TS-REPAY-12 SC-004 near-cap repayment', () {
+    test('Ahmed owes 999,999,999,999.99; repaying the same amount settles '
+        'to exactly 0', () async {
+      await env.give('ahmed', cap);
+
+      final repayment = unwrapOrThrow(await env.repay('ahmed', cap));
+
+      expect(repayment.direction, TransactionDirection.received);
+      expect(repayment.amount, const Money.egp(cap));
+      final balance = unwrapOrThrow(
+        await env.transactions.getPersonBalance('ahmed'),
+      );
+      expect(balance.net, const Money.egp(0));
+      expect(balance.status, RelationshipStatus.settled);
+    });
+
+    test('repaying one unit less leaves exactly +1', () async {
+      await env.give('ahmed', cap);
+
+      unwrapOrThrow(await env.repay('ahmed', cap - 1));
+
+      expect(await env.net('ahmed'), 1);
+    });
+
+    test('you owe the cap; repayment is "given" and settles', () async {
+      await env.receive('mona', cap);
+
+      final repayment = unwrapOrThrow(await env.repay('mona', cap));
+
+      expect(repayment.direction, TransactionDirection.given);
+      expect(await env.net('mona'), 0);
+    });
+  });
+
+  group('CHK027 a repayment stays a repayment after an edit', () {
+    test('editing the amount keeps kind = repayment and direction; the '
+        'balance follows the new amount', () async {
+      await env.give('ahmed', 100000);
+      final repayment = unwrapOrThrow(await env.repay('ahmed', 40000));
+
+      final edited = unwrapOrThrow(
+        await env.transactions.editTransaction(
+          transactionId: repayment.id,
+          amount: const Money.egp(25000),
+          direction: repayment.direction,
+          date: repayment.date,
+        ),
+      );
+
+      expect(edited.kind, TransactionKind.repayment);
+      expect(edited.direction, TransactionDirection.received);
+      expect(await env.net('ahmed'), 75000);
+      final history = unwrapOrThrow(
+        await env.transactions.getPersonHistory('ahmed'),
+      );
+      expect(
+        history.firstWhere((t) => t.id == repayment.id).kind,
+        TransactionKind.repayment,
+      );
+    });
+  });
 }

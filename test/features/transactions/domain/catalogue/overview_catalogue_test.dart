@@ -135,4 +135,70 @@ void main() {
       );
     });
   });
+
+  const cap = 99999999999999;
+
+  group('TS-OVERVIEW-07 SC-004 one minor unit', () {
+    test('only Ahmed owing 0.01 => total owed to you 1, you owe 0, settled '
+        'count 0', () async {
+      await env.give('ahmed', 1);
+
+      final summary = await overview();
+
+      expect(summary.totalOwedToUser, const Money.egp(1));
+      expect(summary.totalUserOwes, const Money.egp(0));
+      expect(summary.settledCount, 0);
+      expect(summary.peopleTheyOweYou.single.net, const Money.egp(1));
+    });
+  });
+
+  group('TS-OVERVIEW SC-004 near the 12-digit cap', () {
+    test('two people owing the cap each => total 199999999999998, exact; '
+        'a third owed 0.01 is not lost', () async {
+      await env.give('ahmed', cap);
+      await env.give('mona', cap);
+      await env.give('karim', 1);
+
+      final summary = await overview();
+
+      expect(summary.totalOwedToUser, const Money.egp(2 * cap + 1));
+      expect(summary.totalOwedToUser!.minorUnits, 199999999999999);
+      expect(summary.totalUserOwes, const Money.egp(0));
+    });
+
+    test('owed cap and owe cap stay separate, never netted to 0', () async {
+      await env.give('ahmed', cap);
+      await env.receive('mona', cap);
+
+      final summary = await overview();
+
+      expect(summary.totalOwedToUser, const Money.egp(cap));
+      expect(summary.totalUserOwes, const Money.egp(cap));
+      expect(summary.settledCount, 0);
+    });
+  });
+
+  group('TS-OVERVIEW SC-004 edit and delete effects', () {
+    test('editing a row to 0.01 and deleting another moves the totals '
+        'exactly', () async {
+      final big = await env.give('ahmed', 150000);
+      final other = await env.give('mona', 70000);
+      expect((await overview()).totalOwedToUser, const Money.egp(220000));
+
+      unwrapOrThrow(
+        await env.transactions.editTransaction(
+          transactionId: big.id,
+          amount: const Money.egp(1),
+          direction: big.direction,
+          date: big.date,
+        ),
+      );
+      expect((await overview()).totalOwedToUser, const Money.egp(70001));
+
+      unwrapOrThrow(await env.transactions.deleteTransaction(other.id));
+      final after = await overview();
+      expect(after.totalOwedToUser, const Money.egp(1));
+      expect(after.peopleTheyOweYou.map((p) => p.personId), ['ahmed']);
+    });
+  });
 }

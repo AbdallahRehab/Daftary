@@ -17,6 +17,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
 import '../../../../core/money/money.dart';
 import '../../../transactions/domain/entities/money_transaction.dart';
+import '../../../transactions/presentation/widgets/transaction_change_history.dart';
 import '../../../transactions/presentation/widgets/transaction_list_tile.dart';
 import '../../domain/entities/candidate_entry.dart';
 import '../../domain/entities/ocr_scan_detail.dart';
@@ -212,6 +213,8 @@ class _DetailBody extends StatelessWidget {
                     // running balance it feeds.
                     onTap: () =>
                         context.push('/people/${transaction.personId}'),
+                    onEditedTap: () =>
+                        showTransactionChangeHistory(context, transaction),
                   ),
               ],
             ),

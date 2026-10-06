@@ -81,6 +81,9 @@
   "filterSettled": "تمت التسوية",
   "emptyPeopleTitle": "لا يوجد أشخاص بعد",
   "emptyPeopleMessage": "أضف شخصًا لتبدأ في تتبع الأموال التي تعطيها أو تستلمها معه.",
+  "peopleNoMatchTitle": "لا يوجد أشخاص مطابقون",
+  "peopleNoMatchMessage": "لا يوجد أشخاص يطابقون بحثك أو عامل التصفية. جرّب اسمًا أو حالة مختلفة.",
+  "peopleClearFiltersAction": "مسح البحث وعامل التصفية",
   "archivedPeopleAction": "الأشخاص المؤرشفون",
   "archivePersonTooltip": "أرشفة {name}",
   "personArchivedMessage": "تمت أرشفة {name}. يمكنك العثور عليه في الأشخاص المؤرشفين.",
@@ -1416,6 +1419,8 @@
   "repaymentFlipConfirmTitle": "المبلغ أكتر من المتبقي",
   "repaymentFlipConfirmMessage": "{direction, select, owe{هتبقى مديون لـ {name} بـ {amount}} other{{name} هيبقى مديون لك بـ {amount}}}",
   "repaymentPreviewUnavailable": "مش متاح لحد ما تحدد سعر الصرف",
+  "repaymentBalanceLoadError": "تعذّر تحميل المبلغ المتبقي.",
+  "repaymentBalanceLoading": "جارٍ تحميل المبلغ المتبقي",
   "deleteLaterRepaymentsWarning": "{count, plural, =1{فيه سداد واحد اتسجل بعد المعاملة دي} =2{فيه سدادين اتسجلوا بعد المعاملة دي} few{فيه {count} سدادات اتسجلت بعد المعاملة دي} many{فيه {count} سداد اتسجلوا بعد المعاملة دي} other{فيه {count} سداد اتسجلوا بعد المعاملة دي}}. لو حذفتها الرصيد هيبقى: {result}",
   "changeHistoryTitle": "سجل التعديلات",
   "@changeHistoryTitle": {

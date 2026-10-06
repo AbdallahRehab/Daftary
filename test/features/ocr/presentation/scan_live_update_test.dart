@@ -24,6 +24,7 @@ import 'package:daftary/features/people/data/repositories/people_repository_impl
 import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';
 import 'package:daftary/features/transactions/data/repositories/transactions_repository_impl.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
+import 'package:daftary/features/transactions/domain/usecases/watch_transaction_audit_history.dart';
 import 'package:daftary/features/transactions/presentation/widgets/transaction_list_tile.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
@@ -96,6 +97,9 @@ void main() {
       )
       ..registerFactory<ScanDetailCubit>(
         () => ScanDetailCubit(WatchScanDetail(ocr), DeleteScan(ocr)),
+      )
+      ..registerFactory<WatchTransactionAuditHistory>(
+        () => WatchTransactionAuditHistory(transactions),
       );
     tempDir = await Directory.systemTemp.createTemp('scan_live_test');
     // Deliberately never written: the pages degrade a missing image to a
@@ -211,5 +215,41 @@ void main() {
 
     expect(find.byType(TransactionListTile), findsOneWidget);
     await dispose(tester);
+  });
+
+  testWidgets('tapping a produced transaction\'s "Edited" marker opens its '
+      'change history (US8/AC1)', (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    late String scanId;
+    await tester.runAsync(() async => scanId = await confirmedScan());
+    await tester.pumpWidget(app(ScanDetailPage(scanId: scanId)));
+    await settle(tester);
+    final produced = tester
+        .widget<TransactionListTile>(find.byType(TransactionListTile).first)
+        .transaction;
+    await drive(
+      tester,
+      () => transactions.editTransaction(
+        transactionId: produced.id,
+        amount: produced.amount,
+        direction: produced.direction,
+        date: produced.date,
+        note: 'corrected',
+      ),
+    );
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(ScanDetailPage)),
+    )!;
+
+    await tester.tap(find.text('(${l10n.editedLabel})'));
+    await settle(tester);
+
+    expect(find.text(l10n.changeHistoryTitle), findsOneWidget);
+    expect(find.text(l10n.changeHistoryCreated), findsOneWidget);
+    await tester.pumpWidget(const SizedBox());
+    await settle(tester);
+    await tester.runAsync(db.close);
   });
 }

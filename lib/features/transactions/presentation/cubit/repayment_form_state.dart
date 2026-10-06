@@ -64,6 +64,11 @@ class RepaymentFormState extends Equatable {
 
   bool get isSubmitting => status == RepaymentFormStatus.submitting;
 
+  /// Reading the balance or the rates failed, so what is outstanding is
+  /// unknown (022 A2). A failed save never matches: it leaves
+  /// [balanceLoaded] true.
+  bool get balanceLoadFailed => !balanceLoaded && failure != null;
+
   RepaymentFormState copyWith({
     RepaymentFormStatus? status,
     DateTime? date,

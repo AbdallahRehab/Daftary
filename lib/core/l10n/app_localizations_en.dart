@@ -290,6 +290,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a person to start tracking money you give or receive with them.';
 
   @override
+  String get peopleNoMatchTitle => 'No matching people';
+
+  @override
+  String get peopleNoMatchMessage =>
+      'No people match your search or filter. Try a different name or status.';
+
+  @override
+  String get peopleClearFiltersAction => 'Clear search and filter';
+
+  @override
   String get archivedPeopleAction => 'Archived people';
 
   @override
@@ -3812,6 +3822,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get repaymentPreviewUnavailable =>
       'Unavailable until an exchange rate is set';
+
+  @override
+  String get repaymentBalanceLoadError => 'Couldn\'t load what\'s outstanding.';
+
+  @override
+  String get repaymentBalanceLoading => 'Loading what\'s outstanding';
 
   @override
   String deleteLaterRepaymentsWarning(int count, String result) {

@@ -96,6 +96,18 @@
   "filterSettled": "Settled",
   "emptyPeopleTitle": "No people yet",
   "emptyPeopleMessage": "Add a person to start tracking money you give or receive with them.",
+  "peopleNoMatchTitle": "No matching people",
+  "@peopleNoMatchTitle": {
+    "description": "Title of the People list when a name search or status filter matches nobody."
+  },
+  "peopleNoMatchMessage": "No people match your search or filter. Try a different name or status.",
+  "@peopleNoMatchMessage": {
+    "description": "Message of the People list when a name search or status filter matches nobody."
+  },
+  "peopleClearFiltersAction": "Clear search and filter",
+  "@peopleClearFiltersAction": {
+    "description": "Button on the People list no-match state that resets the name search and the status filter."
+  },
   "archivedPeopleAction": "Archived people",
   "archivePersonTooltip": "Archive {name}",
   "@archivePersonTooltip": {
@@ -2690,6 +2702,14 @@
   "repaymentPreviewUnavailable": "Unavailable until an exchange rate is set",
   "@repaymentPreviewUnavailable": {
     "description": "Shown instead of a number when a balance preview needs an exchange rate that is not set."
+  },
+  "repaymentBalanceLoadError": "Couldn't load what's outstanding.",
+  "@repaymentBalanceLoadError": {
+    "description": "Inline error on the repayment form when the person's balance or exchange rates could not be read; a Try again button sits next to it."
+  },
+  "repaymentBalanceLoading": "Loading what's outstanding",
+  "@repaymentBalanceLoading": {
+    "description": "Screen-reader label for the spinner shown on the repayment form while the balance loads."
   },
   "deleteLaterRepaymentsWarning": "{count, plural, =1{1 repayment was recorded after this one} other{{count} repayments were recorded after this one}}. If you delete this one, the balance becomes: {result}",
   "@deleteLaterRepaymentsWarning": {

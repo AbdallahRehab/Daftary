@@ -584,6 +584,24 @@ abstract class AppLocalizations {
   /// **'Add a person to start tracking money you give or receive with them.'**
   String get emptyPeopleMessage;
 
+  /// Title of the People list when a name search or status filter matches nobody.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching people'**
+  String get peopleNoMatchTitle;
+
+  /// Message of the People list when a name search or status filter matches nobody.
+  ///
+  /// In en, this message translates to:
+  /// **'No people match your search or filter. Try a different name or status.'**
+  String get peopleNoMatchMessage;
+
+  /// Button on the People list no-match state that resets the name search and the status filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search and filter'**
+  String get peopleClearFiltersAction;
+
   /// No description provided for @archivedPeopleAction.
   ///
   /// In en, this message translates to:
@@ -6679,6 +6697,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unavailable until an exchange rate is set'**
   String get repaymentPreviewUnavailable;
+
+  /// Inline error on the repayment form when the person's balance or exchange rates could not be read; a Try again button sits next to it.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load what\'s outstanding.'**
+  String get repaymentBalanceLoadError;
+
+  /// Screen-reader label for the spinner shown on the repayment form while the balance loads.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading what\'s outstanding'**
+  String get repaymentBalanceLoading;
 
   /// Warning in the delete dialog when repayments were recorded after the transaction; result is the balance that would remain.
   ///

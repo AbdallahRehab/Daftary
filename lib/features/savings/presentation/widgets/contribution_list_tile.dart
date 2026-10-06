@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/change_history/app_edited_marker.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/money/money.dart';
 import '../../domain/entities/savings_contribution.dart';
@@ -107,33 +108,15 @@ class ContributionListTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   if (entry.isEdited && onEditedTap != null)
-                    Semantics(
-                      button: true,
-                      label:
-                          '${l10n.savingsEntryEditedLabel}, '
-                          '${l10n.changeHistoryTitle}',
-                      excludeSemantics: true,
-                      child: InkWell(
-                        key: const ValueKey('edited-marker'),
-                        onTap: onEditedTap,
-                        borderRadius: BorderRadius.circular(AppRadius.sm),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            minHeight: 48,
-                            minWidth: 48,
-                          ),
-                          child: Align(
-                            alignment: AlignmentDirectional.centerStart,
-                            widthFactor: 1,
-                            child: Text(
-                              l10n.savingsEntryEditedLabel,
-                              style: muted.copyWith(
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
+                    AppEditedMarker(
+                      label: l10n.savingsEntryEditedLabel,
+                      semanticLabel: l10n.savingsEntryEditedLabel,
+                      tooltip: l10n.changeHistoryTitle,
+                      style: muted.copyWith(
+                        decoration: TextDecoration.underline,
                       ),
+                      alignment: AlignmentDirectional.centerStart,
+                      onTap: onEditedTap,
                     ),
                 ],
               ),

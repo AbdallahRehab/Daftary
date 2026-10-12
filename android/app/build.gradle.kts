@@ -1,5 +1,7 @@
+import com.android.build.api.dsl.ApplicationExtension
 import java.io.FileInputStream
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -32,7 +34,7 @@ val smsImportCapability: Boolean =
     providers.environmentVariable("DAFTARY_SMS_IMPORT").orNull == "true" ||
         providers.gradleProperty("daftary.smsImport").orNull == "true"
 
-android {
+configure<ApplicationExtension> {
     namespace = "com.daftary.daftary"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
@@ -43,10 +45,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     defaultConfig {
@@ -72,7 +70,7 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             signingConfig = if (hasReleaseKeystore) {
                 signingConfigs.getByName("release")
             } else {
@@ -83,6 +81,12 @@ android {
                 "proguard-rules.pro",
             )
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

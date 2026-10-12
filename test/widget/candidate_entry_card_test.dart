@@ -1,9 +1,9 @@
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/features/ocr/domain/entities/candidate_entry.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/presentation/widgets/candidate_entry_card.dart';
-import 'package:daftary/features/ocr/presentation/widgets/confidence_indicator.dart';
+import 'package:daftary/core/design_system/confidence_indicator.dart';
 import 'package:daftary/features/people/domain/entities/person.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
 import 'package:flutter/material.dart';

@@ -6,7 +6,7 @@ import 'package:daftary/features/occasions/data/repositories/occasions_repositor
 import 'package:daftary/features/ocr/data/datasources/ocr_dao.dart';
 import 'package:daftary/features/ocr/data/parsing/candidate_entry_parser.dart';
 import 'package:daftary/features/ocr/data/repositories/ocr_repository_impl.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/repositories/text_recognition_service.dart';
 import 'package:daftary/features/people/data/repositories/people_repository_impl.dart';
 import 'package:daftary/features/people/domain/usecases/find_possible_duplicate_person.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/design_system/tokens.dart';
-import '../../../../core/l10n/app_localizations.dart';
-import '../../domain/entities/field_confidence.dart';
+import 'tokens.dart';
+import '../l10n/app_localizations.dart';
+import '../confidence/field_confidence.dart';
 
 /// How much the app trusts one field, rendered honestly (FR-013).
 ///
@@ -88,7 +88,14 @@ class ConfidenceIndicator extends StatelessWidget {
           children: [
             Icon(icon, size: 14, color: foreground),
             const SizedBox(width: AppSpacing.xs),
-            Text(label, style: AppTypography.label.copyWith(color: foreground)),
+            // Flexible: at large text sizes the label wraps instead of
+            // overflowing a narrow row (023 ui-contract §7.6).
+            Flexible(
+              child: Text(
+                label,
+                style: AppTypography.label.copyWith(color: foreground),
+              ),
+            ),
           ],
         ),
       ),
@@ -131,11 +138,13 @@ class _InferredBadge extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
             const SizedBox(width: AppSpacing.xs),
-            Text(
-              label,
-              style: AppTypography.label.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontStyle: FontStyle.italic,
+            Flexible(
+              child: Text(
+                label,
+                style: AppTypography.label.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
           ],

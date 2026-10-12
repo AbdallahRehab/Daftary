@@ -1,6 +1,6 @@
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/features/ocr/domain/entities/candidate_entry.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/repositories/ocr_repository.dart';
 import 'package:daftary/features/ocr/domain/usecases/edit_candidate_entry.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';

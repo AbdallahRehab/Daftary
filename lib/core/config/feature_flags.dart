@@ -12,3 +12,12 @@ const bool kOccasionsFeatureEnabled = true;
 /// "Scan paper" quick action — flipped on by OCR Paper Entry (009, roadmap
 /// §V2.4), whose `/ocr/scan` capture flow has shipped.
 const bool kOcrScanFeatureEnabled = true;
+
+/// "Bank message import" Home quick action and Home card — flipped on by
+/// Bank SMS Import (023), whose `/bank-messages` hub works on every platform
+/// through paste and share.
+///
+/// This flag gates only the Home entry points. It is not the SMS-inbox
+/// capability: whether READ_SMS is declared is decided by the Android build
+/// and read at runtime through `GetSmsCapability`.
+const bool kBankMessageImportFeatureEnabled = true;

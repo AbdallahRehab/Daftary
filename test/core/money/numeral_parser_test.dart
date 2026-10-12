@@ -25,6 +25,42 @@ void main() {
       expect(NumeralParser.toWesternDigits('1٥0'), '150');
     });
 
+    group('Extended Arabic-Indic digits U+06F0-U+06F9 (023 T017)', () {
+      test('converts every Extended Arabic-Indic digit', () {
+        expect(NumeralParser.toWesternDigits('۰۱۲۳۴۵۶۷۸۹'), '0123456789');
+      });
+
+      test('keeps the Arabic decimal separator mapping', () {
+        expect(NumeralParser.toWesternDigits('۱۲۳٫۴۵'), '123.45');
+      });
+
+      test('keeps the Arabic thousands separator mapping', () {
+        expect(NumeralParser.toWesternDigits('۱٬۵۰۰'), '1,500');
+      });
+
+      test('handles Extended, Arabic-Indic and Western digits mixed', () {
+        expect(NumeralParser.toWesternDigits('۱٥0٫۵٠'), '150.50');
+      });
+
+      test('leaves surrounding non-digit text untouched', () {
+        expect(NumeralParser.toWesternDigits('EGP ۱۲۳ ج.م'), 'EGP 123 ج.م');
+      });
+
+      test('Western strings are unchanged', () {
+        const western = 'EGP 1,234.50 on 07/10';
+        expect(NumeralParser.toWesternDigits(western), western);
+      });
+
+      test('۱۲۳٫۴۵ parses identically to 123.45', () {
+        final formatter = EgpFormatter();
+        final fromExtended = formatter.parse(
+          NumeralParser.toWesternDigits('۱۲۳٫۴۵'),
+        );
+        expect(fromExtended, formatter.parse('123.45'));
+        expect(fromExtended, const Money.egp(12345));
+      });
+    });
+
     test(
       'Arabic-Indic amount parses identically to the Western equivalent',
       () {

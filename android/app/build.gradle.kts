@@ -20,6 +20,18 @@ val keystoreProperties = Properties().apply {
 }
 val hasReleaseKeystore = keystorePropertiesFile.exists()
 
+// 023 Bank SMS Import (CHK013, research Decision 3): the one capability
+// switch. Only when DAFTARY_SMS_IMPORT=true (or the Gradle property
+// -Pdaftary.smsImport=true) is the READ_SMS-only overlay manifest
+// sms_capability/AndroidManifest.xml merged in. Default off: the main
+// manifest never declares READ_SMS. There is no Dart const or
+// --dart-define; Dart learns the result from the installed package's
+// requested permissions (SmsPlugin.getCapabilities). Read through
+// providers so the configuration cache tracks the value.
+val smsImportCapability: Boolean =
+    providers.environmentVariable("DAFTARY_SMS_IMPORT").orNull == "true" ||
+        providers.gradleProperty("daftary.smsImport").orNull == "true"
+
 android {
     namespace = "com.daftary.daftary"
     compileSdk = flutter.compileSdkVersion
@@ -69,6 +81,16 @@ android {
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
+            )
+        }
+    }
+}
+
+androidComponents {
+    onVariants { variant ->
+        if (smsImportCapability) {
+            variant.sources.manifests.addStaticManifestFile(
+                "sms_capability/AndroidManifest.xml",
             )
         }
     }

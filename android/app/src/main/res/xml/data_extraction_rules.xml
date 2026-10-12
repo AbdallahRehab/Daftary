@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  023 Bank SMS Import (FR-055, SC-003): Android 12+ backup and device
+  transfer rules. Exclude-only, so everything else backs up as before.
+
+  The SMS import keys live in flutter_secure_storage's
+  `daftary_sms_import` namespace (SecureStorageSmsKeyStore). Their wrapping
+  key is in the Android KeyStore, which is never restored, so a restored
+  copy of these preferences can only fail to decrypt; with
+  `resetOnError: false` that would block the feature and Delete all data.
+  Keep the three preference files of that namespace device-local.
+  Mirror of backup_rules.xml (Android 11 and lower).
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="sharedpref" path="daftary_sms_import.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureKeyStorage:daftary_sms_import.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:daftary_sms_import.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="daftary_sms_import.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureKeyStorage:daftary_sms_import.xml" />
+        <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:daftary_sms_import.xml" />
+    </device-transfer>
+</data-extraction-rules>

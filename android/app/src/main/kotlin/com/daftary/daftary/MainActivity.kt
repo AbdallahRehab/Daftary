@@ -26,5 +26,9 @@ class MainActivity : FlutterFragmentActivity() {
         // In-app plugin (research.md Decision 1): FLAG_SECURE toggling for
         // the always-on screenshot/recording protection (FR-020/FR-021).
         flutterEngine.plugins.add(SecurityPlugin())
+        // 023: bank SMS import. Registered in every build: sharing needs no
+        // permission, and without READ_SMS the inbox/permission methods
+        // answer `unavailable` (sms-platform-channel.md).
+        flutterEngine.plugins.add(SmsPlugin())
     }
 }

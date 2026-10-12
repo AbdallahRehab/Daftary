@@ -93,6 +93,15 @@ jobs:
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Build APK
+        env:
+          # 023 (T124, CHK013): the Gradle switch merges the READ_SMS-only
+          # overlay (android/app/sms_capability/AndroidManifest.xml); it is
+          # the only place the capability is decided. Off unless the repo
+          # variable DAFTARY_SMS_IMPORT_RELEASE is "true", which the owner
+          # sets only after clearing gates OQ5 (Play Protect, Egypt) and
+          # OQ6 (restricted settings) on devices (T160). Off still ships
+          # paste and share.
+          DAFTARY_SMS_IMPORT: ${{ vars.DAFTARY_SMS_IMPORT_RELEASE == 'true' && 'true' || 'false' }}
         run: |
           flutter build apk --release \
             --build-name="$VERSION" \
@@ -109,6 +118,56 @@ jobs:
             --dart-define=DAFTARY_APP_VERSION="$VERSION" \
             --dart-define-from-file=config/supabase.release.json
           cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "dist/Daftary-$VERSION-arm64.apk"
+
+      # 023 (T124, FR-008a, FR-073): check what actually shipped. Every APK
+      # declares READ_SMS exactly when the switch is on, never RECEIVE_SMS,
+      # SEND_SMS or READ_PHONE_STATE (nor the other SMS/MMS permissions),
+      # and keeps the ACTION_SEND share filter on ShareTargetActivity.
+      - name: Verify APK permissions
+        env:
+          DAFTARY_SMS_IMPORT: ${{ vars.DAFTARY_SMS_IMPORT_RELEASE == 'true' && 'true' || 'false' }}
+        run: |
+          BUILD_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -n 1)"
+          AAPT="${BUILD_TOOLS}aapt"
+          if [ ! -x "$AAPT" ]; then
+            echo "::error::aapt not found under $ANDROID_HOME/build-tools"
+            exit 1
+          fi
+          status=0
+          for apk in dist/*.apk; do
+            echo "== $apk"
+            perms="$("$AAPT" dump permissions "$apk")"
+            echo "$perms" | grep -i "permission" || true
+            if echo "$perms" | grep -q "name='android.permission.READ_SMS'"; then
+              has_read_sms=true
+            else
+              has_read_sms=false
+            fi
+            if [ "$has_read_sms" != "$DAFTARY_SMS_IMPORT" ]; then
+              echo "::error::$apk READ_SMS declared=$has_read_sms, expected $DAFTARY_SMS_IMPORT"
+              status=1
+            fi
+            for forbidden in RECEIVE_SMS SEND_SMS READ_PHONE_STATE RECEIVE_MMS RECEIVE_WAP_PUSH WRITE_SMS; do
+              if echo "$perms" | grep -q "name='android.permission.$forbidden'"; then
+                echo "::error::$apk declares $forbidden"
+                status=1
+              fi
+            done
+            # The component that owns each android.intent.action.SEND
+            # action, read from the compiled manifest.
+            send_owners="$("$AAPT" dump xmltree "$apk" AndroidManifest.xml | awk '
+              /E: (activity|activity-alias|receiver|service|provider) / { want = 1; next }
+              want && /A: android:name\(/ {
+                match($0, /="[^"]*"/); owner = substr($0, RSTART + 2, RLENGTH - 3); want = 0; next
+              }
+              /A: android:name\(/ && /"android.intent.action.SEND"/ { print owner }
+            ')"
+            if [ "$send_owners" != "com.daftary.daftary.ShareTargetActivity" ]; then
+              echo "::error::$apk: ACTION_SEND filter owners are '$send_owners', expected ShareTargetActivity only"
+              status=1
+            fi
+          done
+          exit $status
 
       - uses: actions/upload-artifact@v4
         with:

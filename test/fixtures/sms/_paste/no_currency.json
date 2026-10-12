@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "amountMinor": null,
+  "amountCandidatesMinor": [
+    25000
+  ],
+  "currency": null,
+  "direction": "debit",
+  "date": "2026-03-04",
+  "confidence": {
+    "overall": "low"
+  }
+}

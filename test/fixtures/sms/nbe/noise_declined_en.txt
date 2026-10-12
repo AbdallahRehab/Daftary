@@ -1,0 +1,1 @@
+NBE: Transaction of EGP 900.00 at Example Store on your card ending 4821 was declined due to insufficient funds.

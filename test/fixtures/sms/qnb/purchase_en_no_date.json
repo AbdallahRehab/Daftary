@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "QNB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "qnb",
+  "ruleVersion": "qnb@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 3300,
+  "currency": "EGP",
+  "date": "2026-03-09",
+  "dateInferred": true,
+  "merchant": "Example Kiosk",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

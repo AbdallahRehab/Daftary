@@ -14,11 +14,13 @@ import '../../../../core/money/egp_formatter.dart';
 import '../../../budgets/domain/entities/budget_month.dart';
 import '../../../currency/presentation/widgets/rate_needed_banner.dart';
 import '../../../savings/presentation/savings_routes.dart';
+import '../../../sms_import/domain/usecases/get_sms_capability.dart';
 import '../../../transactions/domain/entities/overview_summary.dart';
 import '../../../transactions/presentation/widgets/balance_amount_text.dart';
 import '../cubit/dashboard_cubit.dart';
 import '../cubit/dashboard_state.dart';
 import '../cubit/load_status.dart';
+import '../widgets/bank_messages_home_card.dart';
 import '../widgets/finance_snapshot_card.dart';
 import '../widgets/insights_placeholder_card.dart';
 import '../widgets/overview_summary_card.dart';
@@ -157,6 +159,10 @@ class HomeView extends StatelessWidget {
                     (p) => _PersonSummaryRow(summary: p),
                   ),
                 ],
+                // 023: the bank-messages count and onboarding cards, below
+                // the people summary. It resolves its own gate and cubit;
+                // the dashboard cubit is untouched.
+                BankMessagesHomeCard(onReturn: cubit.refresh),
                 const SizedBox(height: AppSpacing.lg),
                 const InsightsPlaceholderCard(),
                 const SizedBox(height: AppSpacing.sm),
@@ -231,7 +237,12 @@ class HomeView extends StatelessWidget {
     return [
       const SizedBox(height: AppSpacing.lg),
       _SectionHeader(title: l10n.homeQuickActionsTitle),
-      QuickActionRow(onReturn: cubit.refresh),
+      QuickActionRow(
+        onReturn: cubit.refresh,
+        // 023: resolved on tap only, so Home's build never touches it.
+        smsCapabilityAvailable: () async =>
+            (await getIt<GetSmsCapability>()()).available,
+      ),
     ];
   }
 

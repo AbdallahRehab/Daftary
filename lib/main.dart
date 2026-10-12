@@ -23,6 +23,8 @@ import 'features/settings/domain/entities/glass_appearance.dart';
 import 'features/settings/presentation/cubit/settings_cubit.dart';
 import 'features/settings/presentation/cubit/settings_state.dart';
 import 'features/settings/presentation/glass/glass_style_mapper.dart';
+import 'features/sms_import/presentation/shared_text_router.dart';
+import 'features/sms_import/presentation/sms_catch_up_trigger.dart';
 import 'features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'features/startup/presentation/cubit/app_startup_state.dart';
 import 'features/startup/presentation/widgets/app_startup_gate.dart';
@@ -54,6 +56,14 @@ Future<void> main() async {
       // 021: cloud sync starts only once startup is ready. It initializes
       // Supabase lazily, and never when unconfigured or switched off.
       unawaited(getIt<SyncScheduler>().start());
+      // 023: text shared into the app (Android only; a no-op elsewhere)
+      // opens the Paste screen, only after App Lock is satisfied. The text
+      // stays in memory and never enters a route (FR-016a).
+      unawaited(getIt<SharedTextRouter>().start(appRouter));
+      // 023 (T128): the foreground-only bank-message catch-up, plus the
+      // pending-import expiry once the app is first unlocked. It checks
+      // App Lock after the frame and never prompts for a permission.
+      getIt<SmsCatchUpTrigger>().start();
     }),
   );
   // 020: preload the glass shaders (async disk I/O, no GPU work) behind the

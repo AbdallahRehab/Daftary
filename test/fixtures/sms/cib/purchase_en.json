@@ -1,0 +1,24 @@
+{
+  "synthetic": true,
+  "sender": "CIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "cib",
+  "ruleVersion": "cib@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 125050,
+  "currency": "EGP",
+  "date": "2026-03-03",
+  "dateInferred": false,
+  "merchant": "Example Restaurant",
+  "last4": "2290",
+  "timeMinutes": 1300,
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "nbe",
+  "ruleVersion": "nbe@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 100000,
+  "currency": "EGP",
+  "date": "2026-03-01",
+  "dateInferred": false,
+  "counterparty": "سارة المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

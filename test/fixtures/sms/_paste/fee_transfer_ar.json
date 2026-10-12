@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "transfer_out",
+  "amountMinor": 100000,
+  "feeMinor": 500,
+  "counterparty": "Sara"
+}

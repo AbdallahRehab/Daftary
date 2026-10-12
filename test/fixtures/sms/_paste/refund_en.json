@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "refund",
+  "direction": "credit",
+  "amountMinor": 8000,
+  "last4": "0000",
+  "suggestion": {
+    "type": "ignore"
+  },
+  "warnings": [
+    "refund_hint"
+  ]
+}

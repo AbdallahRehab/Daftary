@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "sender": "OTHERBANK",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "generic",
+  "amountMinor": 9900,
+  "date": "2026-03-07",
+  "merchant": "Example Cafe"
+}

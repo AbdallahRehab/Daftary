@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "unverifiedFormat": true,
+  "app": "any",
+  "mode": "a date-only line at the end of a body is body text",
+  "source": "paste",
+  "inboxBodies": [
+    "Your card was debited with EGP 40.00\n04/03/2026"
+  ]
+}

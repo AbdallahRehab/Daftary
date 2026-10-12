@@ -54,6 +54,15 @@ import '../../features/people/presentation/pages/people_list_page.dart';
 import '../../features/people/presentation/pages/person_edit_page.dart';
 import '../../features/people/presentation/pages/person_form_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/sms_import/presentation/pages/bank_messages_page.dart';
+import '../../features/sms_import/presentation/pages/bank_messages_settings_page.dart';
+import '../../features/sms_import/presentation/pages/enable_bank_messages_page.dart';
+import '../../features/sms_import/presentation/pages/ignored_imports_page.dart';
+import '../../features/sms_import/presentation/pages/import_review_page.dart';
+import '../../features/sms_import/presentation/pages/learned_categories_page.dart';
+import '../../features/sms_import/presentation/pages/muted_senders_page.dart';
+import '../../features/sms_import/presentation/pages/paste_bank_message_page.dart';
+import '../../features/sms_import/presentation/routes.dart';
 import '../../features/transactions/domain/entities/money_transaction.dart';
 import '../../features/transactions/presentation/pages/person_detail_page.dart';
 import '../../features/transactions/presentation/pages/repayment_form_page.dart';
@@ -370,6 +379,53 @@ final GoRouter appRouter = GoRouter(
               builder: (context, state) =>
                   ScanDetailPage(scanId: state.pathParameters['scanId']!),
             ),
+            // 023 bank-message import, in the People branch like `/ocr/...`
+            // (ui-contract §1). Static paths precede the parameterized
+            // review route, which is declared last so no literal is ever
+            // captured as an id. Paths carry ids only, never content.
+            GoRoute(
+              path: BankMessagesRoutes.hub,
+              // `?scan=now` (Settings' "Scan now") is a command, not
+              // content; the page never prompts for it.
+              builder: (context, state) => BankMessagesPage(
+                startScan:
+                    state.uri.queryParameters[BankMessagesRoutes.scanQuery] ==
+                    'now',
+              ),
+            ),
+            // The enable flow (explanation -> permission -> window -> scan);
+            // also the target of the Home onboarding card.
+            GoRoute(
+              path: BankMessagesRoutes.enable,
+              builder: (context, state) => const EnableBankMessagesPage(),
+            ),
+            // No text in the path, query or `extra`: a share waits in the
+            // in-memory SharedTextInbox (FR-016a, FR-080).
+            GoRoute(
+              path: BankMessagesRoutes.paste,
+              builder: (context, state) => const PasteBankMessagePage(),
+            ),
+            // The 30-day Undo list (T133) and the muted senders (T134).
+            GoRoute(
+              path: BankMessagesRoutes.ignored,
+              builder: (context, state) => const IgnoredImportsPage(),
+            ),
+            GoRoute(
+              path: BankMessagesRoutes.senders,
+              builder: (context, state) => const MutedSendersPage(),
+            ),
+            // Learned merchant -> category mappings (T139, FR-056).
+            GoRoute(
+              path: BankMessagesRoutes.learned,
+              builder: (context, state) => const LearnedCategoriesPage(),
+            ),
+            GoRoute(
+              path: BankMessagesRoutes.reviewPattern,
+              builder: (context, state) => ImportReviewPage(
+                importId:
+                    state.pathParameters[BankMessagesRoutes.importIdParam]!,
+              ),
+            ),
             // The AI assistant (014) lives in the People branch for the same
             // reason finance, occasions and budgets do (research.md
             // Decision 9): it is reached from Home's section entry points,
@@ -481,6 +537,12 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: '/settings/ai-assistant',
               builder: (context, state) => const AISettingsPage(),
+            ),
+            // 023 Settings -> Bank messages, on every platform (paste is
+            // universal; the SMS rows inside depend on the capability).
+            GoRoute(
+              path: BankMessagesRoutes.settings,
+              builder: (context, state) => const BankMessagesSettingsPage(),
             ),
             // 015 User Story 6. Only the settings screen is a route: the
             // lock screen and PIN setup are overlays/pushed pages, never

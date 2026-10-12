@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "card_purchase",
+  "amountMinor": 7500,
+  "currency": "EGP",
+  "date": null,
+  "merchant": "Example Bakery",
+  "confidence": {
+    "overall": "low",
+    "amount": "read:medium",
+    "date": null
+  }
+}

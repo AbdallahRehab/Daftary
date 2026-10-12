@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "own_account_transfer",
+  "amountMinor": 100000,
+  "suggestion": {
+    "type": "ignore"
+  },
+  "warnings": [
+    "own_account_suggested_ignore"
+  ]
+}

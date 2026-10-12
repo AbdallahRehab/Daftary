@@ -105,6 +105,11 @@ dependencies:
   # 015 App Lock: HMAC-SHA256 for PBKDF2 PIN hashing (research.md
   # Decision 7). Used only by `app_lock/PinHasher`.
   crypto: ^3.0.7
+  # 023 Bank SMS import: AES-GCM for raw message text at rest (research.md
+  # Decision 6; dependency summary in Decision 15). Already resolved
+  # transitively; named directly because the vault imports it. Wrapped
+  # behind `sms_import/RawTextVault`; only AesGcmRawTextVault imports it.
+  pointycastle: ^4.0.0
 
 dev_dependencies:
   flutter_test:

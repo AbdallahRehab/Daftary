@@ -1,0 +1,8 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "amountMinor": 25000,
+  "currency": "EGP"
+}

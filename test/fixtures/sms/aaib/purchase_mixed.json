@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sender": "AAIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "aaib",
+  "ruleVersion": "aaib@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 105000,
+  "currency": "EGP",
+  "date": "2026-03-06",
+  "dateInferred": false,
+  "merchant": "Example Sports",
+  "timeMinutes": 930,
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "synthetic": true,
+  "sender": "BANQUEMISR",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "banque_misr",
+  "ruleVersion": "banque_misr@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 42075,
+  "currency": "EGP",
+  "date": "2026-03-04",
+  "dateInferred": false,
+  "merchant": "Example Pharmacy",
+  "last4": "7310",
+  "timeMinutes": 1210,
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "QNB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "qnb",
+  "ruleVersion": "qnb@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 100000,
+  "currency": "EGP",
+  "date": "2026-03-04",
+  "dateInferred": false,
+  "counterparty": "مصطفى المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

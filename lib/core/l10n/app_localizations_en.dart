@@ -3889,4 +3889,1339 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeHistoryNoValue => '(none)';
+
+  @override
+  String get smsImportErrorCapabilityUnavailable =>
+      'Reading bank messages isn\'t available on this device. You can still paste a bank message.';
+
+  @override
+  String get smsImportErrorPermissionDenied =>
+      'Daftary needs permission to read SMS to find your bank messages. Nothing is lost: you can paste a bank message instead.';
+
+  @override
+  String get smsImportErrorPermissionBlocked =>
+      'Your phone is blocking the SMS permission for Daftary. You can allow it from the app\'s settings, or paste a bank message instead.';
+
+  @override
+  String get smsImportErrorPermissionRevoked =>
+      'Automatic import is off because the SMS permission was turned off. Your pending items are kept.';
+
+  @override
+  String get smsImportErrorInboxQuery =>
+      'Couldn\'t read your messages right now. Daftary will try again next time you open the app.';
+
+  @override
+  String get smsImportErrorTooLongCharacters =>
+      'This text is too long. Paste up to 10,000 characters at a time.';
+
+  @override
+  String get smsImportErrorTooManyMessages =>
+      'This text has too many messages. Paste up to 50 messages at a time.';
+
+  @override
+  String get smsImportErrorNotRecognized =>
+      'This doesn\'t look like a supported bank message. You can add the transaction manually.';
+
+  @override
+  String get smsImportErrorIncomplete =>
+      'Some required details are missing. Fill in the highlighted fields to add it.';
+
+  @override
+  String get smsImportErrorAmountAmbiguous =>
+      'The message has more than one amount. Check which one is right.';
+
+  @override
+  String get smsImportErrorUnsupportedCurrency =>
+      'This currency isn\'t supported. Choose the currency and enter the amount again.';
+
+  @override
+  String get smsImportErrorClipboardEmpty =>
+      'There\'s nothing to paste. Copy a bank message first, or type it into the box.';
+
+  @override
+  String get smsImportErrorOriginalUnavailable =>
+      'The original message can\'t be shown. You can continue with the details below.';
+
+  @override
+  String get smsImportErrorSaveFailed =>
+      'It wasn\'t saved, and it\'s still waiting for your review. Try again.';
+
+  @override
+  String smsImportErrorScanInterrupted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'The scan stopped after checking $count messages. Scan again to continue.',
+      one: 'The scan stopped after checking 1 message. Scan again to continue.',
+      zero:
+          'The scan stopped before any message was checked. Scan again to continue.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportErrorStorageUnavailable =>
+      'Daftary couldn\'t store this on your device. Try again.';
+
+  @override
+  String get smsImportErrorMessageUnreadable =>
+      'One message couldn\'t be read and was skipped. The others were checked.';
+
+  @override
+  String get smsImportErrorAlreadyDecided => 'This item was already handled.';
+
+  @override
+  String get smsImportErrorProbableDuplicate =>
+      'This may already be in Daftary. Compare before adding.';
+
+  @override
+  String get smsImportErrorScanAlreadyRunning => 'A scan is already running.';
+
+  @override
+  String get smsImportErrorScanNotAllowed =>
+      'Scanning isn\'t possible right now. Check that bank message import is on and allowed.';
+
+  @override
+  String get smsImportProvenanceLabel => 'Imported from a bank message';
+
+  @override
+  String get smsImportProvenanceSemantics =>
+      'Imported from a bank message you reviewed';
+
+  @override
+  String get smsImportPendingTitle => 'Bank messages';
+
+  @override
+  String get smsImportPendingEmptyTitle => 'No bank messages to review';
+
+  @override
+  String get smsImportPendingEmptyMessage =>
+      'Bank messages you scan, paste or share appear here for your review. Nothing is saved until you tap Add.';
+
+  @override
+  String get smsImportPendingLoadErrorTitle =>
+      'Couldn\'t load your bank messages';
+
+  @override
+  String get smsImportPendingRetry => 'Try again';
+
+  @override
+  String smsImportPendingExpiredNotice(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count suggestions expired. You can restore them from Ignored items.',
+      one: '1 suggestion expired. You can restore it from Ignored items.',
+      zero: 'No suggestions expired.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingExpiredDismiss => 'Dismiss';
+
+  @override
+  String get smsImportPendingChooseType => 'Choose type';
+
+  @override
+  String get smsImportPendingAmountNeedsCheck => 'Amount needs checking';
+
+  @override
+  String smsImportPendingDateInferred(String date) {
+    return '$date, inferred';
+  }
+
+  @override
+  String get smsImportPendingIgnoreSuggested => 'Ignore suggested';
+
+  @override
+  String get smsImportPendingPossibleDuplicate => 'Possible duplicate';
+
+  @override
+  String get smsImportPendingUnknownBank => 'Unrecognized bank';
+
+  @override
+  String smsImportBankName(String bank) {
+    String _temp0 = intl.Intl.selectLogic(bank, {
+      'nbe': 'National Bank of Egypt',
+      'banque_misr': 'Banque Misr',
+      'cib': 'CIB',
+      'qnb': 'QNB Alahli',
+      'banque_du_caire': 'Banque du Caire',
+      'aaib': 'Arab African International Bank',
+      'instapay': 'InstaPay',
+      'other': 'Bank',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportKindLabel(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'cardPurchase': 'Card purchase',
+      'atmWithdrawal': 'ATM withdrawal',
+      'cardOrLoanSettlement': 'Card or loan payment',
+      'billPayment': 'Bill payment',
+      'fee': 'Bank fee',
+      'salary': 'Salary',
+      'otherDeposit': 'Deposit',
+      'transferOut': 'Transfer out',
+      'transferIn': 'Transfer in',
+      'refund': 'Refund',
+      'authorizationReversal': 'Cancelled authorization',
+      'ownAccountTransfer': 'Move between your accounts',
+      'other': 'Bank transaction',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportReviewSourceLabel(String source) {
+    String _temp0 = intl.Intl.selectLogic(source, {
+      'inboxScan': 'From SMS',
+      'catchUpScan': 'From SMS',
+      'paste': 'Pasted',
+      'share': 'Shared',
+      'other': 'From SMS',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportWarningText(String warning) {
+    String _temp0 = intl.Intl.selectLogic(warning, {
+      'atmIgnoredByDefault':
+          'Cash withdrawals aren\'t counted as spending unless you turn that on in Bank message settings.',
+      'refundHint':
+          'This looks like a refund. Ignore it if the original purchase is already in Daftary.',
+      'ownAccountSuggestedIgnore':
+          'This looks like a move between your own accounts, so it isn\'t income or spending.',
+      'cardSettlementSuggestedIgnore':
+          'This is a card or loan payment. The original purchases are counted separately.',
+      'genericParser':
+          'Daftary doesn\'t know this bank\'s messages well. Check every field.',
+      'unverifiedProfile':
+          'Support for this bank is new. Check every field before adding.',
+      'ambiguousAmount':
+          'The message has more than one amount. Check which one is right.',
+      'unsupportedCurrency':
+          'This currency isn\'t supported. Choose a currency and enter the amount in it.',
+      'dateInferred': 'The date wasn\'t in the message. Check it.',
+      'currencyInferred': 'The currency wasn\'t in the message. Check it.',
+      'foreignCurrencyBilledAmount':
+          'The amount shown is what your account was charged.',
+      'feeSeparateItem': 'A fee in this message is listed as its own item.',
+      'feeFromMessage': 'This fee was taken from another bank message.',
+      'reversalHint':
+          'This money was never taken. Ignore it, or open the matching record to check it.',
+      'maskedReference': 'The reference number was hidden for your privacy.',
+      'possibleDuplicate': 'This may already be in Daftary.',
+      'possibleOwnTransfer':
+          'This looks like money moved between your own accounts. Ignore both if so.',
+      'other': 'Check this item before adding.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportReviewTitle => 'Review bank message';
+
+  @override
+  String get smsImportReviewOverallConfidence => 'Overall confidence';
+
+  @override
+  String get smsImportReviewTypeLabel => 'Type';
+
+  @override
+  String get smsImportReviewChooseType => 'Choose a type';
+
+  @override
+  String get smsImportReviewAmountLabel => 'Amount';
+
+  @override
+  String get smsImportReviewAmountInvalid =>
+      'Enter an amount greater than zero, up to 12 digits.';
+
+  @override
+  String get smsImportReviewWhichAmount => 'Which amount?';
+
+  @override
+  String smsImportReviewUseAmount(String amount) {
+    return 'Use $amount';
+  }
+
+  @override
+  String get smsImportReviewChooseCurrency => 'Choose a currency';
+
+  @override
+  String get smsImportReviewCurrencyNeeded =>
+      'Choose a currency and enter the amount in it.';
+
+  @override
+  String smsImportReviewOriginalAmount(String amount) {
+    return 'Original: $amount';
+  }
+
+  @override
+  String get smsImportReviewDateLabel => 'Date';
+
+  @override
+  String get smsImportReviewChooseDate => 'Choose a date';
+
+  @override
+  String smsImportReviewMessageTime(String time) {
+    return 'Message time $time. Only the date is saved.';
+  }
+
+  @override
+  String get smsImportReviewPersonLabel => 'Person';
+
+  @override
+  String smsImportReviewRecordAsGiven(String name) {
+    return 'Record as Given to $name';
+  }
+
+  @override
+  String smsImportReviewRecordAsReceived(String name) {
+    return 'Record as Received from $name';
+  }
+
+  @override
+  String get smsImportReviewNoteLabel => 'Note (optional)';
+
+  @override
+  String get smsImportReviewUseMerchant => 'Use merchant name as note';
+
+  @override
+  String get smsImportReviewShowOriginal => 'Show original message';
+
+  @override
+  String smsImportReviewMissing(String fields) {
+    return 'Missing: $fields';
+  }
+
+  @override
+  String get smsImportReviewFieldType => 'type';
+
+  @override
+  String get smsImportReviewFieldAmount => 'amount';
+
+  @override
+  String get smsImportReviewFieldCurrency => 'currency';
+
+  @override
+  String get smsImportReviewFieldDate => 'date';
+
+  @override
+  String get smsImportReviewFieldCategory => 'category';
+
+  @override
+  String get smsImportReviewFieldPerson => 'person';
+
+  @override
+  String get smsImportReviewFieldNote => 'note (up to 500 characters)';
+
+  @override
+  String get smsImportReviewListSeparator => ', ';
+
+  @override
+  String get smsImportReviewAdd => 'Add';
+
+  @override
+  String get smsImportReviewAdded => 'Added';
+
+  @override
+  String get smsImportReviewSaving => 'Saving';
+
+  @override
+  String get smsImportReviewAlreadyHandledTitle =>
+      'This item was already handled';
+
+  @override
+  String get smsImportReviewAlreadyHandledMessage =>
+      'It may have been added, ignored or expired.';
+
+  @override
+  String get smsImportReviewBackToList => 'Back to bank messages';
+
+  @override
+  String get smsImportReviewLoadErrorTitle =>
+      'Couldn\'t open this bank message';
+
+  @override
+  String get smsImportReviewDiscardTitle => 'Discard your changes?';
+
+  @override
+  String get smsImportReviewDiscardMessage =>
+      'The item stays waiting for your review.';
+
+  @override
+  String get smsImportReviewDiscardConfirm => 'Discard';
+
+  @override
+  String get smsImportReviewKeepEditing => 'Keep editing';
+
+  @override
+  String get smsImportDuplicateBanner => 'You may already have this';
+
+  @override
+  String get smsImportDuplicateCompare => 'Compare';
+
+  @override
+  String get smsImportDuplicateTitle => 'You may already have this';
+
+  @override
+  String get smsImportDuplicateMessage =>
+      'Compare them before you decide. Nothing is added until you choose.';
+
+  @override
+  String get smsImportDuplicateExisting => 'Already in Daftary';
+
+  @override
+  String get smsImportDuplicateOtherPending => 'Another bank message';
+
+  @override
+  String get smsImportDuplicateIncoming => 'This message';
+
+  @override
+  String get smsImportDuplicateSameAmount => 'Same amount';
+
+  @override
+  String get smsImportDuplicateSameOriginalAmount =>
+      'Same as the original amount in the message';
+
+  @override
+  String smsImportDuplicateDaysApart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days apart',
+      one: '1 day apart',
+      zero: 'Same day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportDuplicateNote(String note) {
+    return 'Note: $note';
+  }
+
+  @override
+  String get smsImportDuplicateSame => 'It\'s the same, don\'t add';
+
+  @override
+  String get smsImportDuplicateAddAnyway => 'It\'s different, add anyway';
+
+  @override
+  String get smsImportDuplicateCancel => 'Cancel';
+
+  @override
+  String get smsImportDuplicateFound => 'Possible duplicate found';
+
+  @override
+  String get smsImportDuplicateClosed => 'Not added. It\'s already in Daftary.';
+
+  @override
+  String get smsImportReviewMatchedRecord => 'Matching record in Daftary';
+
+  @override
+  String get smsImportReviewOpenRecord => 'Open it';
+
+  @override
+  String smsImportReviewFeeFromParent(String date) {
+    return 'Fee from the bank message of $date';
+  }
+
+  @override
+  String get smsImportReviewFeeFromParentNoDate =>
+      'Fee from the related bank message';
+
+  @override
+  String get smsImportReviewNoCategories =>
+      'There\'s no active category of this type. Add one from Manage categories.';
+
+  @override
+  String smsImportSemanticsCardEnding(String last4) {
+    return 'card ending in $last4';
+  }
+
+  @override
+  String get smsImportSemanticsOpenReview => 'Open to review';
+
+  @override
+  String smsImportSemanticsAddUnavailable(String fields) {
+    return 'Add is unavailable. Missing: $fields';
+  }
+
+  @override
+  String get smsImportPasteTitle => 'Paste a bank message';
+
+  @override
+  String get smsImportPasteIntro =>
+      'Copy a message from your bank, then tap Paste, or paste it into the box yourself. Nothing is saved until you review it and tap Add.';
+
+  @override
+  String get smsImportPasteFieldLabel => 'Bank message text';
+
+  @override
+  String get smsImportPasteButton => 'Paste';
+
+  @override
+  String get smsImportPasteProcess => 'Read message';
+
+  @override
+  String get smsImportPasteLimits => 'Up to 10,000 characters and 50 messages.';
+
+  @override
+  String smsImportPasteCharacterCount(int count) {
+    return '$count of 10,000 characters';
+  }
+
+  @override
+  String get smsImportPasteProcessing => 'Reading the message…';
+
+  @override
+  String get smsImportPasteNothingTitle => 'Nothing to paste';
+
+  @override
+  String get smsImportPasteNotRecognizedTitle => 'Not a supported bank message';
+
+  @override
+  String get smsImportPasteEnterManually => 'Enter manually';
+
+  @override
+  String get smsImportPasteTryAgain => 'Try again';
+
+  @override
+  String get smsImportPasteTooLargeTitle => 'Too much text';
+
+  @override
+  String get smsImportPasteUnreadableTitle => 'Couldn\'t read this message';
+
+  @override
+  String get smsImportPasteUnreadableMessage =>
+      'A bank message was found, but its details couldn\'t be read. You can add the transaction manually.';
+
+  @override
+  String smsImportPasteRecognized(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions recognized',
+      one: '1 transaction recognized',
+      zero: 'No transactions recognized',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportPasteSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages skipped',
+      one: '1 message skipped',
+      zero: 'Nothing skipped',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPasteAlreadyListed =>
+      'These messages are already in your list. Nothing new was added.';
+
+  @override
+  String get smsImportPasteOpenList => 'Open bank messages';
+
+  @override
+  String get smsImportShareProcessing => 'Reading the shared message…';
+
+  @override
+  String get smsImportShareReceived => 'Shared from another app';
+
+  @override
+  String get smsImportHomeQuickAction => 'Bank message';
+
+  @override
+  String get smsImportEnableTitle => 'Read bank messages';
+
+  @override
+  String get smsImportEnableExplainTitle =>
+      'Add bank transactions from your messages';
+
+  @override
+  String get smsImportEnableWhatIsReadTitle => 'What Daftary reads';
+
+  @override
+  String get smsImportEnableWhatIsRead =>
+      'Only messages from recognized bank senders, on this device.';
+
+  @override
+  String get smsImportEnableNeverTitle => 'What never happens';
+
+  @override
+  String get smsImportEnableNever =>
+      'Nothing is uploaded, and nothing is saved until you review it and tap Add.';
+
+  @override
+  String get smsImportEnableTurnOffTitle => 'How to turn it off';
+
+  @override
+  String get smsImportEnableTurnOff =>
+      'Any time from Settings, then Bank messages.';
+
+  @override
+  String get smsImportEnableContinue => 'Continue';
+
+  @override
+  String get smsImportEnableNotNow => 'Not now';
+
+  @override
+  String get smsImportEnablePasteInstead => 'Paste instead';
+
+  @override
+  String get smsImportEnableRequesting =>
+      'Waiting for your answer to Android\'s question…';
+
+  @override
+  String get smsImportEnableWindowTitle => 'How far back should Daftary look?';
+
+  @override
+  String smsImportEnableWindowDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Last $count days',
+      one: 'Last day',
+      zero: 'Last 0 days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportEnableScan => 'Scan';
+
+  @override
+  String get smsImportEnableDoneTitle => 'Scan finished';
+
+  @override
+  String get smsImportEnableReviewNow => 'Review now';
+
+  @override
+  String get smsImportEnableClose => 'Close';
+
+  @override
+  String get smsImportEnableUnavailableTitle =>
+      'Reading messages isn\'t available here';
+
+  @override
+  String get smsImportEnableUnavailableMessage =>
+      'You can still paste or share a bank message.';
+
+  @override
+  String get smsImportEnableErrorTitle => 'Something went wrong';
+
+  @override
+  String get smsImportEnableRetry => 'Retry';
+
+  @override
+  String get smsImportPermissionDeniedBanner =>
+      'Bank message import needs permission to read messages from your bank.';
+
+  @override
+  String get smsImportPermissionDeniedDetail =>
+      'Daftary needs this permission to find bank transactions in your messages. Nothing is lost if you don\'t allow it: you can paste or share a message instead.';
+
+  @override
+  String get smsImportPermissionPermanentBanner =>
+      'Permission is turned off for Daftary.';
+
+  @override
+  String get smsImportPermissionPermanentDetail =>
+      'To allow it, open App info, then Permissions, then SMS, and choose Allow. Then come back to Daftary.';
+
+  @override
+  String get smsImportPermissionRevokedBanner =>
+      'Automatic import is off because the permission was turned off. Your pending items are still here.';
+
+  @override
+  String get smsImportPermissionAllow => 'Allow';
+
+  @override
+  String get smsImportPermissionTryAgain => 'Try again';
+
+  @override
+  String get smsImportPermissionOpenAppInfo => 'Open App info';
+
+  @override
+  String get smsImportPermissionPasteInstead => 'Paste or share instead';
+
+  @override
+  String get smsImportPermissionTurnOnAgain => 'Turn on again';
+
+  @override
+  String get smsImportPermissionShowMeHow => 'Show me how';
+
+  @override
+  String get smsImportRestrictedBanner =>
+      'Android may be blocking this permission for apps installed outside a store.';
+
+  @override
+  String get smsImportRestrictedTitle =>
+      'Android may be blocking this permission';
+
+  @override
+  String get smsImportRestrictedIntro =>
+      'If no question appeared, Android may be blocking it because Daftary was installed from outside an app store. To allow it:';
+
+  @override
+  String get smsImportRestrictedStep1 => '1. Open App info.';
+
+  @override
+  String get smsImportRestrictedStep2 =>
+      '2. Open the menu (three dots) at the top.';
+
+  @override
+  String get smsImportRestrictedStep3 =>
+      '3. Choose \"Allow restricted settings\".';
+
+  @override
+  String get smsImportRestrictedStep4 =>
+      '4. Come back to Daftary and tap Try again.';
+
+  @override
+  String get smsImportRestrictedAltPath =>
+      'If you don\'t see \"Allow restricted settings\", open Permissions → SMS in App info and choose Allow, then come back and tap Try again.';
+
+  @override
+  String get smsImportScanNow => 'Scan now';
+
+  @override
+  String smsImportScanProgress(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Processed $count messages',
+      one: 'Processed 1 message',
+      zero: 'No messages processed yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanCancel => 'Cancel';
+
+  @override
+  String get smsImportScanCancelled =>
+      'Scan stopped. What was found so far is kept.';
+
+  @override
+  String get smsImportScanSummaryTitle => 'Scan summary';
+
+  @override
+  String smsImportScanFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bank messages found',
+      one: '1 bank message found',
+      zero: 'No bank messages found',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanReady(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ready to add',
+      one: '1 ready to add',
+      zero: 'None ready to add',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanNeedReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count need your review',
+      one: '1 needs your review',
+      zero: 'None need your review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanAlreadyKnown(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count were already listed',
+      one: '1 was already listed',
+      zero: 'None were already listed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count skipped: not transactions',
+      one: '1 skipped: not a transaction',
+      zero: 'Nothing skipped',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanUnreadable(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count couldn\'t be read',
+      one: '1 couldn\'t be read',
+      zero: 'None unreadable',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanInterrupted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages processed before the interruption',
+      one: '1 message processed before the interruption',
+      zero: 'Nothing was processed before the interruption',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanShowSkipped => 'Show skipped';
+
+  @override
+  String get smsImportScanSkippedTitle => 'Skipped messages';
+
+  @override
+  String get smsImportScanSkippedNote => 'Message text is never shown here.';
+
+  @override
+  String smsImportScanSkipReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'notRecognized': 'Not a recognized transaction',
+      'noAmount': 'No amount found',
+      'amountUnreadable': 'Couldn\'t read the amount',
+      'tooLong': 'Too long to read',
+      'empty': 'Empty message',
+      'nonText': 'Not text',
+      'parserError': 'Couldn\'t read',
+      'other': 'Couldn\'t read',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanSkippedNoDate => 'Date unknown';
+
+  @override
+  String get smsImportScanDismiss => 'Dismiss summary';
+
+  @override
+  String get smsImportScanTurnOnTitle =>
+      'Find bank transactions in your messages';
+
+  @override
+  String get smsImportScanTurnOn => 'Turn on';
+
+  @override
+  String get smsImportScanFailedTitle => 'The scan stopped';
+
+  @override
+  String get smsImportScanRetry => 'Retry';
+
+  @override
+  String get smsImportScanMore => 'More options';
+
+  @override
+  String get smsImportSettingsTitle => 'Bank messages';
+
+  @override
+  String get smsImportSettingsEntrySubtitle =>
+      'Add transactions from bank messages';
+
+  @override
+  String get smsImportSettingsStatusTitle => 'Status';
+
+  @override
+  String smsImportSettingsStatusLabel(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'off': 'Off',
+      'on': 'On',
+      'permissionOff': 'Permission off',
+      'blocked': 'Blocked by Android',
+      'other': 'Off',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportSettingsTurnOn => 'Turn on';
+
+  @override
+  String get smsImportSettingsScanTitle => 'Scan';
+
+  @override
+  String get smsImportSettingsWindowTitle => 'Scan period';
+
+  @override
+  String smsImportSettingsLastScan(String date) {
+    return 'Last scan: $date';
+  }
+
+  @override
+  String get smsImportSettingsNeverScanned => 'Not scanned yet';
+
+  @override
+  String get smsImportSettingsCountsTitle => 'Activity';
+
+  @override
+  String smsImportSettingsCountScanned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages read',
+      one: '1 message read',
+      zero: 'No messages read',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountRecognized(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions recognized',
+      one: '1 transaction recognized',
+      zero: 'No transactions recognized',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count added',
+      one: '1 added',
+      zero: 'None added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountIgnored(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ignored',
+      one: '1 ignored',
+      zero: 'None ignored',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportSettingsPreferencesTitle => 'Preferences';
+
+  @override
+  String get smsImportSettingsCountCash => 'Count cash withdrawals as spending';
+
+  @override
+  String get smsImportSettingsCountCashHelp =>
+      'When on, ATM withdrawals are suggested as an expense instead of being ignored.';
+
+  @override
+  String get smsImportSettingsManageTitle => 'Manage';
+
+  @override
+  String get smsImportSettingsPending => 'Pending bank messages';
+
+  @override
+  String get smsImportSettingsPrivacyTitle => 'Privacy';
+
+  @override
+  String get smsImportSettingsPrivacyText =>
+      'Messages are read on this device only. Nothing is saved without your Add.';
+
+  @override
+  String get smsImportSettingsLoadErrorTitle =>
+      'Couldn\'t load bank message settings';
+
+  @override
+  String get smsImportSettingsRetry => 'Retry';
+
+  @override
+  String get smsImportSettingsSaveFailed => 'Couldn\'t save. Try again.';
+
+  @override
+  String get smsImportHomeOnboardingTitle => 'Bank messages';
+
+  @override
+  String get smsImportHomeOnboardingText =>
+      'Daftary can find transactions in your bank\'s messages for you to review.';
+
+  @override
+  String get smsImportHomeOnboardingSetUp => 'Set up';
+
+  @override
+  String get smsImportHomeOnboardingDismiss => 'Dismiss';
+
+  @override
+  String smsImportHomeCardCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bank transactions to review',
+      one: '1 bank transaction to review',
+      zero: 'No bank transactions to review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportHomeCardHint => 'Opens bank messages';
+
+  @override
+  String get smsImportPendingSelect => 'Select';
+
+  @override
+  String smsImportPendingSelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '1 selected',
+      zero: 'None selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingCancelSelection => 'Cancel selection';
+
+  @override
+  String get smsImportPendingIgnoreSelected => 'Ignore';
+
+  @override
+  String smsImportPendingIgnoreConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ignore $count items?',
+      one: 'Ignore 1 item?',
+      zero: 'Ignore nothing?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingIgnoreConfirmMessage =>
+      'Nothing will be added, and these messages won\'t be suggested again. You can restore them from Ignored items for 30 days.';
+
+  @override
+  String get smsImportPendingIgnoreConfirm => 'Ignore';
+
+  @override
+  String smsImportPendingIgnoredCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items ignored',
+      one: '1 item ignored',
+      zero: 'Nothing ignored',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingMenuIgnored => 'Ignored items';
+
+  @override
+  String get smsImportReviewIgnore => 'Ignore';
+
+  @override
+  String get smsImportReviewIgnored => 'Ignored';
+
+  @override
+  String get smsImportReviewMoreActions => 'More actions';
+
+  @override
+  String get smsImportMuteAction => 'Stop suggesting from this sender';
+
+  @override
+  String get smsImportMuteConfirmTitle => 'Stop suggesting from this sender?';
+
+  @override
+  String smsImportMuteConfirmMessage(String sender) {
+    return 'Daftary will stop suggesting transactions from $sender. Its pending items will be removed. Saved transactions are not changed. You can undo this in Muted senders.';
+  }
+
+  @override
+  String get smsImportMuteConfirm => 'Stop suggesting';
+
+  @override
+  String smsImportMuteDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sender muted. $count pending items removed.',
+      one: 'Sender muted. 1 pending item removed.',
+      zero: 'Sender muted.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportMuteTitle => 'Muted senders';
+
+  @override
+  String get smsImportMuteHelp =>
+      'Daftary doesn\'t suggest transactions from these senders.';
+
+  @override
+  String get smsImportMuteEmptyTitle => 'No muted senders';
+
+  @override
+  String get smsImportMuteEmptyMessage =>
+      'When you stop suggestions from a sender on a review screen, it appears here.';
+
+  @override
+  String get smsImportMuteLoadError => 'Couldn\'t load muted senders';
+
+  @override
+  String get smsImportMuteUnmute => 'Unmute';
+
+  @override
+  String smsImportMuteUnmuteSemantics(String sender) {
+    return 'Unmute $sender';
+  }
+
+  @override
+  String get smsImportMuteUnmuted =>
+      'Unmuted. Its new messages will be suggested after the next scan.';
+
+  @override
+  String get smsImportIgnoredTitle => 'Ignored items';
+
+  @override
+  String get smsImportIgnoredHelp =>
+      'Items you ignored, or that expired, in the last 30 days.';
+
+  @override
+  String get smsImportIgnoredEmptyTitle => 'Nothing ignored recently';
+
+  @override
+  String get smsImportIgnoredEmptyMessage =>
+      'Items you ignore, or that expire, stay here for 30 days so you can undo.';
+
+  @override
+  String get smsImportIgnoredLoadError => 'Couldn\'t load ignored items';
+
+  @override
+  String get smsImportIgnoredStatusIgnored => 'Ignored';
+
+  @override
+  String get smsImportIgnoredStatusExpired => 'Expired';
+
+  @override
+  String get smsImportIgnoredNoAmount => 'No amount';
+
+  @override
+  String smsImportIgnoredDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Less than a day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportIgnoredUndo => 'Undo';
+
+  @override
+  String get smsImportIgnoredComesBack =>
+      'It will come back when you tap Scan now, or paste or share this message again.';
+
+  @override
+  String get smsImportIgnoredComesBackPasteOnly =>
+      'It will come back when you paste or share this message again.';
+
+  @override
+  String get smsImportIgnoredRestored =>
+      'Restored. Tap Scan now, or paste it again, to see it.';
+
+  @override
+  String get smsImportIgnoredRestoredPasteOnly =>
+      'Restored. Paste or share it again to see it.';
+
+  @override
+  String smsImportSuggestHint(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'ignore': 'Suggested: Ignore. Nothing is counted as income or spending.',
+      'unset': 'No type was suggested. Choose one, or Ignore this item.',
+      'other': 'Check the suggested type before adding.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestCashLink(String state) {
+    String _temp0 = intl.Intl.selectLogic(state, {
+      'on': 'Cash withdrawals count as spending. Change in settings',
+      'other':
+          'Cash withdrawals aren\'t counted as spending. Change in settings',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestSeveralPeople(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people in your people could be $name.',
+      one: '1 person in your people could be $name.',
+      zero: 'No one in your people matches $name.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestChoosePerson(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'received': 'Choose who sent it',
+      'other': 'Choose who received it',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestPersonNotInList(String name) {
+    return '$name isn\'t in your people. A person is created only if you tap Create new person.';
+  }
+
+  @override
+  String get smsImportMappingsTitle => 'Learned categories';
+
+  @override
+  String get smsImportMappingsHelp =>
+      'When you change a merchant\'s category and add the transaction, Daftary suggests that category next time.';
+
+  @override
+  String smsImportMappingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count learned categories',
+      one: '1 learned category',
+      zero: 'No learned categories',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportMappingsCategoryRemoved => 'Category removed';
+
+  @override
+  String smsImportMappingsRowSemantics(
+    String merchant,
+    String type,
+    String category,
+  ) {
+    return '$merchant: $type, $category';
+  }
+
+  @override
+  String get smsImportMappingsRemove => 'Remove';
+
+  @override
+  String smsImportMappingsRemoveSemantics(String merchant) {
+    return 'Remove the learned category for $merchant';
+  }
+
+  @override
+  String get smsImportMappingsRemoved =>
+      'Removed. This merchant gets the usual suggestion again.';
+
+  @override
+  String get smsImportMappingsClear => 'Clear learned categories';
+
+  @override
+  String get smsImportMappingsClearConfirmTitle => 'Clear learned categories?';
+
+  @override
+  String get smsImportMappingsClearConfirmMessage =>
+      'Daftary will forget every learned category. Your categories and saved transactions are not changed.';
+
+  @override
+  String get smsImportMappingsClearConfirm => 'Clear';
+
+  @override
+  String get smsImportMappingsCleared => 'Learned categories cleared.';
+
+  @override
+  String get smsImportMappingsEmptyTitle => 'No learned categories';
+
+  @override
+  String get smsImportMappingsEmptyMessage =>
+      'When you change the category of an imported transaction and add it, the choice appears here.';
+
+  @override
+  String get smsImportMappingsLoadError => 'Couldn\'t load learned categories';
+
+  @override
+  String get smsImportSettingsTurnOff => 'Turn off';
+
+  @override
+  String get smsImportSettingsTurnOffTitle => 'Also delete pending imports?';
+
+  @override
+  String get smsImportSettingsTurnOffMessage =>
+      'Bank message import stops now. Your pending items can stay for you to review later, or be deleted. Saved transactions, muted senders and learned categories are not changed.';
+
+  @override
+  String get smsImportSettingsTurnOffKeep => 'Keep them';
+
+  @override
+  String get smsImportSettingsTurnOffDelete => 'Delete them';
+
+  @override
+  String get smsImportSettingsTurnedOffKept =>
+      'Turned off. Your pending items are still here.';
+
+  @override
+  String smsImportSettingsTurnedOffDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Turned off. $count pending items deleted.',
+      one: 'Turned off. 1 pending item deleted.',
+      zero: 'Turned off. There were no pending items.',
+    );
+    return '$_temp0';
+  }
 }

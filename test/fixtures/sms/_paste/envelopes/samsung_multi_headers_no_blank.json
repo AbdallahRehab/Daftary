@@ -1,0 +1,12 @@
+{
+  "synthetic": true,
+  "unverifiedFormat": true,
+  "app": "Samsung Messages",
+  "mode": "multi-select, SENDER / DATE TIME / BODY per message, no blank lines",
+  "source": "paste",
+  "inboxBodies": [
+    "Purchase of EGP 125.50 at Example Cafe on 04/03/2026 10:15 with card ****0000.",
+    "تم خصم 300.00 جنيه من بطاقتك المنتهية ب 0000 لدى Example Market يوم 05/03/2026",
+    "EGP 500.00 transferred to Mona via InstaPay on 06/03/2026. Fees EGP 2.50"
+  ]
+}

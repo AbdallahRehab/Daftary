@@ -6799,6 +6799,1732 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'(none)'**
   String get changeHistoryNoValue;
+
+  /// Bank message import: the SMS inbox cannot be read on this device or build; paste still works.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading bank messages isn\'t available on this device. You can still paste a bank message.'**
+  String get smsImportErrorCapabilityUnavailable;
+
+  /// Bank message import: the SMS permission was denied; explains why it is needed and the paste fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary needs permission to read SMS to find your bank messages. Nothing is lost: you can paste a bank message instead.'**
+  String get smsImportErrorPermissionDenied;
+
+  /// Bank message import: the SMS permission is permanently denied or blocked by the system.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone is blocking the SMS permission for Daftary. You can allow it from the app\'s settings, or paste a bank message instead.'**
+  String get smsImportErrorPermissionBlocked;
+
+  /// Bank message import: the SMS permission was revoked while the feature was on.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic import is off because the SMS permission was turned off. Your pending items are kept.'**
+  String get smsImportErrorPermissionRevoked;
+
+  /// Bank message import: the SMS inbox query failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read your messages right now. Daftary will try again next time you open the app.'**
+  String get smsImportErrorInboxQuery;
+
+  /// Bank message import: pasted or shared text exceeded the character limit. Nothing was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'This text is too long. Paste up to 10,000 characters at a time.'**
+  String get smsImportErrorTooLongCharacters;
+
+  /// Bank message import: pasted or shared text exceeded the message-count limit. Nothing was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'This text has too many messages. Paste up to 50 messages at a time.'**
+  String get smsImportErrorTooManyMessages;
+
+  /// Bank message import: the pasted or shared text was not recognized as a bank message.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like a supported bank message. You can add the transaction manually.'**
+  String get smsImportErrorNotRecognized;
+
+  /// Bank message import: Add was tried with required fields missing; the review page names each field.
+  ///
+  /// In en, this message translates to:
+  /// **'Some required details are missing. Fill in the highlighted fields to add it.'**
+  String get smsImportErrorIncomplete;
+
+  /// Bank message import: two or more amounts were found and the user must choose.
+  ///
+  /// In en, this message translates to:
+  /// **'The message has more than one amount. Check which one is right.'**
+  String get smsImportErrorAmountAmbiguous;
+
+  /// Bank message import: the message's currency is outside the app's currency list.
+  ///
+  /// In en, this message translates to:
+  /// **'This currency isn\'t supported. Choose the currency and enter the amount again.'**
+  String get smsImportErrorUnsupportedCurrency;
+
+  /// Bank message import: the clipboard was empty or had no text.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s nothing to paste. Copy a bank message first, or type it into the box.'**
+  String get smsImportErrorClipboardEmpty;
+
+  /// Bank message import: the stored original text cannot be opened or was already removed.
+  ///
+  /// In en, this message translates to:
+  /// **'The original message can\'t be shown. You can continue with the details below.'**
+  String get smsImportErrorOriginalUnavailable;
+
+  /// Bank message import: Add failed; the item stays pending and no record was created.
+  ///
+  /// In en, this message translates to:
+  /// **'It wasn\'t saved, and it\'s still waiting for your review. Try again.'**
+  String get smsImportErrorSaveFailed;
+
+  /// Bank message import: a scan was interrupted; count is how many messages were processed. Re-scanning never duplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{The scan stopped before any message was checked. Scan again to continue.} =1{The scan stopped after checking 1 message. Scan again to continue.} other{The scan stopped after checking {count} messages. Scan again to continue.}}'**
+  String smsImportErrorScanInterrupted(int count);
+
+  /// Bank message import: the local database was unavailable; nothing partial was kept.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary couldn\'t store this on your device. Try again.'**
+  String get smsImportErrorStorageUnavailable;
+
+  /// Bank message import: a single message could not be parsed; processing continued.
+  ///
+  /// In en, this message translates to:
+  /// **'One message couldn\'t be read and was skipped. The others were checked.'**
+  String get smsImportErrorMessageUnreadable;
+
+  /// Bank message import: the item is no longer pending (for example a second tap on Add).
+  ///
+  /// In en, this message translates to:
+  /// **'This item was already handled.'**
+  String get smsImportErrorAlreadyDecided;
+
+  /// Bank message import: a probable duplicate was found; the comparison sheet follows.
+  ///
+  /// In en, this message translates to:
+  /// **'This may already be in Daftary. Compare before adding.'**
+  String get smsImportErrorProbableDuplicate;
+
+  /// Bank message import: a scan was requested while another scan was running.
+  ///
+  /// In en, this message translates to:
+  /// **'A scan is already running.'**
+  String get smsImportErrorScanAlreadyRunning;
+
+  /// Bank message import: a scan could not start (feature off, no permission, or app locked).
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning isn\'t possible right now. Check that bank message import is on and allowed.'**
+  String get smsImportErrorScanNotAllowed;
+
+  /// Label on a saved record that the user added from a bank message (FR-057).
+  ///
+  /// In en, this message translates to:
+  /// **'Imported from a bank message'**
+  String get smsImportProvenanceLabel;
+
+  /// Screen-reader label of the imported-from-bank-message marker.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported from a bank message you reviewed'**
+  String get smsImportProvenanceSemantics;
+
+  /// Title of the pending bank messages list.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages'**
+  String get smsImportPendingTitle;
+
+  /// Empty state title of the pending list.
+  ///
+  /// In en, this message translates to:
+  /// **'No bank messages to review'**
+  String get smsImportPendingEmptyTitle;
+
+  /// Empty state message of the pending list.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages you scan, paste or share appear here for your review. Nothing is saved until you tap Add.'**
+  String get smsImportPendingEmptyMessage;
+
+  /// Error state title of the pending list.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your bank messages'**
+  String get smsImportPendingLoadErrorTitle;
+
+  /// Retry action on bank message screens.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get smsImportPendingRetry;
+
+  /// One-line notice: pending suggestions older than 30 days expired (FR-025).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No suggestions expired.} =1{1 suggestion expired. You can restore it from Ignored items.} other{{count} suggestions expired. You can restore them from Ignored items.}}'**
+  String smsImportPendingExpiredNotice(int count);
+
+  /// Dismisses the expired-suggestions notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get smsImportPendingExpiredDismiss;
+
+  /// Type chip of a pending item with no suggested type.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose type'**
+  String get smsImportPendingChooseType;
+
+  /// Shown on a pending item whose amount could not be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount needs checking'**
+  String get smsImportPendingAmountNeedsCheck;
+
+  /// A date that was inferred, not read from the message.
+  ///
+  /// In en, this message translates to:
+  /// **'{date}, inferred'**
+  String smsImportPendingDateInferred(String date);
+
+  /// Chip on a pending item whose suggestion is to ignore it.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore suggested'**
+  String get smsImportPendingIgnoreSuggested;
+
+  /// Chip on a pending item that may already be saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate'**
+  String get smsImportPendingPossibleDuplicate;
+
+  /// Bank name for a message read by the generic parser.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrecognized bank'**
+  String get smsImportPendingUnknownBank;
+
+  /// Display name of a recognized bank profile, by its id. Unknown ids are shown as their code instead.
+  ///
+  /// In en, this message translates to:
+  /// **'{bank, select, nbe{National Bank of Egypt} banque_misr{Banque Misr} cib{CIB} qnb{QNB Alahli} banque_du_caire{Banque du Caire} aaib{Arab African International Bank} instapay{InstaPay} other{Bank}}'**
+  String smsImportBankName(String bank);
+
+  /// What a bank message describes.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind, select, cardPurchase{Card purchase} atmWithdrawal{ATM withdrawal} cardOrLoanSettlement{Card or loan payment} billPayment{Bill payment} fee{Bank fee} salary{Salary} otherDeposit{Deposit} transferOut{Transfer out} transferIn{Transfer in} refund{Refund} authorizationReversal{Cancelled authorization} ownAccountTransfer{Move between your accounts} other{Bank transaction}}'**
+  String smsImportKindLabel(String kind);
+
+  /// Where a pending bank message came from.
+  ///
+  /// In en, this message translates to:
+  /// **'{source, select, inboxScan{From SMS} catchUpScan{From SMS} paste{Pasted} share{Shared} other{From SMS}}'**
+  String smsImportReviewSourceLabel(String source);
+
+  /// One line per warning on a pending bank message.
+  ///
+  /// In en, this message translates to:
+  /// **'{warning, select, atmIgnoredByDefault{Cash withdrawals aren\'t counted as spending unless you turn that on in Bank message settings.} refundHint{This looks like a refund. Ignore it if the original purchase is already in Daftary.} ownAccountSuggestedIgnore{This looks like a move between your own accounts, so it isn\'t income or spending.} cardSettlementSuggestedIgnore{This is a card or loan payment. The original purchases are counted separately.} genericParser{Daftary doesn\'t know this bank\'s messages well. Check every field.} unverifiedProfile{Support for this bank is new. Check every field before adding.} ambiguousAmount{The message has more than one amount. Check which one is right.} unsupportedCurrency{This currency isn\'t supported. Choose a currency and enter the amount in it.} dateInferred{The date wasn\'t in the message. Check it.} currencyInferred{The currency wasn\'t in the message. Check it.} foreignCurrencyBilledAmount{The amount shown is what your account was charged.} feeSeparateItem{A fee in this message is listed as its own item.} feeFromMessage{This fee was taken from another bank message.} reversalHint{This money was never taken. Ignore it, or open the matching record to check it.} maskedReference{The reference number was hidden for your privacy.} possibleDuplicate{This may already be in Daftary.} possibleOwnTransfer{This looks like money moved between your own accounts. Ignore both if so.} other{Check this item before adding.}}'**
+  String smsImportWarningText(String warning);
+
+  /// Title of the review screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Review bank message'**
+  String get smsImportReviewTitle;
+
+  /// Label before the overall confidence badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall confidence'**
+  String get smsImportReviewOverallConfidence;
+
+  /// Label of the record type selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get smsImportReviewTypeLabel;
+
+  /// Shown when no record type is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a type'**
+  String get smsImportReviewChooseType;
+
+  /// Amount field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get smsImportReviewAmountLabel;
+
+  /// Amount field error.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount greater than zero, up to 12 digits.'**
+  String get smsImportReviewAmountInvalid;
+
+  /// Shown above the amount choices when a message has two amounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Which amount?'**
+  String get smsImportReviewWhichAmount;
+
+  /// Screen-reader label of an amount choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {amount}'**
+  String smsImportReviewUseAmount(String amount);
+
+  /// Hint of the currency picker when no currency is known.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a currency'**
+  String get smsImportReviewChooseCurrency;
+
+  /// Shown when the message's currency is missing or unsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a currency and enter the amount in it.'**
+  String get smsImportReviewCurrencyNeeded;
+
+  /// Read-only original-currency context; it is not saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Original: {amount}'**
+  String smsImportReviewOriginalAmount(String amount);
+
+  /// Date field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get smsImportReviewDateLabel;
+
+  /// Shown when no date is known.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a date'**
+  String get smsImportReviewChooseDate;
+
+  /// Read-only time of the message (FR-058).
+  ///
+  /// In en, this message translates to:
+  /// **'Message time {time}. Only the date is saved.'**
+  String smsImportReviewMessageTime(String time);
+
+  /// Person field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get smsImportReviewPersonLabel;
+
+  /// One-tap action for a named transfer out.
+  ///
+  /// In en, this message translates to:
+  /// **'Record as Given to {name}'**
+  String smsImportReviewRecordAsGiven(String name);
+
+  /// One-tap action for a named transfer in.
+  ///
+  /// In en, this message translates to:
+  /// **'Record as Received from {name}'**
+  String smsImportReviewRecordAsReceived(String name);
+
+  /// Note field label.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get smsImportReviewNoteLabel;
+
+  /// Copies the merchant name into the note.
+  ///
+  /// In en, this message translates to:
+  /// **'Use merchant name as note'**
+  String get smsImportReviewUseMerchant;
+
+  /// Expands the masked original message.
+  ///
+  /// In en, this message translates to:
+  /// **'Show original message'**
+  String get smsImportReviewShowOriginal;
+
+  /// Lists the required fields that block Add.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing: {fields}'**
+  String smsImportReviewMissing(String fields);
+
+  /// Name of the required review field "type" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'type'**
+  String get smsImportReviewFieldType;
+
+  /// Name of the required review field "amount" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'amount'**
+  String get smsImportReviewFieldAmount;
+
+  /// Name of the required review field "currency" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'currency'**
+  String get smsImportReviewFieldCurrency;
+
+  /// Name of the required review field "date" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'date'**
+  String get smsImportReviewFieldDate;
+
+  /// Name of the required review field "category" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'category'**
+  String get smsImportReviewFieldCategory;
+
+  /// Name of the required review field "person" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'person'**
+  String get smsImportReviewFieldPerson;
+
+  /// Name of the required review field "note (up to 500 characters)" in the Missing line.
+  ///
+  /// In en, this message translates to:
+  /// **'note (up to 500 characters)'**
+  String get smsImportReviewFieldNote;
+
+  /// Separator between items of a list in a sentence.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get smsImportReviewListSeparator;
+
+  /// Primary action: save this one item.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get smsImportReviewAdd;
+
+  /// Confirmation after an item was added.
+  ///
+  /// In en, this message translates to:
+  /// **'Added'**
+  String get smsImportReviewAdded;
+
+  /// Announced while the item is being saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving'**
+  String get smsImportReviewSaving;
+
+  /// Review of an item that is no longer pending.
+  ///
+  /// In en, this message translates to:
+  /// **'This item was already handled'**
+  String get smsImportReviewAlreadyHandledTitle;
+
+  /// Explains the already-handled state.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have been added, ignored or expired.'**
+  String get smsImportReviewAlreadyHandledMessage;
+
+  /// Returns to the pending list.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to bank messages'**
+  String get smsImportReviewBackToList;
+
+  /// Error state title of the review screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open this bank message'**
+  String get smsImportReviewLoadErrorTitle;
+
+  /// Asked when leaving review with unsaved edits.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard your changes?'**
+  String get smsImportReviewDiscardTitle;
+
+  /// Explains what discarding does.
+  ///
+  /// In en, this message translates to:
+  /// **'The item stays waiting for your review.'**
+  String get smsImportReviewDiscardMessage;
+
+  /// Confirms leaving review without saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get smsImportReviewDiscardConfirm;
+
+  /// Cancels leaving review.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get smsImportReviewKeepEditing;
+
+  /// Review banner shown when a probable duplicate was found (US5).
+  ///
+  /// In en, this message translates to:
+  /// **'You may already have this'**
+  String get smsImportDuplicateBanner;
+
+  /// Opens the side-by-side duplicate comparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare'**
+  String get smsImportDuplicateCompare;
+
+  /// Title of the probable-duplicate sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'You may already have this'**
+  String get smsImportDuplicateTitle;
+
+  /// Explains the probable-duplicate sheet; nothing is saved until the user chooses.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare them before you decide. Nothing is added until you choose.'**
+  String get smsImportDuplicateMessage;
+
+  /// Card title: the saved record that may be the same.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in Daftary'**
+  String get smsImportDuplicateExisting;
+
+  /// Card title: another pending bank message that may be the same.
+  ///
+  /// In en, this message translates to:
+  /// **'Another bank message'**
+  String get smsImportDuplicateOtherPending;
+
+  /// Card title: the bank message being reviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'This message'**
+  String get smsImportDuplicateIncoming;
+
+  /// Comparison phrase: both amounts are equal.
+  ///
+  /// In en, this message translates to:
+  /// **'Same amount'**
+  String get smsImportDuplicateSameAmount;
+
+  /// Comparison phrase: the saved record equals the original-currency amount stated in the message.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as the original amount in the message'**
+  String get smsImportDuplicateSameOriginalAmount;
+
+  /// Comparison phrase: how many calendar days apart the two dates are.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Same day} =1{1 day apart} other{{count} days apart}}'**
+  String smsImportDuplicateDaysApart(int count);
+
+  /// First line of the saved record's note on the comparison card.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: {note}'**
+  String smsImportDuplicateNote(String note);
+
+  /// Closes the bank message as a duplicate; nothing is added and the saved record is not changed.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s the same, don\'t add'**
+  String get smsImportDuplicateSame;
+
+  /// Adds the bank message despite the possible duplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s different, add anyway'**
+  String get smsImportDuplicateAddAnyway;
+
+  /// Closes the sheet; the bank message stays pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get smsImportDuplicateCancel;
+
+  /// Screen-reader announcement when the duplicate comparison opens.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate found'**
+  String get smsImportDuplicateFound;
+
+  /// Confirmation after the user chose "It's the same, don't add".
+  ///
+  /// In en, this message translates to:
+  /// **'Not added. It\'s already in Daftary.'**
+  String get smsImportDuplicateClosed;
+
+  /// Title of the read-only card of the matched saved record.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching record in Daftary'**
+  String get smsImportReviewMatchedRecord;
+
+  /// Opens the matched saved record.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it'**
+  String get smsImportReviewOpenRecord;
+
+  /// Links a split fee item to its parent message (FR-030a).
+  ///
+  /// In en, this message translates to:
+  /// **'Fee from the bank message of {date}'**
+  String smsImportReviewFeeFromParent(String date);
+
+  /// Links a split fee item to its parent message when the parent has no date (FR-030a).
+  ///
+  /// In en, this message translates to:
+  /// **'Fee from the related bank message'**
+  String get smsImportReviewFeeFromParentNoDate;
+
+  /// Shown when no active category matches the type (FR-055).
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s no active category of this type. Add one from Manage categories.'**
+  String get smsImportReviewNoCategories;
+
+  /// Screen-reader text of a masked card number.
+  ///
+  /// In en, this message translates to:
+  /// **'card ending in {last4}'**
+  String smsImportSemanticsCardEnding(String last4);
+
+  /// Screen-reader hint of a pending row.
+  ///
+  /// In en, this message translates to:
+  /// **'Open to review'**
+  String get smsImportSemanticsOpenReview;
+
+  /// Screen-reader label of the disabled Add button.
+  ///
+  /// In en, this message translates to:
+  /// **'Add is unavailable. Missing: {fields}'**
+  String smsImportSemanticsAddUnavailable(String fields);
+
+  /// Title of the Paste screen; also the hub's empty-state paste action.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a bank message'**
+  String get smsImportPasteTitle;
+
+  /// Paste screen explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy a message from your bank, then tap Paste, or paste it into the box yourself. Nothing is saved until you review it and tap Add.'**
+  String get smsImportPasteIntro;
+
+  /// Label of the multi-line text field on the Paste screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank message text'**
+  String get smsImportPasteFieldLabel;
+
+  /// Button that reads the clipboard into the field (the only clipboard read).
+  ///
+  /// In en, this message translates to:
+  /// **'Paste'**
+  String get smsImportPasteButton;
+
+  /// Button that processes the text in the field.
+  ///
+  /// In en, this message translates to:
+  /// **'Read message'**
+  String get smsImportPasteProcess;
+
+  /// Input limits help text on the Paste screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 10,000 characters and 50 messages.'**
+  String get smsImportPasteLimits;
+
+  /// Character counter of the Paste field.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 10,000 characters'**
+  String smsImportPasteCharacterCount(int count);
+
+  /// Progress text while pasted text is processed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the message…'**
+  String get smsImportPasteProcessing;
+
+  /// Title of the nothing-to-paste state (empty or non-text clipboard).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to paste'**
+  String get smsImportPasteNothingTitle;
+
+  /// Title of the not-recognized state. Nothing was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Not a supported bank message'**
+  String get smsImportPasteNotRecognizedTitle;
+
+  /// Action that opens the manual expense form.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter manually'**
+  String get smsImportPasteEnterManually;
+
+  /// Action that returns the Paste screen to its ready state.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get smsImportPasteTryAgain;
+
+  /// Title of the input-limit-exceeded state. Nothing was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Too much text'**
+  String get smsImportPasteTooLargeTitle;
+
+  /// Title of the state where a bank message was found but could not be read.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read this message'**
+  String get smsImportPasteUnreadableTitle;
+
+  /// Message of the unreadable-only state.
+  ///
+  /// In en, this message translates to:
+  /// **'A bank message was found, but its details couldn\'t be read. You can add the transaction manually.'**
+  String get smsImportPasteUnreadableMessage;
+
+  /// Paste or share summary: how many transactions were recognized.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No transactions recognized} =1{1 transaction recognized} other{{count} transactions recognized}}'**
+  String smsImportPasteRecognized(int count);
+
+  /// Paste or share summary: how many messages were skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing skipped} =1{1 message skipped} other{{count} messages skipped}}'**
+  String smsImportPasteSkipped(int count);
+
+  /// Shown when every recognized message was already pending or handled.
+  ///
+  /// In en, this message translates to:
+  /// **'These messages are already in your list. Nothing new was added.'**
+  String get smsImportPasteAlreadyListed;
+
+  /// Action that opens the pending bank-message list.
+  ///
+  /// In en, this message translates to:
+  /// **'Open bank messages'**
+  String get smsImportPasteOpenList;
+
+  /// Progress text while text shared from another app is processed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the shared message…'**
+  String get smsImportShareProcessing;
+
+  /// Label shown on the Paste screen for a result that came from the Android share target.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared from another app'**
+  String get smsImportShareReceived;
+
+  /// Home quick action that opens bank-message import.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank message'**
+  String get smsImportHomeQuickAction;
+
+  /// Enable flow: screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Read bank messages'**
+  String get smsImportEnableTitle;
+
+  /// Enable flow: explanation heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add bank transactions from your messages'**
+  String get smsImportEnableExplainTitle;
+
+  /// Enable flow: heading of what is read.
+  ///
+  /// In en, this message translates to:
+  /// **'What Daftary reads'**
+  String get smsImportEnableWhatIsReadTitle;
+
+  /// Enable flow: what is read (FR-005).
+  ///
+  /// In en, this message translates to:
+  /// **'Only messages from recognized bank senders, on this device.'**
+  String get smsImportEnableWhatIsRead;
+
+  /// Enable flow: heading of what is never done.
+  ///
+  /// In en, this message translates to:
+  /// **'What never happens'**
+  String get smsImportEnableNeverTitle;
+
+  /// Enable flow: what is never done (FR-005).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing is uploaded, and nothing is saved until you review it and tap Add.'**
+  String get smsImportEnableNever;
+
+  /// Enable flow: heading of how to turn it off.
+  ///
+  /// In en, this message translates to:
+  /// **'How to turn it off'**
+  String get smsImportEnableTurnOffTitle;
+
+  /// Enable flow: how to turn it off (FR-005).
+  ///
+  /// In en, this message translates to:
+  /// **'Any time from Settings, then Bank messages.'**
+  String get smsImportEnableTurnOff;
+
+  /// Enable flow: acknowledges the explanation; the permission prompt may follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get smsImportEnableContinue;
+
+  /// Enable flow: leaves without enabling.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get smsImportEnableNotNow;
+
+  /// Enable flow: link to the Paste screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste instead'**
+  String get smsImportEnablePasteInstead;
+
+  /// Enable flow: shown while the system permission dialog is up.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your answer to Android\'s question…'**
+  String get smsImportEnableRequesting;
+
+  /// Enable flow: scan window step heading.
+  ///
+  /// In en, this message translates to:
+  /// **'How far back should Daftary look?'**
+  String get smsImportEnableWindowTitle;
+
+  /// Scan window option: the last N days (7, 30 or 90).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Last 0 days} =1{Last day} other{Last {count} days}}'**
+  String smsImportEnableWindowDays(int count);
+
+  /// Enable flow: starts the inbox scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get smsImportEnableScan;
+
+  /// Enable flow: done step heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan finished'**
+  String get smsImportEnableDoneTitle;
+
+  /// Enable flow: opens the first pending item.
+  ///
+  /// In en, this message translates to:
+  /// **'Review now'**
+  String get smsImportEnableReviewNow;
+
+  /// Enable flow: closes the flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get smsImportEnableClose;
+
+  /// Enable flow: the capability is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading messages isn\'t available here'**
+  String get smsImportEnableUnavailableTitle;
+
+  /// Enable flow: the capability is unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'You can still paste or share a bank message.'**
+  String get smsImportEnableUnavailableMessage;
+
+  /// Enable flow: error step heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get smsImportEnableErrorTitle;
+
+  /// Enable flow: retries after an error.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get smsImportEnableRetry;
+
+  /// Permission banner: denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank message import needs permission to read messages from your bank.'**
+  String get smsImportPermissionDeniedBanner;
+
+  /// Enable flow: denied step explanation (FR-012).
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary needs this permission to find bank transactions in your messages. Nothing is lost if you don\'t allow it: you can paste or share a message instead.'**
+  String get smsImportPermissionDeniedDetail;
+
+  /// Permission banner: permanently denied.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission is turned off for Daftary.'**
+  String get smsImportPermissionPermanentBanner;
+
+  /// Enable flow: permanently denied steps.
+  ///
+  /// In en, this message translates to:
+  /// **'To allow it, open App info, then Permissions, then SMS, and choose Allow. Then come back to Daftary.'**
+  String get smsImportPermissionPermanentDetail;
+
+  /// Permission banner: revoked (FR-070).
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic import is off because the permission was turned off. Your pending items are still here.'**
+  String get smsImportPermissionRevokedBanner;
+
+  /// Permission banner: opens the enable flow, which asks.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get smsImportPermissionAllow;
+
+  /// Permission: asks again after an explicit tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get smsImportPermissionTryAgain;
+
+  /// Permission: opens the system App info screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open App info'**
+  String get smsImportPermissionOpenAppInfo;
+
+  /// Permission: the paste and share fallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste or share instead'**
+  String get smsImportPermissionPasteInstead;
+
+  /// Permission banner: revoked, opens the enable flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on again'**
+  String get smsImportPermissionTurnOnAgain;
+
+  /// Permission banner: restricted, shows the steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me how'**
+  String get smsImportPermissionShowMeHow;
+
+  /// Permission banner: restricted settings (FR-072).
+  ///
+  /// In en, this message translates to:
+  /// **'Android may be blocking this permission for apps installed outside a store.'**
+  String get smsImportRestrictedBanner;
+
+  /// Restricted guidance heading. Never claims certainty.
+  ///
+  /// In en, this message translates to:
+  /// **'Android may be blocking this permission'**
+  String get smsImportRestrictedTitle;
+
+  /// Restricted guidance introduction.
+  ///
+  /// In en, this message translates to:
+  /// **'If no question appeared, Android may be blocking it because Daftary was installed from outside an app store. To allow it:'**
+  String get smsImportRestrictedIntro;
+
+  /// Restricted guidance step 1. Western digits in both languages.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Open App info.'**
+  String get smsImportRestrictedStep1;
+
+  /// Restricted guidance step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Open the menu (three dots) at the top.'**
+  String get smsImportRestrictedStep2;
+
+  /// Restricted guidance step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Choose \"Allow restricted settings\".'**
+  String get smsImportRestrictedStep3;
+
+  /// Restricted guidance step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Come back to Daftary and tap Try again.'**
+  String get smsImportRestrictedStep4;
+
+  /// Restricted guidance: the second path when the menu item is not offered (spike S4 fallback).
+  ///
+  /// In en, this message translates to:
+  /// **'If you don\'t see \"Allow restricted settings\", open Permissions → SMS in App info and choose Allow, then come back and tap Try again.'**
+  String get smsImportRestrictedAltPath;
+
+  /// Hub and settings: runs the inbox scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan now'**
+  String get smsImportScanNow;
+
+  /// Scan progress: messages processed so far.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No messages processed yet} =1{Processed 1 message} other{Processed {count} messages}}'**
+  String smsImportScanProgress(int count);
+
+  /// Stops the running scan; created items stay.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get smsImportScanCancel;
+
+  /// Scan summary: the scan was cancelled (FR-007).
+  ///
+  /// In en, this message translates to:
+  /// **'Scan stopped. What was found so far is kept.'**
+  String get smsImportScanCancelled;
+
+  /// Scan summary heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan summary'**
+  String get smsImportScanSummaryTitle;
+
+  /// Scan summary: bank messages read.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No bank messages found} =1{1 bank message found} other{{count} bank messages found}}'**
+  String smsImportScanFound(int count);
+
+  /// Scan summary: new items with every required field.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None ready to add} =1{1 ready to add} other{{count} ready to add}}'**
+  String smsImportScanReady(int count);
+
+  /// Scan summary: new items that need fields checked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None need your review} =1{1 needs your review} other{{count} need your review}}'**
+  String smsImportScanNeedReview(int count);
+
+  /// Scan summary: messages already staged or decided.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None were already listed} =1{1 was already listed} other{{count} were already listed}}'**
+  String smsImportScanAlreadyKnown(int count);
+
+  /// Scan summary: non-transactional messages (OTP, promotions...).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing skipped} =1{1 skipped: not a transaction} other{{count} skipped: not transactions}}'**
+  String smsImportScanSkipped(int count);
+
+  /// Scan summary: messages that could not be read.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None unreadable} =1{1 couldn\'t be read} other{{count} couldn\'t be read}}'**
+  String smsImportScanUnreadable(int count);
+
+  /// Scan error: how many messages were processed before it failed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing was processed before the interruption} =1{1 message processed before the interruption} other{{count} messages processed before the interruption}}'**
+  String smsImportScanInterrupted(int count);
+
+  /// Scan summary: opens the content-free Skipped list.
+  ///
+  /// In en, this message translates to:
+  /// **'Show skipped'**
+  String get smsImportScanShowSkipped;
+
+  /// Skipped list heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped messages'**
+  String get smsImportScanSkippedTitle;
+
+  /// Skipped list: privacy note.
+  ///
+  /// In en, this message translates to:
+  /// **'Message text is never shown here.'**
+  String get smsImportScanSkippedNote;
+
+  /// Skipped list: why a message was skipped. A code, never text.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason, select, notRecognized{Not a recognized transaction} noAmount{No amount found} amountUnreadable{Couldn\'t read the amount} tooLong{Too long to read} empty{Empty message} nonText{Not text} parserError{Couldn\'t read} other{Couldn\'t read}}'**
+  String smsImportScanSkipReason(String reason);
+
+  /// Skipped list: no receipt date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date unknown'**
+  String get smsImportScanSkippedNoDate;
+
+  /// Scan summary: hides the card.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss summary'**
+  String get smsImportScanDismiss;
+
+  /// Hub: card that leads to the enable flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Find bank transactions in your messages'**
+  String get smsImportScanTurnOnTitle;
+
+  /// Hub: opens the enable flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get smsImportScanTurnOn;
+
+  /// Scan error heading.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan stopped'**
+  String get smsImportScanFailedTitle;
+
+  /// Scan error: runs the scan again.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get smsImportScanRetry;
+
+  /// Hub overflow menu tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get smsImportScanMore;
+
+  /// Settings -> Bank messages title and tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages'**
+  String get smsImportSettingsTitle;
+
+  /// Settings tile subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add transactions from bank messages'**
+  String get smsImportSettingsEntrySubtitle;
+
+  /// Settings section: status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get smsImportSettingsStatusTitle;
+
+  /// Settings: the status chip.
+  ///
+  /// In en, this message translates to:
+  /// **'{status, select, off{Off} on{On} permissionOff{Permission off} blocked{Blocked by Android} other{Off}}'**
+  String smsImportSettingsStatusLabel(String status);
+
+  /// Settings: opens the enable flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get smsImportSettingsTurnOn;
+
+  /// Settings section: scan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get smsImportSettingsScanTitle;
+
+  /// Settings: scan window heading.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan period'**
+  String get smsImportSettingsWindowTitle;
+
+  /// Settings: when the last scan ran.
+  ///
+  /// In en, this message translates to:
+  /// **'Last scan: {date}'**
+  String smsImportSettingsLastScan(String date);
+
+  /// Settings: no scan yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not scanned yet'**
+  String get smsImportSettingsNeverScanned;
+
+  /// Settings: content-free counters heading (FR-102).
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get smsImportSettingsCountsTitle;
+
+  /// Settings counter: messages read.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No messages read} =1{1 message read} other{{count} messages read}}'**
+  String smsImportSettingsCountScanned(int count);
+
+  /// Settings counter: transactions recognized.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No transactions recognized} =1{1 transaction recognized} other{{count} transactions recognized}}'**
+  String smsImportSettingsCountRecognized(int count);
+
+  /// Settings counter: items added.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None added} =1{1 added} other{{count} added}}'**
+  String smsImportSettingsCountAdded(int count);
+
+  /// Settings counter: items ignored.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None ignored} =1{1 ignored} other{{count} ignored}}'**
+  String smsImportSettingsCountIgnored(int count);
+
+  /// Settings section: preferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get smsImportSettingsPreferencesTitle;
+
+  /// Settings switch (FR-051b).
+  ///
+  /// In en, this message translates to:
+  /// **'Count cash withdrawals as spending'**
+  String get smsImportSettingsCountCash;
+
+  /// Settings switch help (FR-051b).
+  ///
+  /// In en, this message translates to:
+  /// **'When on, ATM withdrawals are suggested as an expense instead of being ignored.'**
+  String get smsImportSettingsCountCashHelp;
+
+  /// Settings section: manage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get smsImportSettingsManageTitle;
+
+  /// Settings, Manage section: opens the list of bank messages waiting for review.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending bank messages'**
+  String get smsImportSettingsPending;
+
+  /// Settings section: privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get smsImportSettingsPrivacyTitle;
+
+  /// Settings: privacy statement.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are read on this device only. Nothing is saved without your Add.'**
+  String get smsImportSettingsPrivacyText;
+
+  /// Settings: load error.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load bank message settings'**
+  String get smsImportSettingsLoadErrorTitle;
+
+  /// Settings: retry after a load error.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get smsImportSettingsRetry;
+
+  /// Settings: a preference write failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save. Try again.'**
+  String get smsImportSettingsSaveFailed;
+
+  /// Home onboarding card title.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages'**
+  String get smsImportHomeOnboardingTitle;
+
+  /// Home onboarding card text (FR-004).
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary can find transactions in your bank\'s messages for you to review.'**
+  String get smsImportHomeOnboardingText;
+
+  /// Home onboarding card: opens the enable flow.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get smsImportHomeOnboardingSetUp;
+
+  /// Home onboarding card: hides it permanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get smsImportHomeOnboardingDismiss;
+
+  /// Home count card (T129, FR-050): how many bank-message items wait for review. A count only, never content.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No bank transactions to review} =1{1 bank transaction to review} other{{count} bank transactions to review}}'**
+  String smsImportHomeCardCount(int count);
+
+  /// Screen-reader hint of the Home count card: tapping opens the bank-messages list.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens bank messages'**
+  String get smsImportHomeCardHint;
+
+  /// Pending list: enters selection mode (tooltip of the app-bar action).
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get smsImportPendingSelect;
+
+  /// Pending list selection toolbar: how many items are selected (FR-064).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{None selected} =1{1 selected} other{{count} selected}}'**
+  String smsImportPendingSelectedCount(int count);
+
+  /// Pending list: leaves selection mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel selection'**
+  String get smsImportPendingCancelSelection;
+
+  /// Pending list selection toolbar: ignores the selected items after a confirmation. There is no batch Add.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get smsImportPendingIgnoreSelected;
+
+  /// Batch Ignore confirmation title (FR-064).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Ignore nothing?} =1{Ignore 1 item?} other{Ignore {count} items?}}'**
+  String smsImportPendingIgnoreConfirmTitle(int count);
+
+  /// Batch Ignore confirmation message (FR-064, FR-066, FR-067).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing will be added, and these messages won\'t be suggested again. You can restore them from Ignored items for 30 days.'**
+  String get smsImportPendingIgnoreConfirmMessage;
+
+  /// Batch Ignore confirmation: the confirm button.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get smsImportPendingIgnoreConfirm;
+
+  /// Announced and shown after a batch Ignore (ui-contract §7.5).
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing ignored} =1{1 item ignored} other{{count} items ignored}}'**
+  String smsImportPendingIgnoredCount(int count);
+
+  /// Pending list overflow menu: opens the Ignored items list.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignored items'**
+  String get smsImportPendingMenuIgnored;
+
+  /// Review: ignores this item. Nothing is added.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get smsImportReviewIgnore;
+
+  /// Review: announced and shown after Ignore.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignored'**
+  String get smsImportReviewIgnored;
+
+  /// Review: tooltip of the overflow menu.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get smsImportReviewMoreActions;
+
+  /// Review overflow: mutes the message's sender (FR-065). Shown only when the item has a sender.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop suggesting from this sender'**
+  String get smsImportMuteAction;
+
+  /// Mute confirmation title (FR-065).
+  ///
+  /// In en, this message translates to:
+  /// **'Stop suggesting from this sender?'**
+  String get smsImportMuteConfirmTitle;
+
+  /// Mute confirmation message: states that this sender's pending items are removed (FR-065). sender is the sender ID, isolated left-to-right.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary will stop suggesting transactions from {sender}. Its pending items will be removed. Saved transactions are not changed. You can undo this in Muted senders.'**
+  String smsImportMuteConfirmMessage(String sender);
+
+  /// Mute confirmation: the confirm button.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop suggesting'**
+  String get smsImportMuteConfirm;
+
+  /// Shown and announced after muting a sender: how many pending items were removed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Sender muted.} =1{Sender muted. 1 pending item removed.} other{Sender muted. {count} pending items removed.}}'**
+  String smsImportMuteDone(int count);
+
+  /// Muted senders screen title, and its Settings link (FR-056, FR-065).
+  ///
+  /// In en, this message translates to:
+  /// **'Muted senders'**
+  String get smsImportMuteTitle;
+
+  /// Muted senders screen: one-line explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary doesn\'t suggest transactions from these senders.'**
+  String get smsImportMuteHelp;
+
+  /// Muted senders screen: empty state title.
+  ///
+  /// In en, this message translates to:
+  /// **'No muted senders'**
+  String get smsImportMuteEmptyTitle;
+
+  /// Muted senders screen: empty state message.
+  ///
+  /// In en, this message translates to:
+  /// **'When you stop suggestions from a sender on a review screen, it appears here.'**
+  String get smsImportMuteEmptyMessage;
+
+  /// Muted senders screen: load error title.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load muted senders'**
+  String get smsImportMuteLoadError;
+
+  /// Muted senders screen: unmutes one sender.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get smsImportMuteUnmute;
+
+  /// Screen-reader label of the Unmute button.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute {sender}'**
+  String smsImportMuteUnmuteSemantics(String sender);
+
+  /// Shown and announced after unmuting a sender (FR-065).
+  ///
+  /// In en, this message translates to:
+  /// **'Unmuted. Its new messages will be suggested after the next scan.'**
+  String get smsImportMuteUnmuted;
+
+  /// Ignored items screen title, and its Settings link (FR-067).
+  ///
+  /// In en, this message translates to:
+  /// **'Ignored items'**
+  String get smsImportIgnoredTitle;
+
+  /// Ignored items screen: one-line explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Items you ignored, or that expired, in the last 30 days.'**
+  String get smsImportIgnoredHelp;
+
+  /// Ignored items screen: empty state title (ui-contract §3.8).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing ignored recently'**
+  String get smsImportIgnoredEmptyTitle;
+
+  /// Ignored items screen: empty state message.
+  ///
+  /// In en, this message translates to:
+  /// **'Items you ignore, or that expire, stay here for 30 days so you can undo.'**
+  String get smsImportIgnoredEmptyMessage;
+
+  /// Ignored items screen: load error title.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load ignored items'**
+  String get smsImportIgnoredLoadError;
+
+  /// Ignored items: status label of an item the user ignored.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignored'**
+  String get smsImportIgnoredStatusIgnored;
+
+  /// Ignored items: status label of an item that expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get smsImportIgnoredStatusExpired;
+
+  /// Ignored items: shown when the item has no amount.
+  ///
+  /// In en, this message translates to:
+  /// **'No amount'**
+  String get smsImportIgnoredNoAmount;
+
+  /// Ignored items: days until the item leaves the Undo list.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Less than a day left} =1{1 day left} other{{count} days left}}'**
+  String smsImportIgnoredDaysLeft(int count);
+
+  /// Ignored items: restores one item (FR-068).
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get smsImportIgnoredUndo;
+
+  /// Ignored items: what Undo does (FR-068, ui-contract §3.8). Catch-up does not re-read older messages, so the copy names Scan now.
+  ///
+  /// In en, this message translates to:
+  /// **'It will come back when you tap Scan now, or paste or share this message again.'**
+  String get smsImportIgnoredComesBack;
+
+  /// Ignored items: what Undo does, on devices without bank-message scanning (ui-contract §3.8).
+  ///
+  /// In en, this message translates to:
+  /// **'It will come back when you paste or share this message again.'**
+  String get smsImportIgnoredComesBackPasteOnly;
+
+  /// Shown and announced after Undo (ui-contract §3.8).
+  ///
+  /// In en, this message translates to:
+  /// **'Restored. Tap Scan now, or paste it again, to see it.'**
+  String get smsImportIgnoredRestored;
+
+  /// Shown and announced after Undo, on devices without bank-message scanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored. Paste or share it again to see it.'**
+  String get smsImportIgnoredRestoredPasteOnly;
+
+  /// Review: the hint under the type selector for the suggested type (FR-051a, FR-051c). 'ignore' covers ATM (preference off), refunds, reversals and own-account moves.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, ignore{Suggested: Ignore. Nothing is counted as income or spending.} unset{No type was suggested. Choose one, or Ignore this item.} other{Check the suggested type before adding.}}'**
+  String smsImportSuggestHint(String type);
+
+  /// Review of an ATM withdrawal: the one-line link to the 'Count cash withdrawals as spending' preference (FR-051b). 'on' when the preference is on.
+  ///
+  /// In en, this message translates to:
+  /// **'{state, select, on{Cash withdrawals count as spending. Change in settings} other{Cash withdrawals aren\'t counted as spending. Change in settings}}'**
+  String smsImportSuggestCashLink(String state);
+
+  /// Review of a named transfer: more than one existing person has a similar name (FR-054). Shown with the 'Choose the person' action.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No one in your people matches {name}.} =1{1 person in your people could be {name}.} other{{count} people in your people could be {name}.}}'**
+  String smsImportSuggestSeveralPeople(int count, String name);
+
+  /// Review: opens the existing similar-name choice to record the transfer as Received from (or Given to) one of the matching people (FR-054).
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, received{Choose who sent it} other{Choose who received it}}'**
+  String smsImportSuggestChoosePerson(String type);
+
+  /// Review of Given/Received for a counterparty that matches no one: nothing is created without the user's tap (FR-054, US7-2).
+  ///
+  /// In en, this message translates to:
+  /// **'{name} isn\'t in your people. A person is created only if you tap Create new person.'**
+  String smsImportSuggestPersonNotInList(String name);
+
+  /// Learned categories screen title, and its Settings link (FR-056).
+  ///
+  /// In en, this message translates to:
+  /// **'Learned categories'**
+  String get smsImportMappingsTitle;
+
+  /// Learned categories: what the list is (FR-056).
+  ///
+  /// In en, this message translates to:
+  /// **'When you change a merchant\'s category and add the transaction, Daftary suggests that category next time.'**
+  String get smsImportMappingsHelp;
+
+  /// Learned categories: how many are listed.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No learned categories} =1{1 learned category} other{{count} learned categories}}'**
+  String smsImportMappingsCount(int count);
+
+  /// Learned categories: the mapped category was archived or deleted; the mapping is not used (data-model §3.4).
+  ///
+  /// In en, this message translates to:
+  /// **'Category removed'**
+  String get smsImportMappingsCategoryRemoved;
+
+  /// Learned categories: screen-reader label of one row.
+  ///
+  /// In en, this message translates to:
+  /// **'{merchant}: {type}, {category}'**
+  String smsImportMappingsRowSemantics(
+    String merchant,
+    String type,
+    String category,
+  );
+
+  /// Learned categories: forgets one learned category.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get smsImportMappingsRemove;
+
+  /// Learned categories: screen-reader label of Remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the learned category for {merchant}'**
+  String smsImportMappingsRemoveSemantics(String merchant);
+
+  /// Shown and announced after removing one learned category.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed. This merchant gets the usual suggestion again.'**
+  String get smsImportMappingsRemoved;
+
+  /// Learned categories: clears them all, after a confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear learned categories'**
+  String get smsImportMappingsClear;
+
+  /// Confirmation title for clearing every learned category.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear learned categories?'**
+  String get smsImportMappingsClearConfirmTitle;
+
+  /// Confirmation message for clearing every learned category (FR-056).
+  ///
+  /// In en, this message translates to:
+  /// **'Daftary will forget every learned category. Your categories and saved transactions are not changed.'**
+  String get smsImportMappingsClearConfirmMessage;
+
+  /// Confirms clearing every learned category.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get smsImportMappingsClearConfirm;
+
+  /// Shown and announced after clearing every learned category.
+  ///
+  /// In en, this message translates to:
+  /// **'Learned categories cleared.'**
+  String get smsImportMappingsCleared;
+
+  /// Learned categories: empty state title.
+  ///
+  /// In en, this message translates to:
+  /// **'No learned categories'**
+  String get smsImportMappingsEmptyTitle;
+
+  /// Learned categories: empty state message.
+  ///
+  /// In en, this message translates to:
+  /// **'When you change the category of an imported transaction and add it, the choice appears here.'**
+  String get smsImportMappingsEmptyMessage;
+
+  /// Learned categories: load error title.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load learned categories'**
+  String get smsImportMappingsLoadError;
+
+  /// Settings -> Bank messages: turns the feature off (FR-078).
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off'**
+  String get smsImportSettingsTurnOff;
+
+  /// Turn off dialog title (FR-078, ui-contract §3.1).
+  ///
+  /// In en, this message translates to:
+  /// **'Also delete pending imports?'**
+  String get smsImportSettingsTurnOffTitle;
+
+  /// Turn off dialog message: the two outcomes (FR-078).
+  ///
+  /// In en, this message translates to:
+  /// **'Bank message import stops now. Your pending items can stay for you to review later, or be deleted. Saved transactions, muted senders and learned categories are not changed.'**
+  String get smsImportSettingsTurnOffMessage;
+
+  /// Turn off dialog: turn off and keep pending items (the default when dismissed).
+  ///
+  /// In en, this message translates to:
+  /// **'Keep them'**
+  String get smsImportSettingsTurnOffKeep;
+
+  /// Turn off dialog: turn off and delete pending items.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete them'**
+  String get smsImportSettingsTurnOffDelete;
+
+  /// Shown and announced after turning off and keeping pending items.
+  ///
+  /// In en, this message translates to:
+  /// **'Turned off. Your pending items are still here.'**
+  String get smsImportSettingsTurnedOffKept;
+
+  /// Shown and announced after turning off and deleting pending items.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Turned off. There were no pending items.} =1{Turned off. 1 pending item deleted.} other{Turned off. {count} pending items deleted.}}'**
+  String smsImportSettingsTurnedOffDeleted(int count);
 }
 
 class _AppLocalizationsDelegate

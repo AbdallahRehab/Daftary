@@ -1,0 +1,16 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "atm_withdrawal",
+  "amountMinor": 200000,
+  "feeMinor": 1500,
+  "date": "2026-03-05",
+  "suggestion": {
+    "type": "ignore"
+  },
+  "warnings": [
+    "atm_ignored_by_default"
+  ]
+}

@@ -1,0 +1,14 @@
+# Decisions: discovery T004-T006 (persistence, DI, permissions/lifecycle)
+
+Read-only slice. No production code changed. The full evidence is in `discovery/persistence.md`, `discovery/di.md` and `discovery/permissions-lifecycle.md`.
+
+| Conflict or ambiguity | Choice | Why |
+|---|---|---|
+| T035 `ensureColumn(table, column, ddl)` vs data-model §11 `ensureColumn(db, m, table, column)` | data-model signature; Drift generates the DDL | Matches `ensureTable`/`ensureIndex` and the private copy in `v10_merge_features.dart:108-120`. |
+| data-model §4.5 says the settings row is "created on first read, exactly as NotificationPreferences" | Follow what `NotificationPreferences` actually does: defaults when there is no row, upsert on first write | That is the real precedent (`notifications_dao.dart:18-31`). It also keeps "no singleton insert in the migration" and the data-wipe "fresh install" equality true. |
+| Platform split: contract §6 puts `@LazySingleton(as: ...)` on every adapter; tasks require `Unavailable*` on iOS/macOS | One feature `@module` (`SmsPlatformModule`) chooses with `dart:io` `Platform.isAndroid`. The six split adapters carry no annotation | Matches the existing `@module` precedent, needs no injectable environments (none exist, and `init()` passes none), and picks `Unavailable*` under `flutter test`. `defaultTargetPlatform` was rejected because it reports android under `flutter test`. |
+| `GetSmsCapability` formula `readSmsDeclared && Platform.isAndroid` | The `Platform.isAndroid` half lives in DI selection, the other half in the Android adapter. The domain never evaluates it | Briefing rule 11. |
+| "post-frame callback makes `isLocked` reliable" | Not guaranteed on the resume slow path (`app_lifecycle_observer.dart:143-148` waits on a platform read). Recommended: post-frame wait, plus cancel-on-lock listener, plus between-page re-check. `AppLifecycleObserver` stays untouched | Most conservative option that needs no edit to core security code. Cold launch is settled before `startup.whenReady`. |
+| "`SharedTextRouter` routes after unlock (precedent `NotificationTapRouter`)" | `SharedTextRouter` implements its own wait for unlock | The precedent does not wait. It relies on `AppLockGate` offstage. |
+| "secure-flag protection on list/review/paste" | No per-page opt-in; protection is global. Add a guard so `sms_import` never references `ScreenshotProtectionService` | `main.dart:38` plus window-level `FLAG_SECURE`. macOS has no protection (pre-existing, no native work allowed). |
+| T039 dedicated secure storage | Recommend `AndroidOptions(resetOnError: false, storageNamespace: ...)` built through an `@ignoreParam` default, not a new `@Named` registration | Without a namespace the shared instance's `resetOnError: true` could still wipe the SMS keys. No `@Named` exists in the app yet. This is a recommendation for the T039 owner, not decided here. |

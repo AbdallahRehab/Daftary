@@ -49,6 +49,7 @@ It's designed for people **with no accounting background**: plain language, calm
 | 🎯 **Savings goals** | Goals with contributions and withdrawals, projected completion dates, and a "what if" calculator. |
 | 📈 **Reports & export** | A 6-month income and expense trend, spending by category, and CSV export through the share sheet. |
 | 📷 **Scan paper (OCR)** | Photograph an old paper notebook. On-device ML Kit text recognition turns it into candidate entries for you to review. Images never leave the device. |
+| 🏦 **Bank messages (SMS import)** | Turns bank SMS into suggested records that you check and add one at a time. Nothing is saved until you tap Add on an item. Parsing is on-device and rule-based: no AI, no network. On Android you can scan your inbox (in the SMS-capable build), paste, or share a message into Daftary. On iPhone you paste. Message text is masked, encrypted on the device and deleted once you decide. |
 | 🤖 **AI assistant** | Optional chat assistant that uses your own API key (OpenAI, Anthropic or Gemini), stored in secure storage. There is no Daftary backend in the middle. |
 | 🔔 **Insights & reminders** | Local notifications calculated from your real data, with quiet hours, cooldowns and per-category controls. No generic or made-up "tips". |
 | 📚 **Financial education** | A bundled offline library and calculators (compound growth, doubling time, savings rate). It's general education, never personalized advice. |
@@ -275,6 +276,10 @@ fvm flutter test integration_test -d <device>
 - **Android:** download the latest APK from [Releases](https://github.com/AbdallahRehab/Daftary/releases/latest). Pick `-arm64.apk`, open it on your phone and allow "Install unknown apps".
 - **iPhone:** a public TestFlight beta is coming soon.
 
+> **Bank messages on Android.** The release APK is the SMS-capable build: it declares `READ_SMS` (and no other SMS permission) so it can read bank messages after you allow it. Daftary never asks for it at startup, only when you turn on Bank messages. Because the APK is sideloaded, not from Google Play:
+> - **Play Protect** may warn about, or block, installing an app that reads SMS. Daftary does not work around this. If you'd rather not allow it, use Paste or share a message into Daftary instead; both work without any SMS permission.
+> - **Android 15 and later (restricted settings):** the SMS permission can be greyed out for a sideloaded app. Open App info → ⋮ (three dots) → **Allow restricted settings**, then turn Bank messages on again. The exact wording varies by phone maker.
+
 ## Getting started
 
 **Requirements:** [FVM](https://fvm.app) (the project pins Flutter 3.47.0), Xcode and/or Android Studio.
@@ -293,6 +298,17 @@ The app runs **fully offline** by default. To turn on cloud sync, copy `config/s
 ```sh
 fvm flutter run --dart-define-from-file=config/supabase.dev.json
 ```
+
+### Bank SMS import build switch
+
+Whether the Android app can read the SMS inbox is decided by one Gradle switch, not a `--dart-define`:
+
+```sh
+export DAFTARY_SMS_IMPORT=true      # or: -Pdaftary.smsImport=true
+fvm flutter build apk --release
+```
+
+With it, the merged manifest declares `READ_SMS` only (never `RECEIVE_SMS`, `SEND_SMS` or `READ_PHONE_STATE`). Without it, the app declares no SMS permission at all and Bank messages works by paste and share only. iOS and macOS never get inbox access. `tool/check_merged_manifest.sh` checks both builds. The release workflow builds with the switch on and verifies the APK's permissions.
 
 ### Releasing the Android APK
 

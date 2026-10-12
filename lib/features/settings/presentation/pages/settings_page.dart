@@ -13,6 +13,7 @@ import '../../../cloud_sync/presentation/pages/sync_settings_page.dart';
 import '../../../cloud_sync/presentation/widgets/sync_status_subtitle.dart';
 import '../../../currency/presentation/pages/currency_settings_page.dart';
 import '../../../insights_notifications/presentation/pages/notification_settings_page.dart';
+import '../../../sms_import/presentation/routes.dart';
 import '../../domain/entities/app_language.dart';
 import '../../domain/entities/app_theme_mode.dart';
 import '../../domain/entities/glass_appearance.dart';
@@ -163,6 +164,22 @@ class SettingsPage extends StatelessWidget {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () =>
                       context.push(NotificationSettingsRoutes.settings),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Bank messages entry point (023): on every platform, since
+              // paste works everywhere; the SMS rows inside depend on the
+              // capability (ui-contract §1, CHK013).
+              _SettingsSection(
+                icon: Icons.sms_outlined,
+                title: l10n.smsImportSettingsTitle,
+                child: ListTile(
+                  key: const Key('settings_bank_messages_entry'),
+                  leading: const Icon(Icons.account_balance_outlined),
+                  title: Text(l10n.smsImportSettingsTitle),
+                  subtitle: Text(l10n.smsImportSettingsEntrySubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(BankMessagesRoutes.settings),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

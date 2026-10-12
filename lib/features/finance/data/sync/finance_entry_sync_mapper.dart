@@ -32,6 +32,9 @@ class FinanceEntrySyncMapper extends SyncMapper<FinanceEntry> {
     'client_updated_at': SyncWire.instant(
       SyncWire.latest([row.createdAt, row.editedAt, row.deletedAt]),
     ),
+    // 023 (027): provenance travels only when set, so a pre-023 row keeps
+    // its exact v1.0.1 wire shape and a null never travels over a value.
+    if (row.importSource != null) 'import_source': row.importSource,
   };
 
   @override
@@ -56,6 +59,12 @@ class FinanceEntrySyncMapper extends SyncMapper<FinanceEntry> {
     ),
     deletedAt: Value(
       SyncWire.parseInstantOrNull(json['deleted_at'], 'deleted_at'),
+    ),
+    // 023 (027): an absent key (server before 027) or a null (a pre-027
+    // row, or `keepTheirs` on one) never downgrades local provenance.
+    importSource: Value(
+      SyncWire.stringOrNull(json, 'import_source') ??
+          existingLocal?.importSource,
     ),
   );
 }

@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/money/numeral_parser.dart';
 import '../../domain/entities/candidate_entry.dart';
-import '../../domain/entities/field_confidence.dart';
+import '../../../../core/confidence/field_confidence.dart';
 import '../../domain/entities/parsed_scan.dart';
 import '../../domain/repositories/text_recognition_service.dart';
 

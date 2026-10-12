@@ -1,5 +1,17 @@
 <!--
-Sync Impact Report
+Sync Impact Report (2026-10-07)
+Version change: 1.0.0 → 1.1.0 (MINOR: Principle X expanded in scope; nothing narrowed)
+Modified principles:
+  - X. "OCR Is an Uncertain Input Source Requiring Confirmation" →
+    "OCR and Bank Messages Are Uncertain Inputs Requiring Confirmation"
+    (adds SMS-derived data: bank messages read on the device, pasted or shared;
+    requires explicit per-item confirmation). Driven by spec 023-bank-sms-import.
+Added sections: none
+Removed sections: none
+Templates requiring updates: none (plan/spec/tasks templates reference principles generically)
+Follow-up TODOs: none
+
+Previous report (2026-09-19)
 Version change: [TEMPLATE] → 1.0.0 (initial ratification)
 Modified principles: N/A (first concrete adoption of the constitution template)
 Added sections:
@@ -154,15 +166,17 @@ boundary).
 secrets out of the client, and lets the app evolve or swap AI providers
 without touching business logic.
 
-### X. OCR Is an Uncertain Input Source Requiring Confirmation
-OCR-derived data MUST flow through: Image → Preprocessing → OCR → Parsing →
+### X. OCR and Bank Messages Are Uncertain Inputs Requiring Confirmation
+OCR-derived and SMS-derived data (bank messages read on the device, pasted or
+shared) MUST flow through: Input → Preprocessing/Normalization → Parsing →
 Validation → User Review → Confirmation → Persistence. The application MUST
-NEVER auto-create financial transactions directly from OCR output without
-explicit user confirmation. Extracted values MUST be shown clearly and MUST
-be correctable before saving.
+NEVER auto-create financial transactions directly from OCR or SMS output
+without explicit per-item user confirmation. Extracted values MUST be shown
+clearly and MUST be correctable before saving.
 
-**Rationale**: OCR is inherently error-prone; treating it as a proposal that
-a human confirms — rather than a fact — protects financial data integrity.
+**Rationale**: OCR and bank-message parsing are inherently error-prone;
+treating their output as a proposal that a human confirms — rather than a
+fact — protects financial data integrity.
 
 ### XI. Offline Resilience and Idempotent Synchronization
 The app MUST detect online/offline/restored-connection states and MUST NEVER
@@ -415,4 +429,4 @@ Quality Standards, and the Definition of Done before the work is considered
 finished. Deviations found after merge MUST be filed as follow-up work, not
 silently left in place.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-19
+**Version**: 1.1.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-07

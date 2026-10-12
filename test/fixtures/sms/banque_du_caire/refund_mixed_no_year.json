@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "BDC",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "banque_du_caire",
+  "ruleVersion": "banque_du_caire@1",
+  "kind": "refund",
+  "direction": "credit",
+  "amountMinor": 4800,
+  "currency": "EGP",
+  "date": "2026-03-08",
+  "dateInferred": true,
+  "merchant": "متجر المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sender": "CIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "cib",
+  "ruleVersion": "cib@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 54000,
+  "currency": "EGP",
+  "date": "2026-03-04",
+  "dateInferred": false,
+  "merchant": "مطعم المثال",
+  "last4": "2290",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

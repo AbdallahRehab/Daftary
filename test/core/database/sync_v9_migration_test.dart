@@ -155,7 +155,7 @@ void main() {
   /// Every row of [table], as full column maps, in a stable order.
   List<Map<String, Object?>> rowsOf(Database raw, String table) => [
     for (final row in raw.select('SELECT * FROM $table ORDER BY rowid'))
-      {for (final key in row.keys) key: row[key]},
+      withoutImportSource(row),
   ];
 
   List<String> tablesOf(Database raw) => [
@@ -195,8 +195,8 @@ void main() {
       await db.customSelect('SELECT 1').get();
     });
 
-    test('reaches the latest user_version (12)', () {
-      expect(raw.select('PRAGMA user_version').single.values.single, 12);
+    test('reaches the latest user_version (13)', () {
+      expect(raw.select('PRAGMA user_version').single.values.single, 13);
     });
 
     test('every business column of every row is unchanged, except '
@@ -306,7 +306,7 @@ void main() {
     );
     await retry.customSelect('SELECT 1').get();
     await retry.close();
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
     expect(tablesOf(raw), containsAll(syncTables));
   });
 
@@ -388,8 +388,8 @@ void main() {
     });
     await db.customSelect('SELECT 1').get();
     expect(tablesOf(raw), containsAll(syncTables));
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
-    expect(db.schemaVersion, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
+    expect(db.schemaVersion, 13);
   });
 }
 

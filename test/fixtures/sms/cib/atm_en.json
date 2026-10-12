@@ -1,0 +1,24 @@
+{
+  "synthetic": true,
+  "sender": "CIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "cib",
+  "ruleVersion": "cib@1",
+  "kind": "atm_withdrawal",
+  "direction": "debit",
+  "amountMinor": 300000,
+  "currency": "EGP",
+  "date": "2026-03-02",
+  "dateInferred": false,
+  "merchant": "Example Mall",
+  "feeMinor": 1000,
+  "timeMinutes": 1155,
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

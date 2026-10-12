@@ -1,3 +1,6 @@
+import '../../features/sms_import/domain/entities/sms_import_failures.dart';
+import '../../features/sms_import/domain/entities/sms_permission_status.dart';
+import '../../features/sms_import/domain/entities/sms_value_types.dart';
 import '../error/failure.dart';
 import 'app_localizations.dart';
 
@@ -26,6 +29,41 @@ extension FailureMessage on AppLocalizations {
     RatesMissingFailure(:final missingRatesFor) => rateNeededMessage(
       missingRatesFor.map((c) => c.code).join(', '),
     ),
+    // 023: bank message import. Each failure carries codes only, so the
+    // copy never contains message text, an amount or a name (FR-097).
+    SmsImportFailure() => _smsImportMessage(failure),
+    _ => errorUnknown,
+  };
+
+  String _smsImportMessage(SmsImportFailure failure) => switch (failure) {
+    SmsCapabilityUnavailableFailure() => smsImportErrorCapabilityUnavailable,
+    SmsPermissionFailure(:final status) => switch (status) {
+      SmsPermissionStatus.permanentlyDenied ||
+      SmsPermissionStatus.restrictedBlocked => smsImportErrorPermissionBlocked,
+      SmsPermissionStatus.revoked => smsImportErrorPermissionRevoked,
+      SmsPermissionStatus.unavailable => smsImportErrorCapabilityUnavailable,
+      SmsPermissionStatus.denied ||
+      SmsPermissionStatus.granted => smsImportErrorPermissionDenied,
+    },
+    SmsInboxQueryFailure() => smsImportErrorInboxQuery,
+    InputTooLargeFailure(:final limit) => switch (limit) {
+      InputLimit.characters => smsImportErrorTooLongCharacters,
+      InputLimit.messages => smsImportErrorTooManyMessages,
+    },
+    NotRecognizedFailure() => smsImportErrorNotRecognized,
+    ImportAlreadyDecidedFailure() => smsImportErrorAlreadyDecided,
+    ImportIncompleteFailure() => smsImportErrorIncomplete,
+    ProbableDuplicateFailure() => smsImportErrorProbableDuplicate,
+    OriginalUnavailableFailure() => smsImportErrorOriginalUnavailable,
+    ScanNotAllowedFailure(:final reason) => switch (reason) {
+      ScanBlockReason.alreadyRunning => smsImportErrorScanAlreadyRunning,
+      ScanBlockReason.capabilityOff => smsImportErrorCapabilityUnavailable,
+      ScanBlockReason.noPermission => smsImportErrorPermissionDenied,
+      ScanBlockReason.disabled ||
+      ScanBlockReason.locked ||
+      ScanBlockReason.debounced ||
+      ScanBlockReason.notResumed => smsImportErrorScanNotAllowed,
+    },
     _ => errorUnknown,
   };
 }

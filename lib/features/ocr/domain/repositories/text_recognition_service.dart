@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 
 import '../../../../core/error/failure.dart';
-import '../entities/field_confidence.dart';
+import '../../../../core/confidence/field_confidence.dart';
 
 /// One recognized line of text, as the parser sees it.
 ///

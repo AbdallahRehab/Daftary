@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sender": "QNB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "qnb",
+  "ruleVersion": "qnb@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 26000,
+  "currency": "EGP",
+  "date": "2026-03-05",
+  "dateInferred": false,
+  "merchant": "مقهى المثال",
+  "last4": "5521",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

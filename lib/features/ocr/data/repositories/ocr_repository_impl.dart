@@ -16,7 +16,7 @@ import '../../../transactions/data/models/transaction_mapper.dart'
     show TransactionDirectionDb;
 import '../../../transactions/domain/repositories/transactions_repository.dart';
 import '../../domain/entities/candidate_entry.dart';
-import '../../domain/entities/field_confidence.dart';
+import '../../../../core/confidence/field_confidence.dart';
 import '../../domain/entities/ocr_failures.dart';
 import '../../domain/entities/ocr_scan.dart';
 import '../../domain/entities/ocr_scan_detail.dart';

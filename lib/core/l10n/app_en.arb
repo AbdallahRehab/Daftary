@@ -2805,5 +2805,1432 @@
   "changeHistoryNoValue": "(none)",
   "@changeHistoryNoValue": {
     "description": "Shown in a change-history line where a value was empty (for example a cleared or newly added note)."
+  },
+  "smsImportErrorCapabilityUnavailable": "Reading bank messages isn't available on this device. You can still paste a bank message.",
+  "@smsImportErrorCapabilityUnavailable": {
+    "description": "Bank message import: the SMS inbox cannot be read on this device or build; paste still works."
+  },
+  "smsImportErrorPermissionDenied": "Daftary needs permission to read SMS to find your bank messages. Nothing is lost: you can paste a bank message instead.",
+  "@smsImportErrorPermissionDenied": {
+    "description": "Bank message import: the SMS permission was denied; explains why it is needed and the paste fallback."
+  },
+  "smsImportErrorPermissionBlocked": "Your phone is blocking the SMS permission for Daftary. You can allow it from the app's settings, or paste a bank message instead.",
+  "@smsImportErrorPermissionBlocked": {
+    "description": "Bank message import: the SMS permission is permanently denied or blocked by the system."
+  },
+  "smsImportErrorPermissionRevoked": "Automatic import is off because the SMS permission was turned off. Your pending items are kept.",
+  "@smsImportErrorPermissionRevoked": {
+    "description": "Bank message import: the SMS permission was revoked while the feature was on."
+  },
+  "smsImportErrorInboxQuery": "Couldn't read your messages right now. Daftary will try again next time you open the app.",
+  "@smsImportErrorInboxQuery": {
+    "description": "Bank message import: the SMS inbox query failed."
+  },
+  "smsImportErrorTooLongCharacters": "This text is too long. Paste up to 10,000 characters at a time.",
+  "@smsImportErrorTooLongCharacters": {
+    "description": "Bank message import: pasted or shared text exceeded the character limit. Nothing was saved."
+  },
+  "smsImportErrorTooManyMessages": "This text has too many messages. Paste up to 50 messages at a time.",
+  "@smsImportErrorTooManyMessages": {
+    "description": "Bank message import: pasted or shared text exceeded the message-count limit. Nothing was saved."
+  },
+  "smsImportErrorNotRecognized": "This doesn't look like a supported bank message. You can add the transaction manually.",
+  "@smsImportErrorNotRecognized": {
+    "description": "Bank message import: the pasted or shared text was not recognized as a bank message."
+  },
+  "smsImportErrorIncomplete": "Some required details are missing. Fill in the highlighted fields to add it.",
+  "@smsImportErrorIncomplete": {
+    "description": "Bank message import: Add was tried with required fields missing; the review page names each field."
+  },
+  "smsImportErrorAmountAmbiguous": "The message has more than one amount. Check which one is right.",
+  "@smsImportErrorAmountAmbiguous": {
+    "description": "Bank message import: two or more amounts were found and the user must choose."
+  },
+  "smsImportErrorUnsupportedCurrency": "This currency isn't supported. Choose the currency and enter the amount again.",
+  "@smsImportErrorUnsupportedCurrency": {
+    "description": "Bank message import: the message's currency is outside the app's currency list."
+  },
+  "smsImportErrorClipboardEmpty": "There's nothing to paste. Copy a bank message first, or type it into the box.",
+  "@smsImportErrorClipboardEmpty": {
+    "description": "Bank message import: the clipboard was empty or had no text."
+  },
+  "smsImportErrorOriginalUnavailable": "The original message can't be shown. You can continue with the details below.",
+  "@smsImportErrorOriginalUnavailable": {
+    "description": "Bank message import: the stored original text cannot be opened or was already removed."
+  },
+  "smsImportErrorSaveFailed": "It wasn't saved, and it's still waiting for your review. Try again.",
+  "@smsImportErrorSaveFailed": {
+    "description": "Bank message import: Add failed; the item stays pending and no record was created."
+  },
+  "smsImportErrorScanInterrupted": "{count, plural, =0{The scan stopped before any message was checked. Scan again to continue.} =1{The scan stopped after checking 1 message. Scan again to continue.} other{The scan stopped after checking {count} messages. Scan again to continue.}}",
+  "@smsImportErrorScanInterrupted": {
+    "description": "Bank message import: a scan was interrupted; count is how many messages were processed. Re-scanning never duplicates.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportErrorStorageUnavailable": "Daftary couldn't store this on your device. Try again.",
+  "@smsImportErrorStorageUnavailable": {
+    "description": "Bank message import: the local database was unavailable; nothing partial was kept."
+  },
+  "smsImportErrorMessageUnreadable": "One message couldn't be read and was skipped. The others were checked.",
+  "@smsImportErrorMessageUnreadable": {
+    "description": "Bank message import: a single message could not be parsed; processing continued."
+  },
+  "smsImportErrorAlreadyDecided": "This item was already handled.",
+  "@smsImportErrorAlreadyDecided": {
+    "description": "Bank message import: the item is no longer pending (for example a second tap on Add)."
+  },
+  "smsImportErrorProbableDuplicate": "This may already be in Daftary. Compare before adding.",
+  "@smsImportErrorProbableDuplicate": {
+    "description": "Bank message import: a probable duplicate was found; the comparison sheet follows."
+  },
+  "smsImportErrorScanAlreadyRunning": "A scan is already running.",
+  "@smsImportErrorScanAlreadyRunning": {
+    "description": "Bank message import: a scan was requested while another scan was running."
+  },
+  "smsImportErrorScanNotAllowed": "Scanning isn't possible right now. Check that bank message import is on and allowed.",
+  "@smsImportErrorScanNotAllowed": {
+    "description": "Bank message import: a scan could not start (feature off, no permission, or app locked)."
+  },
+  "smsImportProvenanceLabel": "Imported from a bank message",
+  "@smsImportProvenanceLabel": {
+    "description": "Label on a saved record that the user added from a bank message (FR-057)."
+  },
+  "smsImportProvenanceSemantics": "Imported from a bank message you reviewed",
+  "@smsImportProvenanceSemantics": {
+    "description": "Screen-reader label of the imported-from-bank-message marker."
+  },
+  "smsImportPendingTitle": "Bank messages",
+  "@smsImportPendingTitle": {
+    "description": "Title of the pending bank messages list."
+  },
+  "smsImportPendingEmptyTitle": "No bank messages to review",
+  "@smsImportPendingEmptyTitle": {
+    "description": "Empty state title of the pending list."
+  },
+  "smsImportPendingEmptyMessage": "Bank messages you scan, paste or share appear here for your review. Nothing is saved until you tap Add.",
+  "@smsImportPendingEmptyMessage": {
+    "description": "Empty state message of the pending list."
+  },
+  "smsImportPendingLoadErrorTitle": "Couldn't load your bank messages",
+  "@smsImportPendingLoadErrorTitle": {
+    "description": "Error state title of the pending list."
+  },
+  "smsImportPendingRetry": "Try again",
+  "@smsImportPendingRetry": {
+    "description": "Retry action on bank message screens."
+  },
+  "smsImportPendingExpiredNotice": "{count, plural, =0{No suggestions expired.} =1{1 suggestion expired. You can restore it from Ignored items.} other{{count} suggestions expired. You can restore them from Ignored items.}}",
+  "@smsImportPendingExpiredNotice": {
+    "description": "One-line notice: pending suggestions older than 30 days expired (FR-025).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingExpiredDismiss": "Dismiss",
+  "@smsImportPendingExpiredDismiss": {
+    "description": "Dismisses the expired-suggestions notice."
+  },
+  "smsImportPendingChooseType": "Choose type",
+  "@smsImportPendingChooseType": {
+    "description": "Type chip of a pending item with no suggested type."
+  },
+  "smsImportPendingAmountNeedsCheck": "Amount needs checking",
+  "@smsImportPendingAmountNeedsCheck": {
+    "description": "Shown on a pending item whose amount could not be read."
+  },
+  "smsImportPendingDateInferred": "{date}, inferred",
+  "@smsImportPendingDateInferred": {
+    "description": "A date that was inferred, not read from the message.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportPendingIgnoreSuggested": "Ignore suggested",
+  "@smsImportPendingIgnoreSuggested": {
+    "description": "Chip on a pending item whose suggestion is to ignore it."
+  },
+  "smsImportPendingPossibleDuplicate": "Possible duplicate",
+  "@smsImportPendingPossibleDuplicate": {
+    "description": "Chip on a pending item that may already be saved."
+  },
+  "smsImportPendingUnknownBank": "Unrecognized bank",
+  "@smsImportPendingUnknownBank": {
+    "description": "Bank name for a message read by the generic parser."
+  },
+  "smsImportBankName": "{bank, select, nbe{National Bank of Egypt} banque_misr{Banque Misr} cib{CIB} qnb{QNB Alahli} banque_du_caire{Banque du Caire} aaib{Arab African International Bank} instapay{InstaPay} other{Bank}}",
+  "@smsImportBankName": {
+    "description": "Display name of a recognized bank profile, by its id. Unknown ids are shown as their code instead.",
+    "placeholders": {
+      "bank": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportKindLabel": "{kind, select, cardPurchase{Card purchase} atmWithdrawal{ATM withdrawal} cardOrLoanSettlement{Card or loan payment} billPayment{Bill payment} fee{Bank fee} salary{Salary} otherDeposit{Deposit} transferOut{Transfer out} transferIn{Transfer in} refund{Refund} authorizationReversal{Cancelled authorization} ownAccountTransfer{Move between your accounts} other{Bank transaction}}",
+  "@smsImportKindLabel": {
+    "description": "What a bank message describes.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewSourceLabel": "{source, select, inboxScan{From SMS} catchUpScan{From SMS} paste{Pasted} share{Shared} other{From SMS}}",
+  "@smsImportReviewSourceLabel": {
+    "description": "Where a pending bank message came from.",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportWarningText": "{warning, select, atmIgnoredByDefault{Cash withdrawals aren't counted as spending unless you turn that on in Bank message settings.} refundHint{This looks like a refund. Ignore it if the original purchase is already in Daftary.} ownAccountSuggestedIgnore{This looks like a move between your own accounts, so it isn't income or spending.} cardSettlementSuggestedIgnore{This is a card or loan payment. The original purchases are counted separately.} genericParser{Daftary doesn't know this bank's messages well. Check every field.} unverifiedProfile{Support for this bank is new. Check every field before adding.} ambiguousAmount{The message has more than one amount. Check which one is right.} unsupportedCurrency{This currency isn't supported. Choose a currency and enter the amount in it.} dateInferred{The date wasn't in the message. Check it.} currencyInferred{The currency wasn't in the message. Check it.} foreignCurrencyBilledAmount{The amount shown is what your account was charged.} feeSeparateItem{A fee in this message is listed as its own item.} feeFromMessage{This fee was taken from another bank message.} reversalHint{This money was never taken. Ignore it, or open the matching record to check it.} maskedReference{The reference number was hidden for your privacy.} possibleDuplicate{This may already be in Daftary.} possibleOwnTransfer{This looks like money moved between your own accounts. Ignore both if so.} other{Check this item before adding.}}",
+  "@smsImportWarningText": {
+    "description": "One line per warning on a pending bank message.",
+    "placeholders": {
+      "warning": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewTitle": "Review bank message",
+  "@smsImportReviewTitle": {
+    "description": "Title of the review screen."
+  },
+  "smsImportReviewOverallConfidence": "Overall confidence",
+  "@smsImportReviewOverallConfidence": {
+    "description": "Label before the overall confidence badge."
+  },
+  "smsImportReviewTypeLabel": "Type",
+  "@smsImportReviewTypeLabel": {
+    "description": "Label of the record type selector."
+  },
+  "smsImportReviewChooseType": "Choose a type",
+  "@smsImportReviewChooseType": {
+    "description": "Shown when no record type is selected."
+  },
+  "smsImportReviewAmountLabel": "Amount",
+  "@smsImportReviewAmountLabel": {
+    "description": "Amount field label."
+  },
+  "smsImportReviewAmountInvalid": "Enter an amount greater than zero, up to 12 digits.",
+  "@smsImportReviewAmountInvalid": {
+    "description": "Amount field error."
+  },
+  "smsImportReviewWhichAmount": "Which amount?",
+  "@smsImportReviewWhichAmount": {
+    "description": "Shown above the amount choices when a message has two amounts."
+  },
+  "smsImportReviewUseAmount": "Use {amount}",
+  "@smsImportReviewUseAmount": {
+    "description": "Screen-reader label of an amount choice.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewChooseCurrency": "Choose a currency",
+  "@smsImportReviewChooseCurrency": {
+    "description": "Hint of the currency picker when no currency is known."
+  },
+  "smsImportReviewCurrencyNeeded": "Choose a currency and enter the amount in it.",
+  "@smsImportReviewCurrencyNeeded": {
+    "description": "Shown when the message's currency is missing or unsupported."
+  },
+  "smsImportReviewOriginalAmount": "Original: {amount}",
+  "@smsImportReviewOriginalAmount": {
+    "description": "Read-only original-currency context; it is not saved.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewDateLabel": "Date",
+  "@smsImportReviewDateLabel": {
+    "description": "Date field label."
+  },
+  "smsImportReviewChooseDate": "Choose a date",
+  "@smsImportReviewChooseDate": {
+    "description": "Shown when no date is known."
+  },
+  "smsImportReviewMessageTime": "Message time {time}. Only the date is saved.",
+  "@smsImportReviewMessageTime": {
+    "description": "Read-only time of the message (FR-058).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewPersonLabel": "Person",
+  "@smsImportReviewPersonLabel": {
+    "description": "Person field label."
+  },
+  "smsImportReviewRecordAsGiven": "Record as Given to {name}",
+  "@smsImportReviewRecordAsGiven": {
+    "description": "One-tap action for a named transfer out.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewRecordAsReceived": "Record as Received from {name}",
+  "@smsImportReviewRecordAsReceived": {
+    "description": "One-tap action for a named transfer in.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewNoteLabel": "Note (optional)",
+  "@smsImportReviewNoteLabel": {
+    "description": "Note field label."
+  },
+  "smsImportReviewUseMerchant": "Use merchant name as note",
+  "@smsImportReviewUseMerchant": {
+    "description": "Copies the merchant name into the note."
+  },
+  "smsImportReviewShowOriginal": "Show original message",
+  "@smsImportReviewShowOriginal": {
+    "description": "Expands the masked original message."
+  },
+  "smsImportReviewMissing": "Missing: {fields}",
+  "@smsImportReviewMissing": {
+    "description": "Lists the required fields that block Add.",
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewFieldType": "type",
+  "@smsImportReviewFieldType": {
+    "description": "Name of the required review field \"type\" in the Missing line."
+  },
+  "smsImportReviewFieldAmount": "amount",
+  "@smsImportReviewFieldAmount": {
+    "description": "Name of the required review field \"amount\" in the Missing line."
+  },
+  "smsImportReviewFieldCurrency": "currency",
+  "@smsImportReviewFieldCurrency": {
+    "description": "Name of the required review field \"currency\" in the Missing line."
+  },
+  "smsImportReviewFieldDate": "date",
+  "@smsImportReviewFieldDate": {
+    "description": "Name of the required review field \"date\" in the Missing line."
+  },
+  "smsImportReviewFieldCategory": "category",
+  "@smsImportReviewFieldCategory": {
+    "description": "Name of the required review field \"category\" in the Missing line."
+  },
+  "smsImportReviewFieldPerson": "person",
+  "@smsImportReviewFieldPerson": {
+    "description": "Name of the required review field \"person\" in the Missing line."
+  },
+  "smsImportReviewFieldNote": "note (up to 500 characters)",
+  "@smsImportReviewFieldNote": {
+    "description": "Name of the required review field \"note (up to 500 characters)\" in the Missing line."
+  },
+  "smsImportReviewListSeparator": ", ",
+  "@smsImportReviewListSeparator": {
+    "description": "Separator between items of a list in a sentence."
+  },
+  "smsImportReviewAdd": "Add",
+  "@smsImportReviewAdd": {
+    "description": "Primary action: save this one item."
+  },
+  "smsImportReviewAdded": "Added",
+  "@smsImportReviewAdded": {
+    "description": "Confirmation after an item was added."
+  },
+  "smsImportReviewSaving": "Saving",
+  "@smsImportReviewSaving": {
+    "description": "Announced while the item is being saved."
+  },
+  "smsImportReviewAlreadyHandledTitle": "This item was already handled",
+  "@smsImportReviewAlreadyHandledTitle": {
+    "description": "Review of an item that is no longer pending."
+  },
+  "smsImportReviewAlreadyHandledMessage": "It may have been added, ignored or expired.",
+  "@smsImportReviewAlreadyHandledMessage": {
+    "description": "Explains the already-handled state."
+  },
+  "smsImportReviewBackToList": "Back to bank messages",
+  "@smsImportReviewBackToList": {
+    "description": "Returns to the pending list."
+  },
+  "smsImportReviewLoadErrorTitle": "Couldn't open this bank message",
+  "@smsImportReviewLoadErrorTitle": {
+    "description": "Error state title of the review screen."
+  },
+  "smsImportReviewDiscardTitle": "Discard your changes?",
+  "@smsImportReviewDiscardTitle": {
+    "description": "Asked when leaving review with unsaved edits."
+  },
+  "smsImportReviewDiscardMessage": "The item stays waiting for your review.",
+  "@smsImportReviewDiscardMessage": {
+    "description": "Explains what discarding does."
+  },
+  "smsImportReviewDiscardConfirm": "Discard",
+  "@smsImportReviewDiscardConfirm": {
+    "description": "Confirms leaving review without saving."
+  },
+  "smsImportReviewKeepEditing": "Keep editing",
+  "@smsImportReviewKeepEditing": {
+    "description": "Cancels leaving review."
+  },
+  "smsImportDuplicateBanner": "You may already have this",
+  "@smsImportDuplicateBanner": {
+    "description": "Review banner shown when a probable duplicate was found (US5)."
+  },
+  "smsImportDuplicateCompare": "Compare",
+  "@smsImportDuplicateCompare": {
+    "description": "Opens the side-by-side duplicate comparison."
+  },
+  "smsImportDuplicateTitle": "You may already have this",
+  "@smsImportDuplicateTitle": {
+    "description": "Title of the probable-duplicate sheet."
+  },
+  "smsImportDuplicateMessage": "Compare them before you decide. Nothing is added until you choose.",
+  "@smsImportDuplicateMessage": {
+    "description": "Explains the probable-duplicate sheet; nothing is saved until the user chooses."
+  },
+  "smsImportDuplicateExisting": "Already in Daftary",
+  "@smsImportDuplicateExisting": {
+    "description": "Card title: the saved record that may be the same."
+  },
+  "smsImportDuplicateOtherPending": "Another bank message",
+  "@smsImportDuplicateOtherPending": {
+    "description": "Card title: another pending bank message that may be the same."
+  },
+  "smsImportDuplicateIncoming": "This message",
+  "@smsImportDuplicateIncoming": {
+    "description": "Card title: the bank message being reviewed."
+  },
+  "smsImportDuplicateSameAmount": "Same amount",
+  "@smsImportDuplicateSameAmount": {
+    "description": "Comparison phrase: both amounts are equal."
+  },
+  "smsImportDuplicateSameOriginalAmount": "Same as the original amount in the message",
+  "@smsImportDuplicateSameOriginalAmount": {
+    "description": "Comparison phrase: the saved record equals the original-currency amount stated in the message."
+  },
+  "smsImportDuplicateDaysApart": "{count, plural, =0{Same day} =1{1 day apart} other{{count} days apart}}",
+  "@smsImportDuplicateDaysApart": {
+    "description": "Comparison phrase: how many calendar days apart the two dates are.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportDuplicateNote": "Note: {note}",
+  "@smsImportDuplicateNote": {
+    "description": "First line of the saved record's note on the comparison card.",
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportDuplicateSame": "It's the same, don't add",
+  "@smsImportDuplicateSame": {
+    "description": "Closes the bank message as a duplicate; nothing is added and the saved record is not changed."
+  },
+  "smsImportDuplicateAddAnyway": "It's different, add anyway",
+  "@smsImportDuplicateAddAnyway": {
+    "description": "Adds the bank message despite the possible duplicate."
+  },
+  "smsImportDuplicateCancel": "Cancel",
+  "@smsImportDuplicateCancel": {
+    "description": "Closes the sheet; the bank message stays pending."
+  },
+  "smsImportDuplicateFound": "Possible duplicate found",
+  "@smsImportDuplicateFound": {
+    "description": "Screen-reader announcement when the duplicate comparison opens."
+  },
+  "smsImportDuplicateClosed": "Not added. It's already in Daftary.",
+  "@smsImportDuplicateClosed": {
+    "description": "Confirmation after the user chose \"It's the same, don't add\"."
+  },
+  "smsImportReviewMatchedRecord": "Matching record in Daftary",
+  "@smsImportReviewMatchedRecord": {
+    "description": "Title of the read-only card of the matched saved record."
+  },
+  "smsImportReviewOpenRecord": "Open it",
+  "@smsImportReviewOpenRecord": {
+    "description": "Opens the matched saved record."
+  },
+  "smsImportReviewFeeFromParent": "Fee from the bank message of {date}",
+  "@smsImportReviewFeeFromParent": {
+    "description": "Links a split fee item to its parent message (FR-030a).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewFeeFromParentNoDate": "Fee from the related bank message",
+  "@smsImportReviewFeeFromParentNoDate": {
+    "description": "Links a split fee item to its parent message when the parent has no date (FR-030a)."
+  },
+  "smsImportReviewNoCategories": "There's no active category of this type. Add one from Manage categories.",
+  "@smsImportReviewNoCategories": {
+    "description": "Shown when no active category matches the type (FR-055)."
+  },
+  "smsImportSemanticsCardEnding": "card ending in {last4}",
+  "@smsImportSemanticsCardEnding": {
+    "description": "Screen-reader text of a masked card number.",
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSemanticsOpenReview": "Open to review",
+  "@smsImportSemanticsOpenReview": {
+    "description": "Screen-reader hint of a pending row."
+  },
+  "smsImportSemanticsAddUnavailable": "Add is unavailable. Missing: {fields}",
+  "@smsImportSemanticsAddUnavailable": {
+    "description": "Screen-reader label of the disabled Add button.",
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportPasteTitle": "Paste a bank message",
+  "@smsImportPasteTitle": {
+    "description": "Title of the Paste screen; also the hub's empty-state paste action."
+  },
+  "smsImportPasteIntro": "Copy a message from your bank, then tap Paste, or paste it into the box yourself. Nothing is saved until you review it and tap Add.",
+  "@smsImportPasteIntro": {
+    "description": "Paste screen explanation."
+  },
+  "smsImportPasteFieldLabel": "Bank message text",
+  "@smsImportPasteFieldLabel": {
+    "description": "Label of the multi-line text field on the Paste screen."
+  },
+  "smsImportPasteButton": "Paste",
+  "@smsImportPasteButton": {
+    "description": "Button that reads the clipboard into the field (the only clipboard read)."
+  },
+  "smsImportPasteProcess": "Read message",
+  "@smsImportPasteProcess": {
+    "description": "Button that processes the text in the field."
+  },
+  "smsImportPasteLimits": "Up to 10,000 characters and 50 messages.",
+  "@smsImportPasteLimits": {
+    "description": "Input limits help text on the Paste screen."
+  },
+  "smsImportPasteCharacterCount": "{count} of 10,000 characters",
+  "@smsImportPasteCharacterCount": {
+    "description": "Character counter of the Paste field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteProcessing": "Reading the message…",
+  "@smsImportPasteProcessing": {
+    "description": "Progress text while pasted text is processed."
+  },
+  "smsImportPasteNothingTitle": "Nothing to paste",
+  "@smsImportPasteNothingTitle": {
+    "description": "Title of the nothing-to-paste state (empty or non-text clipboard)."
+  },
+  "smsImportPasteNotRecognizedTitle": "Not a supported bank message",
+  "@smsImportPasteNotRecognizedTitle": {
+    "description": "Title of the not-recognized state. Nothing was saved."
+  },
+  "smsImportPasteEnterManually": "Enter manually",
+  "@smsImportPasteEnterManually": {
+    "description": "Action that opens the manual expense form."
+  },
+  "smsImportPasteTryAgain": "Try again",
+  "@smsImportPasteTryAgain": {
+    "description": "Action that returns the Paste screen to its ready state."
+  },
+  "smsImportPasteTooLargeTitle": "Too much text",
+  "@smsImportPasteTooLargeTitle": {
+    "description": "Title of the input-limit-exceeded state. Nothing was saved."
+  },
+  "smsImportPasteUnreadableTitle": "Couldn't read this message",
+  "@smsImportPasteUnreadableTitle": {
+    "description": "Title of the state where a bank message was found but could not be read."
+  },
+  "smsImportPasteUnreadableMessage": "A bank message was found, but its details couldn't be read. You can add the transaction manually.",
+  "@smsImportPasteUnreadableMessage": {
+    "description": "Message of the unreadable-only state."
+  },
+  "smsImportPasteRecognized": "{count, plural, =0{No transactions recognized} =1{1 transaction recognized} other{{count} transactions recognized}}",
+  "@smsImportPasteRecognized": {
+    "description": "Paste or share summary: how many transactions were recognized.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteSkipped": "{count, plural, =0{Nothing skipped} =1{1 message skipped} other{{count} messages skipped}}",
+  "@smsImportPasteSkipped": {
+    "description": "Paste or share summary: how many messages were skipped.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteAlreadyListed": "These messages are already in your list. Nothing new was added.",
+  "@smsImportPasteAlreadyListed": {
+    "description": "Shown when every recognized message was already pending or handled."
+  },
+  "smsImportPasteOpenList": "Open bank messages",
+  "@smsImportPasteOpenList": {
+    "description": "Action that opens the pending bank-message list."
+  },
+  "smsImportShareProcessing": "Reading the shared message…",
+  "@smsImportShareProcessing": {
+    "description": "Progress text while text shared from another app is processed."
+  },
+  "smsImportShareReceived": "Shared from another app",
+  "@smsImportShareReceived": {
+    "description": "Label shown on the Paste screen for a result that came from the Android share target."
+  },
+  "smsImportHomeQuickAction": "Bank message",
+  "@smsImportHomeQuickAction": {
+    "description": "Home quick action that opens bank-message import."
+  },
+  "smsImportEnableTitle": "Read bank messages",
+  "@smsImportEnableTitle": {
+    "description": "Enable flow: screen title."
+  },
+  "smsImportEnableExplainTitle": "Add bank transactions from your messages",
+  "@smsImportEnableExplainTitle": {
+    "description": "Enable flow: explanation heading."
+  },
+  "smsImportEnableWhatIsReadTitle": "What Daftary reads",
+  "@smsImportEnableWhatIsReadTitle": {
+    "description": "Enable flow: heading of what is read."
+  },
+  "smsImportEnableWhatIsRead": "Only messages from recognized bank senders, on this device.",
+  "@smsImportEnableWhatIsRead": {
+    "description": "Enable flow: what is read (FR-005)."
+  },
+  "smsImportEnableNeverTitle": "What never happens",
+  "@smsImportEnableNeverTitle": {
+    "description": "Enable flow: heading of what is never done."
+  },
+  "smsImportEnableNever": "Nothing is uploaded, and nothing is saved until you review it and tap Add.",
+  "@smsImportEnableNever": {
+    "description": "Enable flow: what is never done (FR-005)."
+  },
+  "smsImportEnableTurnOffTitle": "How to turn it off",
+  "@smsImportEnableTurnOffTitle": {
+    "description": "Enable flow: heading of how to turn it off."
+  },
+  "smsImportEnableTurnOff": "Any time from Settings, then Bank messages.",
+  "@smsImportEnableTurnOff": {
+    "description": "Enable flow: how to turn it off (FR-005)."
+  },
+  "smsImportEnableContinue": "Continue",
+  "@smsImportEnableContinue": {
+    "description": "Enable flow: acknowledges the explanation; the permission prompt may follow."
+  },
+  "smsImportEnableNotNow": "Not now",
+  "@smsImportEnableNotNow": {
+    "description": "Enable flow: leaves without enabling."
+  },
+  "smsImportEnablePasteInstead": "Paste instead",
+  "@smsImportEnablePasteInstead": {
+    "description": "Enable flow: link to the Paste screen."
+  },
+  "smsImportEnableRequesting": "Waiting for your answer to Android's question…",
+  "@smsImportEnableRequesting": {
+    "description": "Enable flow: shown while the system permission dialog is up."
+  },
+  "smsImportEnableWindowTitle": "How far back should Daftary look?",
+  "@smsImportEnableWindowTitle": {
+    "description": "Enable flow: scan window step heading."
+  },
+  "smsImportEnableWindowDays": "{count, plural, =0{Last 0 days} =1{Last day} other{Last {count} days}}",
+  "@smsImportEnableWindowDays": {
+    "description": "Scan window option: the last N days (7, 30 or 90).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportEnableScan": "Scan",
+  "@smsImportEnableScan": {
+    "description": "Enable flow: starts the inbox scan."
+  },
+  "smsImportEnableDoneTitle": "Scan finished",
+  "@smsImportEnableDoneTitle": {
+    "description": "Enable flow: done step heading."
+  },
+  "smsImportEnableReviewNow": "Review now",
+  "@smsImportEnableReviewNow": {
+    "description": "Enable flow: opens the first pending item."
+  },
+  "smsImportEnableClose": "Close",
+  "@smsImportEnableClose": {
+    "description": "Enable flow: closes the flow."
+  },
+  "smsImportEnableUnavailableTitle": "Reading messages isn't available here",
+  "@smsImportEnableUnavailableTitle": {
+    "description": "Enable flow: the capability is unavailable."
+  },
+  "smsImportEnableUnavailableMessage": "You can still paste or share a bank message.",
+  "@smsImportEnableUnavailableMessage": {
+    "description": "Enable flow: the capability is unavailable."
+  },
+  "smsImportEnableErrorTitle": "Something went wrong",
+  "@smsImportEnableErrorTitle": {
+    "description": "Enable flow: error step heading."
+  },
+  "smsImportEnableRetry": "Retry",
+  "@smsImportEnableRetry": {
+    "description": "Enable flow: retries after an error."
+  },
+  "smsImportPermissionDeniedBanner": "Bank message import needs permission to read messages from your bank.",
+  "@smsImportPermissionDeniedBanner": {
+    "description": "Permission banner: denied."
+  },
+  "smsImportPermissionDeniedDetail": "Daftary needs this permission to find bank transactions in your messages. Nothing is lost if you don't allow it: you can paste or share a message instead.",
+  "@smsImportPermissionDeniedDetail": {
+    "description": "Enable flow: denied step explanation (FR-012)."
+  },
+  "smsImportPermissionPermanentBanner": "Permission is turned off for Daftary.",
+  "@smsImportPermissionPermanentBanner": {
+    "description": "Permission banner: permanently denied."
+  },
+  "smsImportPermissionPermanentDetail": "To allow it, open App info, then Permissions, then SMS, and choose Allow. Then come back to Daftary.",
+  "@smsImportPermissionPermanentDetail": {
+    "description": "Enable flow: permanently denied steps."
+  },
+  "smsImportPermissionRevokedBanner": "Automatic import is off because the permission was turned off. Your pending items are still here.",
+  "@smsImportPermissionRevokedBanner": {
+    "description": "Permission banner: revoked (FR-070)."
+  },
+  "smsImportPermissionAllow": "Allow",
+  "@smsImportPermissionAllow": {
+    "description": "Permission banner: opens the enable flow, which asks."
+  },
+  "smsImportPermissionTryAgain": "Try again",
+  "@smsImportPermissionTryAgain": {
+    "description": "Permission: asks again after an explicit tap."
+  },
+  "smsImportPermissionOpenAppInfo": "Open App info",
+  "@smsImportPermissionOpenAppInfo": {
+    "description": "Permission: opens the system App info screen."
+  },
+  "smsImportPermissionPasteInstead": "Paste or share instead",
+  "@smsImportPermissionPasteInstead": {
+    "description": "Permission: the paste and share fallback."
+  },
+  "smsImportPermissionTurnOnAgain": "Turn on again",
+  "@smsImportPermissionTurnOnAgain": {
+    "description": "Permission banner: revoked, opens the enable flow."
+  },
+  "smsImportPermissionShowMeHow": "Show me how",
+  "@smsImportPermissionShowMeHow": {
+    "description": "Permission banner: restricted, shows the steps."
+  },
+  "smsImportRestrictedBanner": "Android may be blocking this permission for apps installed outside a store.",
+  "@smsImportRestrictedBanner": {
+    "description": "Permission banner: restricted settings (FR-072)."
+  },
+  "smsImportRestrictedTitle": "Android may be blocking this permission",
+  "@smsImportRestrictedTitle": {
+    "description": "Restricted guidance heading. Never claims certainty."
+  },
+  "smsImportRestrictedIntro": "If no question appeared, Android may be blocking it because Daftary was installed from outside an app store. To allow it:",
+  "@smsImportRestrictedIntro": {
+    "description": "Restricted guidance introduction."
+  },
+  "smsImportRestrictedStep1": "1. Open App info.",
+  "@smsImportRestrictedStep1": {
+    "description": "Restricted guidance step 1. Western digits in both languages."
+  },
+  "smsImportRestrictedStep2": "2. Open the menu (three dots) at the top.",
+  "@smsImportRestrictedStep2": {
+    "description": "Restricted guidance step 2."
+  },
+  "smsImportRestrictedStep3": "3. Choose \"Allow restricted settings\".",
+  "@smsImportRestrictedStep3": {
+    "description": "Restricted guidance step 3."
+  },
+  "smsImportRestrictedStep4": "4. Come back to Daftary and tap Try again.",
+  "@smsImportRestrictedStep4": {
+    "description": "Restricted guidance step 4."
+  },
+  "smsImportRestrictedAltPath": "If you don't see \"Allow restricted settings\", open Permissions → SMS in App info and choose Allow, then come back and tap Try again.",
+  "@smsImportRestrictedAltPath": {
+    "description": "Restricted guidance: the second path when the menu item is not offered (spike S4 fallback)."
+  },
+  "smsImportScanNow": "Scan now",
+  "@smsImportScanNow": {
+    "description": "Hub and settings: runs the inbox scan."
+  },
+  "smsImportScanProgress": "{count, plural, =0{No messages processed yet} =1{Processed 1 message} other{Processed {count} messages}}",
+  "@smsImportScanProgress": {
+    "description": "Scan progress: messages processed so far.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanCancel": "Cancel",
+  "@smsImportScanCancel": {
+    "description": "Stops the running scan; created items stay."
+  },
+  "smsImportScanCancelled": "Scan stopped. What was found so far is kept.",
+  "@smsImportScanCancelled": {
+    "description": "Scan summary: the scan was cancelled (FR-007)."
+  },
+  "smsImportScanSummaryTitle": "Scan summary",
+  "@smsImportScanSummaryTitle": {
+    "description": "Scan summary heading."
+  },
+  "smsImportScanFound": "{count, plural, =0{No bank messages found} =1{1 bank message found} other{{count} bank messages found}}",
+  "@smsImportScanFound": {
+    "description": "Scan summary: bank messages read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanReady": "{count, plural, =0{None ready to add} =1{1 ready to add} other{{count} ready to add}}",
+  "@smsImportScanReady": {
+    "description": "Scan summary: new items with every required field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanNeedReview": "{count, plural, =0{None need your review} =1{1 needs your review} other{{count} need your review}}",
+  "@smsImportScanNeedReview": {
+    "description": "Scan summary: new items that need fields checked.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanAlreadyKnown": "{count, plural, =0{None were already listed} =1{1 was already listed} other{{count} were already listed}}",
+  "@smsImportScanAlreadyKnown": {
+    "description": "Scan summary: messages already staged or decided.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanSkipped": "{count, plural, =0{Nothing skipped} =1{1 skipped: not a transaction} other{{count} skipped: not transactions}}",
+  "@smsImportScanSkipped": {
+    "description": "Scan summary: non-transactional messages (OTP, promotions...).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanUnreadable": "{count, plural, =0{None unreadable} =1{1 couldn't be read} other{{count} couldn't be read}}",
+  "@smsImportScanUnreadable": {
+    "description": "Scan summary: messages that could not be read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanInterrupted": "{count, plural, =0{Nothing was processed before the interruption} =1{1 message processed before the interruption} other{{count} messages processed before the interruption}}",
+  "@smsImportScanInterrupted": {
+    "description": "Scan error: how many messages were processed before it failed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanShowSkipped": "Show skipped",
+  "@smsImportScanShowSkipped": {
+    "description": "Scan summary: opens the content-free Skipped list."
+  },
+  "smsImportScanSkippedTitle": "Skipped messages",
+  "@smsImportScanSkippedTitle": {
+    "description": "Skipped list heading."
+  },
+  "smsImportScanSkippedNote": "Message text is never shown here.",
+  "@smsImportScanSkippedNote": {
+    "description": "Skipped list: privacy note."
+  },
+  "smsImportScanSkipReason": "{reason, select, notRecognized{Not a recognized transaction} noAmount{No amount found} amountUnreadable{Couldn't read the amount} tooLong{Too long to read} empty{Empty message} nonText{Not text} parserError{Couldn't read} other{Couldn't read}}",
+  "@smsImportScanSkipReason": {
+    "description": "Skipped list: why a message was skipped. A code, never text.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportScanSkippedNoDate": "Date unknown",
+  "@smsImportScanSkippedNoDate": {
+    "description": "Skipped list: no receipt date."
+  },
+  "smsImportScanDismiss": "Dismiss summary",
+  "@smsImportScanDismiss": {
+    "description": "Scan summary: hides the card."
+  },
+  "smsImportScanTurnOnTitle": "Find bank transactions in your messages",
+  "@smsImportScanTurnOnTitle": {
+    "description": "Hub: card that leads to the enable flow."
+  },
+  "smsImportScanTurnOn": "Turn on",
+  "@smsImportScanTurnOn": {
+    "description": "Hub: opens the enable flow."
+  },
+  "smsImportScanFailedTitle": "The scan stopped",
+  "@smsImportScanFailedTitle": {
+    "description": "Scan error heading."
+  },
+  "smsImportScanRetry": "Retry",
+  "@smsImportScanRetry": {
+    "description": "Scan error: runs the scan again."
+  },
+  "smsImportScanMore": "More options",
+  "@smsImportScanMore": {
+    "description": "Hub overflow menu tooltip."
+  },
+  "smsImportSettingsTitle": "Bank messages",
+  "@smsImportSettingsTitle": {
+    "description": "Settings -> Bank messages title and tile."
+  },
+  "smsImportSettingsEntrySubtitle": "Add transactions from bank messages",
+  "@smsImportSettingsEntrySubtitle": {
+    "description": "Settings tile subtitle."
+  },
+  "smsImportSettingsStatusTitle": "Status",
+  "@smsImportSettingsStatusTitle": {
+    "description": "Settings section: status."
+  },
+  "smsImportSettingsStatusLabel": "{status, select, off{Off} on{On} permissionOff{Permission off} blocked{Blocked by Android} other{Off}}",
+  "@smsImportSettingsStatusLabel": {
+    "description": "Settings: the status chip.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSettingsTurnOn": "Turn on",
+  "@smsImportSettingsTurnOn": {
+    "description": "Settings: opens the enable flow."
+  },
+  "smsImportSettingsScanTitle": "Scan",
+  "@smsImportSettingsScanTitle": {
+    "description": "Settings section: scan."
+  },
+  "smsImportSettingsWindowTitle": "Scan period",
+  "@smsImportSettingsWindowTitle": {
+    "description": "Settings: scan window heading."
+  },
+  "smsImportSettingsLastScan": "Last scan: {date}",
+  "@smsImportSettingsLastScan": {
+    "description": "Settings: when the last scan ran.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSettingsNeverScanned": "Not scanned yet",
+  "@smsImportSettingsNeverScanned": {
+    "description": "Settings: no scan yet."
+  },
+  "smsImportSettingsCountsTitle": "Activity",
+  "@smsImportSettingsCountsTitle": {
+    "description": "Settings: content-free counters heading (FR-102)."
+  },
+  "smsImportSettingsCountScanned": "{count, plural, =0{No messages read} =1{1 message read} other{{count} messages read}}",
+  "@smsImportSettingsCountScanned": {
+    "description": "Settings counter: messages read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountRecognized": "{count, plural, =0{No transactions recognized} =1{1 transaction recognized} other{{count} transactions recognized}}",
+  "@smsImportSettingsCountRecognized": {
+    "description": "Settings counter: transactions recognized.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountAdded": "{count, plural, =0{None added} =1{1 added} other{{count} added}}",
+  "@smsImportSettingsCountAdded": {
+    "description": "Settings counter: items added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountIgnored": "{count, plural, =0{None ignored} =1{1 ignored} other{{count} ignored}}",
+  "@smsImportSettingsCountIgnored": {
+    "description": "Settings counter: items ignored.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsPreferencesTitle": "Preferences",
+  "@smsImportSettingsPreferencesTitle": {
+    "description": "Settings section: preferences."
+  },
+  "smsImportSettingsCountCash": "Count cash withdrawals as spending",
+  "@smsImportSettingsCountCash": {
+    "description": "Settings switch (FR-051b)."
+  },
+  "smsImportSettingsCountCashHelp": "When on, ATM withdrawals are suggested as an expense instead of being ignored.",
+  "@smsImportSettingsCountCashHelp": {
+    "description": "Settings switch help (FR-051b)."
+  },
+  "smsImportSettingsManageTitle": "Manage",
+  "@smsImportSettingsManageTitle": {
+    "description": "Settings section: manage."
+  },
+  "smsImportSettingsPending": "Pending bank messages",
+  "@smsImportSettingsPending": {
+    "description": "Settings, Manage section: opens the list of bank messages waiting for review."
+  },
+  "smsImportSettingsPrivacyTitle": "Privacy",
+  "@smsImportSettingsPrivacyTitle": {
+    "description": "Settings section: privacy."
+  },
+  "smsImportSettingsPrivacyText": "Messages are read on this device only. Nothing is saved without your Add.",
+  "@smsImportSettingsPrivacyText": {
+    "description": "Settings: privacy statement."
+  },
+  "smsImportSettingsLoadErrorTitle": "Couldn't load bank message settings",
+  "@smsImportSettingsLoadErrorTitle": {
+    "description": "Settings: load error."
+  },
+  "smsImportSettingsRetry": "Retry",
+  "@smsImportSettingsRetry": {
+    "description": "Settings: retry after a load error."
+  },
+  "smsImportSettingsSaveFailed": "Couldn't save. Try again.",
+  "@smsImportSettingsSaveFailed": {
+    "description": "Settings: a preference write failed."
+  },
+  "smsImportHomeOnboardingTitle": "Bank messages",
+  "@smsImportHomeOnboardingTitle": {
+    "description": "Home onboarding card title."
+  },
+  "smsImportHomeOnboardingText": "Daftary can find transactions in your bank's messages for you to review.",
+  "@smsImportHomeOnboardingText": {
+    "description": "Home onboarding card text (FR-004)."
+  },
+  "smsImportHomeOnboardingSetUp": "Set up",
+  "@smsImportHomeOnboardingSetUp": {
+    "description": "Home onboarding card: opens the enable flow."
+  },
+  "smsImportHomeOnboardingDismiss": "Dismiss",
+  "@smsImportHomeOnboardingDismiss": {
+    "description": "Home onboarding card: hides it permanently."
+  },
+  "smsImportHomeCardCount": "{count, plural, =0{No bank transactions to review} =1{1 bank transaction to review} other{{count} bank transactions to review}}",
+  "@smsImportHomeCardCount": {
+    "description": "Home count card (T129, FR-050): how many bank-message items wait for review. A count only, never content.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportHomeCardHint": "Opens bank messages",
+  "@smsImportHomeCardHint": {
+    "description": "Screen-reader hint of the Home count card: tapping opens the bank-messages list."
+  },
+  "smsImportPendingSelect": "Select",
+  "@smsImportPendingSelect": {
+    "description": "Pending list: enters selection mode (tooltip of the app-bar action)."
+  },
+  "smsImportPendingSelectedCount": "{count, plural, =0{None selected} =1{1 selected} other{{count} selected}}",
+  "@smsImportPendingSelectedCount": {
+    "description": "Pending list selection toolbar: how many items are selected (FR-064).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingCancelSelection": "Cancel selection",
+  "@smsImportPendingCancelSelection": {
+    "description": "Pending list: leaves selection mode."
+  },
+  "smsImportPendingIgnoreSelected": "Ignore",
+  "@smsImportPendingIgnoreSelected": {
+    "description": "Pending list selection toolbar: ignores the selected items after a confirmation. There is no batch Add."
+  },
+  "smsImportPendingIgnoreConfirmTitle": "{count, plural, =0{Ignore nothing?} =1{Ignore 1 item?} other{Ignore {count} items?}}",
+  "@smsImportPendingIgnoreConfirmTitle": {
+    "description": "Batch Ignore confirmation title (FR-064).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingIgnoreConfirmMessage": "Nothing will be added, and these messages won't be suggested again. You can restore them from Ignored items for 30 days.",
+  "@smsImportPendingIgnoreConfirmMessage": {
+    "description": "Batch Ignore confirmation message (FR-064, FR-066, FR-067)."
+  },
+  "smsImportPendingIgnoreConfirm": "Ignore",
+  "@smsImportPendingIgnoreConfirm": {
+    "description": "Batch Ignore confirmation: the confirm button."
+  },
+  "smsImportPendingIgnoredCount": "{count, plural, =0{Nothing ignored} =1{1 item ignored} other{{count} items ignored}}",
+  "@smsImportPendingIgnoredCount": {
+    "description": "Announced and shown after a batch Ignore (ui-contract §7.5).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingMenuIgnored": "Ignored items",
+  "@smsImportPendingMenuIgnored": {
+    "description": "Pending list overflow menu: opens the Ignored items list."
+  },
+  "smsImportReviewIgnore": "Ignore",
+  "@smsImportReviewIgnore": {
+    "description": "Review: ignores this item. Nothing is added."
+  },
+  "smsImportReviewIgnored": "Ignored",
+  "@smsImportReviewIgnored": {
+    "description": "Review: announced and shown after Ignore."
+  },
+  "smsImportReviewMoreActions": "More actions",
+  "@smsImportReviewMoreActions": {
+    "description": "Review: tooltip of the overflow menu."
+  },
+  "smsImportMuteAction": "Stop suggesting from this sender",
+  "@smsImportMuteAction": {
+    "description": "Review overflow: mutes the message's sender (FR-065). Shown only when the item has a sender."
+  },
+  "smsImportMuteConfirmTitle": "Stop suggesting from this sender?",
+  "@smsImportMuteConfirmTitle": {
+    "description": "Mute confirmation title (FR-065)."
+  },
+  "smsImportMuteConfirmMessage": "Daftary will stop suggesting transactions from {sender}. Its pending items will be removed. Saved transactions are not changed. You can undo this in Muted senders.",
+  "@smsImportMuteConfirmMessage": {
+    "description": "Mute confirmation message: states that this sender's pending items are removed (FR-065). sender is the sender ID, isolated left-to-right.",
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMuteConfirm": "Stop suggesting",
+  "@smsImportMuteConfirm": {
+    "description": "Mute confirmation: the confirm button."
+  },
+  "smsImportMuteDone": "{count, plural, =0{Sender muted.} =1{Sender muted. 1 pending item removed.} other{Sender muted. {count} pending items removed.}}",
+  "@smsImportMuteDone": {
+    "description": "Shown and announced after muting a sender: how many pending items were removed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportMuteTitle": "Muted senders",
+  "@smsImportMuteTitle": {
+    "description": "Muted senders screen title, and its Settings link (FR-056, FR-065)."
+  },
+  "smsImportMuteHelp": "Daftary doesn't suggest transactions from these senders.",
+  "@smsImportMuteHelp": {
+    "description": "Muted senders screen: one-line explanation."
+  },
+  "smsImportMuteEmptyTitle": "No muted senders",
+  "@smsImportMuteEmptyTitle": {
+    "description": "Muted senders screen: empty state title."
+  },
+  "smsImportMuteEmptyMessage": "When you stop suggestions from a sender on a review screen, it appears here.",
+  "@smsImportMuteEmptyMessage": {
+    "description": "Muted senders screen: empty state message."
+  },
+  "smsImportMuteLoadError": "Couldn't load muted senders",
+  "@smsImportMuteLoadError": {
+    "description": "Muted senders screen: load error title."
+  },
+  "smsImportMuteUnmute": "Unmute",
+  "@smsImportMuteUnmute": {
+    "description": "Muted senders screen: unmutes one sender."
+  },
+  "smsImportMuteUnmuteSemantics": "Unmute {sender}",
+  "@smsImportMuteUnmuteSemantics": {
+    "description": "Screen-reader label of the Unmute button.",
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMuteUnmuted": "Unmuted. Its new messages will be suggested after the next scan.",
+  "@smsImportMuteUnmuted": {
+    "description": "Shown and announced after unmuting a sender (FR-065)."
+  },
+  "smsImportIgnoredTitle": "Ignored items",
+  "@smsImportIgnoredTitle": {
+    "description": "Ignored items screen title, and its Settings link (FR-067)."
+  },
+  "smsImportIgnoredHelp": "Items you ignored, or that expired, in the last 30 days.",
+  "@smsImportIgnoredHelp": {
+    "description": "Ignored items screen: one-line explanation."
+  },
+  "smsImportIgnoredEmptyTitle": "Nothing ignored recently",
+  "@smsImportIgnoredEmptyTitle": {
+    "description": "Ignored items screen: empty state title (ui-contract §3.8)."
+  },
+  "smsImportIgnoredEmptyMessage": "Items you ignore, or that expire, stay here for 30 days so you can undo.",
+  "@smsImportIgnoredEmptyMessage": {
+    "description": "Ignored items screen: empty state message."
+  },
+  "smsImportIgnoredLoadError": "Couldn't load ignored items",
+  "@smsImportIgnoredLoadError": {
+    "description": "Ignored items screen: load error title."
+  },
+  "smsImportIgnoredStatusIgnored": "Ignored",
+  "@smsImportIgnoredStatusIgnored": {
+    "description": "Ignored items: status label of an item the user ignored."
+  },
+  "smsImportIgnoredStatusExpired": "Expired",
+  "@smsImportIgnoredStatusExpired": {
+    "description": "Ignored items: status label of an item that expired."
+  },
+  "smsImportIgnoredNoAmount": "No amount",
+  "@smsImportIgnoredNoAmount": {
+    "description": "Ignored items: shown when the item has no amount."
+  },
+  "smsImportIgnoredDaysLeft": "{count, plural, =0{Less than a day left} =1{1 day left} other{{count} days left}}",
+  "@smsImportIgnoredDaysLeft": {
+    "description": "Ignored items: days until the item leaves the Undo list.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportIgnoredUndo": "Undo",
+  "@smsImportIgnoredUndo": {
+    "description": "Ignored items: restores one item (FR-068)."
+  },
+  "smsImportIgnoredComesBack": "It will come back when you tap Scan now, or paste or share this message again.",
+  "@smsImportIgnoredComesBack": {
+    "description": "Ignored items: what Undo does (FR-068, ui-contract §3.8). Catch-up does not re-read older messages, so the copy names Scan now."
+  },
+  "smsImportIgnoredComesBackPasteOnly": "It will come back when you paste or share this message again.",
+  "@smsImportIgnoredComesBackPasteOnly": {
+    "description": "Ignored items: what Undo does, on devices without bank-message scanning (ui-contract §3.8)."
+  },
+  "smsImportIgnoredRestored": "Restored. Tap Scan now, or paste it again, to see it.",
+  "@smsImportIgnoredRestored": {
+    "description": "Shown and announced after Undo (ui-contract §3.8)."
+  },
+  "smsImportIgnoredRestoredPasteOnly": "Restored. Paste or share it again to see it.",
+  "@smsImportIgnoredRestoredPasteOnly": {
+    "description": "Shown and announced after Undo, on devices without bank-message scanning."
+  },
+  "smsImportSuggestHint": "{type, select, ignore{Suggested: Ignore. Nothing is counted as income or spending.} unset{No type was suggested. Choose one, or Ignore this item.} other{Check the suggested type before adding.}}",
+  "@smsImportSuggestHint": {
+    "description": "Review: the hint under the type selector for the suggested type (FR-051a, FR-051c). 'ignore' covers ATM (preference off), refunds, reversals and own-account moves.",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestCashLink": "{state, select, on{Cash withdrawals count as spending. Change in settings} other{Cash withdrawals aren't counted as spending. Change in settings}}",
+  "@smsImportSuggestCashLink": {
+    "description": "Review of an ATM withdrawal: the one-line link to the 'Count cash withdrawals as spending' preference (FR-051b). 'on' when the preference is on.",
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestSeveralPeople": "{count, plural, =0{No one in your people matches {name}.} =1{1 person in your people could be {name}.} other{{count} people in your people could be {name}.}}",
+  "@smsImportSuggestSeveralPeople": {
+    "description": "Review of a named transfer: more than one existing person has a similar name (FR-054). Shown with the 'Choose the person' action.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestChoosePerson": "{type, select, received{Choose who sent it} other{Choose who received it}}",
+  "@smsImportSuggestChoosePerson": {
+    "description": "Review: opens the existing similar-name choice to record the transfer as Received from (or Given to) one of the matching people (FR-054).",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestPersonNotInList": "{name} isn't in your people. A person is created only if you tap Create new person.",
+  "@smsImportSuggestPersonNotInList": {
+    "description": "Review of Given/Received for a counterparty that matches no one: nothing is created without the user's tap (FR-054, US7-2).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsTitle": "Learned categories",
+  "@smsImportMappingsTitle": {
+    "description": "Learned categories screen title, and its Settings link (FR-056)."
+  },
+  "smsImportMappingsHelp": "When you change a merchant's category and add the transaction, Daftary suggests that category next time.",
+  "@smsImportMappingsHelp": {
+    "description": "Learned categories: what the list is (FR-056)."
+  },
+  "smsImportMappingsCount": "{count, plural, =0{No learned categories} =1{1 learned category} other{{count} learned categories}}",
+  "@smsImportMappingsCount": {
+    "description": "Learned categories: how many are listed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportMappingsCategoryRemoved": "Category removed",
+  "@smsImportMappingsCategoryRemoved": {
+    "description": "Learned categories: the mapped category was archived or deleted; the mapping is not used (data-model §3.4)."
+  },
+  "smsImportMappingsRowSemantics": "{merchant}: {type}, {category}",
+  "@smsImportMappingsRowSemantics": {
+    "description": "Learned categories: screen-reader label of one row.",
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsRemove": "Remove",
+  "@smsImportMappingsRemove": {
+    "description": "Learned categories: forgets one learned category."
+  },
+  "smsImportMappingsRemoveSemantics": "Remove the learned category for {merchant}",
+  "@smsImportMappingsRemoveSemantics": {
+    "description": "Learned categories: screen-reader label of Remove.",
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsRemoved": "Removed. This merchant gets the usual suggestion again.",
+  "@smsImportMappingsRemoved": {
+    "description": "Shown and announced after removing one learned category."
+  },
+  "smsImportMappingsClear": "Clear learned categories",
+  "@smsImportMappingsClear": {
+    "description": "Learned categories: clears them all, after a confirmation."
+  },
+  "smsImportMappingsClearConfirmTitle": "Clear learned categories?",
+  "@smsImportMappingsClearConfirmTitle": {
+    "description": "Confirmation title for clearing every learned category."
+  },
+  "smsImportMappingsClearConfirmMessage": "Daftary will forget every learned category. Your categories and saved transactions are not changed.",
+  "@smsImportMappingsClearConfirmMessage": {
+    "description": "Confirmation message for clearing every learned category (FR-056)."
+  },
+  "smsImportMappingsClearConfirm": "Clear",
+  "@smsImportMappingsClearConfirm": {
+    "description": "Confirms clearing every learned category."
+  },
+  "smsImportMappingsCleared": "Learned categories cleared.",
+  "@smsImportMappingsCleared": {
+    "description": "Shown and announced after clearing every learned category."
+  },
+  "smsImportMappingsEmptyTitle": "No learned categories",
+  "@smsImportMappingsEmptyTitle": {
+    "description": "Learned categories: empty state title."
+  },
+  "smsImportMappingsEmptyMessage": "When you change the category of an imported transaction and add it, the choice appears here.",
+  "@smsImportMappingsEmptyMessage": {
+    "description": "Learned categories: empty state message."
+  },
+  "smsImportMappingsLoadError": "Couldn't load learned categories",
+  "@smsImportMappingsLoadError": {
+    "description": "Learned categories: load error title."
+  },
+  "smsImportSettingsTurnOff": "Turn off",
+  "@smsImportSettingsTurnOff": {
+    "description": "Settings -> Bank messages: turns the feature off (FR-078)."
+  },
+  "smsImportSettingsTurnOffTitle": "Also delete pending imports?",
+  "@smsImportSettingsTurnOffTitle": {
+    "description": "Turn off dialog title (FR-078, ui-contract §3.1)."
+  },
+  "smsImportSettingsTurnOffMessage": "Bank message import stops now. Your pending items can stay for you to review later, or be deleted. Saved transactions, muted senders and learned categories are not changed.",
+  "@smsImportSettingsTurnOffMessage": {
+    "description": "Turn off dialog message: the two outcomes (FR-078)."
+  },
+  "smsImportSettingsTurnOffKeep": "Keep them",
+  "@smsImportSettingsTurnOffKeep": {
+    "description": "Turn off dialog: turn off and keep pending items (the default when dismissed)."
+  },
+  "smsImportSettingsTurnOffDelete": "Delete them",
+  "@smsImportSettingsTurnOffDelete": {
+    "description": "Turn off dialog: turn off and delete pending items."
+  },
+  "smsImportSettingsTurnedOffKept": "Turned off. Your pending items are still here.",
+  "@smsImportSettingsTurnedOffKept": {
+    "description": "Shown and announced after turning off and keeping pending items."
+  },
+  "smsImportSettingsTurnedOffDeleted": "{count, plural, =0{Turned off. There were no pending items.} =1{Turned off. 1 pending item deleted.} other{Turned off. {count} pending items deleted.}}",
+  "@smsImportSettingsTurnedOffDeleted": {
+    "description": "Shown and announced after turning off and deleting pending items.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

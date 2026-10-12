@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/change_history/app_edited_marker.dart';
 import '../../../../core/design_system/currency_indicator_chip.dart';
+import '../../../../core/design_system/imported_from_sms_label.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/currency.dart';
@@ -133,12 +134,14 @@ class TransactionListTile extends StatelessWidget {
           ?conflictBadge,
         ],
       ),
-      subtitle: Text(
-        transaction.note?.isNotEmpty == true
-            ? '$dateLabel · ${transaction.note}'
-            : dateLabel,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+      subtitle: _withProvenance(
+        Text(
+          transaction.note?.isNotEmpty == true
+              ? '$dateLabel · ${transaction.note}'
+              : dateLabel,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       // Capped so a large amount or a large system font never squeezes the
       // direction/date out of the row; the amount scales down to fit rather
@@ -173,6 +176,17 @@ class TransactionListTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  /// 023 FR-057: a record added from a bank message carries the
+  /// "Imported from a bank message" label; every other row is unchanged.
+  Widget _withProvenance(Widget subtitle) {
+    if (transaction.importSource?.isSms != true) return subtitle;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [subtitle, const ImportedFromSmsLabel()],
     );
   }
 }

@@ -1,0 +1,12 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "expectedItems": [
+    {
+      "classification": "transaction",
+      "amountMinor": 12550
+    }
+  ],
+  "skipped": 1
+}

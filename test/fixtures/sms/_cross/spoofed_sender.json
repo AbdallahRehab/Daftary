@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "sender": "BANKX-ALERT",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "generic",
+  "amountMinor": 9900,
+  "warnings": [
+    "generic_parser"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

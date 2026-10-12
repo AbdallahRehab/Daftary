@@ -19,6 +19,7 @@ class AppTextField extends StatelessWidget {
     this.maxLength,
     this.obscureText = false,
     this.enabled,
+    this.privateInput = false,
   });
 
   final String label;
@@ -43,6 +44,11 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final bool? enabled;
 
+  /// Visible text the keyboard must not learn from (e.g. a pasted bank
+  /// message): turns off autocorrect, suggestions and IME personalized
+  /// learning without masking the input.
+  final bool privateInput;
+
   @override
   Widget build(BuildContext context) {
     return TextField(
@@ -65,8 +71,9 @@ class AppTextField extends StatelessWidget {
                 ? Text('$currentLength/$maxLength')
                 : null,
       obscureText: obscureText,
-      autocorrect: !obscureText,
-      enableSuggestions: !obscureText,
+      autocorrect: !obscureText && !privateInput,
+      enableSuggestions: !obscureText && !privateInput,
+      enableIMEPersonalizedLearning: !privateInput,
       enabled: enabled,
       decoration: InputDecoration(
         labelText: label,

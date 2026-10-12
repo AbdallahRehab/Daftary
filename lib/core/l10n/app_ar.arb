@@ -1501,5 +1501,1432 @@
   "changeHistoryNoValue": "(فاضي)",
   "@changeHistoryNoValue": {
     "description": "Shown in a change-history line where a value was empty (for example a cleared or newly added note)."
+  },
+  "smsImportErrorCapabilityUnavailable": "قراءة الرسائل البنكية غير متاحة على هذا الجهاز. لا يزال بإمكانك لصق رسالة بنكية.",
+  "@smsImportErrorCapabilityUnavailable": {
+    "description": "Bank message import: the SMS inbox cannot be read on this device or build; paste still works."
+  },
+  "smsImportErrorPermissionDenied": "يحتاج دفتري إلى إذن قراءة الرسائل للعثور على رسائلك البنكية. لن يضيع شيء: يمكنك لصق رسالة بنكية بدلًا من ذلك.",
+  "@smsImportErrorPermissionDenied": {
+    "description": "Bank message import: the SMS permission was denied; explains why it is needed and the paste fallback."
+  },
+  "smsImportErrorPermissionBlocked": "هاتفك يمنع إذن الرسائل لتطبيق دفتري. يمكنك السماح به من إعدادات التطبيق، أو لصق رسالة بنكية بدلًا من ذلك.",
+  "@smsImportErrorPermissionBlocked": {
+    "description": "Bank message import: the SMS permission is permanently denied or blocked by the system."
+  },
+  "smsImportErrorPermissionRevoked": "الاستيراد التلقائي متوقف لأن إذن الرسائل أُوقف. العناصر المعلّقة محفوظة.",
+  "@smsImportErrorPermissionRevoked": {
+    "description": "Bank message import: the SMS permission was revoked while the feature was on."
+  },
+  "smsImportErrorInboxQuery": "تعذّرت قراءة رسائلك الآن. سيحاول دفتري مرة أخرى عند فتح التطبيق في المرة القادمة.",
+  "@smsImportErrorInboxQuery": {
+    "description": "Bank message import: the SMS inbox query failed."
+  },
+  "smsImportErrorTooLongCharacters": "هذا النص طويل جدًا. الصق حتى 10,000 حرف في المرة الواحدة.",
+  "@smsImportErrorTooLongCharacters": {
+    "description": "Bank message import: pasted or shared text exceeded the character limit. Nothing was saved."
+  },
+  "smsImportErrorTooManyMessages": "هذا النص يحتوي على رسائل كثيرة جدًا. الصق حتى 50 رسالة في المرة الواحدة.",
+  "@smsImportErrorTooManyMessages": {
+    "description": "Bank message import: pasted or shared text exceeded the message-count limit. Nothing was saved."
+  },
+  "smsImportErrorNotRecognized": "لا يبدو هذا كرسالة بنكية مدعومة. يمكنك إضافة المعاملة يدويًا.",
+  "@smsImportErrorNotRecognized": {
+    "description": "Bank message import: the pasted or shared text was not recognized as a bank message."
+  },
+  "smsImportErrorIncomplete": "بعض البيانات المطلوبة ناقصة. أكمل الحقول المحددة لإضافتها.",
+  "@smsImportErrorIncomplete": {
+    "description": "Bank message import: Add was tried with required fields missing; the review page names each field."
+  },
+  "smsImportErrorAmountAmbiguous": "الرسالة تحتوي على أكثر من مبلغ. تأكد من المبلغ الصحيح.",
+  "@smsImportErrorAmountAmbiguous": {
+    "description": "Bank message import: two or more amounts were found and the user must choose."
+  },
+  "smsImportErrorUnsupportedCurrency": "هذه العملة غير مدعومة. اختر العملة وأدخل المبلغ مرة أخرى.",
+  "@smsImportErrorUnsupportedCurrency": {
+    "description": "Bank message import: the message's currency is outside the app's currency list."
+  },
+  "smsImportErrorClipboardEmpty": "لا يوجد شيء للصق. انسخ رسالة بنكية أولًا، أو اكتبها في المربع.",
+  "@smsImportErrorClipboardEmpty": {
+    "description": "Bank message import: the clipboard was empty or had no text."
+  },
+  "smsImportErrorOriginalUnavailable": "لا يمكن عرض الرسالة الأصلية. يمكنك المتابعة بالتفاصيل أدناه.",
+  "@smsImportErrorOriginalUnavailable": {
+    "description": "Bank message import: the stored original text cannot be opened or was already removed."
+  },
+  "smsImportErrorSaveFailed": "لم يتم الحفظ، وما زال العنصر بانتظار مراجعتك. حاول مرة أخرى.",
+  "@smsImportErrorSaveFailed": {
+    "description": "Bank message import: Add failed; the item stays pending and no record was created."
+  },
+  "smsImportErrorScanInterrupted": "{count, plural, =0{توقف الفحص قبل التحقق من أي رسالة. افحص مرة أخرى للمتابعة.} =1{توقف الفحص بعد التحقق من رسالة واحدة. افحص مرة أخرى للمتابعة.} =2{توقف الفحص بعد التحقق من رسالتين. افحص مرة أخرى للمتابعة.} few{توقف الفحص بعد التحقق من {count} رسائل. افحص مرة أخرى للمتابعة.} many{توقف الفحص بعد التحقق من {count} رسالة. افحص مرة أخرى للمتابعة.} other{توقف الفحص بعد التحقق من {count} رسالة. افحص مرة أخرى للمتابعة.}}",
+  "@smsImportErrorScanInterrupted": {
+    "description": "Bank message import: a scan was interrupted; count is how many messages were processed. Re-scanning never duplicates.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportErrorStorageUnavailable": "تعذّر على دفتري حفظ هذا على جهازك. حاول مرة أخرى.",
+  "@smsImportErrorStorageUnavailable": {
+    "description": "Bank message import: the local database was unavailable; nothing partial was kept."
+  },
+  "smsImportErrorMessageUnreadable": "تعذّرت قراءة رسالة واحدة وتم تخطيها. تم التحقق من باقي الرسائل.",
+  "@smsImportErrorMessageUnreadable": {
+    "description": "Bank message import: a single message could not be parsed; processing continued."
+  },
+  "smsImportErrorAlreadyDecided": "تم التعامل مع هذا العنصر بالفعل.",
+  "@smsImportErrorAlreadyDecided": {
+    "description": "Bank message import: the item is no longer pending (for example a second tap on Add)."
+  },
+  "smsImportErrorProbableDuplicate": "قد يكون هذا موجودًا بالفعل في دفتري. قارن قبل الإضافة.",
+  "@smsImportErrorProbableDuplicate": {
+    "description": "Bank message import: a probable duplicate was found; the comparison sheet follows."
+  },
+  "smsImportErrorScanAlreadyRunning": "هناك فحص جارٍ بالفعل.",
+  "@smsImportErrorScanAlreadyRunning": {
+    "description": "Bank message import: a scan was requested while another scan was running."
+  },
+  "smsImportErrorScanNotAllowed": "الفحص غير ممكن الآن. تأكد من أن استيراد الرسائل البنكية مفعّل ومسموح به.",
+  "@smsImportErrorScanNotAllowed": {
+    "description": "Bank message import: a scan could not start (feature off, no permission, or app locked)."
+  },
+  "smsImportProvenanceLabel": "مستورد من رسالة بنكية",
+  "@smsImportProvenanceLabel": {
+    "description": "Label on a saved record that the user added from a bank message (FR-057)."
+  },
+  "smsImportProvenanceSemantics": "مستورد من رسالة بنكية راجعتها",
+  "@smsImportProvenanceSemantics": {
+    "description": "Screen-reader label of the imported-from-bank-message marker."
+  },
+  "smsImportPendingTitle": "الرسائل البنكية",
+  "@smsImportPendingTitle": {
+    "description": "Title of the pending bank messages list."
+  },
+  "smsImportPendingEmptyTitle": "لا توجد رسائل بنكية للمراجعة",
+  "@smsImportPendingEmptyTitle": {
+    "description": "Empty state title of the pending list."
+  },
+  "smsImportPendingEmptyMessage": "تظهر هنا الرسائل البنكية التي تفحصها أو تلصقها أو تشاركها لتراجعها. لا يُحفظ شيء حتى تضغط «إضافة».",
+  "@smsImportPendingEmptyMessage": {
+    "description": "Empty state message of the pending list."
+  },
+  "smsImportPendingLoadErrorTitle": "تعذّر تحميل رسائلك البنكية",
+  "@smsImportPendingLoadErrorTitle": {
+    "description": "Error state title of the pending list."
+  },
+  "smsImportPendingRetry": "حاول مرة أخرى",
+  "@smsImportPendingRetry": {
+    "description": "Retry action on bank message screens."
+  },
+  "smsImportPendingExpiredNotice": "{count, plural, =0{لم تنتهِ صلاحية أي اقتراح.} =1{انتهت صلاحية اقتراح واحد. يمكنك استعادته من العناصر المتجاهلة.} =2{انتهت صلاحية اقتراحين. يمكنك استعادتهما من العناصر المتجاهلة.} few{انتهت صلاحية {count} اقتراحات. يمكنك استعادتها من العناصر المتجاهلة.} many{انتهت صلاحية {count} اقتراحًا. يمكنك استعادتها من العناصر المتجاهلة.} other{انتهت صلاحية {count} اقتراح. يمكنك استعادتها من العناصر المتجاهلة.}}",
+  "@smsImportPendingExpiredNotice": {
+    "description": "One-line notice: pending suggestions older than 30 days expired (FR-025).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingExpiredDismiss": "إخفاء",
+  "@smsImportPendingExpiredDismiss": {
+    "description": "Dismisses the expired-suggestions notice."
+  },
+  "smsImportPendingChooseType": "اختر النوع",
+  "@smsImportPendingChooseType": {
+    "description": "Type chip of a pending item with no suggested type."
+  },
+  "smsImportPendingAmountNeedsCheck": "المبلغ يحتاج إلى مراجعة",
+  "@smsImportPendingAmountNeedsCheck": {
+    "description": "Shown on a pending item whose amount could not be read."
+  },
+  "smsImportPendingDateInferred": "{date}، تاريخ مستنتج",
+  "@smsImportPendingDateInferred": {
+    "description": "A date that was inferred, not read from the message.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportPendingIgnoreSuggested": "يُقترح التجاهل",
+  "@smsImportPendingIgnoreSuggested": {
+    "description": "Chip on a pending item whose suggestion is to ignore it."
+  },
+  "smsImportPendingPossibleDuplicate": "تكرار محتمل",
+  "@smsImportPendingPossibleDuplicate": {
+    "description": "Chip on a pending item that may already be saved."
+  },
+  "smsImportPendingUnknownBank": "بنك غير معروف",
+  "@smsImportPendingUnknownBank": {
+    "description": "Bank name for a message read by the generic parser."
+  },
+  "smsImportBankName": "{bank, select, nbe{البنك الأهلي المصري} banque_misr{بنك مصر} cib{البنك التجاري الدولي} qnb{بنك قطر الوطني الأهلي} banque_du_caire{بنك القاهرة} aaib{البنك العربي الأفريقي الدولي} instapay{إنستاباي} other{بنك}}",
+  "@smsImportBankName": {
+    "description": "Display name of a recognized bank profile, by its id. Unknown ids are shown as their code instead.",
+    "placeholders": {
+      "bank": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportKindLabel": "{kind, select, cardPurchase{شراء بالبطاقة} atmWithdrawal{سحب من ماكينة الصراف} cardOrLoanSettlement{سداد بطاقة أو قرض} billPayment{دفع فاتورة} fee{رسوم بنكية} salary{راتب} otherDeposit{إيداع} transferOut{تحويل صادر} transferIn{تحويل وارد} refund{استرداد} authorizationReversal{إلغاء حجز مبلغ} ownAccountTransfer{تحويل بين حساباتك} other{معاملة بنكية}}",
+  "@smsImportKindLabel": {
+    "description": "What a bank message describes.",
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewSourceLabel": "{source, select, inboxScan{من الرسائل القصيرة} catchUpScan{من الرسائل القصيرة} paste{تم لصقها} share{تمت مشاركتها} other{من الرسائل القصيرة}}",
+  "@smsImportReviewSourceLabel": {
+    "description": "Where a pending bank message came from.",
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportWarningText": "{warning, select, atmIgnoredByDefault{لا تُحتسب عمليات السحب النقدي كمصروف إلا إذا فعّلت ذلك في إعدادات الرسائل البنكية.} refundHint{يبدو هذا استردادًا. تجاهله إذا كانت عملية الشراء الأصلية مسجلة في دفتري.} ownAccountSuggestedIgnore{يبدو هذا تحويلًا بين حساباتك، لذلك ليس دخلًا ولا مصروفًا.} cardSettlementSuggestedIgnore{هذا سداد بطاقة أو قرض. عمليات الشراء الأصلية تُحتسب وحدها.} genericParser{دفتري لا يعرف رسائل هذا البنك جيدًا. راجع كل الحقول.} unverifiedProfile{دعم هذا البنك جديد. راجع كل الحقول قبل الإضافة.} ambiguousAmount{في الرسالة أكثر من مبلغ. تأكد من المبلغ الصحيح.} unsupportedCurrency{هذه العملة غير مدعومة. اختر عملة وأدخل المبلغ بها.} dateInferred{لم يرد التاريخ في الرسالة. راجعه.} currencyInferred{لم ترد العملة في الرسالة. راجعها.} foreignCurrencyBilledAmount{المبلغ المعروض هو ما خُصم من حسابك.} feeSeparateItem{الرسوم الواردة في هذه الرسالة مدرجة كعنصر منفصل.} feeFromMessage{هذه الرسوم مأخوذة من رسالة بنكية أخرى.} reversalHint{لم يُخصم هذا المبلغ فعليًا. تجاهله أو افتح السجل المطابق للتحقق منه.} maskedReference{أُخفي الرقم المرجعي حفاظًا على خصوصيتك.} possibleDuplicate{قد يكون هذا مسجلًا في دفتري بالفعل.} possibleOwnTransfer{يبدو أن هذا مال نُقل بين حساباتك. تجاهل الاثنين إن كان كذلك.} other{راجع هذا العنصر قبل الإضافة.}}",
+  "@smsImportWarningText": {
+    "description": "One line per warning on a pending bank message.",
+    "placeholders": {
+      "warning": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewTitle": "مراجعة رسالة بنكية",
+  "@smsImportReviewTitle": {
+    "description": "Title of the review screen."
+  },
+  "smsImportReviewOverallConfidence": "الثقة العامة",
+  "@smsImportReviewOverallConfidence": {
+    "description": "Label before the overall confidence badge."
+  },
+  "smsImportReviewTypeLabel": "النوع",
+  "@smsImportReviewTypeLabel": {
+    "description": "Label of the record type selector."
+  },
+  "smsImportReviewChooseType": "اختر نوعًا",
+  "@smsImportReviewChooseType": {
+    "description": "Shown when no record type is selected."
+  },
+  "smsImportReviewAmountLabel": "المبلغ",
+  "@smsImportReviewAmountLabel": {
+    "description": "Amount field label."
+  },
+  "smsImportReviewAmountInvalid": "أدخل مبلغًا أكبر من صفر، حتى 12 رقمًا.",
+  "@smsImportReviewAmountInvalid": {
+    "description": "Amount field error."
+  },
+  "smsImportReviewWhichAmount": "أي مبلغ؟",
+  "@smsImportReviewWhichAmount": {
+    "description": "Shown above the amount choices when a message has two amounts."
+  },
+  "smsImportReviewUseAmount": "استخدم {amount}",
+  "@smsImportReviewUseAmount": {
+    "description": "Screen-reader label of an amount choice.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewChooseCurrency": "اختر عملة",
+  "@smsImportReviewChooseCurrency": {
+    "description": "Hint of the currency picker when no currency is known."
+  },
+  "smsImportReviewCurrencyNeeded": "اختر عملة وأدخل المبلغ بها.",
+  "@smsImportReviewCurrencyNeeded": {
+    "description": "Shown when the message's currency is missing or unsupported."
+  },
+  "smsImportReviewOriginalAmount": "المبلغ الأصلي: {amount}",
+  "@smsImportReviewOriginalAmount": {
+    "description": "Read-only original-currency context; it is not saved.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewDateLabel": "التاريخ",
+  "@smsImportReviewDateLabel": {
+    "description": "Date field label."
+  },
+  "smsImportReviewChooseDate": "اختر تاريخًا",
+  "@smsImportReviewChooseDate": {
+    "description": "Shown when no date is known."
+  },
+  "smsImportReviewMessageTime": "وقت الرسالة {time}. يُحفظ التاريخ فقط.",
+  "@smsImportReviewMessageTime": {
+    "description": "Read-only time of the message (FR-058).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewPersonLabel": "الشخص",
+  "@smsImportReviewPersonLabel": {
+    "description": "Person field label."
+  },
+  "smsImportReviewRecordAsGiven": "سجّلها كمبلغ أعطيته لـ {name}",
+  "@smsImportReviewRecordAsGiven": {
+    "description": "One-tap action for a named transfer out.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewRecordAsReceived": "سجّلها كمبلغ استلمته من {name}",
+  "@smsImportReviewRecordAsReceived": {
+    "description": "One-tap action for a named transfer in.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewNoteLabel": "ملاحظة (اختيارية)",
+  "@smsImportReviewNoteLabel": {
+    "description": "Note field label."
+  },
+  "smsImportReviewUseMerchant": "استخدم اسم التاجر كملاحظة",
+  "@smsImportReviewUseMerchant": {
+    "description": "Copies the merchant name into the note."
+  },
+  "smsImportReviewShowOriginal": "عرض الرسالة الأصلية",
+  "@smsImportReviewShowOriginal": {
+    "description": "Expands the masked original message."
+  },
+  "smsImportReviewMissing": "بيانات ناقصة: {fields}",
+  "@smsImportReviewMissing": {
+    "description": "Lists the required fields that block Add.",
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewFieldType": "النوع",
+  "@smsImportReviewFieldType": {
+    "description": "Name of the required review field \"type\" in the Missing line."
+  },
+  "smsImportReviewFieldAmount": "المبلغ",
+  "@smsImportReviewFieldAmount": {
+    "description": "Name of the required review field \"amount\" in the Missing line."
+  },
+  "smsImportReviewFieldCurrency": "العملة",
+  "@smsImportReviewFieldCurrency": {
+    "description": "Name of the required review field \"currency\" in the Missing line."
+  },
+  "smsImportReviewFieldDate": "التاريخ",
+  "@smsImportReviewFieldDate": {
+    "description": "Name of the required review field \"date\" in the Missing line."
+  },
+  "smsImportReviewFieldCategory": "الفئة",
+  "@smsImportReviewFieldCategory": {
+    "description": "Name of the required review field \"category\" in the Missing line."
+  },
+  "smsImportReviewFieldPerson": "الشخص",
+  "@smsImportReviewFieldPerson": {
+    "description": "Name of the required review field \"person\" in the Missing line."
+  },
+  "smsImportReviewFieldNote": "الملاحظة (حتى 500 حرف)",
+  "@smsImportReviewFieldNote": {
+    "description": "Name of the required review field \"note (up to 500 characters)\" in the Missing line."
+  },
+  "smsImportReviewListSeparator": "، ",
+  "@smsImportReviewListSeparator": {
+    "description": "Separator between items of a list in a sentence."
+  },
+  "smsImportReviewAdd": "إضافة",
+  "@smsImportReviewAdd": {
+    "description": "Primary action: save this one item."
+  },
+  "smsImportReviewAdded": "تمت الإضافة",
+  "@smsImportReviewAdded": {
+    "description": "Confirmation after an item was added."
+  },
+  "smsImportReviewSaving": "جارٍ الحفظ",
+  "@smsImportReviewSaving": {
+    "description": "Announced while the item is being saved."
+  },
+  "smsImportReviewAlreadyHandledTitle": "تم التعامل مع هذا العنصر بالفعل",
+  "@smsImportReviewAlreadyHandledTitle": {
+    "description": "Review of an item that is no longer pending."
+  },
+  "smsImportReviewAlreadyHandledMessage": "ربما أُضيف أو تم تجاهله أو انتهت صلاحيته.",
+  "@smsImportReviewAlreadyHandledMessage": {
+    "description": "Explains the already-handled state."
+  },
+  "smsImportReviewBackToList": "العودة إلى الرسائل البنكية",
+  "@smsImportReviewBackToList": {
+    "description": "Returns to the pending list."
+  },
+  "smsImportReviewLoadErrorTitle": "تعذّر فتح هذه الرسالة البنكية",
+  "@smsImportReviewLoadErrorTitle": {
+    "description": "Error state title of the review screen."
+  },
+  "smsImportReviewDiscardTitle": "هل تريد إلغاء تعديلاتك؟",
+  "@smsImportReviewDiscardTitle": {
+    "description": "Asked when leaving review with unsaved edits."
+  },
+  "smsImportReviewDiscardMessage": "سيبقى العنصر في انتظار مراجعتك.",
+  "@smsImportReviewDiscardMessage": {
+    "description": "Explains what discarding does."
+  },
+  "smsImportReviewDiscardConfirm": "إلغاء التعديلات",
+  "@smsImportReviewDiscardConfirm": {
+    "description": "Confirms leaving review without saving."
+  },
+  "smsImportReviewKeepEditing": "متابعة التعديل",
+  "@smsImportReviewKeepEditing": {
+    "description": "Cancels leaving review."
+  },
+  "smsImportDuplicateBanner": "قد يكون هذا مسجلًا لديك",
+  "@smsImportDuplicateBanner": {
+    "description": "Review banner shown when a probable duplicate was found (US5)."
+  },
+  "smsImportDuplicateCompare": "قارن",
+  "@smsImportDuplicateCompare": {
+    "description": "Opens the side-by-side duplicate comparison."
+  },
+  "smsImportDuplicateTitle": "قد يكون هذا مسجلًا لديك",
+  "@smsImportDuplicateTitle": {
+    "description": "Title of the probable-duplicate sheet."
+  },
+  "smsImportDuplicateMessage": "قارن بينهما قبل أن تقرر. لن يُضاف شيء حتى تختار.",
+  "@smsImportDuplicateMessage": {
+    "description": "Explains the probable-duplicate sheet; nothing is saved until the user chooses."
+  },
+  "smsImportDuplicateExisting": "موجود في دفتري",
+  "@smsImportDuplicateExisting": {
+    "description": "Card title: the saved record that may be the same."
+  },
+  "smsImportDuplicateOtherPending": "رسالة بنكية أخرى",
+  "@smsImportDuplicateOtherPending": {
+    "description": "Card title: another pending bank message that may be the same."
+  },
+  "smsImportDuplicateIncoming": "هذه الرسالة",
+  "@smsImportDuplicateIncoming": {
+    "description": "Card title: the bank message being reviewed."
+  },
+  "smsImportDuplicateSameAmount": "نفس المبلغ",
+  "@smsImportDuplicateSameAmount": {
+    "description": "Comparison phrase: both amounts are equal."
+  },
+  "smsImportDuplicateSameOriginalAmount": "يساوي المبلغ الأصلي المذكور في الرسالة",
+  "@smsImportDuplicateSameOriginalAmount": {
+    "description": "Comparison phrase: the saved record equals the original-currency amount stated in the message."
+  },
+  "smsImportDuplicateDaysApart": "{count, plural, =0{نفس اليوم} =1{بفارق يوم واحد} =2{بفارق يومين} few{بفارق {count} أيام} many{بفارق {count} يومًا} other{بفارق {count} يوم}}",
+  "@smsImportDuplicateDaysApart": {
+    "description": "Comparison phrase: how many calendar days apart the two dates are.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportDuplicateNote": "ملاحظة: {note}",
+  "@smsImportDuplicateNote": {
+    "description": "First line of the saved record's note on the comparison card.",
+    "placeholders": {
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportDuplicateSame": "نفس المعاملة، لا تُضفها",
+  "@smsImportDuplicateSame": {
+    "description": "Closes the bank message as a duplicate; nothing is added and the saved record is not changed."
+  },
+  "smsImportDuplicateAddAnyway": "مختلفة، أضفها على أي حال",
+  "@smsImportDuplicateAddAnyway": {
+    "description": "Adds the bank message despite the possible duplicate."
+  },
+  "smsImportDuplicateCancel": "إلغاء",
+  "@smsImportDuplicateCancel": {
+    "description": "Closes the sheet; the bank message stays pending."
+  },
+  "smsImportDuplicateFound": "تم العثور على تكرار محتمل",
+  "@smsImportDuplicateFound": {
+    "description": "Screen-reader announcement when the duplicate comparison opens."
+  },
+  "smsImportDuplicateClosed": "لم تتم الإضافة. هو موجود بالفعل في دفتري.",
+  "@smsImportDuplicateClosed": {
+    "description": "Confirmation after the user chose \"It's the same, don't add\"."
+  },
+  "smsImportReviewMatchedRecord": "السجل المطابق في دفتري",
+  "@smsImportReviewMatchedRecord": {
+    "description": "Title of the read-only card of the matched saved record."
+  },
+  "smsImportReviewOpenRecord": "افتحه",
+  "@smsImportReviewOpenRecord": {
+    "description": "Opens the matched saved record."
+  },
+  "smsImportReviewFeeFromParent": "رسوم من الرسالة البنكية بتاريخ {date}",
+  "@smsImportReviewFeeFromParent": {
+    "description": "Links a split fee item to its parent message (FR-030a).",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportReviewFeeFromParentNoDate": "رسوم من الرسالة البنكية المرتبطة",
+  "@smsImportReviewFeeFromParentNoDate": {
+    "description": "Links a split fee item to its parent message when the parent has no date (FR-030a)."
+  },
+  "smsImportReviewNoCategories": "لا توجد فئة نشطة من هذا النوع. أضف واحدة من إدارة الفئات.",
+  "@smsImportReviewNoCategories": {
+    "description": "Shown when no active category matches the type (FR-055)."
+  },
+  "smsImportSemanticsCardEnding": "بطاقة تنتهي بـ {last4}",
+  "@smsImportSemanticsCardEnding": {
+    "description": "Screen-reader text of a masked card number.",
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSemanticsOpenReview": "افتح للمراجعة",
+  "@smsImportSemanticsOpenReview": {
+    "description": "Screen-reader hint of a pending row."
+  },
+  "smsImportSemanticsAddUnavailable": "الإضافة غير متاحة. بيانات ناقصة: {fields}",
+  "@smsImportSemanticsAddUnavailable": {
+    "description": "Screen-reader label of the disabled Add button.",
+    "placeholders": {
+      "fields": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportPasteTitle": "لصق رسالة بنكية",
+  "@smsImportPasteTitle": {
+    "description": "Title of the Paste screen; also the hub's empty-state paste action."
+  },
+  "smsImportPasteIntro": "انسخ رسالة من البنك ثم اضغط «لصق»، أو الصقها في المربع بنفسك. لا يُحفظ شيء حتى تراجعها وتضغط «إضافة».",
+  "@smsImportPasteIntro": {
+    "description": "Paste screen explanation."
+  },
+  "smsImportPasteFieldLabel": "نص الرسالة البنكية",
+  "@smsImportPasteFieldLabel": {
+    "description": "Label of the multi-line text field on the Paste screen."
+  },
+  "smsImportPasteButton": "لصق",
+  "@smsImportPasteButton": {
+    "description": "Button that reads the clipboard into the field (the only clipboard read)."
+  },
+  "smsImportPasteProcess": "قراءة الرسالة",
+  "@smsImportPasteProcess": {
+    "description": "Button that processes the text in the field."
+  },
+  "smsImportPasteLimits": "حتى 10,000 حرف و50 رسالة.",
+  "@smsImportPasteLimits": {
+    "description": "Input limits help text on the Paste screen."
+  },
+  "smsImportPasteCharacterCount": "{count} من 10,000 حرف",
+  "@smsImportPasteCharacterCount": {
+    "description": "Character counter of the Paste field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteProcessing": "جارٍ قراءة الرسالة…",
+  "@smsImportPasteProcessing": {
+    "description": "Progress text while pasted text is processed."
+  },
+  "smsImportPasteNothingTitle": "لا يوجد شيء للصق",
+  "@smsImportPasteNothingTitle": {
+    "description": "Title of the nothing-to-paste state (empty or non-text clipboard)."
+  },
+  "smsImportPasteNotRecognizedTitle": "ليست رسالة بنكية مدعومة",
+  "@smsImportPasteNotRecognizedTitle": {
+    "description": "Title of the not-recognized state. Nothing was saved."
+  },
+  "smsImportPasteEnterManually": "إدخال يدوي",
+  "@smsImportPasteEnterManually": {
+    "description": "Action that opens the manual expense form."
+  },
+  "smsImportPasteTryAgain": "حاول مرة أخرى",
+  "@smsImportPasteTryAgain": {
+    "description": "Action that returns the Paste screen to its ready state."
+  },
+  "smsImportPasteTooLargeTitle": "النص طويل جدًا",
+  "@smsImportPasteTooLargeTitle": {
+    "description": "Title of the input-limit-exceeded state. Nothing was saved."
+  },
+  "smsImportPasteUnreadableTitle": "تعذّرت قراءة هذه الرسالة",
+  "@smsImportPasteUnreadableTitle": {
+    "description": "Title of the state where a bank message was found but could not be read."
+  },
+  "smsImportPasteUnreadableMessage": "تم العثور على رسالة بنكية، لكن تعذّرت قراءة تفاصيلها. يمكنك إضافة المعاملة يدويًا.",
+  "@smsImportPasteUnreadableMessage": {
+    "description": "Message of the unreadable-only state."
+  },
+  "smsImportPasteRecognized": "{count, plural, =0{لم يتم التعرّف على أي معاملة} =1{تم التعرّف على معاملة واحدة} =2{تم التعرّف على معاملتين} few{تم التعرّف على {count} معاملات} many{تم التعرّف على {count} معاملة} other{تم التعرّف على {count} معاملة}}",
+  "@smsImportPasteRecognized": {
+    "description": "Paste or share summary: how many transactions were recognized.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteSkipped": "{count, plural, =0{لم يتم تخطي أي رسالة} =1{تم تخطي رسالة واحدة} =2{تم تخطي رسالتين} few{تم تخطي {count} رسائل} many{تم تخطي {count} رسالة} other{تم تخطي {count} رسالة}}",
+  "@smsImportPasteSkipped": {
+    "description": "Paste or share summary: how many messages were skipped.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPasteAlreadyListed": "هذه الرسائل موجودة بالفعل في قائمتك. لم تتم إضافة شيء جديد.",
+  "@smsImportPasteAlreadyListed": {
+    "description": "Shown when every recognized message was already pending or handled."
+  },
+  "smsImportPasteOpenList": "فتح الرسائل البنكية",
+  "@smsImportPasteOpenList": {
+    "description": "Action that opens the pending bank-message list."
+  },
+  "smsImportShareProcessing": "جارٍ قراءة الرسالة التي تمت مشاركتها…",
+  "@smsImportShareProcessing": {
+    "description": "Progress text while text shared from another app is processed."
+  },
+  "smsImportShareReceived": "تمت مشاركتها من تطبيق آخر",
+  "@smsImportShareReceived": {
+    "description": "Label shown on the Paste screen for a result that came from the Android share target."
+  },
+  "smsImportHomeQuickAction": "رسالة بنكية",
+  "@smsImportHomeQuickAction": {
+    "description": "Home quick action that opens bank-message import."
+  },
+  "smsImportEnableTitle": "قراءة الرسائل البنكية",
+  "@smsImportEnableTitle": {
+    "description": "Enable flow: screen title."
+  },
+  "smsImportEnableExplainTitle": "أضف معاملاتك البنكية من رسائلك",
+  "@smsImportEnableExplainTitle": {
+    "description": "Enable flow: explanation heading."
+  },
+  "smsImportEnableWhatIsReadTitle": "ما يقرؤه دفتري",
+  "@smsImportEnableWhatIsReadTitle": {
+    "description": "Enable flow: heading of what is read."
+  },
+  "smsImportEnableWhatIsRead": "الرسائل الواردة من البنوك المعروفة فقط، على هذا الجهاز.",
+  "@smsImportEnableWhatIsRead": {
+    "description": "Enable flow: what is read (FR-005)."
+  },
+  "smsImportEnableNeverTitle": "ما لا يحدث أبدًا",
+  "@smsImportEnableNeverTitle": {
+    "description": "Enable flow: heading of what is never done."
+  },
+  "smsImportEnableNever": "لا يتم رفع أي شيء، ولا يُحفظ أي شيء حتى تراجعه وتضغط «إضافة».",
+  "@smsImportEnableNever": {
+    "description": "Enable flow: what is never done (FR-005)."
+  },
+  "smsImportEnableTurnOffTitle": "كيف تُوقفه",
+  "@smsImportEnableTurnOffTitle": {
+    "description": "Enable flow: heading of how to turn it off."
+  },
+  "smsImportEnableTurnOff": "في أي وقت من «الإعدادات» ثم «الرسائل البنكية».",
+  "@smsImportEnableTurnOff": {
+    "description": "Enable flow: how to turn it off (FR-005)."
+  },
+  "smsImportEnableContinue": "متابعة",
+  "@smsImportEnableContinue": {
+    "description": "Enable flow: acknowledges the explanation; the permission prompt may follow."
+  },
+  "smsImportEnableNotNow": "ليس الآن",
+  "@smsImportEnableNotNow": {
+    "description": "Enable flow: leaves without enabling."
+  },
+  "smsImportEnablePasteInstead": "الصق بدلًا من ذلك",
+  "@smsImportEnablePasteInstead": {
+    "description": "Enable flow: link to the Paste screen."
+  },
+  "smsImportEnableRequesting": "في انتظار إجابتك على سؤال أندرويد…",
+  "@smsImportEnableRequesting": {
+    "description": "Enable flow: shown while the system permission dialog is up."
+  },
+  "smsImportEnableWindowTitle": "إلى أي مدى يفحص دفتري الرسائل السابقة؟",
+  "@smsImportEnableWindowTitle": {
+    "description": "Enable flow: scan window step heading."
+  },
+  "smsImportEnableWindowDays": "{count, plural, =0{آخر 0 يوم} =1{آخر يوم} =2{آخر يومين} few{آخر {count} أيام} many{آخر {count} يومًا} other{آخر {count} يوم}}",
+  "@smsImportEnableWindowDays": {
+    "description": "Scan window option: the last N days (7, 30 or 90).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportEnableScan": "افحص",
+  "@smsImportEnableScan": {
+    "description": "Enable flow: starts the inbox scan."
+  },
+  "smsImportEnableDoneTitle": "انتهى الفحص",
+  "@smsImportEnableDoneTitle": {
+    "description": "Enable flow: done step heading."
+  },
+  "smsImportEnableReviewNow": "راجع الآن",
+  "@smsImportEnableReviewNow": {
+    "description": "Enable flow: opens the first pending item."
+  },
+  "smsImportEnableClose": "إغلاق",
+  "@smsImportEnableClose": {
+    "description": "Enable flow: closes the flow."
+  },
+  "smsImportEnableUnavailableTitle": "قراءة الرسائل غير متاحة هنا",
+  "@smsImportEnableUnavailableTitle": {
+    "description": "Enable flow: the capability is unavailable."
+  },
+  "smsImportEnableUnavailableMessage": "ما زال بإمكانك لصق رسالة بنكية أو مشاركتها.",
+  "@smsImportEnableUnavailableMessage": {
+    "description": "Enable flow: the capability is unavailable."
+  },
+  "smsImportEnableErrorTitle": "حدث خطأ ما",
+  "@smsImportEnableErrorTitle": {
+    "description": "Enable flow: error step heading."
+  },
+  "smsImportEnableRetry": "إعادة المحاولة",
+  "@smsImportEnableRetry": {
+    "description": "Enable flow: retries after an error."
+  },
+  "smsImportPermissionDeniedBanner": "يحتاج استيراد الرسائل البنكية إلى إذن لقراءة رسائل بنكك.",
+  "@smsImportPermissionDeniedBanner": {
+    "description": "Permission banner: denied."
+  },
+  "smsImportPermissionDeniedDetail": "يحتاج دفتري إلى هذا الإذن ليجد المعاملات البنكية في رسائلك. لن تفقد شيئًا إن لم تسمح به: يمكنك لصق رسالة أو مشاركتها بدلًا من ذلك.",
+  "@smsImportPermissionDeniedDetail": {
+    "description": "Enable flow: denied step explanation (FR-012)."
+  },
+  "smsImportPermissionPermanentBanner": "الإذن متوقف لتطبيق دفتري.",
+  "@smsImportPermissionPermanentBanner": {
+    "description": "Permission banner: permanently denied."
+  },
+  "smsImportPermissionPermanentDetail": "للسماح به، افتح «معلومات التطبيق»، ثم «الأذونات»، ثم «الرسائل القصيرة»، واختر «السماح». ثم عد إلى دفتري.",
+  "@smsImportPermissionPermanentDetail": {
+    "description": "Enable flow: permanently denied steps."
+  },
+  "smsImportPermissionRevokedBanner": "الاستيراد التلقائي متوقف لأن الإذن أُوقف. ما زالت العناصر المعلّقة هنا.",
+  "@smsImportPermissionRevokedBanner": {
+    "description": "Permission banner: revoked (FR-070)."
+  },
+  "smsImportPermissionAllow": "سماح",
+  "@smsImportPermissionAllow": {
+    "description": "Permission banner: opens the enable flow, which asks."
+  },
+  "smsImportPermissionTryAgain": "حاول مرة أخرى",
+  "@smsImportPermissionTryAgain": {
+    "description": "Permission: asks again after an explicit tap."
+  },
+  "smsImportPermissionOpenAppInfo": "افتح معلومات التطبيق",
+  "@smsImportPermissionOpenAppInfo": {
+    "description": "Permission: opens the system App info screen."
+  },
+  "smsImportPermissionPasteInstead": "الصق أو شارك بدلًا من ذلك",
+  "@smsImportPermissionPasteInstead": {
+    "description": "Permission: the paste and share fallback."
+  },
+  "smsImportPermissionTurnOnAgain": "شغّله مرة أخرى",
+  "@smsImportPermissionTurnOnAgain": {
+    "description": "Permission banner: revoked, opens the enable flow."
+  },
+  "smsImportPermissionShowMeHow": "أرني الطريقة",
+  "@smsImportPermissionShowMeHow": {
+    "description": "Permission banner: restricted, shows the steps."
+  },
+  "smsImportRestrictedBanner": "قد يمنع أندرويد هذا الإذن للتطبيقات المثبتة من خارج المتجر.",
+  "@smsImportRestrictedBanner": {
+    "description": "Permission banner: restricted settings (FR-072)."
+  },
+  "smsImportRestrictedTitle": "قد يكون أندرويد يمنع هذا الإذن",
+  "@smsImportRestrictedTitle": {
+    "description": "Restricted guidance heading. Never claims certainty."
+  },
+  "smsImportRestrictedIntro": "إن لم يظهر أي سؤال، فقد يكون أندرويد يمنعه لأن دفتري مثبت من خارج متجر التطبيقات. للسماح به:",
+  "@smsImportRestrictedIntro": {
+    "description": "Restricted guidance introduction."
+  },
+  "smsImportRestrictedStep1": "1. افتح «معلومات التطبيق».",
+  "@smsImportRestrictedStep1": {
+    "description": "Restricted guidance step 1. Western digits in both languages."
+  },
+  "smsImportRestrictedStep2": "2. افتح القائمة (النقاط الثلاث) في الأعلى.",
+  "@smsImportRestrictedStep2": {
+    "description": "Restricted guidance step 2."
+  },
+  "smsImportRestrictedStep3": "3. اختر «السماح بالإعدادات المقيّدة».",
+  "@smsImportRestrictedStep3": {
+    "description": "Restricted guidance step 3."
+  },
+  "smsImportRestrictedStep4": "4. عد إلى دفتري واضغط «حاول مرة أخرى».",
+  "@smsImportRestrictedStep4": {
+    "description": "Restricted guidance step 4."
+  },
+  "smsImportRestrictedAltPath": "إن لم تجد «السماح بالإعدادات المقيّدة»، فافتح «الأذونات» ثم «الرسائل القصيرة» في «معلومات التطبيق» واختر «سماح»، ثم عد واضغط «حاول مرة أخرى».",
+  "@smsImportRestrictedAltPath": {
+    "description": "Restricted guidance: the second path when the menu item is not offered (spike S4 fallback)."
+  },
+  "smsImportScanNow": "افحص الآن",
+  "@smsImportScanNow": {
+    "description": "Hub and settings: runs the inbox scan."
+  },
+  "smsImportScanProgress": "{count, plural, =0{لم تتم معالجة أي رسالة بعد} =1{تمت معالجة رسالة واحدة} =2{تمت معالجة رسالتين} few{تمت معالجة {count} رسائل} many{تمت معالجة {count} رسالة} other{تمت معالجة {count} رسالة}}",
+  "@smsImportScanProgress": {
+    "description": "Scan progress: messages processed so far.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanCancel": "إلغاء",
+  "@smsImportScanCancel": {
+    "description": "Stops the running scan; created items stay."
+  },
+  "smsImportScanCancelled": "توقف الفحص. تم الاحتفاظ بما وُجد حتى الآن.",
+  "@smsImportScanCancelled": {
+    "description": "Scan summary: the scan was cancelled (FR-007)."
+  },
+  "smsImportScanSummaryTitle": "ملخص الفحص",
+  "@smsImportScanSummaryTitle": {
+    "description": "Scan summary heading."
+  },
+  "smsImportScanFound": "{count, plural, =0{لم يتم العثور على أي رسالة بنكية} =1{تم العثور على رسالة بنكية واحدة} =2{تم العثور على رسالتين بنكيتين} few{تم العثور على {count} رسائل بنكية} many{تم العثور على {count} رسالة بنكية} other{تم العثور على {count} رسالة بنكية}}",
+  "@smsImportScanFound": {
+    "description": "Scan summary: bank messages read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanReady": "{count, plural, =0{لا شيء جاهز للإضافة} =1{واحدة جاهزة للإضافة} =2{اثنتان جاهزتان للإضافة} few{{count} جاهزة للإضافة} many{{count} جاهزة للإضافة} other{{count} جاهزة للإضافة}}",
+  "@smsImportScanReady": {
+    "description": "Scan summary: new items with every required field.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanNeedReview": "{count, plural, =0{لا شيء يحتاج إلى مراجعتك} =1{واحدة تحتاج إلى مراجعتك} =2{اثنتان تحتاجان إلى مراجعتك} few{{count} تحتاج إلى مراجعتك} many{{count} تحتاج إلى مراجعتك} other{{count} تحتاج إلى مراجعتك}}",
+  "@smsImportScanNeedReview": {
+    "description": "Scan summary: new items that need fields checked.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanAlreadyKnown": "{count, plural, =0{لا شيء كان موجودًا بالفعل} =1{واحدة كانت موجودة بالفعل} =2{اثنتان كانتا موجودتين بالفعل} few{{count} كانت موجودة بالفعل} many{{count} كانت موجودة بالفعل} other{{count} كانت موجودة بالفعل}}",
+  "@smsImportScanAlreadyKnown": {
+    "description": "Scan summary: messages already staged or decided.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanSkipped": "{count, plural, =0{لم يتم تخطي أي رسالة} =1{تم تخطي رسالة واحدة: ليست معاملة} =2{تم تخطي رسالتين: ليستا معاملتين} few{تم تخطي {count} رسائل: ليست معاملات} many{تم تخطي {count} رسالة: ليست معاملات} other{تم تخطي {count} رسالة: ليست معاملات}}",
+  "@smsImportScanSkipped": {
+    "description": "Scan summary: non-transactional messages (OTP, promotions...).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanUnreadable": "{count, plural, =0{لا توجد رسائل تعذّرت قراءتها} =1{تعذّرت قراءة رسالة واحدة} =2{تعذّرت قراءة رسالتين} few{تعذّرت قراءة {count} رسائل} many{تعذّرت قراءة {count} رسالة} other{تعذّرت قراءة {count} رسالة}}",
+  "@smsImportScanUnreadable": {
+    "description": "Scan summary: messages that could not be read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanInterrupted": "{count, plural, =0{لم تتم معالجة أي رسالة قبل التوقف} =1{تمت معالجة رسالة واحدة قبل التوقف} =2{تمت معالجة رسالتين قبل التوقف} few{تمت معالجة {count} رسائل قبل التوقف} many{تمت معالجة {count} رسالة قبل التوقف} other{تمت معالجة {count} رسالة قبل التوقف}}",
+  "@smsImportScanInterrupted": {
+    "description": "Scan error: how many messages were processed before it failed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportScanShowSkipped": "عرض ما تم تخطيه",
+  "@smsImportScanShowSkipped": {
+    "description": "Scan summary: opens the content-free Skipped list."
+  },
+  "smsImportScanSkippedTitle": "الرسائل التي تم تخطيها",
+  "@smsImportScanSkippedTitle": {
+    "description": "Skipped list heading."
+  },
+  "smsImportScanSkippedNote": "لا يُعرض نص الرسالة هنا أبدًا.",
+  "@smsImportScanSkippedNote": {
+    "description": "Skipped list: privacy note."
+  },
+  "smsImportScanSkipReason": "{reason, select, notRecognized{ليست معاملة معروفة} noAmount{لم يتم العثور على مبلغ} amountUnreadable{تعذّرت قراءة المبلغ} tooLong{أطول من أن تُقرأ} empty{رسالة فارغة} nonText{ليست نصًا} parserError{تعذّرت القراءة} other{تعذّرت القراءة}}",
+  "@smsImportScanSkipReason": {
+    "description": "Skipped list: why a message was skipped. A code, never text.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportScanSkippedNoDate": "التاريخ غير معروف",
+  "@smsImportScanSkippedNoDate": {
+    "description": "Skipped list: no receipt date."
+  },
+  "smsImportScanDismiss": "إخفاء الملخص",
+  "@smsImportScanDismiss": {
+    "description": "Scan summary: hides the card."
+  },
+  "smsImportScanTurnOnTitle": "اكتشف المعاملات البنكية في رسائلك",
+  "@smsImportScanTurnOnTitle": {
+    "description": "Hub: card that leads to the enable flow."
+  },
+  "smsImportScanTurnOn": "تشغيل",
+  "@smsImportScanTurnOn": {
+    "description": "Hub: opens the enable flow."
+  },
+  "smsImportScanFailedTitle": "توقف الفحص",
+  "@smsImportScanFailedTitle": {
+    "description": "Scan error heading."
+  },
+  "smsImportScanRetry": "إعادة المحاولة",
+  "@smsImportScanRetry": {
+    "description": "Scan error: runs the scan again."
+  },
+  "smsImportScanMore": "خيارات أخرى",
+  "@smsImportScanMore": {
+    "description": "Hub overflow menu tooltip."
+  },
+  "smsImportSettingsTitle": "الرسائل البنكية",
+  "@smsImportSettingsTitle": {
+    "description": "Settings -> Bank messages title and tile."
+  },
+  "smsImportSettingsEntrySubtitle": "أضف المعاملات من الرسائل البنكية",
+  "@smsImportSettingsEntrySubtitle": {
+    "description": "Settings tile subtitle."
+  },
+  "smsImportSettingsStatusTitle": "الحالة",
+  "@smsImportSettingsStatusTitle": {
+    "description": "Settings section: status."
+  },
+  "smsImportSettingsStatusLabel": "{status, select, off{متوقف} on{يعمل} permissionOff{الإذن متوقف} blocked{يمنعه أندرويد} other{متوقف}}",
+  "@smsImportSettingsStatusLabel": {
+    "description": "Settings: the status chip.",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSettingsTurnOn": "تشغيل",
+  "@smsImportSettingsTurnOn": {
+    "description": "Settings: opens the enable flow."
+  },
+  "smsImportSettingsScanTitle": "الفحص",
+  "@smsImportSettingsScanTitle": {
+    "description": "Settings section: scan."
+  },
+  "smsImportSettingsWindowTitle": "مدة الفحص",
+  "@smsImportSettingsWindowTitle": {
+    "description": "Settings: scan window heading."
+  },
+  "smsImportSettingsLastScan": "آخر فحص: {date}",
+  "@smsImportSettingsLastScan": {
+    "description": "Settings: when the last scan ran.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSettingsNeverScanned": "لم يتم الفحص بعد",
+  "@smsImportSettingsNeverScanned": {
+    "description": "Settings: no scan yet."
+  },
+  "smsImportSettingsCountsTitle": "النشاط",
+  "@smsImportSettingsCountsTitle": {
+    "description": "Settings: content-free counters heading (FR-102)."
+  },
+  "smsImportSettingsCountScanned": "{count, plural, =0{لم تُقرأ أي رسالة} =1{قُرئت رسالة واحدة} =2{قُرئت رسالتان} few{قُرئت {count} رسائل} many{قُرئت {count} رسالة} other{قُرئت {count} رسالة}}",
+  "@smsImportSettingsCountScanned": {
+    "description": "Settings counter: messages read.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountRecognized": "{count, plural, =0{لم يتم التعرّف على أي معاملة} =1{تم التعرّف على معاملة واحدة} =2{تم التعرّف على معاملتين} few{تم التعرّف على {count} معاملات} many{تم التعرّف على {count} معاملة} other{تم التعرّف على {count} معاملة}}",
+  "@smsImportSettingsCountRecognized": {
+    "description": "Settings counter: transactions recognized.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountAdded": "{count, plural, =0{لم تتم إضافة أي معاملة} =1{تمت إضافة معاملة واحدة} =2{تمت إضافة معاملتين} few{تمت إضافة {count} معاملات} many{تمت إضافة {count} معاملة} other{تمت إضافة {count} معاملة}}",
+  "@smsImportSettingsCountAdded": {
+    "description": "Settings counter: items added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsCountIgnored": "{count, plural, =0{لم يتم تجاهل أي معاملة} =1{تم تجاهل معاملة واحدة} =2{تم تجاهل معاملتين} few{تم تجاهل {count} معاملات} many{تم تجاهل {count} معاملة} other{تم تجاهل {count} معاملة}}",
+  "@smsImportSettingsCountIgnored": {
+    "description": "Settings counter: items ignored.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportSettingsPreferencesTitle": "التفضيلات",
+  "@smsImportSettingsPreferencesTitle": {
+    "description": "Settings section: preferences."
+  },
+  "smsImportSettingsCountCash": "احسب السحب النقدي كمصروف",
+  "@smsImportSettingsCountCash": {
+    "description": "Settings switch (FR-051b)."
+  },
+  "smsImportSettingsCountCashHelp": "عند التشغيل، يُقترح السحب من الصراف الآلي كمصروف بدلًا من تجاهله.",
+  "@smsImportSettingsCountCashHelp": {
+    "description": "Settings switch help (FR-051b)."
+  },
+  "smsImportSettingsManageTitle": "الإدارة",
+  "@smsImportSettingsManageTitle": {
+    "description": "Settings section: manage."
+  },
+  "smsImportSettingsPending": "رسائل بنكية بانتظار المراجعة",
+  "@smsImportSettingsPending": {
+    "description": "Settings, Manage section: opens the list of bank messages waiting for review."
+  },
+  "smsImportSettingsPrivacyTitle": "الخصوصية",
+  "@smsImportSettingsPrivacyTitle": {
+    "description": "Settings section: privacy."
+  },
+  "smsImportSettingsPrivacyText": "تُقرأ الرسائل على هذا الجهاز فقط. لا يُحفظ أي شيء دون أن تضغط «إضافة».",
+  "@smsImportSettingsPrivacyText": {
+    "description": "Settings: privacy statement."
+  },
+  "smsImportSettingsLoadErrorTitle": "تعذّر تحميل إعدادات الرسائل البنكية",
+  "@smsImportSettingsLoadErrorTitle": {
+    "description": "Settings: load error."
+  },
+  "smsImportSettingsRetry": "إعادة المحاولة",
+  "@smsImportSettingsRetry": {
+    "description": "Settings: retry after a load error."
+  },
+  "smsImportSettingsSaveFailed": "تعذّر الحفظ. حاول مرة أخرى.",
+  "@smsImportSettingsSaveFailed": {
+    "description": "Settings: a preference write failed."
+  },
+  "smsImportHomeOnboardingTitle": "الرسائل البنكية",
+  "@smsImportHomeOnboardingTitle": {
+    "description": "Home onboarding card title."
+  },
+  "smsImportHomeOnboardingText": "يمكن لدفتري أن يجد المعاملات في رسائل بنكك لتراجعها.",
+  "@smsImportHomeOnboardingText": {
+    "description": "Home onboarding card text (FR-004)."
+  },
+  "smsImportHomeOnboardingSetUp": "إعداد",
+  "@smsImportHomeOnboardingSetUp": {
+    "description": "Home onboarding card: opens the enable flow."
+  },
+  "smsImportHomeOnboardingDismiss": "إخفاء",
+  "@smsImportHomeOnboardingDismiss": {
+    "description": "Home onboarding card: hides it permanently."
+  },
+  "smsImportHomeCardCount": "{count, plural, =0{لا توجد معاملات بنكية للمراجعة} =1{معاملة بنكية واحدة للمراجعة} =2{معاملتان بنكيتان للمراجعة} few{{count} معاملات بنكية للمراجعة} many{{count} معاملة بنكية للمراجعة} other{{count} معاملة بنكية للمراجعة}}",
+  "@smsImportHomeCardCount": {
+    "description": "Home count card (T129, FR-050): how many bank-message items wait for review. A count only, never content.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportHomeCardHint": "يفتح الرسائل البنكية",
+  "@smsImportHomeCardHint": {
+    "description": "Screen-reader hint of the Home count card: tapping opens the bank-messages list."
+  },
+  "smsImportPendingSelect": "تحديد",
+  "@smsImportPendingSelect": {
+    "description": "Pending list: enters selection mode (tooltip of the app-bar action)."
+  },
+  "smsImportPendingSelectedCount": "{count, plural, =0{لم يتم تحديد شيء} =1{تم تحديد عنصر واحد} =2{تم تحديد عنصرين} few{تم تحديد {count} عناصر} many{تم تحديد {count} عنصرًا} other{تم تحديد {count} عنصر}}",
+  "@smsImportPendingSelectedCount": {
+    "description": "Pending list selection toolbar: how many items are selected (FR-064).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingCancelSelection": "إلغاء التحديد",
+  "@smsImportPendingCancelSelection": {
+    "description": "Pending list: leaves selection mode."
+  },
+  "smsImportPendingIgnoreSelected": "تجاهل",
+  "@smsImportPendingIgnoreSelected": {
+    "description": "Pending list selection toolbar: ignores the selected items after a confirmation. There is no batch Add."
+  },
+  "smsImportPendingIgnoreConfirmTitle": "{count, plural, =0{لا شيء للتجاهل؟} =1{تجاهل عنصر واحد؟} =2{تجاهل عنصرين؟} few{تجاهل {count} عناصر؟} many{تجاهل {count} عنصرًا؟} other{تجاهل {count} عنصر؟}}",
+  "@smsImportPendingIgnoreConfirmTitle": {
+    "description": "Batch Ignore confirmation title (FR-064).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingIgnoreConfirmMessage": "لن تتم إضافة أي شيء، ولن تُقترح هذه الرسائل مرة أخرى. يمكنك استعادتها من العناصر المتجاهلة خلال 30 يومًا.",
+  "@smsImportPendingIgnoreConfirmMessage": {
+    "description": "Batch Ignore confirmation message (FR-064, FR-066, FR-067)."
+  },
+  "smsImportPendingIgnoreConfirm": "تجاهل",
+  "@smsImportPendingIgnoreConfirm": {
+    "description": "Batch Ignore confirmation: the confirm button."
+  },
+  "smsImportPendingIgnoredCount": "{count, plural, =0{لم يتم تجاهل أي شيء} =1{تم تجاهل عنصر واحد} =2{تم تجاهل عنصرين} few{تم تجاهل {count} عناصر} many{تم تجاهل {count} عنصرًا} other{تم تجاهل {count} عنصر}}",
+  "@smsImportPendingIgnoredCount": {
+    "description": "Announced and shown after a batch Ignore (ui-contract §7.5).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportPendingMenuIgnored": "العناصر المتجاهلة",
+  "@smsImportPendingMenuIgnored": {
+    "description": "Pending list overflow menu: opens the Ignored items list."
+  },
+  "smsImportReviewIgnore": "تجاهل",
+  "@smsImportReviewIgnore": {
+    "description": "Review: ignores this item. Nothing is added."
+  },
+  "smsImportReviewIgnored": "تم التجاهل",
+  "@smsImportReviewIgnored": {
+    "description": "Review: announced and shown after Ignore."
+  },
+  "smsImportReviewMoreActions": "إجراءات أخرى",
+  "@smsImportReviewMoreActions": {
+    "description": "Review: tooltip of the overflow menu."
+  },
+  "smsImportMuteAction": "إيقاف الاقتراحات من هذا المرسل",
+  "@smsImportMuteAction": {
+    "description": "Review overflow: mutes the message's sender (FR-065). Shown only when the item has a sender."
+  },
+  "smsImportMuteConfirmTitle": "إيقاف الاقتراحات من هذا المرسل؟",
+  "@smsImportMuteConfirmTitle": {
+    "description": "Mute confirmation title (FR-065)."
+  },
+  "smsImportMuteConfirmMessage": "سيتوقف دفتري عن اقتراح معاملات من {sender}. ستتم إزالة العناصر المعلّقة منه. لن تتغير المعاملات المحفوظة. يمكنك التراجع عن ذلك من شاشة «المرسلون المكتومون».",
+  "@smsImportMuteConfirmMessage": {
+    "description": "Mute confirmation message: states that this sender's pending items are removed (FR-065). sender is the sender ID, isolated left-to-right.",
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMuteConfirm": "إيقاف الاقتراحات",
+  "@smsImportMuteConfirm": {
+    "description": "Mute confirmation: the confirm button."
+  },
+  "smsImportMuteDone": "{count, plural, =0{تم كتم المرسل.} =1{تم كتم المرسل. أُزيل عنصر معلّق واحد.} =2{تم كتم المرسل. أُزيل عنصران معلّقان.} few{تم كتم المرسل. أُزيلت {count} عناصر معلّقة.} many{تم كتم المرسل. أُزيل {count} عنصرًا معلّقًا.} other{تم كتم المرسل. أُزيل {count} عنصر معلّق.}}",
+  "@smsImportMuteDone": {
+    "description": "Shown and announced after muting a sender: how many pending items were removed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportMuteTitle": "المرسلون المكتومون",
+  "@smsImportMuteTitle": {
+    "description": "Muted senders screen title, and its Settings link (FR-056, FR-065)."
+  },
+  "smsImportMuteHelp": "لا يقترح دفتري معاملات من هؤلاء المرسلين.",
+  "@smsImportMuteHelp": {
+    "description": "Muted senders screen: one-line explanation."
+  },
+  "smsImportMuteEmptyTitle": "لا يوجد مرسلون مكتومون",
+  "@smsImportMuteEmptyTitle": {
+    "description": "Muted senders screen: empty state title."
+  },
+  "smsImportMuteEmptyMessage": "عندما توقف الاقتراحات من مرسل في شاشة المراجعة، يظهر هنا.",
+  "@smsImportMuteEmptyMessage": {
+    "description": "Muted senders screen: empty state message."
+  },
+  "smsImportMuteLoadError": "تعذّر تحميل المرسلين المكتومين",
+  "@smsImportMuteLoadError": {
+    "description": "Muted senders screen: load error title."
+  },
+  "smsImportMuteUnmute": "إلغاء الكتم",
+  "@smsImportMuteUnmute": {
+    "description": "Muted senders screen: unmutes one sender."
+  },
+  "smsImportMuteUnmuteSemantics": "إلغاء كتم {sender}",
+  "@smsImportMuteUnmuteSemantics": {
+    "description": "Screen-reader label of the Unmute button.",
+    "placeholders": {
+      "sender": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMuteUnmuted": "تم إلغاء الكتم. ستُقترح رسائله الجديدة بعد الفحص التالي.",
+  "@smsImportMuteUnmuted": {
+    "description": "Shown and announced after unmuting a sender (FR-065)."
+  },
+  "smsImportIgnoredTitle": "العناصر المتجاهلة",
+  "@smsImportIgnoredTitle": {
+    "description": "Ignored items screen title, and its Settings link (FR-067)."
+  },
+  "smsImportIgnoredHelp": "العناصر التي تجاهلتها أو انتهت صلاحيتها خلال آخر 30 يومًا.",
+  "@smsImportIgnoredHelp": {
+    "description": "Ignored items screen: one-line explanation."
+  },
+  "smsImportIgnoredEmptyTitle": "لا توجد عناصر متجاهلة مؤخرًا",
+  "@smsImportIgnoredEmptyTitle": {
+    "description": "Ignored items screen: empty state title (ui-contract §3.8)."
+  },
+  "smsImportIgnoredEmptyMessage": "تبقى العناصر التي تتجاهلها أو تنتهي صلاحيتها هنا لمدة 30 يومًا لتتمكن من التراجع.",
+  "@smsImportIgnoredEmptyMessage": {
+    "description": "Ignored items screen: empty state message."
+  },
+  "smsImportIgnoredLoadError": "تعذّر تحميل العناصر المتجاهلة",
+  "@smsImportIgnoredLoadError": {
+    "description": "Ignored items screen: load error title."
+  },
+  "smsImportIgnoredStatusIgnored": "متجاهل",
+  "@smsImportIgnoredStatusIgnored": {
+    "description": "Ignored items: status label of an item the user ignored."
+  },
+  "smsImportIgnoredStatusExpired": "منتهي الصلاحية",
+  "@smsImportIgnoredStatusExpired": {
+    "description": "Ignored items: status label of an item that expired."
+  },
+  "smsImportIgnoredNoAmount": "بدون مبلغ",
+  "@smsImportIgnoredNoAmount": {
+    "description": "Ignored items: shown when the item has no amount."
+  },
+  "smsImportIgnoredDaysLeft": "{count, plural, =0{يتبقى أقل من يوم} =1{يتبقى يوم واحد} =2{يتبقى يومان} few{يتبقى {count} أيام} many{يتبقى {count} يومًا} other{يتبقى {count} يوم}}",
+  "@smsImportIgnoredDaysLeft": {
+    "description": "Ignored items: days until the item leaves the Undo list.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportIgnoredUndo": "تراجع",
+  "@smsImportIgnoredUndo": {
+    "description": "Ignored items: restores one item (FR-068)."
+  },
+  "smsImportIgnoredComesBack": "سيعود عندما تضغط «افحص الآن»، أو تلصق هذه الرسالة أو تشاركها مرة أخرى.",
+  "@smsImportIgnoredComesBack": {
+    "description": "Ignored items: what Undo does (FR-068, ui-contract §3.8). Catch-up does not re-read older messages, so the copy names Scan now."
+  },
+  "smsImportIgnoredComesBackPasteOnly": "سيعود عندما تلصق هذه الرسالة أو تشاركها مرة أخرى.",
+  "@smsImportIgnoredComesBackPasteOnly": {
+    "description": "Ignored items: what Undo does, on devices without bank-message scanning (ui-contract §3.8)."
+  },
+  "smsImportIgnoredRestored": "تمت الاستعادة. اضغط «افحص الآن»، أو الصقها مرة أخرى، لتظهر.",
+  "@smsImportIgnoredRestored": {
+    "description": "Shown and announced after Undo (ui-contract §3.8)."
+  },
+  "smsImportIgnoredRestoredPasteOnly": "تمت الاستعادة. الصقها أو شاركها مرة أخرى لتظهر.",
+  "@smsImportIgnoredRestoredPasteOnly": {
+    "description": "Shown and announced after Undo, on devices without bank-message scanning."
+  },
+  "smsImportSuggestHint": "{type, select, ignore{المقترح: تجاهل. لا يُحسب شيء دخلًا ولا مصروفًا.} unset{لم يُقترح نوع. اختر نوعًا أو تجاهل هذا العنصر.} other{راجع النوع المقترح قبل الإضافة.}}",
+  "@smsImportSuggestHint": {
+    "description": "Review: the hint under the type selector for the suggested type (FR-051a, FR-051c). 'ignore' covers ATM (preference off), refunds, reversals and own-account moves.",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestCashLink": "{state, select, on{السحب النقدي يُحسب مصروفًا. غيّر ذلك من الإعدادات} other{السحب النقدي لا يُحسب مصروفًا. غيّر ذلك من الإعدادات}}",
+  "@smsImportSuggestCashLink": {
+    "description": "Review of an ATM withdrawal: the one-line link to the 'Count cash withdrawals as spending' preference (FR-051b). 'on' when the preference is on.",
+    "placeholders": {
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestSeveralPeople": "{count, plural, =0{لا أحد في أشخاصك يطابق {name}.} =1{شخص واحد في أشخاصك قد يكون {name}.} =2{شخصان في أشخاصك قد يكون أحدهما {name}.} few{{count} أشخاص في أشخاصك قد يكون أحدهم {name}.} many{{count} شخصًا في أشخاصك قد يكون أحدهم {name}.} other{{count} شخص في أشخاصك قد يكون أحدهم {name}.}}",
+  "@smsImportSuggestSeveralPeople": {
+    "description": "Review of a named transfer: more than one existing person has a similar name (FR-054). Shown with the 'Choose the person' action.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestChoosePerson": "{type, select, received{اختر من أرسلها} other{اختر من استلمها}}",
+  "@smsImportSuggestChoosePerson": {
+    "description": "Review: opens the existing similar-name choice to record the transfer as Received from (or Given to) one of the matching people (FR-054).",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportSuggestPersonNotInList": "{name} ليس ضمن أشخاصك. لا يُنشأ شخص إلا إذا ضغطت «إنشاء شخص جديد».",
+  "@smsImportSuggestPersonNotInList": {
+    "description": "Review of Given/Received for a counterparty that matches no one: nothing is created without the user's tap (FR-054, US7-2).",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsTitle": "الفئات المتعلَّمة",
+  "@smsImportMappingsTitle": {
+    "description": "Learned categories screen title, and its Settings link (FR-056)."
+  },
+  "smsImportMappingsHelp": "عندما تغيّر فئة تاجر وتضيف المعاملة، يقترح دفتري هذه الفئة في المرة القادمة.",
+  "@smsImportMappingsHelp": {
+    "description": "Learned categories: what the list is (FR-056)."
+  },
+  "smsImportMappingsCount": "{count, plural, =0{لا توجد فئات متعلَّمة} =1{فئة متعلَّمة واحدة} =2{فئتان متعلَّمتان} few{{count} فئات متعلَّمة} many{{count} فئة متعلَّمة} other{{count} فئة متعلَّمة}}",
+  "@smsImportMappingsCount": {
+    "description": "Learned categories: how many are listed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "smsImportMappingsCategoryRemoved": "الفئة محذوفة",
+  "@smsImportMappingsCategoryRemoved": {
+    "description": "Learned categories: the mapped category was archived or deleted; the mapping is not used (data-model §3.4)."
+  },
+  "smsImportMappingsRowSemantics": "{merchant}: {type}، {category}",
+  "@smsImportMappingsRowSemantics": {
+    "description": "Learned categories: screen-reader label of one row.",
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      },
+      "type": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsRemove": "إزالة",
+  "@smsImportMappingsRemove": {
+    "description": "Learned categories: forgets one learned category."
+  },
+  "smsImportMappingsRemoveSemantics": "إزالة الفئة المتعلَّمة لـ {merchant}",
+  "@smsImportMappingsRemoveSemantics": {
+    "description": "Learned categories: screen-reader label of Remove.",
+    "placeholders": {
+      "merchant": {
+        "type": "String"
+      }
+    }
+  },
+  "smsImportMappingsRemoved": "أُزيلت. سيعود هذا التاجر إلى الاقتراح المعتاد.",
+  "@smsImportMappingsRemoved": {
+    "description": "Shown and announced after removing one learned category."
+  },
+  "smsImportMappingsClear": "مسح الفئات المتعلَّمة",
+  "@smsImportMappingsClear": {
+    "description": "Learned categories: clears them all, after a confirmation."
+  },
+  "smsImportMappingsClearConfirmTitle": "مسح الفئات المتعلَّمة؟",
+  "@smsImportMappingsClearConfirmTitle": {
+    "description": "Confirmation title for clearing every learned category."
+  },
+  "smsImportMappingsClearConfirmMessage": "سينسى دفتري كل الفئات المتعلَّمة. لن تتغير فئاتك ولا معاملاتك المحفوظة.",
+  "@smsImportMappingsClearConfirmMessage": {
+    "description": "Confirmation message for clearing every learned category (FR-056)."
+  },
+  "smsImportMappingsClearConfirm": "مسح",
+  "@smsImportMappingsClearConfirm": {
+    "description": "Confirms clearing every learned category."
+  },
+  "smsImportMappingsCleared": "تم مسح الفئات المتعلَّمة.",
+  "@smsImportMappingsCleared": {
+    "description": "Shown and announced after clearing every learned category."
+  },
+  "smsImportMappingsEmptyTitle": "لا توجد فئات متعلَّمة",
+  "@smsImportMappingsEmptyTitle": {
+    "description": "Learned categories: empty state title."
+  },
+  "smsImportMappingsEmptyMessage": "عندما تغيّر فئة معاملة مستوردة وتضيفها، يظهر اختيارك هنا.",
+  "@smsImportMappingsEmptyMessage": {
+    "description": "Learned categories: empty state message."
+  },
+  "smsImportMappingsLoadError": "تعذّر تحميل الفئات المتعلَّمة",
+  "@smsImportMappingsLoadError": {
+    "description": "Learned categories: load error title."
+  },
+  "smsImportSettingsTurnOff": "إيقاف",
+  "@smsImportSettingsTurnOff": {
+    "description": "Settings -> Bank messages: turns the feature off (FR-078)."
+  },
+  "smsImportSettingsTurnOffTitle": "هل تحذف العناصر المعلّقة أيضًا؟",
+  "@smsImportSettingsTurnOffTitle": {
+    "description": "Turn off dialog title (FR-078, ui-contract §3.1)."
+  },
+  "smsImportSettingsTurnOffMessage": "يتوقف استيراد الرسائل البنكية الآن. يمكن أن تبقى عناصرك المعلّقة لتراجعها لاحقًا، أو أن تُحذف. لن تتغير المعاملات المحفوظة ولا المرسلون المكتومون ولا الفئات المتعلَّمة.",
+  "@smsImportSettingsTurnOffMessage": {
+    "description": "Turn off dialog message: the two outcomes (FR-078)."
+  },
+  "smsImportSettingsTurnOffKeep": "الإبقاء عليها",
+  "@smsImportSettingsTurnOffKeep": {
+    "description": "Turn off dialog: turn off and keep pending items (the default when dismissed)."
+  },
+  "smsImportSettingsTurnOffDelete": "حذفها",
+  "@smsImportSettingsTurnOffDelete": {
+    "description": "Turn off dialog: turn off and delete pending items."
+  },
+  "smsImportSettingsTurnedOffKept": "تم الإيقاف. عناصرك المعلّقة ما زالت هنا.",
+  "@smsImportSettingsTurnedOffKept": {
+    "description": "Shown and announced after turning off and keeping pending items."
+  },
+  "smsImportSettingsTurnedOffDeleted": "{count, plural, =0{تم الإيقاف. لم تكن هناك عناصر معلّقة.} =1{تم الإيقاف. حُذف عنصر معلّق واحد.} =2{تم الإيقاف. حُذف عنصران معلّقان.} few{تم الإيقاف. حُذفت {count} عناصر معلّقة.} many{تم الإيقاف. حُذف {count} عنصرًا معلّقًا.} other{تم الإيقاف. حُذف {count} عنصر معلّق.}}",
+  "@smsImportSettingsTurnedOffDeleted": {
+    "description": "Shown and announced after turning off and deleting pending items.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

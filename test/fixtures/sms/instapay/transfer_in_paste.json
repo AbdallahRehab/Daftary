@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "instapay",
+  "ruleVersion": "instapay@1",
+  "kind": "transfer_in",
+  "direction": "credit",
+  "amountMinor": 100000,
+  "currency": "EGP",
+  "date": "2026-03-02",
+  "dateInferred": false,
+  "counterparty": "Mona Example",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

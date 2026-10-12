@@ -7,19 +7,41 @@ import '../money/currency.dart';
 /// catalog). Built directly in `core/design_system` — plan.md Complexity
 /// Tracking — since every amount-entry form needs it at once. The caller
 /// supplies [value], normally the current primary currency (FR-003).
+///
+/// 023: [CurrencyPicker.optional] allows no selection yet (a bank message
+/// that states no currency, FR-053); the field then shows [hint] and the
+/// caller's [errorText] until the user chooses.
 class CurrencyPicker extends StatelessWidget {
   const CurrencyPicker({
-    required this.value,
+    required Currency value,
     required this.onChanged,
     this.currencies = Currency.catalog,
     this.enabled = true,
     this.label,
+    this.hint,
+    this.errorText,
+    super.key,
+  }) : selected = value;
+
+  /// 023: like the default constructor, but [selected] may be `null`.
+  const CurrencyPicker.optional({
+    required this.selected,
+    required this.onChanged,
+    this.currencies = Currency.catalog,
+    this.enabled = true,
+    this.label,
+    this.hint,
+    this.errorText,
     super.key,
   });
 
   static const Key fieldKey = Key('currency_picker');
 
-  final Currency value;
+  /// The selected currency; `null` only through [CurrencyPicker.optional].
+  final Currency? selected;
+
+  /// The selected currency of a picker built with the default constructor.
+  Currency get value => selected!;
   final ValueChanged<Currency> onChanged;
   final List<Currency> currencies;
   final bool enabled;
@@ -27,18 +49,29 @@ class CurrencyPicker extends StatelessWidget {
   /// Overrides the default "Currency" label.
   final String? label;
 
+  /// Shown while [value] is `null`.
+  final String? hint;
+
+  /// Shown under the field (for example a required-field message).
+  final String? errorText;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final languageCode = Localizations.localeOf(context).languageCode;
-    final options = currencies.contains(value)
+    final current = selected;
+    final options = current == null || currencies.contains(current)
         ? currencies
-        : [value, ...currencies];
+        : [current, ...currencies];
     return DropdownButtonFormField<Currency>(
       key: fieldKey,
-      initialValue: value,
+      initialValue: current,
       isExpanded: true,
-      decoration: InputDecoration(labelText: label ?? l10n.currencyFieldLabel),
+      decoration: InputDecoration(
+        labelText: label ?? l10n.currencyFieldLabel,
+        hintText: hint,
+        errorText: errorText,
+      ),
       items: [
         for (final currency in options)
           DropdownMenuItem(

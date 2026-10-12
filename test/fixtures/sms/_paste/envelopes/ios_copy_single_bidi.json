@@ -1,0 +1,10 @@
+{
+  "synthetic": true,
+  "unverifiedFormat": true,
+  "app": "iOS Messages",
+  "mode": "copy, one message, embedding marks",
+  "source": "paste",
+  "inboxBodies": [
+    "تم خصم 300.00 جنيه من بطاقتك المنتهية ب 0000 لدى Example Market يوم 05/03/2026"
+  ]
+}

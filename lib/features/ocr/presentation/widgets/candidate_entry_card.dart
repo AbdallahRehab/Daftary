@@ -12,8 +12,8 @@ import '../../../transactions/domain/entities/money_transaction.dart';
 import '../../../transactions/presentation/widgets/duplicate_warning_sheet.dart';
 import '../../../transactions/presentation/widgets/person_picker_field.dart';
 import '../../domain/entities/candidate_entry.dart';
-import '../../domain/entities/field_confidence.dart';
-import 'confidence_indicator.dart';
+import '../../../../core/confidence/field_confidence.dart';
+import '../../../../core/design_system/confidence_indicator.dart';
 
 /// One proposed entry, laid out so it can be checked against the page and
 /// corrected before it is allowed to become money (FR-008, FR-013).

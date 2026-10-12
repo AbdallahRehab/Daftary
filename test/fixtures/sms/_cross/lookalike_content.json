@@ -1,0 +1,8 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "generic",
+  "amountMinor": 9900
+}

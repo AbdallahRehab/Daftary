@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": "BANQUEMISR",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "banque_misr",
+  "ruleVersion": "banque_misr@1",
+  "kind": "salary",
+  "direction": "credit",
+  "amountMinor": 1100000,
+  "currency": "EGP",
+  "date": "2026-02-27",
+  "dateInferred": false,
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

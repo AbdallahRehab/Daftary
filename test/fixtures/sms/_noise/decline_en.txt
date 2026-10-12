@@ -1,0 +1,1 @@
+Your transaction of EGP 300.00 at Example Shop was declined due to insufficient funds.

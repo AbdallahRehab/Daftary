@@ -555,6 +555,8 @@ const _specs = {
     'note',
     'edited_at',
     'deleted_at',
+    // 027 (023): provenance joins the "same create" comparison.
+    'import_source',
   ]),
   SyncEntityType.transactionAudit: _EntitySpec(_Policy.append, [
     'transaction_id',
@@ -582,6 +584,8 @@ const _specs = {
     'note',
     'edited_at',
     'deleted_at',
+    // 027 (023): provenance joins the "same create" comparison.
+    'import_source',
   ]),
   SyncEntityType.exchangeRate: _EntitySpec(_Policy.lww, [
     'currency_code',

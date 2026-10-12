@@ -1,0 +1,13 @@
+# Decisions: discovery T007-T009
+
+Read-only slice. No production code or test was changed. Outputs: `discovery/localization.md`, `discovery/sync.md`, `discovery/importers.md`.
+
+| # | Doc conflict or ambiguity | What I found or chose | Why |
+|---|---|---|---|
+| 1 | tasks T007 and plan name `app_ar.arb:284` as the "full" Arabic plural precedent | `:284` has `=1/=2/few/many/other`, with no `=0`. The full six-form precedents are `app_ar.arb:615` (`occasionDeleteConfirmMessage`) and `:1360` (`savingsOverviewGoalCount`). localization.md points implementers to `:1360`. | Arabic plurals must use all six forms (briefing rule 8). |
+| 2 | ui-contract §6 says to clone the AI parity test, which compares placeholders | Its extractor `RegExp(r'\{(\w+)')` also captures the first word of each ICU branch, so plural keys would fail it. Nothing hits this today because no `ai*` key is a plural. The clone must read placeholders from the `@key` metadata, or strip the branches. | Recorded so T066 doesn't copy a broken check. |
+| 3 | The "hardcoded-string guard" is described as an existing test to clone | No directory-wide guard exists. The only one checks a single file (`test/widget/data_export_page_test.dart:239-245`). I documented combining it with the directory walk in `architecture_boundary_test.dart:60-69`. | Gives the clone a concrete pattern. |
+| 4 | plan.md lists `test/core/confidence/field_confidence_test.dart` as "moved" | No such test exists. The only test T016 moves is `test/widget/confidence_indicator_test.dart`. | T016's diff must contain only moves and import lines, so it creates no new test. |
+| 5 | T151 adds the legacy sync dir to the CI UTC re-run | `ci.yml:43` already runs all of `test/core/sync`, so `test/core/sync/legacy/` is covered. T151 may be a no-op. The orchestrator decides. | Avoids a redundant CI edit. |
+| 6 | T150 two-device tests on `SyncHarness`/`FakeSyncRemote` | The harness has no finance-entry helpers. The fake's `financial` business lists are narrower than 026's `v_business`, so the case-7 create-retry `conflict` needs `'import_source'` added to the fake. Both are test-fake edits outside T150's listed files. | Flagged for whoever owns T148/T150. |
+| 7 | `CurrencyFormatter.parse` as the SMS amount parser (plan Step 3) | It strips every `,` from the whole part (`currency_formatter.dart:80`), so `"100,50"` becomes `10050`. Its `FormatException` messages also embed the raw input. The SMS amount extractor must check grouping first (CHK045) and must never copy `e.message`. | Avoids silently wrong amounts and keeps message text out of errors and logs (briefing rule 6). |

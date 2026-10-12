@@ -1,6 +1,6 @@
 import 'package:daftary/features/ocr/data/parsing/candidate_entry_parser.dart';
 import 'package:daftary/features/ocr/domain/entities/candidate_entry.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/entities/parsed_scan.dart';
 import 'package:daftary/features/ocr/domain/repositories/text_recognition_service.dart';
 import 'package:flutter_test/flutter_test.dart';

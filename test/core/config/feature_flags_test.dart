@@ -15,4 +15,11 @@ void main() {
   test('"Scan paper" is enabled because OCR Paper Entry (009) has shipped', () {
     expect(kOcrScanFeatureEnabled, isTrue);
   });
+
+  test(
+    '"Bank message import" is enabled because Bank SMS Import (023) ships',
+    () {
+      expect(kBankMessageImportFeatureEnabled, isTrue);
+    },
+  );
 }

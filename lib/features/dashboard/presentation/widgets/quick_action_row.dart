@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/config/feature_flags.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
+import '../../../sms_import/presentation/routes.dart';
 import 'quick_action_button.dart';
 
 /// Home's one-tap shortcuts into the existing entry forms (012 T027,
@@ -22,12 +23,22 @@ class QuickActionRow extends StatelessWidget {
     this.onReturn,
     this.showOccasion = kOccasionsFeatureEnabled,
     this.showScan = kOcrScanFeatureEnabled,
+    this.showBankMessage = kBankMessageImportFeatureEnabled,
+    this.smsCapabilityAvailable,
   });
 
   /// Called after any pushed route pops, so Home can refresh (FR-011).
   final VoidCallback? onReturn;
   final bool showOccasion;
   final bool showScan;
+
+  /// 023: the "Bank message" slot (gated by
+  /// [kBankMessageImportFeatureEnabled], never by the SMS capability).
+  final bool showBankMessage;
+
+  /// Resolves, on tap only, whether the SMS inbox can be read here
+  /// (`GetSmsCapability`). `null` means it cannot: the action opens Paste.
+  final Future<bool> Function()? smsCapabilityAvailable;
 
   static const String addExpenseLocation = '/finance/entries/new?type=expense';
   static const String addIncomeLocation = '/finance/entries/new?type=income';
@@ -38,6 +49,19 @@ class QuickActionRow extends StatelessWidget {
   static const String addOccasionLocation = '/occasions/new';
   static const String scanPaperLocation = '/ocr/scan';
 
+  /// Bank message, Android with the SMS capability: the hub (scan + list).
+  static const String bankMessageHubLocation = BankMessagesRoutes.hub;
+
+  /// Bank message everywhere else (iOS, macOS, Android without READ_SMS):
+  /// the Paste screen.
+  static const String bankMessagePasteLocation = BankMessagesRoutes.paste;
+
+  /// Where the Bank message action goes (ui-contract §2).
+  static String bankMessageLocation({required bool smsCapabilityAvailable}) =>
+      smsCapabilityAvailable
+      ? bankMessageHubLocation
+      : bankMessagePasteLocation;
+
   static const double _spacing = AppSpacing.sm;
 
   @override
@@ -47,6 +71,13 @@ class QuickActionRow extends StatelessWidget {
     Future<void> open(String location) async {
       await context.push<void>(location);
       onReturn?.call();
+    }
+
+    Future<void> openBankMessage() async {
+      // `GetSmsCapability` never throws; no resolver means Paste.
+      final available = await smsCapabilityAvailable?.call() ?? false;
+      if (!context.mounted) return;
+      await open(bankMessageLocation(smsCapabilityAvailable: available));
     }
 
     final actions = <(IconData, String, String)>[
@@ -106,6 +137,14 @@ class QuickActionRow extends StatelessWidget {
                 label: label,
                 width: tileWidth,
                 onPressed: () => open(location),
+              ),
+            if (showBankMessage)
+              QuickActionButton(
+                key: const ValueKey('quick_action_bank_message'),
+                icon: Icons.sms_outlined,
+                label: l10n.smsImportHomeQuickAction,
+                width: tileWidth,
+                onPressed: openBankMessage,
               ),
           ],
         );

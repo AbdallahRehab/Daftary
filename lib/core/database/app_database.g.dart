@@ -1431,6 +1431,17 @@ class $MoneyTransactionsTable extends MoneyTransactions
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _importSourceMeta = const VerificationMeta(
+    'importSource',
+  );
+  @override
+  late final GeneratedColumn<String> importSource = GeneratedColumn<String>(
+    'import_source',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1449,6 +1460,7 @@ class $MoneyTransactionsTable extends MoneyTransactions
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1583,6 +1595,15 @@ class $MoneyTransactionsTable extends MoneyTransactions
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
+    if (data.containsKey('import_source')) {
+      context.handle(
+        _importSourceMeta,
+        importSource.isAcceptableOrUnknown(
+          data['import_source']!,
+          _importSourceMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1656,6 +1677,10 @@ class $MoneyTransactionsTable extends MoneyTransactions
         DriftSqlType.int,
         data['${effectivePrefix}deleted_at'],
       ),
+      importSource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_source'],
+      ),
     );
   }
 
@@ -1705,6 +1730,14 @@ class MoneyTransaction extends DataClass
   final int createdAt;
   final int? editedAt;
   final int? deletedAt;
+
+  /// 023: `'sms'` for a row the user confirmed from a bank message, `NULL`
+  /// otherwise (FR-057). Stores the raw wire string, so a value written by a
+  /// newer client round-trips unchanged. Unrelated to [source], which stays
+  /// `'manual'` for such a row (FR-086). Added by v13 with no default, no
+  /// backfill and no index; declared last so a fresh install and an
+  /// upgraded file have the same column order.
+  final String? importSource;
   const MoneyTransaction({
     required this.id,
     required this.idempotencyKey,
@@ -1722,6 +1755,7 @@ class MoneyTransaction extends DataClass
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
+    this.importSource,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1752,6 +1786,9 @@ class MoneyTransaction extends DataClass
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<int>(deletedAt);
     }
+    if (!nullToAbsent || importSource != null) {
+      map['import_source'] = Variable<String>(importSource);
+    }
     return map;
   }
 
@@ -1781,6 +1818,9 @@ class MoneyTransaction extends DataClass
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
+      importSource: importSource == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importSource),
     );
   }
 
@@ -1808,6 +1848,7 @@ class MoneyTransaction extends DataClass
       createdAt: serializer.fromJson<int>(json['createdAt']),
       editedAt: serializer.fromJson<int?>(json['editedAt']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      importSource: serializer.fromJson<String?>(json['importSource']),
     );
   }
   @override
@@ -1830,6 +1871,7 @@ class MoneyTransaction extends DataClass
       'createdAt': serializer.toJson<int>(createdAt),
       'editedAt': serializer.toJson<int?>(editedAt),
       'deletedAt': serializer.toJson<int?>(deletedAt),
+      'importSource': serializer.toJson<String?>(importSource),
     };
   }
 
@@ -1850,6 +1892,7 @@ class MoneyTransaction extends DataClass
     int? createdAt,
     Value<int?> editedAt = const Value.absent(),
     Value<int?> deletedAt = const Value.absent(),
+    Value<String?> importSource = const Value.absent(),
   }) => MoneyTransaction(
     id: id ?? this.id,
     idempotencyKey: idempotencyKey ?? this.idempotencyKey,
@@ -1867,6 +1910,7 @@ class MoneyTransaction extends DataClass
     createdAt: createdAt ?? this.createdAt,
     editedAt: editedAt.present ? editedAt.value : this.editedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    importSource: importSource.present ? importSource.value : this.importSource,
   );
   MoneyTransaction copyWithCompanion(MoneyTransactionsCompanion data) {
     return MoneyTransaction(
@@ -1896,6 +1940,9 @@ class MoneyTransaction extends DataClass
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      importSource: data.importSource.present
+          ? data.importSource.value
+          : this.importSource,
     );
   }
 
@@ -1917,7 +1964,8 @@ class MoneyTransaction extends DataClass
           ..write('ocrScanId: $ocrScanId, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
-          ..write('deletedAt: $deletedAt')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('importSource: $importSource')
           ..write(')'))
         .toString();
   }
@@ -1940,6 +1988,7 @@ class MoneyTransaction extends DataClass
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   );
   @override
   bool operator ==(Object other) =>
@@ -1960,7 +2009,8 @@ class MoneyTransaction extends DataClass
           other.ocrScanId == this.ocrScanId &&
           other.createdAt == this.createdAt &&
           other.editedAt == this.editedAt &&
-          other.deletedAt == this.deletedAt);
+          other.deletedAt == this.deletedAt &&
+          other.importSource == this.importSource);
 }
 
 class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
@@ -1980,6 +2030,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
   final Value<int> createdAt;
   final Value<int?> editedAt;
   final Value<int?> deletedAt;
+  final Value<String?> importSource;
   final Value<int> rowid;
   const MoneyTransactionsCompanion({
     this.id = const Value.absent(),
@@ -1998,6 +2049,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     this.createdAt = const Value.absent(),
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.importSource = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   MoneyTransactionsCompanion.insert({
@@ -2017,6 +2069,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     required int createdAt,
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.importSource = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        idempotencyKey = Value(idempotencyKey),
@@ -2043,6 +2096,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Expression<int>? createdAt,
     Expression<int>? editedAt,
     Expression<int>? deletedAt,
+    Expression<String>? importSource,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2063,6 +2117,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       if (createdAt != null) 'created_at': createdAt,
       if (editedAt != null) 'edited_at': editedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
+      if (importSource != null) 'import_source': importSource,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2084,6 +2139,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     Value<int>? createdAt,
     Value<int?>? editedAt,
     Value<int?>? deletedAt,
+    Value<String?>? importSource,
     Value<int>? rowid,
   }) {
     return MoneyTransactionsCompanion(
@@ -2103,6 +2159,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
       deletedAt: deletedAt ?? this.deletedAt,
+      importSource: importSource ?? this.importSource,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2158,6 +2215,9 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<int>(deletedAt.value);
     }
+    if (importSource.present) {
+      map['import_source'] = Variable<String>(importSource.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2183,6 +2243,7 @@ class MoneyTransactionsCompanion extends UpdateCompanion<MoneyTransaction> {
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('importSource: $importSource, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -4051,6 +4112,17 @@ class $FinanceEntriesTable extends FinanceEntries
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _importSourceMeta = const VerificationMeta(
+    'importSource',
+  );
+  @override
+  late final GeneratedColumn<String> importSource = GeneratedColumn<String>(
+    'import_source',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4064,6 +4136,7 @@ class $FinanceEntriesTable extends FinanceEntries
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4163,6 +4236,15 @@ class $FinanceEntriesTable extends FinanceEntries
         deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
       );
     }
+    if (data.containsKey('import_source')) {
+      context.handle(
+        _importSourceMeta,
+        importSource.isAcceptableOrUnknown(
+          data['import_source']!,
+          _importSourceMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -4216,6 +4298,10 @@ class $FinanceEntriesTable extends FinanceEntries
         DriftSqlType.int,
         data['${effectivePrefix}deleted_at'],
       ),
+      importSource: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}import_source'],
+      ),
     );
   }
 
@@ -4242,6 +4328,12 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
   final int createdAt;
   final int? editedAt;
   final int? deletedAt;
+
+  /// 023: `'sms'` for an entry the user confirmed from a bank message,
+  /// `NULL` otherwise (FR-057); same treatment as
+  /// [MoneyTransactions.importSource]. Added by v13 with no default, no
+  /// backfill and no index.
+  final String? importSource;
   const FinanceEntry({
     required this.id,
     required this.idempotencyKey,
@@ -4254,6 +4346,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
     required this.createdAt,
     this.editedAt,
     this.deletedAt,
+    this.importSource,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4275,6 +4368,9 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
     if (!nullToAbsent || deletedAt != null) {
       map['deleted_at'] = Variable<int>(deletedAt);
     }
+    if (!nullToAbsent || importSource != null) {
+      map['import_source'] = Variable<String>(importSource);
+    }
     return map;
   }
 
@@ -4295,6 +4391,9 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
       deletedAt: deletedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(deletedAt),
+      importSource: importSource == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importSource),
     );
   }
 
@@ -4315,6 +4414,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
       createdAt: serializer.fromJson<int>(json['createdAt']),
       editedAt: serializer.fromJson<int?>(json['editedAt']),
       deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      importSource: serializer.fromJson<String?>(json['importSource']),
     );
   }
   @override
@@ -4332,6 +4432,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
       'createdAt': serializer.toJson<int>(createdAt),
       'editedAt': serializer.toJson<int?>(editedAt),
       'deletedAt': serializer.toJson<int?>(deletedAt),
+      'importSource': serializer.toJson<String?>(importSource),
     };
   }
 
@@ -4347,6 +4448,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
     int? createdAt,
     Value<int?> editedAt = const Value.absent(),
     Value<int?> deletedAt = const Value.absent(),
+    Value<String?> importSource = const Value.absent(),
   }) => FinanceEntry(
     id: id ?? this.id,
     idempotencyKey: idempotencyKey ?? this.idempotencyKey,
@@ -4359,6 +4461,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
     createdAt: createdAt ?? this.createdAt,
     editedAt: editedAt.present ? editedAt.value : this.editedAt,
     deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    importSource: importSource.present ? importSource.value : this.importSource,
   );
   FinanceEntry copyWithCompanion(FinanceEntriesCompanion data) {
     return FinanceEntry(
@@ -4381,6 +4484,9 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       editedAt: data.editedAt.present ? data.editedAt.value : this.editedAt,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      importSource: data.importSource.present
+          ? data.importSource.value
+          : this.importSource,
     );
   }
 
@@ -4397,7 +4503,8 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
           ..write('note: $note, ')
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
-          ..write('deletedAt: $deletedAt')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('importSource: $importSource')
           ..write(')'))
         .toString();
   }
@@ -4415,6 +4522,7 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   );
   @override
   bool operator ==(Object other) =>
@@ -4430,7 +4538,8 @@ class FinanceEntry extends DataClass implements Insertable<FinanceEntry> {
           other.note == this.note &&
           other.createdAt == this.createdAt &&
           other.editedAt == this.editedAt &&
-          other.deletedAt == this.deletedAt);
+          other.deletedAt == this.deletedAt &&
+          other.importSource == this.importSource);
 }
 
 class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
@@ -4445,6 +4554,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
   final Value<int> createdAt;
   final Value<int?> editedAt;
   final Value<int?> deletedAt;
+  final Value<String?> importSource;
   final Value<int> rowid;
   const FinanceEntriesCompanion({
     this.id = const Value.absent(),
@@ -4458,6 +4568,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
     this.createdAt = const Value.absent(),
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.importSource = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   FinanceEntriesCompanion.insert({
@@ -4472,6 +4583,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
     required int createdAt,
     this.editedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
+    this.importSource = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        idempotencyKey = Value(idempotencyKey),
@@ -4492,6 +4604,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
     Expression<int>? createdAt,
     Expression<int>? editedAt,
     Expression<int>? deletedAt,
+    Expression<String>? importSource,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4506,6 +4619,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
       if (createdAt != null) 'created_at': createdAt,
       if (editedAt != null) 'edited_at': editedAt,
       if (deletedAt != null) 'deleted_at': deletedAt,
+      if (importSource != null) 'import_source': importSource,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4522,6 +4636,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
     Value<int>? createdAt,
     Value<int?>? editedAt,
     Value<int?>? deletedAt,
+    Value<String?>? importSource,
     Value<int>? rowid,
   }) {
     return FinanceEntriesCompanion(
@@ -4536,6 +4651,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
       createdAt: createdAt ?? this.createdAt,
       editedAt: editedAt ?? this.editedAt,
       deletedAt: deletedAt ?? this.deletedAt,
+      importSource: importSource ?? this.importSource,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4576,6 +4692,9 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
     if (deletedAt.present) {
       map['deleted_at'] = Variable<int>(deletedAt.value);
     }
+    if (importSource.present) {
+      map['import_source'] = Variable<String>(importSource.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4596,6 +4715,7 @@ class FinanceEntriesCompanion extends UpdateCompanion<FinanceEntry> {
           ..write('createdAt: $createdAt, ')
           ..write('editedAt: $editedAt, ')
           ..write('deletedAt: $deletedAt, ')
+          ..write('importSource: $importSource, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16256,6 +16376,3985 @@ class FinanceEntryAuditsCompanion extends UpdateCompanion<FinanceEntryAudit> {
   }
 }
 
+class $PendingSmsImportsTable extends PendingSmsImports
+    with TableInfo<$PendingSmsImportsTable, PendingSmsImportRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PendingSmsImportsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _fingerprintMeta = const VerificationMeta(
+    'fingerprint',
+  );
+  @override
+  late final GeneratedColumn<String> fingerprint = GeneratedColumn<String>(
+    'fingerprint',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _parentImportIdMeta = const VerificationMeta(
+    'parentImportId',
+  );
+  @override
+  late final GeneratedColumn<String> parentImportId = GeneratedColumn<String>(
+    'parent_import_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _originMeta = const VerificationMeta('origin');
+  @override
+  late final GeneratedColumn<String> origin = GeneratedColumn<String>(
+    'origin',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _senderIdMeta = const VerificationMeta(
+    'senderId',
+  );
+  @override
+  late final GeneratedColumn<String> senderId = GeneratedColumn<String>(
+    'sender_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bankIdMeta = const VerificationMeta('bankId');
+  @override
+  late final GeneratedColumn<String> bankId = GeneratedColumn<String>(
+    'bank_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _parserIdMeta = const VerificationMeta(
+    'parserId',
+  );
+  @override
+  late final GeneratedColumn<String> parserId = GeneratedColumn<String>(
+    'parser_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ruleVersionMeta = const VerificationMeta(
+    'ruleVersion',
+  );
+  @override
+  late final GeneratedColumn<String> ruleVersion = GeneratedColumn<String>(
+    'rule_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountMinorUnitsMeta = const VerificationMeta(
+    'amountMinorUnits',
+  );
+  @override
+  late final GeneratedColumn<int> amountMinorUnits = GeneratedColumn<int>(
+    'amount_minor_units',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currencyCodeMeta = const VerificationMeta(
+    'currencyCode',
+  );
+  @override
+  late final GeneratedColumn<String> currencyCode = GeneratedColumn<String>(
+    'currency_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _occurredOnMeta = const VerificationMeta(
+    'occurredOn',
+  );
+  @override
+  late final GeneratedColumn<int> occurredOn = GeneratedColumn<int>(
+    'occurred_on',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _timeMinutesMeta = const VerificationMeta(
+    'timeMinutes',
+  );
+  @override
+  late final GeneratedColumn<int> timeMinutes = GeneratedColumn<int>(
+    'time_minutes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _merchantMeta = const VerificationMeta(
+    'merchant',
+  );
+  @override
+  late final GeneratedColumn<String> merchant = GeneratedColumn<String>(
+    'merchant',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _merchantKeyMeta = const VerificationMeta(
+    'merchantKey',
+  );
+  @override
+  late final GeneratedColumn<String> merchantKey = GeneratedColumn<String>(
+    'merchant_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _counterpartyMeta = const VerificationMeta(
+    'counterparty',
+  );
+  @override
+  late final GeneratedColumn<String> counterparty = GeneratedColumn<String>(
+    'counterparty',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cardLast4Meta = const VerificationMeta(
+    'cardLast4',
+  );
+  @override
+  late final GeneratedColumn<String> cardLast4 = GeneratedColumn<String>(
+    'card_last4',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _suggestedCategoryIdMeta =
+      const VerificationMeta('suggestedCategoryId');
+  @override
+  late final GeneratedColumn<String> suggestedCategoryId =
+      GeneratedColumn<String>(
+        'suggested_category_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _suggestedPersonIdMeta = const VerificationMeta(
+    'suggestedPersonId',
+  );
+  @override
+  late final GeneratedColumn<String> suggestedPersonId =
+      GeneratedColumn<String>(
+        'suggested_person_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _suggestedActionMeta = const VerificationMeta(
+    'suggestedAction',
+  );
+  @override
+  late final GeneratedColumn<String> suggestedAction = GeneratedColumn<String>(
+    'suggested_action',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('unset'),
+  );
+  static const VerificationMeta _confidenceJsonMeta = const VerificationMeta(
+    'confidenceJson',
+  );
+  @override
+  late final GeneratedColumn<String> confidenceJson = GeneratedColumn<String>(
+    'confidence_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _warningsJsonMeta = const VerificationMeta(
+    'warningsJson',
+  );
+  @override
+  late final GeneratedColumn<String> warningsJson = GeneratedColumn<String>(
+    'warnings_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _refHashMeta = const VerificationMeta(
+    'refHash',
+  );
+  @override
+  late final GeneratedColumn<String> refHash = GeneratedColumn<String>(
+    'ref_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _refAmountHashMeta = const VerificationMeta(
+    'refAmountHash',
+  );
+  @override
+  late final GeneratedColumn<String> refAmountHash = GeneratedColumn<String>(
+    'ref_amount_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _receivedAtMeta = const VerificationMeta(
+    'receivedAt',
+  );
+  @override
+  late final GeneratedColumn<int> receivedAt = GeneratedColumn<int>(
+    'received_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<int> expiresAt = GeneratedColumn<int>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _decidedAtMeta = const VerificationMeta(
+    'decidedAt',
+  );
+  @override
+  late final GeneratedColumn<int> decidedAt = GeneratedColumn<int>(
+    'decided_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _savedRecordIdMeta = const VerificationMeta(
+    'savedRecordId',
+  );
+  @override
+  late final GeneratedColumn<String> savedRecordId = GeneratedColumn<String>(
+    'saved_record_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _savedRecordTypeMeta = const VerificationMeta(
+    'savedRecordType',
+  );
+  @override
+  late final GeneratedColumn<String> savedRecordType = GeneratedColumn<String>(
+    'saved_record_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rawBlobMeta = const VerificationMeta(
+    'rawBlob',
+  );
+  @override
+  late final GeneratedColumn<Uint8List> rawBlob = GeneratedColumn<Uint8List>(
+    'raw_blob',
+    aliasedName,
+    true,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    fingerprint,
+    parentImportId,
+    status,
+    origin,
+    senderId,
+    bankId,
+    parserId,
+    ruleVersion,
+    kind,
+    direction,
+    amountMinorUnits,
+    currencyCode,
+    occurredOn,
+    timeMinutes,
+    merchant,
+    merchantKey,
+    counterparty,
+    cardLast4,
+    suggestedCategoryId,
+    suggestedPersonId,
+    suggestedAction,
+    confidenceJson,
+    warningsJson,
+    refHash,
+    refAmountHash,
+    receivedAt,
+    createdAt,
+    expiresAt,
+    decidedAt,
+    savedRecordId,
+    savedRecordType,
+    rawBlob,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'pending_sms_imports';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PendingSmsImportRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('fingerprint')) {
+      context.handle(
+        _fingerprintMeta,
+        fingerprint.isAcceptableOrUnknown(
+          data['fingerprint']!,
+          _fingerprintMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_fingerprintMeta);
+    }
+    if (data.containsKey('parent_import_id')) {
+      context.handle(
+        _parentImportIdMeta,
+        parentImportId.isAcceptableOrUnknown(
+          data['parent_import_id']!,
+          _parentImportIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('origin')) {
+      context.handle(
+        _originMeta,
+        origin.isAcceptableOrUnknown(data['origin']!, _originMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_originMeta);
+    }
+    if (data.containsKey('sender_id')) {
+      context.handle(
+        _senderIdMeta,
+        senderId.isAcceptableOrUnknown(data['sender_id']!, _senderIdMeta),
+      );
+    }
+    if (data.containsKey('bank_id')) {
+      context.handle(
+        _bankIdMeta,
+        bankId.isAcceptableOrUnknown(data['bank_id']!, _bankIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bankIdMeta);
+    }
+    if (data.containsKey('parser_id')) {
+      context.handle(
+        _parserIdMeta,
+        parserId.isAcceptableOrUnknown(data['parser_id']!, _parserIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_parserIdMeta);
+    }
+    if (data.containsKey('rule_version')) {
+      context.handle(
+        _ruleVersionMeta,
+        ruleVersion.isAcceptableOrUnknown(
+          data['rule_version']!,
+          _ruleVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_ruleVersionMeta);
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_kindMeta);
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_directionMeta);
+    }
+    if (data.containsKey('amount_minor_units')) {
+      context.handle(
+        _amountMinorUnitsMeta,
+        amountMinorUnits.isAcceptableOrUnknown(
+          data['amount_minor_units']!,
+          _amountMinorUnitsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('currency_code')) {
+      context.handle(
+        _currencyCodeMeta,
+        currencyCode.isAcceptableOrUnknown(
+          data['currency_code']!,
+          _currencyCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('occurred_on')) {
+      context.handle(
+        _occurredOnMeta,
+        occurredOn.isAcceptableOrUnknown(data['occurred_on']!, _occurredOnMeta),
+      );
+    }
+    if (data.containsKey('time_minutes')) {
+      context.handle(
+        _timeMinutesMeta,
+        timeMinutes.isAcceptableOrUnknown(
+          data['time_minutes']!,
+          _timeMinutesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('merchant')) {
+      context.handle(
+        _merchantMeta,
+        merchant.isAcceptableOrUnknown(data['merchant']!, _merchantMeta),
+      );
+    }
+    if (data.containsKey('merchant_key')) {
+      context.handle(
+        _merchantKeyMeta,
+        merchantKey.isAcceptableOrUnknown(
+          data['merchant_key']!,
+          _merchantKeyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('counterparty')) {
+      context.handle(
+        _counterpartyMeta,
+        counterparty.isAcceptableOrUnknown(
+          data['counterparty']!,
+          _counterpartyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('card_last4')) {
+      context.handle(
+        _cardLast4Meta,
+        cardLast4.isAcceptableOrUnknown(data['card_last4']!, _cardLast4Meta),
+      );
+    }
+    if (data.containsKey('suggested_category_id')) {
+      context.handle(
+        _suggestedCategoryIdMeta,
+        suggestedCategoryId.isAcceptableOrUnknown(
+          data['suggested_category_id']!,
+          _suggestedCategoryIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('suggested_person_id')) {
+      context.handle(
+        _suggestedPersonIdMeta,
+        suggestedPersonId.isAcceptableOrUnknown(
+          data['suggested_person_id']!,
+          _suggestedPersonIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('suggested_action')) {
+      context.handle(
+        _suggestedActionMeta,
+        suggestedAction.isAcceptableOrUnknown(
+          data['suggested_action']!,
+          _suggestedActionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('confidence_json')) {
+      context.handle(
+        _confidenceJsonMeta,
+        confidenceJson.isAcceptableOrUnknown(
+          data['confidence_json']!,
+          _confidenceJsonMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_confidenceJsonMeta);
+    }
+    if (data.containsKey('warnings_json')) {
+      context.handle(
+        _warningsJsonMeta,
+        warningsJson.isAcceptableOrUnknown(
+          data['warnings_json']!,
+          _warningsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('ref_hash')) {
+      context.handle(
+        _refHashMeta,
+        refHash.isAcceptableOrUnknown(data['ref_hash']!, _refHashMeta),
+      );
+    }
+    if (data.containsKey('ref_amount_hash')) {
+      context.handle(
+        _refAmountHashMeta,
+        refAmountHash.isAcceptableOrUnknown(
+          data['ref_amount_hash']!,
+          _refAmountHashMeta,
+        ),
+      );
+    }
+    if (data.containsKey('received_at')) {
+      context.handle(
+        _receivedAtMeta,
+        receivedAt.isAcceptableOrUnknown(data['received_at']!, _receivedAtMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('decided_at')) {
+      context.handle(
+        _decidedAtMeta,
+        decidedAt.isAcceptableOrUnknown(data['decided_at']!, _decidedAtMeta),
+      );
+    }
+    if (data.containsKey('saved_record_id')) {
+      context.handle(
+        _savedRecordIdMeta,
+        savedRecordId.isAcceptableOrUnknown(
+          data['saved_record_id']!,
+          _savedRecordIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('saved_record_type')) {
+      context.handle(
+        _savedRecordTypeMeta,
+        savedRecordType.isAcceptableOrUnknown(
+          data['saved_record_type']!,
+          _savedRecordTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('raw_blob')) {
+      context.handle(
+        _rawBlobMeta,
+        rawBlob.isAcceptableOrUnknown(data['raw_blob']!, _rawBlobMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PendingSmsImportRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PendingSmsImportRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      fingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fingerprint'],
+      )!,
+      parentImportId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}parent_import_id'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      origin: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}origin'],
+      )!,
+      senderId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender_id'],
+      ),
+      bankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bank_id'],
+      )!,
+      parserId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}parser_id'],
+      )!,
+      ruleVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rule_version'],
+      )!,
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      )!,
+      amountMinorUnits: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_minor_units'],
+      ),
+      currencyCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_code'],
+      ),
+      occurredOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}occurred_on'],
+      ),
+      timeMinutes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}time_minutes'],
+      ),
+      merchant: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}merchant'],
+      ),
+      merchantKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}merchant_key'],
+      ),
+      counterparty: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}counterparty'],
+      ),
+      cardLast4: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}card_last4'],
+      ),
+      suggestedCategoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}suggested_category_id'],
+      ),
+      suggestedPersonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}suggested_person_id'],
+      ),
+      suggestedAction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}suggested_action'],
+      )!,
+      confidenceJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}confidence_json'],
+      )!,
+      warningsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}warnings_json'],
+      )!,
+      refHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ref_hash'],
+      ),
+      refAmountHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ref_amount_hash'],
+      ),
+      receivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}received_at'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      decidedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}decided_at'],
+      ),
+      savedRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}saved_record_id'],
+      ),
+      savedRecordType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}saved_record_type'],
+      ),
+      rawBlob: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}raw_blob'],
+      ),
+    );
+  }
+
+  @override
+  $PendingSmsImportsTable createAlias(String alias) {
+    return $PendingSmsImportsTable(attachedDatabase, alias);
+  }
+}
+
+class PendingSmsImportRow extends DataClass
+    implements Insertable<PendingSmsImportRow> {
+  final String id;
+
+  /// HMAC-SHA256 hex over the frozen fingerprint normalizer's output; the
+  /// unique index makes ingestion idempotent (FR-023).
+  final String fingerprint;
+
+  /// Set only on a fee item split from its parent message (FR-030a). A
+  /// display link only, no FK.
+  final String? parentImportId;
+
+  /// `SmsImportStatus.dbValue`.
+  final String status;
+
+  /// `SmsSource.dbValue`: `'scan'|'catchup'|'paste'|'share'`.
+  final String origin;
+  final String? senderId;
+  final String bankId;
+  final String parserId;
+  final String ruleVersion;
+
+  /// `SmsKind.dbValue`.
+  final String kind;
+
+  /// `SmsDirection.dbValue`: `'debit'|'credit'|'unknown'`.
+  final String direction;
+  final int? amountMinorUnits;
+  final String? currencyCode;
+
+  /// Date-only, local midnight epoch millis.
+  final int? occurredOn;
+
+  /// Minutes since local midnight, 0..1439.
+  final int? timeMinutes;
+  final String? merchant;
+  final String? merchantKey;
+  final String? counterparty;
+  final String? cardLast4;
+  final String? suggestedCategoryId;
+  final String? suggestedPersonId;
+
+  /// `SuggestedRecordType.dbValue`.
+  final String suggestedAction;
+  final String confidenceJson;
+  final String warningsJson;
+  final String? refHash;
+  final String? refAmountHash;
+  final int? receivedAt;
+  final int createdAt;
+  final int expiresAt;
+  final int? decidedAt;
+  final String? savedRecordId;
+
+  /// `SavedRecordType.dbValue`.
+  final String? savedRecordType;
+
+  /// The masked original sealed with AES-GCM:
+  /// `0x01 | nonce(12) | ciphertext | tag(16)`, AAD = [id] (research
+  /// Decision 6). Non-null only while `status = 'pending'`.
+  final Uint8List? rawBlob;
+  const PendingSmsImportRow({
+    required this.id,
+    required this.fingerprint,
+    this.parentImportId,
+    required this.status,
+    required this.origin,
+    this.senderId,
+    required this.bankId,
+    required this.parserId,
+    required this.ruleVersion,
+    required this.kind,
+    required this.direction,
+    this.amountMinorUnits,
+    this.currencyCode,
+    this.occurredOn,
+    this.timeMinutes,
+    this.merchant,
+    this.merchantKey,
+    this.counterparty,
+    this.cardLast4,
+    this.suggestedCategoryId,
+    this.suggestedPersonId,
+    required this.suggestedAction,
+    required this.confidenceJson,
+    required this.warningsJson,
+    this.refHash,
+    this.refAmountHash,
+    this.receivedAt,
+    required this.createdAt,
+    required this.expiresAt,
+    this.decidedAt,
+    this.savedRecordId,
+    this.savedRecordType,
+    this.rawBlob,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['fingerprint'] = Variable<String>(fingerprint);
+    if (!nullToAbsent || parentImportId != null) {
+      map['parent_import_id'] = Variable<String>(parentImportId);
+    }
+    map['status'] = Variable<String>(status);
+    map['origin'] = Variable<String>(origin);
+    if (!nullToAbsent || senderId != null) {
+      map['sender_id'] = Variable<String>(senderId);
+    }
+    map['bank_id'] = Variable<String>(bankId);
+    map['parser_id'] = Variable<String>(parserId);
+    map['rule_version'] = Variable<String>(ruleVersion);
+    map['kind'] = Variable<String>(kind);
+    map['direction'] = Variable<String>(direction);
+    if (!nullToAbsent || amountMinorUnits != null) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits);
+    }
+    if (!nullToAbsent || currencyCode != null) {
+      map['currency_code'] = Variable<String>(currencyCode);
+    }
+    if (!nullToAbsent || occurredOn != null) {
+      map['occurred_on'] = Variable<int>(occurredOn);
+    }
+    if (!nullToAbsent || timeMinutes != null) {
+      map['time_minutes'] = Variable<int>(timeMinutes);
+    }
+    if (!nullToAbsent || merchant != null) {
+      map['merchant'] = Variable<String>(merchant);
+    }
+    if (!nullToAbsent || merchantKey != null) {
+      map['merchant_key'] = Variable<String>(merchantKey);
+    }
+    if (!nullToAbsent || counterparty != null) {
+      map['counterparty'] = Variable<String>(counterparty);
+    }
+    if (!nullToAbsent || cardLast4 != null) {
+      map['card_last4'] = Variable<String>(cardLast4);
+    }
+    if (!nullToAbsent || suggestedCategoryId != null) {
+      map['suggested_category_id'] = Variable<String>(suggestedCategoryId);
+    }
+    if (!nullToAbsent || suggestedPersonId != null) {
+      map['suggested_person_id'] = Variable<String>(suggestedPersonId);
+    }
+    map['suggested_action'] = Variable<String>(suggestedAction);
+    map['confidence_json'] = Variable<String>(confidenceJson);
+    map['warnings_json'] = Variable<String>(warningsJson);
+    if (!nullToAbsent || refHash != null) {
+      map['ref_hash'] = Variable<String>(refHash);
+    }
+    if (!nullToAbsent || refAmountHash != null) {
+      map['ref_amount_hash'] = Variable<String>(refAmountHash);
+    }
+    if (!nullToAbsent || receivedAt != null) {
+      map['received_at'] = Variable<int>(receivedAt);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['expires_at'] = Variable<int>(expiresAt);
+    if (!nullToAbsent || decidedAt != null) {
+      map['decided_at'] = Variable<int>(decidedAt);
+    }
+    if (!nullToAbsent || savedRecordId != null) {
+      map['saved_record_id'] = Variable<String>(savedRecordId);
+    }
+    if (!nullToAbsent || savedRecordType != null) {
+      map['saved_record_type'] = Variable<String>(savedRecordType);
+    }
+    if (!nullToAbsent || rawBlob != null) {
+      map['raw_blob'] = Variable<Uint8List>(rawBlob);
+    }
+    return map;
+  }
+
+  PendingSmsImportsCompanion toCompanion(bool nullToAbsent) {
+    return PendingSmsImportsCompanion(
+      id: Value(id),
+      fingerprint: Value(fingerprint),
+      parentImportId: parentImportId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parentImportId),
+      status: Value(status),
+      origin: Value(origin),
+      senderId: senderId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(senderId),
+      bankId: Value(bankId),
+      parserId: Value(parserId),
+      ruleVersion: Value(ruleVersion),
+      kind: Value(kind),
+      direction: Value(direction),
+      amountMinorUnits: amountMinorUnits == null && nullToAbsent
+          ? const Value.absent()
+          : Value(amountMinorUnits),
+      currencyCode: currencyCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currencyCode),
+      occurredOn: occurredOn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(occurredOn),
+      timeMinutes: timeMinutes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timeMinutes),
+      merchant: merchant == null && nullToAbsent
+          ? const Value.absent()
+          : Value(merchant),
+      merchantKey: merchantKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(merchantKey),
+      counterparty: counterparty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(counterparty),
+      cardLast4: cardLast4 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cardLast4),
+      suggestedCategoryId: suggestedCategoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(suggestedCategoryId),
+      suggestedPersonId: suggestedPersonId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(suggestedPersonId),
+      suggestedAction: Value(suggestedAction),
+      confidenceJson: Value(confidenceJson),
+      warningsJson: Value(warningsJson),
+      refHash: refHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refHash),
+      refAmountHash: refAmountHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refAmountHash),
+      receivedAt: receivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(receivedAt),
+      createdAt: Value(createdAt),
+      expiresAt: Value(expiresAt),
+      decidedAt: decidedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(decidedAt),
+      savedRecordId: savedRecordId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(savedRecordId),
+      savedRecordType: savedRecordType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(savedRecordType),
+      rawBlob: rawBlob == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rawBlob),
+    );
+  }
+
+  factory PendingSmsImportRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PendingSmsImportRow(
+      id: serializer.fromJson<String>(json['id']),
+      fingerprint: serializer.fromJson<String>(json['fingerprint']),
+      parentImportId: serializer.fromJson<String?>(json['parentImportId']),
+      status: serializer.fromJson<String>(json['status']),
+      origin: serializer.fromJson<String>(json['origin']),
+      senderId: serializer.fromJson<String?>(json['senderId']),
+      bankId: serializer.fromJson<String>(json['bankId']),
+      parserId: serializer.fromJson<String>(json['parserId']),
+      ruleVersion: serializer.fromJson<String>(json['ruleVersion']),
+      kind: serializer.fromJson<String>(json['kind']),
+      direction: serializer.fromJson<String>(json['direction']),
+      amountMinorUnits: serializer.fromJson<int?>(json['amountMinorUnits']),
+      currencyCode: serializer.fromJson<String?>(json['currencyCode']),
+      occurredOn: serializer.fromJson<int?>(json['occurredOn']),
+      timeMinutes: serializer.fromJson<int?>(json['timeMinutes']),
+      merchant: serializer.fromJson<String?>(json['merchant']),
+      merchantKey: serializer.fromJson<String?>(json['merchantKey']),
+      counterparty: serializer.fromJson<String?>(json['counterparty']),
+      cardLast4: serializer.fromJson<String?>(json['cardLast4']),
+      suggestedCategoryId: serializer.fromJson<String?>(
+        json['suggestedCategoryId'],
+      ),
+      suggestedPersonId: serializer.fromJson<String?>(
+        json['suggestedPersonId'],
+      ),
+      suggestedAction: serializer.fromJson<String>(json['suggestedAction']),
+      confidenceJson: serializer.fromJson<String>(json['confidenceJson']),
+      warningsJson: serializer.fromJson<String>(json['warningsJson']),
+      refHash: serializer.fromJson<String?>(json['refHash']),
+      refAmountHash: serializer.fromJson<String?>(json['refAmountHash']),
+      receivedAt: serializer.fromJson<int?>(json['receivedAt']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      expiresAt: serializer.fromJson<int>(json['expiresAt']),
+      decidedAt: serializer.fromJson<int?>(json['decidedAt']),
+      savedRecordId: serializer.fromJson<String?>(json['savedRecordId']),
+      savedRecordType: serializer.fromJson<String?>(json['savedRecordType']),
+      rawBlob: serializer.fromJson<Uint8List?>(json['rawBlob']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'fingerprint': serializer.toJson<String>(fingerprint),
+      'parentImportId': serializer.toJson<String?>(parentImportId),
+      'status': serializer.toJson<String>(status),
+      'origin': serializer.toJson<String>(origin),
+      'senderId': serializer.toJson<String?>(senderId),
+      'bankId': serializer.toJson<String>(bankId),
+      'parserId': serializer.toJson<String>(parserId),
+      'ruleVersion': serializer.toJson<String>(ruleVersion),
+      'kind': serializer.toJson<String>(kind),
+      'direction': serializer.toJson<String>(direction),
+      'amountMinorUnits': serializer.toJson<int?>(amountMinorUnits),
+      'currencyCode': serializer.toJson<String?>(currencyCode),
+      'occurredOn': serializer.toJson<int?>(occurredOn),
+      'timeMinutes': serializer.toJson<int?>(timeMinutes),
+      'merchant': serializer.toJson<String?>(merchant),
+      'merchantKey': serializer.toJson<String?>(merchantKey),
+      'counterparty': serializer.toJson<String?>(counterparty),
+      'cardLast4': serializer.toJson<String?>(cardLast4),
+      'suggestedCategoryId': serializer.toJson<String?>(suggestedCategoryId),
+      'suggestedPersonId': serializer.toJson<String?>(suggestedPersonId),
+      'suggestedAction': serializer.toJson<String>(suggestedAction),
+      'confidenceJson': serializer.toJson<String>(confidenceJson),
+      'warningsJson': serializer.toJson<String>(warningsJson),
+      'refHash': serializer.toJson<String?>(refHash),
+      'refAmountHash': serializer.toJson<String?>(refAmountHash),
+      'receivedAt': serializer.toJson<int?>(receivedAt),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'expiresAt': serializer.toJson<int>(expiresAt),
+      'decidedAt': serializer.toJson<int?>(decidedAt),
+      'savedRecordId': serializer.toJson<String?>(savedRecordId),
+      'savedRecordType': serializer.toJson<String?>(savedRecordType),
+      'rawBlob': serializer.toJson<Uint8List?>(rawBlob),
+    };
+  }
+
+  PendingSmsImportRow copyWith({
+    String? id,
+    String? fingerprint,
+    Value<String?> parentImportId = const Value.absent(),
+    String? status,
+    String? origin,
+    Value<String?> senderId = const Value.absent(),
+    String? bankId,
+    String? parserId,
+    String? ruleVersion,
+    String? kind,
+    String? direction,
+    Value<int?> amountMinorUnits = const Value.absent(),
+    Value<String?> currencyCode = const Value.absent(),
+    Value<int?> occurredOn = const Value.absent(),
+    Value<int?> timeMinutes = const Value.absent(),
+    Value<String?> merchant = const Value.absent(),
+    Value<String?> merchantKey = const Value.absent(),
+    Value<String?> counterparty = const Value.absent(),
+    Value<String?> cardLast4 = const Value.absent(),
+    Value<String?> suggestedCategoryId = const Value.absent(),
+    Value<String?> suggestedPersonId = const Value.absent(),
+    String? suggestedAction,
+    String? confidenceJson,
+    String? warningsJson,
+    Value<String?> refHash = const Value.absent(),
+    Value<String?> refAmountHash = const Value.absent(),
+    Value<int?> receivedAt = const Value.absent(),
+    int? createdAt,
+    int? expiresAt,
+    Value<int?> decidedAt = const Value.absent(),
+    Value<String?> savedRecordId = const Value.absent(),
+    Value<String?> savedRecordType = const Value.absent(),
+    Value<Uint8List?> rawBlob = const Value.absent(),
+  }) => PendingSmsImportRow(
+    id: id ?? this.id,
+    fingerprint: fingerprint ?? this.fingerprint,
+    parentImportId: parentImportId.present
+        ? parentImportId.value
+        : this.parentImportId,
+    status: status ?? this.status,
+    origin: origin ?? this.origin,
+    senderId: senderId.present ? senderId.value : this.senderId,
+    bankId: bankId ?? this.bankId,
+    parserId: parserId ?? this.parserId,
+    ruleVersion: ruleVersion ?? this.ruleVersion,
+    kind: kind ?? this.kind,
+    direction: direction ?? this.direction,
+    amountMinorUnits: amountMinorUnits.present
+        ? amountMinorUnits.value
+        : this.amountMinorUnits,
+    currencyCode: currencyCode.present ? currencyCode.value : this.currencyCode,
+    occurredOn: occurredOn.present ? occurredOn.value : this.occurredOn,
+    timeMinutes: timeMinutes.present ? timeMinutes.value : this.timeMinutes,
+    merchant: merchant.present ? merchant.value : this.merchant,
+    merchantKey: merchantKey.present ? merchantKey.value : this.merchantKey,
+    counterparty: counterparty.present ? counterparty.value : this.counterparty,
+    cardLast4: cardLast4.present ? cardLast4.value : this.cardLast4,
+    suggestedCategoryId: suggestedCategoryId.present
+        ? suggestedCategoryId.value
+        : this.suggestedCategoryId,
+    suggestedPersonId: suggestedPersonId.present
+        ? suggestedPersonId.value
+        : this.suggestedPersonId,
+    suggestedAction: suggestedAction ?? this.suggestedAction,
+    confidenceJson: confidenceJson ?? this.confidenceJson,
+    warningsJson: warningsJson ?? this.warningsJson,
+    refHash: refHash.present ? refHash.value : this.refHash,
+    refAmountHash: refAmountHash.present
+        ? refAmountHash.value
+        : this.refAmountHash,
+    receivedAt: receivedAt.present ? receivedAt.value : this.receivedAt,
+    createdAt: createdAt ?? this.createdAt,
+    expiresAt: expiresAt ?? this.expiresAt,
+    decidedAt: decidedAt.present ? decidedAt.value : this.decidedAt,
+    savedRecordId: savedRecordId.present
+        ? savedRecordId.value
+        : this.savedRecordId,
+    savedRecordType: savedRecordType.present
+        ? savedRecordType.value
+        : this.savedRecordType,
+    rawBlob: rawBlob.present ? rawBlob.value : this.rawBlob,
+  );
+  PendingSmsImportRow copyWithCompanion(PendingSmsImportsCompanion data) {
+    return PendingSmsImportRow(
+      id: data.id.present ? data.id.value : this.id,
+      fingerprint: data.fingerprint.present
+          ? data.fingerprint.value
+          : this.fingerprint,
+      parentImportId: data.parentImportId.present
+          ? data.parentImportId.value
+          : this.parentImportId,
+      status: data.status.present ? data.status.value : this.status,
+      origin: data.origin.present ? data.origin.value : this.origin,
+      senderId: data.senderId.present ? data.senderId.value : this.senderId,
+      bankId: data.bankId.present ? data.bankId.value : this.bankId,
+      parserId: data.parserId.present ? data.parserId.value : this.parserId,
+      ruleVersion: data.ruleVersion.present
+          ? data.ruleVersion.value
+          : this.ruleVersion,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      amountMinorUnits: data.amountMinorUnits.present
+          ? data.amountMinorUnits.value
+          : this.amountMinorUnits,
+      currencyCode: data.currencyCode.present
+          ? data.currencyCode.value
+          : this.currencyCode,
+      occurredOn: data.occurredOn.present
+          ? data.occurredOn.value
+          : this.occurredOn,
+      timeMinutes: data.timeMinutes.present
+          ? data.timeMinutes.value
+          : this.timeMinutes,
+      merchant: data.merchant.present ? data.merchant.value : this.merchant,
+      merchantKey: data.merchantKey.present
+          ? data.merchantKey.value
+          : this.merchantKey,
+      counterparty: data.counterparty.present
+          ? data.counterparty.value
+          : this.counterparty,
+      cardLast4: data.cardLast4.present ? data.cardLast4.value : this.cardLast4,
+      suggestedCategoryId: data.suggestedCategoryId.present
+          ? data.suggestedCategoryId.value
+          : this.suggestedCategoryId,
+      suggestedPersonId: data.suggestedPersonId.present
+          ? data.suggestedPersonId.value
+          : this.suggestedPersonId,
+      suggestedAction: data.suggestedAction.present
+          ? data.suggestedAction.value
+          : this.suggestedAction,
+      confidenceJson: data.confidenceJson.present
+          ? data.confidenceJson.value
+          : this.confidenceJson,
+      warningsJson: data.warningsJson.present
+          ? data.warningsJson.value
+          : this.warningsJson,
+      refHash: data.refHash.present ? data.refHash.value : this.refHash,
+      refAmountHash: data.refAmountHash.present
+          ? data.refAmountHash.value
+          : this.refAmountHash,
+      receivedAt: data.receivedAt.present
+          ? data.receivedAt.value
+          : this.receivedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      decidedAt: data.decidedAt.present ? data.decidedAt.value : this.decidedAt,
+      savedRecordId: data.savedRecordId.present
+          ? data.savedRecordId.value
+          : this.savedRecordId,
+      savedRecordType: data.savedRecordType.present
+          ? data.savedRecordType.value
+          : this.savedRecordType,
+      rawBlob: data.rawBlob.present ? data.rawBlob.value : this.rawBlob,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingSmsImportRow(')
+          ..write('id: $id, ')
+          ..write('fingerprint: $fingerprint, ')
+          ..write('parentImportId: $parentImportId, ')
+          ..write('status: $status, ')
+          ..write('origin: $origin, ')
+          ..write('senderId: $senderId, ')
+          ..write('bankId: $bankId, ')
+          ..write('parserId: $parserId, ')
+          ..write('ruleVersion: $ruleVersion, ')
+          ..write('kind: $kind, ')
+          ..write('direction: $direction, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('occurredOn: $occurredOn, ')
+          ..write('timeMinutes: $timeMinutes, ')
+          ..write('merchant: $merchant, ')
+          ..write('merchantKey: $merchantKey, ')
+          ..write('counterparty: $counterparty, ')
+          ..write('cardLast4: $cardLast4, ')
+          ..write('suggestedCategoryId: $suggestedCategoryId, ')
+          ..write('suggestedPersonId: $suggestedPersonId, ')
+          ..write('suggestedAction: $suggestedAction, ')
+          ..write('confidenceJson: $confidenceJson, ')
+          ..write('warningsJson: $warningsJson, ')
+          ..write('refHash: $refHash, ')
+          ..write('refAmountHash: $refAmountHash, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('decidedAt: $decidedAt, ')
+          ..write('savedRecordId: $savedRecordId, ')
+          ..write('savedRecordType: $savedRecordType, ')
+          ..write('rawBlob: $rawBlob')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    fingerprint,
+    parentImportId,
+    status,
+    origin,
+    senderId,
+    bankId,
+    parserId,
+    ruleVersion,
+    kind,
+    direction,
+    amountMinorUnits,
+    currencyCode,
+    occurredOn,
+    timeMinutes,
+    merchant,
+    merchantKey,
+    counterparty,
+    cardLast4,
+    suggestedCategoryId,
+    suggestedPersonId,
+    suggestedAction,
+    confidenceJson,
+    warningsJson,
+    refHash,
+    refAmountHash,
+    receivedAt,
+    createdAt,
+    expiresAt,
+    decidedAt,
+    savedRecordId,
+    savedRecordType,
+    $driftBlobEquality.hash(rawBlob),
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PendingSmsImportRow &&
+          other.id == this.id &&
+          other.fingerprint == this.fingerprint &&
+          other.parentImportId == this.parentImportId &&
+          other.status == this.status &&
+          other.origin == this.origin &&
+          other.senderId == this.senderId &&
+          other.bankId == this.bankId &&
+          other.parserId == this.parserId &&
+          other.ruleVersion == this.ruleVersion &&
+          other.kind == this.kind &&
+          other.direction == this.direction &&
+          other.amountMinorUnits == this.amountMinorUnits &&
+          other.currencyCode == this.currencyCode &&
+          other.occurredOn == this.occurredOn &&
+          other.timeMinutes == this.timeMinutes &&
+          other.merchant == this.merchant &&
+          other.merchantKey == this.merchantKey &&
+          other.counterparty == this.counterparty &&
+          other.cardLast4 == this.cardLast4 &&
+          other.suggestedCategoryId == this.suggestedCategoryId &&
+          other.suggestedPersonId == this.suggestedPersonId &&
+          other.suggestedAction == this.suggestedAction &&
+          other.confidenceJson == this.confidenceJson &&
+          other.warningsJson == this.warningsJson &&
+          other.refHash == this.refHash &&
+          other.refAmountHash == this.refAmountHash &&
+          other.receivedAt == this.receivedAt &&
+          other.createdAt == this.createdAt &&
+          other.expiresAt == this.expiresAt &&
+          other.decidedAt == this.decidedAt &&
+          other.savedRecordId == this.savedRecordId &&
+          other.savedRecordType == this.savedRecordType &&
+          $driftBlobEquality.equals(other.rawBlob, this.rawBlob));
+}
+
+class PendingSmsImportsCompanion extends UpdateCompanion<PendingSmsImportRow> {
+  final Value<String> id;
+  final Value<String> fingerprint;
+  final Value<String?> parentImportId;
+  final Value<String> status;
+  final Value<String> origin;
+  final Value<String?> senderId;
+  final Value<String> bankId;
+  final Value<String> parserId;
+  final Value<String> ruleVersion;
+  final Value<String> kind;
+  final Value<String> direction;
+  final Value<int?> amountMinorUnits;
+  final Value<String?> currencyCode;
+  final Value<int?> occurredOn;
+  final Value<int?> timeMinutes;
+  final Value<String?> merchant;
+  final Value<String?> merchantKey;
+  final Value<String?> counterparty;
+  final Value<String?> cardLast4;
+  final Value<String?> suggestedCategoryId;
+  final Value<String?> suggestedPersonId;
+  final Value<String> suggestedAction;
+  final Value<String> confidenceJson;
+  final Value<String> warningsJson;
+  final Value<String?> refHash;
+  final Value<String?> refAmountHash;
+  final Value<int?> receivedAt;
+  final Value<int> createdAt;
+  final Value<int> expiresAt;
+  final Value<int?> decidedAt;
+  final Value<String?> savedRecordId;
+  final Value<String?> savedRecordType;
+  final Value<Uint8List?> rawBlob;
+  final Value<int> rowid;
+  const PendingSmsImportsCompanion({
+    this.id = const Value.absent(),
+    this.fingerprint = const Value.absent(),
+    this.parentImportId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.origin = const Value.absent(),
+    this.senderId = const Value.absent(),
+    this.bankId = const Value.absent(),
+    this.parserId = const Value.absent(),
+    this.ruleVersion = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.amountMinorUnits = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.occurredOn = const Value.absent(),
+    this.timeMinutes = const Value.absent(),
+    this.merchant = const Value.absent(),
+    this.merchantKey = const Value.absent(),
+    this.counterparty = const Value.absent(),
+    this.cardLast4 = const Value.absent(),
+    this.suggestedCategoryId = const Value.absent(),
+    this.suggestedPersonId = const Value.absent(),
+    this.suggestedAction = const Value.absent(),
+    this.confidenceJson = const Value.absent(),
+    this.warningsJson = const Value.absent(),
+    this.refHash = const Value.absent(),
+    this.refAmountHash = const Value.absent(),
+    this.receivedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.decidedAt = const Value.absent(),
+    this.savedRecordId = const Value.absent(),
+    this.savedRecordType = const Value.absent(),
+    this.rawBlob = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PendingSmsImportsCompanion.insert({
+    required String id,
+    required String fingerprint,
+    this.parentImportId = const Value.absent(),
+    this.status = const Value.absent(),
+    required String origin,
+    this.senderId = const Value.absent(),
+    required String bankId,
+    required String parserId,
+    required String ruleVersion,
+    required String kind,
+    required String direction,
+    this.amountMinorUnits = const Value.absent(),
+    this.currencyCode = const Value.absent(),
+    this.occurredOn = const Value.absent(),
+    this.timeMinutes = const Value.absent(),
+    this.merchant = const Value.absent(),
+    this.merchantKey = const Value.absent(),
+    this.counterparty = const Value.absent(),
+    this.cardLast4 = const Value.absent(),
+    this.suggestedCategoryId = const Value.absent(),
+    this.suggestedPersonId = const Value.absent(),
+    this.suggestedAction = const Value.absent(),
+    required String confidenceJson,
+    this.warningsJson = const Value.absent(),
+    this.refHash = const Value.absent(),
+    this.refAmountHash = const Value.absent(),
+    this.receivedAt = const Value.absent(),
+    required int createdAt,
+    required int expiresAt,
+    this.decidedAt = const Value.absent(),
+    this.savedRecordId = const Value.absent(),
+    this.savedRecordType = const Value.absent(),
+    this.rawBlob = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       fingerprint = Value(fingerprint),
+       origin = Value(origin),
+       bankId = Value(bankId),
+       parserId = Value(parserId),
+       ruleVersion = Value(ruleVersion),
+       kind = Value(kind),
+       direction = Value(direction),
+       confidenceJson = Value(confidenceJson),
+       createdAt = Value(createdAt),
+       expiresAt = Value(expiresAt);
+  static Insertable<PendingSmsImportRow> custom({
+    Expression<String>? id,
+    Expression<String>? fingerprint,
+    Expression<String>? parentImportId,
+    Expression<String>? status,
+    Expression<String>? origin,
+    Expression<String>? senderId,
+    Expression<String>? bankId,
+    Expression<String>? parserId,
+    Expression<String>? ruleVersion,
+    Expression<String>? kind,
+    Expression<String>? direction,
+    Expression<int>? amountMinorUnits,
+    Expression<String>? currencyCode,
+    Expression<int>? occurredOn,
+    Expression<int>? timeMinutes,
+    Expression<String>? merchant,
+    Expression<String>? merchantKey,
+    Expression<String>? counterparty,
+    Expression<String>? cardLast4,
+    Expression<String>? suggestedCategoryId,
+    Expression<String>? suggestedPersonId,
+    Expression<String>? suggestedAction,
+    Expression<String>? confidenceJson,
+    Expression<String>? warningsJson,
+    Expression<String>? refHash,
+    Expression<String>? refAmountHash,
+    Expression<int>? receivedAt,
+    Expression<int>? createdAt,
+    Expression<int>? expiresAt,
+    Expression<int>? decidedAt,
+    Expression<String>? savedRecordId,
+    Expression<String>? savedRecordType,
+    Expression<Uint8List>? rawBlob,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (fingerprint != null) 'fingerprint': fingerprint,
+      if (parentImportId != null) 'parent_import_id': parentImportId,
+      if (status != null) 'status': status,
+      if (origin != null) 'origin': origin,
+      if (senderId != null) 'sender_id': senderId,
+      if (bankId != null) 'bank_id': bankId,
+      if (parserId != null) 'parser_id': parserId,
+      if (ruleVersion != null) 'rule_version': ruleVersion,
+      if (kind != null) 'kind': kind,
+      if (direction != null) 'direction': direction,
+      if (amountMinorUnits != null) 'amount_minor_units': amountMinorUnits,
+      if (currencyCode != null) 'currency_code': currencyCode,
+      if (occurredOn != null) 'occurred_on': occurredOn,
+      if (timeMinutes != null) 'time_minutes': timeMinutes,
+      if (merchant != null) 'merchant': merchant,
+      if (merchantKey != null) 'merchant_key': merchantKey,
+      if (counterparty != null) 'counterparty': counterparty,
+      if (cardLast4 != null) 'card_last4': cardLast4,
+      if (suggestedCategoryId != null)
+        'suggested_category_id': suggestedCategoryId,
+      if (suggestedPersonId != null) 'suggested_person_id': suggestedPersonId,
+      if (suggestedAction != null) 'suggested_action': suggestedAction,
+      if (confidenceJson != null) 'confidence_json': confidenceJson,
+      if (warningsJson != null) 'warnings_json': warningsJson,
+      if (refHash != null) 'ref_hash': refHash,
+      if (refAmountHash != null) 'ref_amount_hash': refAmountHash,
+      if (receivedAt != null) 'received_at': receivedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (decidedAt != null) 'decided_at': decidedAt,
+      if (savedRecordId != null) 'saved_record_id': savedRecordId,
+      if (savedRecordType != null) 'saved_record_type': savedRecordType,
+      if (rawBlob != null) 'raw_blob': rawBlob,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PendingSmsImportsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? fingerprint,
+    Value<String?>? parentImportId,
+    Value<String>? status,
+    Value<String>? origin,
+    Value<String?>? senderId,
+    Value<String>? bankId,
+    Value<String>? parserId,
+    Value<String>? ruleVersion,
+    Value<String>? kind,
+    Value<String>? direction,
+    Value<int?>? amountMinorUnits,
+    Value<String?>? currencyCode,
+    Value<int?>? occurredOn,
+    Value<int?>? timeMinutes,
+    Value<String?>? merchant,
+    Value<String?>? merchantKey,
+    Value<String?>? counterparty,
+    Value<String?>? cardLast4,
+    Value<String?>? suggestedCategoryId,
+    Value<String?>? suggestedPersonId,
+    Value<String>? suggestedAction,
+    Value<String>? confidenceJson,
+    Value<String>? warningsJson,
+    Value<String?>? refHash,
+    Value<String?>? refAmountHash,
+    Value<int?>? receivedAt,
+    Value<int>? createdAt,
+    Value<int>? expiresAt,
+    Value<int?>? decidedAt,
+    Value<String?>? savedRecordId,
+    Value<String?>? savedRecordType,
+    Value<Uint8List?>? rawBlob,
+    Value<int>? rowid,
+  }) {
+    return PendingSmsImportsCompanion(
+      id: id ?? this.id,
+      fingerprint: fingerprint ?? this.fingerprint,
+      parentImportId: parentImportId ?? this.parentImportId,
+      status: status ?? this.status,
+      origin: origin ?? this.origin,
+      senderId: senderId ?? this.senderId,
+      bankId: bankId ?? this.bankId,
+      parserId: parserId ?? this.parserId,
+      ruleVersion: ruleVersion ?? this.ruleVersion,
+      kind: kind ?? this.kind,
+      direction: direction ?? this.direction,
+      amountMinorUnits: amountMinorUnits ?? this.amountMinorUnits,
+      currencyCode: currencyCode ?? this.currencyCode,
+      occurredOn: occurredOn ?? this.occurredOn,
+      timeMinutes: timeMinutes ?? this.timeMinutes,
+      merchant: merchant ?? this.merchant,
+      merchantKey: merchantKey ?? this.merchantKey,
+      counterparty: counterparty ?? this.counterparty,
+      cardLast4: cardLast4 ?? this.cardLast4,
+      suggestedCategoryId: suggestedCategoryId ?? this.suggestedCategoryId,
+      suggestedPersonId: suggestedPersonId ?? this.suggestedPersonId,
+      suggestedAction: suggestedAction ?? this.suggestedAction,
+      confidenceJson: confidenceJson ?? this.confidenceJson,
+      warningsJson: warningsJson ?? this.warningsJson,
+      refHash: refHash ?? this.refHash,
+      refAmountHash: refAmountHash ?? this.refAmountHash,
+      receivedAt: receivedAt ?? this.receivedAt,
+      createdAt: createdAt ?? this.createdAt,
+      expiresAt: expiresAt ?? this.expiresAt,
+      decidedAt: decidedAt ?? this.decidedAt,
+      savedRecordId: savedRecordId ?? this.savedRecordId,
+      savedRecordType: savedRecordType ?? this.savedRecordType,
+      rawBlob: rawBlob ?? this.rawBlob,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (fingerprint.present) {
+      map['fingerprint'] = Variable<String>(fingerprint.value);
+    }
+    if (parentImportId.present) {
+      map['parent_import_id'] = Variable<String>(parentImportId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (origin.present) {
+      map['origin'] = Variable<String>(origin.value);
+    }
+    if (senderId.present) {
+      map['sender_id'] = Variable<String>(senderId.value);
+    }
+    if (bankId.present) {
+      map['bank_id'] = Variable<String>(bankId.value);
+    }
+    if (parserId.present) {
+      map['parser_id'] = Variable<String>(parserId.value);
+    }
+    if (ruleVersion.present) {
+      map['rule_version'] = Variable<String>(ruleVersion.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (amountMinorUnits.present) {
+      map['amount_minor_units'] = Variable<int>(amountMinorUnits.value);
+    }
+    if (currencyCode.present) {
+      map['currency_code'] = Variable<String>(currencyCode.value);
+    }
+    if (occurredOn.present) {
+      map['occurred_on'] = Variable<int>(occurredOn.value);
+    }
+    if (timeMinutes.present) {
+      map['time_minutes'] = Variable<int>(timeMinutes.value);
+    }
+    if (merchant.present) {
+      map['merchant'] = Variable<String>(merchant.value);
+    }
+    if (merchantKey.present) {
+      map['merchant_key'] = Variable<String>(merchantKey.value);
+    }
+    if (counterparty.present) {
+      map['counterparty'] = Variable<String>(counterparty.value);
+    }
+    if (cardLast4.present) {
+      map['card_last4'] = Variable<String>(cardLast4.value);
+    }
+    if (suggestedCategoryId.present) {
+      map['suggested_category_id'] = Variable<String>(
+        suggestedCategoryId.value,
+      );
+    }
+    if (suggestedPersonId.present) {
+      map['suggested_person_id'] = Variable<String>(suggestedPersonId.value);
+    }
+    if (suggestedAction.present) {
+      map['suggested_action'] = Variable<String>(suggestedAction.value);
+    }
+    if (confidenceJson.present) {
+      map['confidence_json'] = Variable<String>(confidenceJson.value);
+    }
+    if (warningsJson.present) {
+      map['warnings_json'] = Variable<String>(warningsJson.value);
+    }
+    if (refHash.present) {
+      map['ref_hash'] = Variable<String>(refHash.value);
+    }
+    if (refAmountHash.present) {
+      map['ref_amount_hash'] = Variable<String>(refAmountHash.value);
+    }
+    if (receivedAt.present) {
+      map['received_at'] = Variable<int>(receivedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<int>(expiresAt.value);
+    }
+    if (decidedAt.present) {
+      map['decided_at'] = Variable<int>(decidedAt.value);
+    }
+    if (savedRecordId.present) {
+      map['saved_record_id'] = Variable<String>(savedRecordId.value);
+    }
+    if (savedRecordType.present) {
+      map['saved_record_type'] = Variable<String>(savedRecordType.value);
+    }
+    if (rawBlob.present) {
+      map['raw_blob'] = Variable<Uint8List>(rawBlob.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PendingSmsImportsCompanion(')
+          ..write('id: $id, ')
+          ..write('fingerprint: $fingerprint, ')
+          ..write('parentImportId: $parentImportId, ')
+          ..write('status: $status, ')
+          ..write('origin: $origin, ')
+          ..write('senderId: $senderId, ')
+          ..write('bankId: $bankId, ')
+          ..write('parserId: $parserId, ')
+          ..write('ruleVersion: $ruleVersion, ')
+          ..write('kind: $kind, ')
+          ..write('direction: $direction, ')
+          ..write('amountMinorUnits: $amountMinorUnits, ')
+          ..write('currencyCode: $currencyCode, ')
+          ..write('occurredOn: $occurredOn, ')
+          ..write('timeMinutes: $timeMinutes, ')
+          ..write('merchant: $merchant, ')
+          ..write('merchantKey: $merchantKey, ')
+          ..write('counterparty: $counterparty, ')
+          ..write('cardLast4: $cardLast4, ')
+          ..write('suggestedCategoryId: $suggestedCategoryId, ')
+          ..write('suggestedPersonId: $suggestedPersonId, ')
+          ..write('suggestedAction: $suggestedAction, ')
+          ..write('confidenceJson: $confidenceJson, ')
+          ..write('warningsJson: $warningsJson, ')
+          ..write('refHash: $refHash, ')
+          ..write('refAmountHash: $refAmountHash, ')
+          ..write('receivedAt: $receivedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('decidedAt: $decidedAt, ')
+          ..write('savedRecordId: $savedRecordId, ')
+          ..write('savedRecordType: $savedRecordType, ')
+          ..write('rawBlob: $rawBlob, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SmsImportTombstonesTable extends SmsImportTombstones
+    with TableInfo<$SmsImportTombstonesTable, SmsImportTombstoneRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SmsImportTombstonesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _fingerprintMeta = const VerificationMeta(
+    'fingerprint',
+  );
+  @override
+  late final GeneratedColumn<String> fingerprint = GeneratedColumn<String>(
+    'fingerprint',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
+  );
+  @override
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bankIdMeta = const VerificationMeta('bankId');
+  @override
+  late final GeneratedColumn<String> bankId = GeneratedColumn<String>(
+    'bank_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _refHashMeta = const VerificationMeta(
+    'refHash',
+  );
+  @override
+  late final GeneratedColumn<String> refHash = GeneratedColumn<String>(
+    'ref_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _refAmountHashMeta = const VerificationMeta(
+    'refAmountHash',
+  );
+  @override
+  late final GeneratedColumn<String> refAmountHash = GeneratedColumn<String>(
+    'ref_amount_hash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _savedRecordIdMeta = const VerificationMeta(
+    'savedRecordId',
+  );
+  @override
+  late final GeneratedColumn<String> savedRecordId = GeneratedColumn<String>(
+    'saved_record_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _savedRecordTypeMeta = const VerificationMeta(
+    'savedRecordType',
+  );
+  @override
+  late final GeneratedColumn<String> savedRecordType = GeneratedColumn<String>(
+    'saved_record_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _purgeAfterMeta = const VerificationMeta(
+    'purgeAfter',
+  );
+  @override
+  late final GeneratedColumn<int> purgeAfter = GeneratedColumn<int>(
+    'purge_after',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    fingerprint,
+    outcome,
+    bankId,
+    refHash,
+    refAmountHash,
+    savedRecordId,
+    savedRecordType,
+    createdAt,
+    purgeAfter,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sms_import_tombstones';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SmsImportTombstoneRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('fingerprint')) {
+      context.handle(
+        _fingerprintMeta,
+        fingerprint.isAcceptableOrUnknown(
+          data['fingerprint']!,
+          _fingerprintMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_fingerprintMeta);
+    }
+    if (data.containsKey('outcome')) {
+      context.handle(
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_outcomeMeta);
+    }
+    if (data.containsKey('bank_id')) {
+      context.handle(
+        _bankIdMeta,
+        bankId.isAcceptableOrUnknown(data['bank_id']!, _bankIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bankIdMeta);
+    }
+    if (data.containsKey('ref_hash')) {
+      context.handle(
+        _refHashMeta,
+        refHash.isAcceptableOrUnknown(data['ref_hash']!, _refHashMeta),
+      );
+    }
+    if (data.containsKey('ref_amount_hash')) {
+      context.handle(
+        _refAmountHashMeta,
+        refAmountHash.isAcceptableOrUnknown(
+          data['ref_amount_hash']!,
+          _refAmountHashMeta,
+        ),
+      );
+    }
+    if (data.containsKey('saved_record_id')) {
+      context.handle(
+        _savedRecordIdMeta,
+        savedRecordId.isAcceptableOrUnknown(
+          data['saved_record_id']!,
+          _savedRecordIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('saved_record_type')) {
+      context.handle(
+        _savedRecordTypeMeta,
+        savedRecordType.isAcceptableOrUnknown(
+          data['saved_record_type']!,
+          _savedRecordTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('purge_after')) {
+      context.handle(
+        _purgeAfterMeta,
+        purgeAfter.isAcceptableOrUnknown(data['purge_after']!, _purgeAfterMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_purgeAfterMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {fingerprint};
+  @override
+  SmsImportTombstoneRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SmsImportTombstoneRow(
+      fingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}fingerprint'],
+      )!,
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      )!,
+      bankId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bank_id'],
+      )!,
+      refHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ref_hash'],
+      ),
+      refAmountHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ref_amount_hash'],
+      ),
+      savedRecordId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}saved_record_id'],
+      ),
+      savedRecordType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}saved_record_type'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      purgeAfter: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}purge_after'],
+      )!,
+    );
+  }
+
+  @override
+  $SmsImportTombstonesTable createAlias(String alias) {
+    return $SmsImportTombstonesTable(attachedDatabase, alias);
+  }
+}
+
+class SmsImportTombstoneRow extends DataClass
+    implements Insertable<SmsImportTombstoneRow> {
+  final String fingerprint;
+
+  /// `TombstoneOutcome.dbValue`.
+  final String outcome;
+  final String bankId;
+  final String? refHash;
+  final String? refAmountHash;
+  final String? savedRecordId;
+  final String? savedRecordType;
+  final int createdAt;
+  final int purgeAfter;
+  const SmsImportTombstoneRow({
+    required this.fingerprint,
+    required this.outcome,
+    required this.bankId,
+    this.refHash,
+    this.refAmountHash,
+    this.savedRecordId,
+    this.savedRecordType,
+    required this.createdAt,
+    required this.purgeAfter,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['fingerprint'] = Variable<String>(fingerprint);
+    map['outcome'] = Variable<String>(outcome);
+    map['bank_id'] = Variable<String>(bankId);
+    if (!nullToAbsent || refHash != null) {
+      map['ref_hash'] = Variable<String>(refHash);
+    }
+    if (!nullToAbsent || refAmountHash != null) {
+      map['ref_amount_hash'] = Variable<String>(refAmountHash);
+    }
+    if (!nullToAbsent || savedRecordId != null) {
+      map['saved_record_id'] = Variable<String>(savedRecordId);
+    }
+    if (!nullToAbsent || savedRecordType != null) {
+      map['saved_record_type'] = Variable<String>(savedRecordType);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['purge_after'] = Variable<int>(purgeAfter);
+    return map;
+  }
+
+  SmsImportTombstonesCompanion toCompanion(bool nullToAbsent) {
+    return SmsImportTombstonesCompanion(
+      fingerprint: Value(fingerprint),
+      outcome: Value(outcome),
+      bankId: Value(bankId),
+      refHash: refHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refHash),
+      refAmountHash: refAmountHash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refAmountHash),
+      savedRecordId: savedRecordId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(savedRecordId),
+      savedRecordType: savedRecordType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(savedRecordType),
+      createdAt: Value(createdAt),
+      purgeAfter: Value(purgeAfter),
+    );
+  }
+
+  factory SmsImportTombstoneRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SmsImportTombstoneRow(
+      fingerprint: serializer.fromJson<String>(json['fingerprint']),
+      outcome: serializer.fromJson<String>(json['outcome']),
+      bankId: serializer.fromJson<String>(json['bankId']),
+      refHash: serializer.fromJson<String?>(json['refHash']),
+      refAmountHash: serializer.fromJson<String?>(json['refAmountHash']),
+      savedRecordId: serializer.fromJson<String?>(json['savedRecordId']),
+      savedRecordType: serializer.fromJson<String?>(json['savedRecordType']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      purgeAfter: serializer.fromJson<int>(json['purgeAfter']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'fingerprint': serializer.toJson<String>(fingerprint),
+      'outcome': serializer.toJson<String>(outcome),
+      'bankId': serializer.toJson<String>(bankId),
+      'refHash': serializer.toJson<String?>(refHash),
+      'refAmountHash': serializer.toJson<String?>(refAmountHash),
+      'savedRecordId': serializer.toJson<String?>(savedRecordId),
+      'savedRecordType': serializer.toJson<String?>(savedRecordType),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'purgeAfter': serializer.toJson<int>(purgeAfter),
+    };
+  }
+
+  SmsImportTombstoneRow copyWith({
+    String? fingerprint,
+    String? outcome,
+    String? bankId,
+    Value<String?> refHash = const Value.absent(),
+    Value<String?> refAmountHash = const Value.absent(),
+    Value<String?> savedRecordId = const Value.absent(),
+    Value<String?> savedRecordType = const Value.absent(),
+    int? createdAt,
+    int? purgeAfter,
+  }) => SmsImportTombstoneRow(
+    fingerprint: fingerprint ?? this.fingerprint,
+    outcome: outcome ?? this.outcome,
+    bankId: bankId ?? this.bankId,
+    refHash: refHash.present ? refHash.value : this.refHash,
+    refAmountHash: refAmountHash.present
+        ? refAmountHash.value
+        : this.refAmountHash,
+    savedRecordId: savedRecordId.present
+        ? savedRecordId.value
+        : this.savedRecordId,
+    savedRecordType: savedRecordType.present
+        ? savedRecordType.value
+        : this.savedRecordType,
+    createdAt: createdAt ?? this.createdAt,
+    purgeAfter: purgeAfter ?? this.purgeAfter,
+  );
+  SmsImportTombstoneRow copyWithCompanion(SmsImportTombstonesCompanion data) {
+    return SmsImportTombstoneRow(
+      fingerprint: data.fingerprint.present
+          ? data.fingerprint.value
+          : this.fingerprint,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      bankId: data.bankId.present ? data.bankId.value : this.bankId,
+      refHash: data.refHash.present ? data.refHash.value : this.refHash,
+      refAmountHash: data.refAmountHash.present
+          ? data.refAmountHash.value
+          : this.refAmountHash,
+      savedRecordId: data.savedRecordId.present
+          ? data.savedRecordId.value
+          : this.savedRecordId,
+      savedRecordType: data.savedRecordType.present
+          ? data.savedRecordType.value
+          : this.savedRecordType,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      purgeAfter: data.purgeAfter.present
+          ? data.purgeAfter.value
+          : this.purgeAfter,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsImportTombstoneRow(')
+          ..write('fingerprint: $fingerprint, ')
+          ..write('outcome: $outcome, ')
+          ..write('bankId: $bankId, ')
+          ..write('refHash: $refHash, ')
+          ..write('refAmountHash: $refAmountHash, ')
+          ..write('savedRecordId: $savedRecordId, ')
+          ..write('savedRecordType: $savedRecordType, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('purgeAfter: $purgeAfter')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    fingerprint,
+    outcome,
+    bankId,
+    refHash,
+    refAmountHash,
+    savedRecordId,
+    savedRecordType,
+    createdAt,
+    purgeAfter,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SmsImportTombstoneRow &&
+          other.fingerprint == this.fingerprint &&
+          other.outcome == this.outcome &&
+          other.bankId == this.bankId &&
+          other.refHash == this.refHash &&
+          other.refAmountHash == this.refAmountHash &&
+          other.savedRecordId == this.savedRecordId &&
+          other.savedRecordType == this.savedRecordType &&
+          other.createdAt == this.createdAt &&
+          other.purgeAfter == this.purgeAfter);
+}
+
+class SmsImportTombstonesCompanion
+    extends UpdateCompanion<SmsImportTombstoneRow> {
+  final Value<String> fingerprint;
+  final Value<String> outcome;
+  final Value<String> bankId;
+  final Value<String?> refHash;
+  final Value<String?> refAmountHash;
+  final Value<String?> savedRecordId;
+  final Value<String?> savedRecordType;
+  final Value<int> createdAt;
+  final Value<int> purgeAfter;
+  final Value<int> rowid;
+  const SmsImportTombstonesCompanion({
+    this.fingerprint = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.bankId = const Value.absent(),
+    this.refHash = const Value.absent(),
+    this.refAmountHash = const Value.absent(),
+    this.savedRecordId = const Value.absent(),
+    this.savedRecordType = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.purgeAfter = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SmsImportTombstonesCompanion.insert({
+    required String fingerprint,
+    required String outcome,
+    required String bankId,
+    this.refHash = const Value.absent(),
+    this.refAmountHash = const Value.absent(),
+    this.savedRecordId = const Value.absent(),
+    this.savedRecordType = const Value.absent(),
+    required int createdAt,
+    required int purgeAfter,
+    this.rowid = const Value.absent(),
+  }) : fingerprint = Value(fingerprint),
+       outcome = Value(outcome),
+       bankId = Value(bankId),
+       createdAt = Value(createdAt),
+       purgeAfter = Value(purgeAfter);
+  static Insertable<SmsImportTombstoneRow> custom({
+    Expression<String>? fingerprint,
+    Expression<String>? outcome,
+    Expression<String>? bankId,
+    Expression<String>? refHash,
+    Expression<String>? refAmountHash,
+    Expression<String>? savedRecordId,
+    Expression<String>? savedRecordType,
+    Expression<int>? createdAt,
+    Expression<int>? purgeAfter,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (fingerprint != null) 'fingerprint': fingerprint,
+      if (outcome != null) 'outcome': outcome,
+      if (bankId != null) 'bank_id': bankId,
+      if (refHash != null) 'ref_hash': refHash,
+      if (refAmountHash != null) 'ref_amount_hash': refAmountHash,
+      if (savedRecordId != null) 'saved_record_id': savedRecordId,
+      if (savedRecordType != null) 'saved_record_type': savedRecordType,
+      if (createdAt != null) 'created_at': createdAt,
+      if (purgeAfter != null) 'purge_after': purgeAfter,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SmsImportTombstonesCompanion copyWith({
+    Value<String>? fingerprint,
+    Value<String>? outcome,
+    Value<String>? bankId,
+    Value<String?>? refHash,
+    Value<String?>? refAmountHash,
+    Value<String?>? savedRecordId,
+    Value<String?>? savedRecordType,
+    Value<int>? createdAt,
+    Value<int>? purgeAfter,
+    Value<int>? rowid,
+  }) {
+    return SmsImportTombstonesCompanion(
+      fingerprint: fingerprint ?? this.fingerprint,
+      outcome: outcome ?? this.outcome,
+      bankId: bankId ?? this.bankId,
+      refHash: refHash ?? this.refHash,
+      refAmountHash: refAmountHash ?? this.refAmountHash,
+      savedRecordId: savedRecordId ?? this.savedRecordId,
+      savedRecordType: savedRecordType ?? this.savedRecordType,
+      createdAt: createdAt ?? this.createdAt,
+      purgeAfter: purgeAfter ?? this.purgeAfter,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (fingerprint.present) {
+      map['fingerprint'] = Variable<String>(fingerprint.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (bankId.present) {
+      map['bank_id'] = Variable<String>(bankId.value);
+    }
+    if (refHash.present) {
+      map['ref_hash'] = Variable<String>(refHash.value);
+    }
+    if (refAmountHash.present) {
+      map['ref_amount_hash'] = Variable<String>(refAmountHash.value);
+    }
+    if (savedRecordId.present) {
+      map['saved_record_id'] = Variable<String>(savedRecordId.value);
+    }
+    if (savedRecordType.present) {
+      map['saved_record_type'] = Variable<String>(savedRecordType.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (purgeAfter.present) {
+      map['purge_after'] = Variable<int>(purgeAfter.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsImportTombstonesCompanion(')
+          ..write('fingerprint: $fingerprint, ')
+          ..write('outcome: $outcome, ')
+          ..write('bankId: $bankId, ')
+          ..write('refHash: $refHash, ')
+          ..write('refAmountHash: $refAmountHash, ')
+          ..write('savedRecordId: $savedRecordId, ')
+          ..write('savedRecordType: $savedRecordType, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('purgeAfter: $purgeAfter, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SmsSenderMutesTable extends SmsSenderMutes
+    with TableInfo<$SmsSenderMutesTable, SmsSenderMuteRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SmsSenderMutesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _senderIdMeta = const VerificationMeta(
+    'senderId',
+  );
+  @override
+  late final GeneratedColumn<String> senderId = GeneratedColumn<String>(
+    'sender_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [senderId, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sms_sender_mutes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SmsSenderMuteRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('sender_id')) {
+      context.handle(
+        _senderIdMeta,
+        senderId.isAcceptableOrUnknown(data['sender_id']!, _senderIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_senderIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {senderId};
+  @override
+  SmsSenderMuteRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SmsSenderMuteRow(
+      senderId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sender_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SmsSenderMutesTable createAlias(String alias) {
+    return $SmsSenderMutesTable(attachedDatabase, alias);
+  }
+}
+
+class SmsSenderMuteRow extends DataClass
+    implements Insertable<SmsSenderMuteRow> {
+  final String senderId;
+  final int createdAt;
+  const SmsSenderMuteRow({required this.senderId, required this.createdAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['sender_id'] = Variable<String>(senderId);
+    map['created_at'] = Variable<int>(createdAt);
+    return map;
+  }
+
+  SmsSenderMutesCompanion toCompanion(bool nullToAbsent) {
+    return SmsSenderMutesCompanion(
+      senderId: Value(senderId),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory SmsSenderMuteRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SmsSenderMuteRow(
+      senderId: serializer.fromJson<String>(json['senderId']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'senderId': serializer.toJson<String>(senderId),
+      'createdAt': serializer.toJson<int>(createdAt),
+    };
+  }
+
+  SmsSenderMuteRow copyWith({String? senderId, int? createdAt}) =>
+      SmsSenderMuteRow(
+        senderId: senderId ?? this.senderId,
+        createdAt: createdAt ?? this.createdAt,
+      );
+  SmsSenderMuteRow copyWithCompanion(SmsSenderMutesCompanion data) {
+    return SmsSenderMuteRow(
+      senderId: data.senderId.present ? data.senderId.value : this.senderId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsSenderMuteRow(')
+          ..write('senderId: $senderId, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(senderId, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SmsSenderMuteRow &&
+          other.senderId == this.senderId &&
+          other.createdAt == this.createdAt);
+}
+
+class SmsSenderMutesCompanion extends UpdateCompanion<SmsSenderMuteRow> {
+  final Value<String> senderId;
+  final Value<int> createdAt;
+  final Value<int> rowid;
+  const SmsSenderMutesCompanion({
+    this.senderId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SmsSenderMutesCompanion.insert({
+    required String senderId,
+    required int createdAt,
+    this.rowid = const Value.absent(),
+  }) : senderId = Value(senderId),
+       createdAt = Value(createdAt);
+  static Insertable<SmsSenderMuteRow> custom({
+    Expression<String>? senderId,
+    Expression<int>? createdAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (senderId != null) 'sender_id': senderId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SmsSenderMutesCompanion copyWith({
+    Value<String>? senderId,
+    Value<int>? createdAt,
+    Value<int>? rowid,
+  }) {
+    return SmsSenderMutesCompanion(
+      senderId: senderId ?? this.senderId,
+      createdAt: createdAt ?? this.createdAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (senderId.present) {
+      map['sender_id'] = Variable<String>(senderId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsSenderMutesCompanion(')
+          ..write('senderId: $senderId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SmsMerchantCategoryMappingsTable extends SmsMerchantCategoryMappings
+    with
+        TableInfo<
+          $SmsMerchantCategoryMappingsTable,
+          SmsMerchantCategoryMappingRow
+        > {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SmsMerchantCategoryMappingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _merchantKeyMeta = const VerificationMeta(
+    'merchantKey',
+  );
+  @override
+  late final GeneratedColumn<String> merchantKey = GeneratedColumn<String>(
+    'merchant_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entryTypeMeta = const VerificationMeta(
+    'entryType',
+  );
+  @override
+  late final GeneratedColumn<String> entryType = GeneratedColumn<String>(
+    'entry_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    merchantKey,
+    entryType,
+    categoryId,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sms_merchant_category_mappings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SmsMerchantCategoryMappingRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('merchant_key')) {
+      context.handle(
+        _merchantKeyMeta,
+        merchantKey.isAcceptableOrUnknown(
+          data['merchant_key']!,
+          _merchantKeyMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_merchantKeyMeta);
+    }
+    if (data.containsKey('entry_type')) {
+      context.handle(
+        _entryTypeMeta,
+        entryType.isAcceptableOrUnknown(data['entry_type']!, _entryTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryTypeMeta);
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryIdMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {merchantKey, entryType};
+  @override
+  SmsMerchantCategoryMappingRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SmsMerchantCategoryMappingRow(
+      merchantKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}merchant_key'],
+      )!,
+      entryType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entry_type'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SmsMerchantCategoryMappingsTable createAlias(String alias) {
+    return $SmsMerchantCategoryMappingsTable(attachedDatabase, alias);
+  }
+}
+
+class SmsMerchantCategoryMappingRow extends DataClass
+    implements Insertable<SmsMerchantCategoryMappingRow> {
+  final String merchantKey;
+
+  /// `'expense'|'income'`.
+  final String entryType;
+  final String categoryId;
+  final int updatedAt;
+  const SmsMerchantCategoryMappingRow({
+    required this.merchantKey,
+    required this.entryType,
+    required this.categoryId,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['merchant_key'] = Variable<String>(merchantKey);
+    map['entry_type'] = Variable<String>(entryType);
+    map['category_id'] = Variable<String>(categoryId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  SmsMerchantCategoryMappingsCompanion toCompanion(bool nullToAbsent) {
+    return SmsMerchantCategoryMappingsCompanion(
+      merchantKey: Value(merchantKey),
+      entryType: Value(entryType),
+      categoryId: Value(categoryId),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SmsMerchantCategoryMappingRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SmsMerchantCategoryMappingRow(
+      merchantKey: serializer.fromJson<String>(json['merchantKey']),
+      entryType: serializer.fromJson<String>(json['entryType']),
+      categoryId: serializer.fromJson<String>(json['categoryId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'merchantKey': serializer.toJson<String>(merchantKey),
+      'entryType': serializer.toJson<String>(entryType),
+      'categoryId': serializer.toJson<String>(categoryId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  SmsMerchantCategoryMappingRow copyWith({
+    String? merchantKey,
+    String? entryType,
+    String? categoryId,
+    int? updatedAt,
+  }) => SmsMerchantCategoryMappingRow(
+    merchantKey: merchantKey ?? this.merchantKey,
+    entryType: entryType ?? this.entryType,
+    categoryId: categoryId ?? this.categoryId,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SmsMerchantCategoryMappingRow copyWithCompanion(
+    SmsMerchantCategoryMappingsCompanion data,
+  ) {
+    return SmsMerchantCategoryMappingRow(
+      merchantKey: data.merchantKey.present
+          ? data.merchantKey.value
+          : this.merchantKey,
+      entryType: data.entryType.present ? data.entryType.value : this.entryType,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsMerchantCategoryMappingRow(')
+          ..write('merchantKey: $merchantKey, ')
+          ..write('entryType: $entryType, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(merchantKey, entryType, categoryId, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SmsMerchantCategoryMappingRow &&
+          other.merchantKey == this.merchantKey &&
+          other.entryType == this.entryType &&
+          other.categoryId == this.categoryId &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SmsMerchantCategoryMappingsCompanion
+    extends UpdateCompanion<SmsMerchantCategoryMappingRow> {
+  final Value<String> merchantKey;
+  final Value<String> entryType;
+  final Value<String> categoryId;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const SmsMerchantCategoryMappingsCompanion({
+    this.merchantKey = const Value.absent(),
+    this.entryType = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SmsMerchantCategoryMappingsCompanion.insert({
+    required String merchantKey,
+    required String entryType,
+    required String categoryId,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : merchantKey = Value(merchantKey),
+       entryType = Value(entryType),
+       categoryId = Value(categoryId),
+       updatedAt = Value(updatedAt);
+  static Insertable<SmsMerchantCategoryMappingRow> custom({
+    Expression<String>? merchantKey,
+    Expression<String>? entryType,
+    Expression<String>? categoryId,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (merchantKey != null) 'merchant_key': merchantKey,
+      if (entryType != null) 'entry_type': entryType,
+      if (categoryId != null) 'category_id': categoryId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SmsMerchantCategoryMappingsCompanion copyWith({
+    Value<String>? merchantKey,
+    Value<String>? entryType,
+    Value<String>? categoryId,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return SmsMerchantCategoryMappingsCompanion(
+      merchantKey: merchantKey ?? this.merchantKey,
+      entryType: entryType ?? this.entryType,
+      categoryId: categoryId ?? this.categoryId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (merchantKey.present) {
+      map['merchant_key'] = Variable<String>(merchantKey.value);
+    }
+    if (entryType.present) {
+      map['entry_type'] = Variable<String>(entryType.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsMerchantCategoryMappingsCompanion(')
+          ..write('merchantKey: $merchantKey, ')
+          ..write('entryType: $entryType, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SmsImportSettingsTable extends SmsImportSettings
+    with TableInfo<$SmsImportSettingsTable, SmsImportSettingsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SmsImportSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isEnabledMeta = const VerificationMeta(
+    'isEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> isEnabled = GeneratedColumn<bool>(
+    'is_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _onboardingDismissedMeta =
+      const VerificationMeta('onboardingDismissed');
+  @override
+  late final GeneratedColumn<bool> onboardingDismissed = GeneratedColumn<bool>(
+    'onboarding_dismissed',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("onboarding_dismissed" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _scanWindowDaysMeta = const VerificationMeta(
+    'scanWindowDays',
+  );
+  @override
+  late final GeneratedColumn<int> scanWindowDays = GeneratedColumn<int>(
+    'scan_window_days',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(30),
+  );
+  static const VerificationMeta _cursorDateMeta = const VerificationMeta(
+    'cursorDate',
+  );
+  @override
+  late final GeneratedColumn<int> cursorDate = GeneratedColumn<int>(
+    'cursor_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cursorIdMeta = const VerificationMeta(
+    'cursorId',
+  );
+  @override
+  late final GeneratedColumn<int> cursorId = GeneratedColumn<int>(
+    'cursor_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastScanAtMeta = const VerificationMeta(
+    'lastScanAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastScanAt = GeneratedColumn<int>(
+    'last_scan_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastCatchUpAtMeta = const VerificationMeta(
+    'lastCatchUpAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastCatchUpAt = GeneratedColumn<int>(
+    'last_catchup_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _countCashWithdrawalsMeta =
+      const VerificationMeta('countCashWithdrawals');
+  @override
+  late final GeneratedColumn<bool> countCashWithdrawals = GeneratedColumn<bool>(
+    'count_cash_withdrawals',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("count_cash_withdrawals" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _permissionRequestedMeta =
+      const VerificationMeta('permissionRequested');
+  @override
+  late final GeneratedColumn<bool> permissionRequested = GeneratedColumn<bool>(
+    'permission_requested',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("permission_requested" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _scannedCountMeta = const VerificationMeta(
+    'scannedCount',
+  );
+  @override
+  late final GeneratedColumn<int> scannedCount = GeneratedColumn<int>(
+    'scanned_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _recognizedCountMeta = const VerificationMeta(
+    'recognizedCount',
+  );
+  @override
+  late final GeneratedColumn<int> recognizedCount = GeneratedColumn<int>(
+    'recognized_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _addedCountMeta = const VerificationMeta(
+    'addedCount',
+  );
+  @override
+  late final GeneratedColumn<int> addedCount = GeneratedColumn<int>(
+    'added_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _ignoredCountMeta = const VerificationMeta(
+    'ignoredCount',
+  );
+  @override
+  late final GeneratedColumn<int> ignoredCount = GeneratedColumn<int>(
+    'ignored_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _expiredNoticeSeenAtMeta =
+      const VerificationMeta('expiredNoticeSeenAt');
+  @override
+  late final GeneratedColumn<int> expiredNoticeSeenAt = GeneratedColumn<int>(
+    'expired_notice_seen_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _rulesSeenMeta = const VerificationMeta(
+    'rulesSeen',
+  );
+  @override
+  late final GeneratedColumn<String> rulesSeen = GeneratedColumn<String>(
+    'rules_seen',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    isEnabled,
+    onboardingDismissed,
+    scanWindowDays,
+    cursorDate,
+    cursorId,
+    lastScanAt,
+    lastCatchUpAt,
+    countCashWithdrawals,
+    permissionRequested,
+    scannedCount,
+    recognizedCount,
+    addedCount,
+    ignoredCount,
+    expiredNoticeSeenAt,
+    rulesSeen,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sms_import_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SmsImportSettingsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('is_enabled')) {
+      context.handle(
+        _isEnabledMeta,
+        isEnabled.isAcceptableOrUnknown(data['is_enabled']!, _isEnabledMeta),
+      );
+    }
+    if (data.containsKey('onboarding_dismissed')) {
+      context.handle(
+        _onboardingDismissedMeta,
+        onboardingDismissed.isAcceptableOrUnknown(
+          data['onboarding_dismissed']!,
+          _onboardingDismissedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('scan_window_days')) {
+      context.handle(
+        _scanWindowDaysMeta,
+        scanWindowDays.isAcceptableOrUnknown(
+          data['scan_window_days']!,
+          _scanWindowDaysMeta,
+        ),
+      );
+    }
+    if (data.containsKey('cursor_date')) {
+      context.handle(
+        _cursorDateMeta,
+        cursorDate.isAcceptableOrUnknown(data['cursor_date']!, _cursorDateMeta),
+      );
+    }
+    if (data.containsKey('cursor_id')) {
+      context.handle(
+        _cursorIdMeta,
+        cursorId.isAcceptableOrUnknown(data['cursor_id']!, _cursorIdMeta),
+      );
+    }
+    if (data.containsKey('last_scan_at')) {
+      context.handle(
+        _lastScanAtMeta,
+        lastScanAt.isAcceptableOrUnknown(
+          data['last_scan_at']!,
+          _lastScanAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_catchup_at')) {
+      context.handle(
+        _lastCatchUpAtMeta,
+        lastCatchUpAt.isAcceptableOrUnknown(
+          data['last_catchup_at']!,
+          _lastCatchUpAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('count_cash_withdrawals')) {
+      context.handle(
+        _countCashWithdrawalsMeta,
+        countCashWithdrawals.isAcceptableOrUnknown(
+          data['count_cash_withdrawals']!,
+          _countCashWithdrawalsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('permission_requested')) {
+      context.handle(
+        _permissionRequestedMeta,
+        permissionRequested.isAcceptableOrUnknown(
+          data['permission_requested']!,
+          _permissionRequestedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('scanned_count')) {
+      context.handle(
+        _scannedCountMeta,
+        scannedCount.isAcceptableOrUnknown(
+          data['scanned_count']!,
+          _scannedCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recognized_count')) {
+      context.handle(
+        _recognizedCountMeta,
+        recognizedCount.isAcceptableOrUnknown(
+          data['recognized_count']!,
+          _recognizedCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('added_count')) {
+      context.handle(
+        _addedCountMeta,
+        addedCount.isAcceptableOrUnknown(data['added_count']!, _addedCountMeta),
+      );
+    }
+    if (data.containsKey('ignored_count')) {
+      context.handle(
+        _ignoredCountMeta,
+        ignoredCount.isAcceptableOrUnknown(
+          data['ignored_count']!,
+          _ignoredCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('expired_notice_seen_at')) {
+      context.handle(
+        _expiredNoticeSeenAtMeta,
+        expiredNoticeSeenAt.isAcceptableOrUnknown(
+          data['expired_notice_seen_at']!,
+          _expiredNoticeSeenAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('rules_seen')) {
+      context.handle(
+        _rulesSeenMeta,
+        rulesSeen.isAcceptableOrUnknown(data['rules_seen']!, _rulesSeenMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SmsImportSettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SmsImportSettingsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      isEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_enabled'],
+      )!,
+      onboardingDismissed: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}onboarding_dismissed'],
+      )!,
+      scanWindowDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}scan_window_days'],
+      )!,
+      cursorDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cursor_date'],
+      ),
+      cursorId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}cursor_id'],
+      ),
+      lastScanAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_scan_at'],
+      ),
+      lastCatchUpAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_catchup_at'],
+      ),
+      countCashWithdrawals: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}count_cash_withdrawals'],
+      )!,
+      permissionRequested: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}permission_requested'],
+      )!,
+      scannedCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}scanned_count'],
+      )!,
+      recognizedCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recognized_count'],
+      )!,
+      addedCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}added_count'],
+      )!,
+      ignoredCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ignored_count'],
+      )!,
+      expiredNoticeSeenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expired_notice_seen_at'],
+      ),
+      rulesSeen: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}rules_seen'],
+      )!,
+    );
+  }
+
+  @override
+  $SmsImportSettingsTable createAlias(String alias) {
+    return $SmsImportSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class SmsImportSettingsRow extends DataClass
+    implements Insertable<SmsImportSettingsRow> {
+  final String id;
+  final bool isEnabled;
+  final bool onboardingDismissed;
+
+  /// 7, 30 or 90; checked in the repository, not in SQL.
+  final int scanWindowDays;
+
+  /// Highest processed provider `(date, _id)` pair.
+  final int? cursorDate;
+  final int? cursorId;
+  final int? lastScanAt;
+  final int? lastCatchUpAt;
+  final bool countCashWithdrawals;
+  final bool permissionRequested;
+
+  /// Content-free, monotonic counters (FR-102).
+  final int scannedCount;
+  final int recognizedCount;
+  final int addedCount;
+  final int ignoredCount;
+  final int? expiredNoticeSeenAt;
+
+  /// JSON map profileId -> rule version last evaluated.
+  final String rulesSeen;
+  const SmsImportSettingsRow({
+    required this.id,
+    required this.isEnabled,
+    required this.onboardingDismissed,
+    required this.scanWindowDays,
+    this.cursorDate,
+    this.cursorId,
+    this.lastScanAt,
+    this.lastCatchUpAt,
+    required this.countCashWithdrawals,
+    required this.permissionRequested,
+    required this.scannedCount,
+    required this.recognizedCount,
+    required this.addedCount,
+    required this.ignoredCount,
+    this.expiredNoticeSeenAt,
+    required this.rulesSeen,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['is_enabled'] = Variable<bool>(isEnabled);
+    map['onboarding_dismissed'] = Variable<bool>(onboardingDismissed);
+    map['scan_window_days'] = Variable<int>(scanWindowDays);
+    if (!nullToAbsent || cursorDate != null) {
+      map['cursor_date'] = Variable<int>(cursorDate);
+    }
+    if (!nullToAbsent || cursorId != null) {
+      map['cursor_id'] = Variable<int>(cursorId);
+    }
+    if (!nullToAbsent || lastScanAt != null) {
+      map['last_scan_at'] = Variable<int>(lastScanAt);
+    }
+    if (!nullToAbsent || lastCatchUpAt != null) {
+      map['last_catchup_at'] = Variable<int>(lastCatchUpAt);
+    }
+    map['count_cash_withdrawals'] = Variable<bool>(countCashWithdrawals);
+    map['permission_requested'] = Variable<bool>(permissionRequested);
+    map['scanned_count'] = Variable<int>(scannedCount);
+    map['recognized_count'] = Variable<int>(recognizedCount);
+    map['added_count'] = Variable<int>(addedCount);
+    map['ignored_count'] = Variable<int>(ignoredCount);
+    if (!nullToAbsent || expiredNoticeSeenAt != null) {
+      map['expired_notice_seen_at'] = Variable<int>(expiredNoticeSeenAt);
+    }
+    map['rules_seen'] = Variable<String>(rulesSeen);
+    return map;
+  }
+
+  SmsImportSettingsCompanion toCompanion(bool nullToAbsent) {
+    return SmsImportSettingsCompanion(
+      id: Value(id),
+      isEnabled: Value(isEnabled),
+      onboardingDismissed: Value(onboardingDismissed),
+      scanWindowDays: Value(scanWindowDays),
+      cursorDate: cursorDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cursorDate),
+      cursorId: cursorId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cursorId),
+      lastScanAt: lastScanAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastScanAt),
+      lastCatchUpAt: lastCatchUpAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastCatchUpAt),
+      countCashWithdrawals: Value(countCashWithdrawals),
+      permissionRequested: Value(permissionRequested),
+      scannedCount: Value(scannedCount),
+      recognizedCount: Value(recognizedCount),
+      addedCount: Value(addedCount),
+      ignoredCount: Value(ignoredCount),
+      expiredNoticeSeenAt: expiredNoticeSeenAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expiredNoticeSeenAt),
+      rulesSeen: Value(rulesSeen),
+    );
+  }
+
+  factory SmsImportSettingsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SmsImportSettingsRow(
+      id: serializer.fromJson<String>(json['id']),
+      isEnabled: serializer.fromJson<bool>(json['isEnabled']),
+      onboardingDismissed: serializer.fromJson<bool>(
+        json['onboardingDismissed'],
+      ),
+      scanWindowDays: serializer.fromJson<int>(json['scanWindowDays']),
+      cursorDate: serializer.fromJson<int?>(json['cursorDate']),
+      cursorId: serializer.fromJson<int?>(json['cursorId']),
+      lastScanAt: serializer.fromJson<int?>(json['lastScanAt']),
+      lastCatchUpAt: serializer.fromJson<int?>(json['lastCatchUpAt']),
+      countCashWithdrawals: serializer.fromJson<bool>(
+        json['countCashWithdrawals'],
+      ),
+      permissionRequested: serializer.fromJson<bool>(
+        json['permissionRequested'],
+      ),
+      scannedCount: serializer.fromJson<int>(json['scannedCount']),
+      recognizedCount: serializer.fromJson<int>(json['recognizedCount']),
+      addedCount: serializer.fromJson<int>(json['addedCount']),
+      ignoredCount: serializer.fromJson<int>(json['ignoredCount']),
+      expiredNoticeSeenAt: serializer.fromJson<int?>(
+        json['expiredNoticeSeenAt'],
+      ),
+      rulesSeen: serializer.fromJson<String>(json['rulesSeen']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'isEnabled': serializer.toJson<bool>(isEnabled),
+      'onboardingDismissed': serializer.toJson<bool>(onboardingDismissed),
+      'scanWindowDays': serializer.toJson<int>(scanWindowDays),
+      'cursorDate': serializer.toJson<int?>(cursorDate),
+      'cursorId': serializer.toJson<int?>(cursorId),
+      'lastScanAt': serializer.toJson<int?>(lastScanAt),
+      'lastCatchUpAt': serializer.toJson<int?>(lastCatchUpAt),
+      'countCashWithdrawals': serializer.toJson<bool>(countCashWithdrawals),
+      'permissionRequested': serializer.toJson<bool>(permissionRequested),
+      'scannedCount': serializer.toJson<int>(scannedCount),
+      'recognizedCount': serializer.toJson<int>(recognizedCount),
+      'addedCount': serializer.toJson<int>(addedCount),
+      'ignoredCount': serializer.toJson<int>(ignoredCount),
+      'expiredNoticeSeenAt': serializer.toJson<int?>(expiredNoticeSeenAt),
+      'rulesSeen': serializer.toJson<String>(rulesSeen),
+    };
+  }
+
+  SmsImportSettingsRow copyWith({
+    String? id,
+    bool? isEnabled,
+    bool? onboardingDismissed,
+    int? scanWindowDays,
+    Value<int?> cursorDate = const Value.absent(),
+    Value<int?> cursorId = const Value.absent(),
+    Value<int?> lastScanAt = const Value.absent(),
+    Value<int?> lastCatchUpAt = const Value.absent(),
+    bool? countCashWithdrawals,
+    bool? permissionRequested,
+    int? scannedCount,
+    int? recognizedCount,
+    int? addedCount,
+    int? ignoredCount,
+    Value<int?> expiredNoticeSeenAt = const Value.absent(),
+    String? rulesSeen,
+  }) => SmsImportSettingsRow(
+    id: id ?? this.id,
+    isEnabled: isEnabled ?? this.isEnabled,
+    onboardingDismissed: onboardingDismissed ?? this.onboardingDismissed,
+    scanWindowDays: scanWindowDays ?? this.scanWindowDays,
+    cursorDate: cursorDate.present ? cursorDate.value : this.cursorDate,
+    cursorId: cursorId.present ? cursorId.value : this.cursorId,
+    lastScanAt: lastScanAt.present ? lastScanAt.value : this.lastScanAt,
+    lastCatchUpAt: lastCatchUpAt.present
+        ? lastCatchUpAt.value
+        : this.lastCatchUpAt,
+    countCashWithdrawals: countCashWithdrawals ?? this.countCashWithdrawals,
+    permissionRequested: permissionRequested ?? this.permissionRequested,
+    scannedCount: scannedCount ?? this.scannedCount,
+    recognizedCount: recognizedCount ?? this.recognizedCount,
+    addedCount: addedCount ?? this.addedCount,
+    ignoredCount: ignoredCount ?? this.ignoredCount,
+    expiredNoticeSeenAt: expiredNoticeSeenAt.present
+        ? expiredNoticeSeenAt.value
+        : this.expiredNoticeSeenAt,
+    rulesSeen: rulesSeen ?? this.rulesSeen,
+  );
+  SmsImportSettingsRow copyWithCompanion(SmsImportSettingsCompanion data) {
+    return SmsImportSettingsRow(
+      id: data.id.present ? data.id.value : this.id,
+      isEnabled: data.isEnabled.present ? data.isEnabled.value : this.isEnabled,
+      onboardingDismissed: data.onboardingDismissed.present
+          ? data.onboardingDismissed.value
+          : this.onboardingDismissed,
+      scanWindowDays: data.scanWindowDays.present
+          ? data.scanWindowDays.value
+          : this.scanWindowDays,
+      cursorDate: data.cursorDate.present
+          ? data.cursorDate.value
+          : this.cursorDate,
+      cursorId: data.cursorId.present ? data.cursorId.value : this.cursorId,
+      lastScanAt: data.lastScanAt.present
+          ? data.lastScanAt.value
+          : this.lastScanAt,
+      lastCatchUpAt: data.lastCatchUpAt.present
+          ? data.lastCatchUpAt.value
+          : this.lastCatchUpAt,
+      countCashWithdrawals: data.countCashWithdrawals.present
+          ? data.countCashWithdrawals.value
+          : this.countCashWithdrawals,
+      permissionRequested: data.permissionRequested.present
+          ? data.permissionRequested.value
+          : this.permissionRequested,
+      scannedCount: data.scannedCount.present
+          ? data.scannedCount.value
+          : this.scannedCount,
+      recognizedCount: data.recognizedCount.present
+          ? data.recognizedCount.value
+          : this.recognizedCount,
+      addedCount: data.addedCount.present
+          ? data.addedCount.value
+          : this.addedCount,
+      ignoredCount: data.ignoredCount.present
+          ? data.ignoredCount.value
+          : this.ignoredCount,
+      expiredNoticeSeenAt: data.expiredNoticeSeenAt.present
+          ? data.expiredNoticeSeenAt.value
+          : this.expiredNoticeSeenAt,
+      rulesSeen: data.rulesSeen.present ? data.rulesSeen.value : this.rulesSeen,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsImportSettingsRow(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('onboardingDismissed: $onboardingDismissed, ')
+          ..write('scanWindowDays: $scanWindowDays, ')
+          ..write('cursorDate: $cursorDate, ')
+          ..write('cursorId: $cursorId, ')
+          ..write('lastScanAt: $lastScanAt, ')
+          ..write('lastCatchUpAt: $lastCatchUpAt, ')
+          ..write('countCashWithdrawals: $countCashWithdrawals, ')
+          ..write('permissionRequested: $permissionRequested, ')
+          ..write('scannedCount: $scannedCount, ')
+          ..write('recognizedCount: $recognizedCount, ')
+          ..write('addedCount: $addedCount, ')
+          ..write('ignoredCount: $ignoredCount, ')
+          ..write('expiredNoticeSeenAt: $expiredNoticeSeenAt, ')
+          ..write('rulesSeen: $rulesSeen')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    isEnabled,
+    onboardingDismissed,
+    scanWindowDays,
+    cursorDate,
+    cursorId,
+    lastScanAt,
+    lastCatchUpAt,
+    countCashWithdrawals,
+    permissionRequested,
+    scannedCount,
+    recognizedCount,
+    addedCount,
+    ignoredCount,
+    expiredNoticeSeenAt,
+    rulesSeen,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SmsImportSettingsRow &&
+          other.id == this.id &&
+          other.isEnabled == this.isEnabled &&
+          other.onboardingDismissed == this.onboardingDismissed &&
+          other.scanWindowDays == this.scanWindowDays &&
+          other.cursorDate == this.cursorDate &&
+          other.cursorId == this.cursorId &&
+          other.lastScanAt == this.lastScanAt &&
+          other.lastCatchUpAt == this.lastCatchUpAt &&
+          other.countCashWithdrawals == this.countCashWithdrawals &&
+          other.permissionRequested == this.permissionRequested &&
+          other.scannedCount == this.scannedCount &&
+          other.recognizedCount == this.recognizedCount &&
+          other.addedCount == this.addedCount &&
+          other.ignoredCount == this.ignoredCount &&
+          other.expiredNoticeSeenAt == this.expiredNoticeSeenAt &&
+          other.rulesSeen == this.rulesSeen);
+}
+
+class SmsImportSettingsCompanion extends UpdateCompanion<SmsImportSettingsRow> {
+  final Value<String> id;
+  final Value<bool> isEnabled;
+  final Value<bool> onboardingDismissed;
+  final Value<int> scanWindowDays;
+  final Value<int?> cursorDate;
+  final Value<int?> cursorId;
+  final Value<int?> lastScanAt;
+  final Value<int?> lastCatchUpAt;
+  final Value<bool> countCashWithdrawals;
+  final Value<bool> permissionRequested;
+  final Value<int> scannedCount;
+  final Value<int> recognizedCount;
+  final Value<int> addedCount;
+  final Value<int> ignoredCount;
+  final Value<int?> expiredNoticeSeenAt;
+  final Value<String> rulesSeen;
+  final Value<int> rowid;
+  const SmsImportSettingsCompanion({
+    this.id = const Value.absent(),
+    this.isEnabled = const Value.absent(),
+    this.onboardingDismissed = const Value.absent(),
+    this.scanWindowDays = const Value.absent(),
+    this.cursorDate = const Value.absent(),
+    this.cursorId = const Value.absent(),
+    this.lastScanAt = const Value.absent(),
+    this.lastCatchUpAt = const Value.absent(),
+    this.countCashWithdrawals = const Value.absent(),
+    this.permissionRequested = const Value.absent(),
+    this.scannedCount = const Value.absent(),
+    this.recognizedCount = const Value.absent(),
+    this.addedCount = const Value.absent(),
+    this.ignoredCount = const Value.absent(),
+    this.expiredNoticeSeenAt = const Value.absent(),
+    this.rulesSeen = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SmsImportSettingsCompanion.insert({
+    required String id,
+    this.isEnabled = const Value.absent(),
+    this.onboardingDismissed = const Value.absent(),
+    this.scanWindowDays = const Value.absent(),
+    this.cursorDate = const Value.absent(),
+    this.cursorId = const Value.absent(),
+    this.lastScanAt = const Value.absent(),
+    this.lastCatchUpAt = const Value.absent(),
+    this.countCashWithdrawals = const Value.absent(),
+    this.permissionRequested = const Value.absent(),
+    this.scannedCount = const Value.absent(),
+    this.recognizedCount = const Value.absent(),
+    this.addedCount = const Value.absent(),
+    this.ignoredCount = const Value.absent(),
+    this.expiredNoticeSeenAt = const Value.absent(),
+    this.rulesSeen = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
+  static Insertable<SmsImportSettingsRow> custom({
+    Expression<String>? id,
+    Expression<bool>? isEnabled,
+    Expression<bool>? onboardingDismissed,
+    Expression<int>? scanWindowDays,
+    Expression<int>? cursorDate,
+    Expression<int>? cursorId,
+    Expression<int>? lastScanAt,
+    Expression<int>? lastCatchUpAt,
+    Expression<bool>? countCashWithdrawals,
+    Expression<bool>? permissionRequested,
+    Expression<int>? scannedCount,
+    Expression<int>? recognizedCount,
+    Expression<int>? addedCount,
+    Expression<int>? ignoredCount,
+    Expression<int>? expiredNoticeSeenAt,
+    Expression<String>? rulesSeen,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isEnabled != null) 'is_enabled': isEnabled,
+      if (onboardingDismissed != null)
+        'onboarding_dismissed': onboardingDismissed,
+      if (scanWindowDays != null) 'scan_window_days': scanWindowDays,
+      if (cursorDate != null) 'cursor_date': cursorDate,
+      if (cursorId != null) 'cursor_id': cursorId,
+      if (lastScanAt != null) 'last_scan_at': lastScanAt,
+      if (lastCatchUpAt != null) 'last_catchup_at': lastCatchUpAt,
+      if (countCashWithdrawals != null)
+        'count_cash_withdrawals': countCashWithdrawals,
+      if (permissionRequested != null)
+        'permission_requested': permissionRequested,
+      if (scannedCount != null) 'scanned_count': scannedCount,
+      if (recognizedCount != null) 'recognized_count': recognizedCount,
+      if (addedCount != null) 'added_count': addedCount,
+      if (ignoredCount != null) 'ignored_count': ignoredCount,
+      if (expiredNoticeSeenAt != null)
+        'expired_notice_seen_at': expiredNoticeSeenAt,
+      if (rulesSeen != null) 'rules_seen': rulesSeen,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SmsImportSettingsCompanion copyWith({
+    Value<String>? id,
+    Value<bool>? isEnabled,
+    Value<bool>? onboardingDismissed,
+    Value<int>? scanWindowDays,
+    Value<int?>? cursorDate,
+    Value<int?>? cursorId,
+    Value<int?>? lastScanAt,
+    Value<int?>? lastCatchUpAt,
+    Value<bool>? countCashWithdrawals,
+    Value<bool>? permissionRequested,
+    Value<int>? scannedCount,
+    Value<int>? recognizedCount,
+    Value<int>? addedCount,
+    Value<int>? ignoredCount,
+    Value<int?>? expiredNoticeSeenAt,
+    Value<String>? rulesSeen,
+    Value<int>? rowid,
+  }) {
+    return SmsImportSettingsCompanion(
+      id: id ?? this.id,
+      isEnabled: isEnabled ?? this.isEnabled,
+      onboardingDismissed: onboardingDismissed ?? this.onboardingDismissed,
+      scanWindowDays: scanWindowDays ?? this.scanWindowDays,
+      cursorDate: cursorDate ?? this.cursorDate,
+      cursorId: cursorId ?? this.cursorId,
+      lastScanAt: lastScanAt ?? this.lastScanAt,
+      lastCatchUpAt: lastCatchUpAt ?? this.lastCatchUpAt,
+      countCashWithdrawals: countCashWithdrawals ?? this.countCashWithdrawals,
+      permissionRequested: permissionRequested ?? this.permissionRequested,
+      scannedCount: scannedCount ?? this.scannedCount,
+      recognizedCount: recognizedCount ?? this.recognizedCount,
+      addedCount: addedCount ?? this.addedCount,
+      ignoredCount: ignoredCount ?? this.ignoredCount,
+      expiredNoticeSeenAt: expiredNoticeSeenAt ?? this.expiredNoticeSeenAt,
+      rulesSeen: rulesSeen ?? this.rulesSeen,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (isEnabled.present) {
+      map['is_enabled'] = Variable<bool>(isEnabled.value);
+    }
+    if (onboardingDismissed.present) {
+      map['onboarding_dismissed'] = Variable<bool>(onboardingDismissed.value);
+    }
+    if (scanWindowDays.present) {
+      map['scan_window_days'] = Variable<int>(scanWindowDays.value);
+    }
+    if (cursorDate.present) {
+      map['cursor_date'] = Variable<int>(cursorDate.value);
+    }
+    if (cursorId.present) {
+      map['cursor_id'] = Variable<int>(cursorId.value);
+    }
+    if (lastScanAt.present) {
+      map['last_scan_at'] = Variable<int>(lastScanAt.value);
+    }
+    if (lastCatchUpAt.present) {
+      map['last_catchup_at'] = Variable<int>(lastCatchUpAt.value);
+    }
+    if (countCashWithdrawals.present) {
+      map['count_cash_withdrawals'] = Variable<bool>(
+        countCashWithdrawals.value,
+      );
+    }
+    if (permissionRequested.present) {
+      map['permission_requested'] = Variable<bool>(permissionRequested.value);
+    }
+    if (scannedCount.present) {
+      map['scanned_count'] = Variable<int>(scannedCount.value);
+    }
+    if (recognizedCount.present) {
+      map['recognized_count'] = Variable<int>(recognizedCount.value);
+    }
+    if (addedCount.present) {
+      map['added_count'] = Variable<int>(addedCount.value);
+    }
+    if (ignoredCount.present) {
+      map['ignored_count'] = Variable<int>(ignoredCount.value);
+    }
+    if (expiredNoticeSeenAt.present) {
+      map['expired_notice_seen_at'] = Variable<int>(expiredNoticeSeenAt.value);
+    }
+    if (rulesSeen.present) {
+      map['rules_seen'] = Variable<String>(rulesSeen.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SmsImportSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('isEnabled: $isEnabled, ')
+          ..write('onboardingDismissed: $onboardingDismissed, ')
+          ..write('scanWindowDays: $scanWindowDays, ')
+          ..write('cursorDate: $cursorDate, ')
+          ..write('cursorId: $cursorId, ')
+          ..write('lastScanAt: $lastScanAt, ')
+          ..write('lastCatchUpAt: $lastCatchUpAt, ')
+          ..write('countCashWithdrawals: $countCashWithdrawals, ')
+          ..write('permissionRequested: $permissionRequested, ')
+          ..write('scannedCount: $scannedCount, ')
+          ..write('recognizedCount: $recognizedCount, ')
+          ..write('addedCount: $addedCount, ')
+          ..write('ignoredCount: $ignoredCount, ')
+          ..write('expiredNoticeSeenAt: $expiredNoticeSeenAt, ')
+          ..write('rulesSeen: $rulesSeen, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -16307,6 +20406,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $SavingsContributionAuditsTable(this);
   late final $FinanceEntryAuditsTable financeEntryAudits =
       $FinanceEntryAuditsTable(this);
+  late final $PendingSmsImportsTable pendingSmsImports =
+      $PendingSmsImportsTable(this);
+  late final $SmsImportTombstonesTable smsImportTombstones =
+      $SmsImportTombstonesTable(this);
+  late final $SmsSenderMutesTable smsSenderMutes = $SmsSenderMutesTable(this);
+  late final $SmsMerchantCategoryMappingsTable smsMerchantCategoryMappings =
+      $SmsMerchantCategoryMappingsTable(this);
+  late final $SmsImportSettingsTable smsImportSettings =
+      $SmsImportSettingsTable(this);
   late final Index idxPeopleNormalizedName = Index(
     'idx_people_normalized_name',
     'CREATE INDEX idx_people_normalized_name ON people (normalized_name)',
@@ -16443,6 +20551,38 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     'idx_finance_audit_entry_id',
     'CREATE INDEX idx_finance_audit_entry_id ON finance_entry_audits (finance_entry_id)',
   );
+  late final Index idxSmsPendingFingerprint = Index(
+    'idx_sms_pending_fingerprint',
+    'CREATE UNIQUE INDEX idx_sms_pending_fingerprint ON pending_sms_imports (fingerprint)',
+  );
+  late final Index idxSmsPendingStatusExpiry = Index(
+    'idx_sms_pending_status_expiry',
+    'CREATE INDEX idx_sms_pending_status_expiry ON pending_sms_imports (status, expires_at)',
+  );
+  late final Index idxSmsPendingRefHash = Index(
+    'idx_sms_pending_ref_hash',
+    'CREATE INDEX idx_sms_pending_ref_hash ON pending_sms_imports (ref_hash)',
+  );
+  late final Index idxSmsPendingAmountPair = Index(
+    'idx_sms_pending_amount_pair',
+    'CREATE INDEX idx_sms_pending_amount_pair ON pending_sms_imports (amount_minor_units, currency_code, status)',
+  );
+  late final Index idxSmsTombRefHash = Index(
+    'idx_sms_tomb_ref_hash',
+    'CREATE INDEX idx_sms_tomb_ref_hash ON sms_import_tombstones (ref_hash)',
+  );
+  late final Index idxSmsTombRefAmount = Index(
+    'idx_sms_tomb_ref_amount',
+    'CREATE INDEX idx_sms_tomb_ref_amount ON sms_import_tombstones (ref_amount_hash)',
+  );
+  late final Index idxSmsTombSavedRecord = Index(
+    'idx_sms_tomb_saved_record',
+    'CREATE INDEX idx_sms_tomb_saved_record ON sms_import_tombstones (saved_record_id)',
+  );
+  late final Index idxSmsTombPurge = Index(
+    'idx_sms_tomb_purge',
+    'CREATE INDEX idx_sms_tomb_purge ON sms_import_tombstones (purge_after)',
+  );
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -16477,6 +20617,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     savingsContributions,
     savingsContributionAudits,
     financeEntryAudits,
+    pendingSmsImports,
+    smsImportTombstones,
+    smsSenderMutes,
+    smsMerchantCategoryMappings,
+    smsImportSettings,
     idxPeopleNormalizedName,
     idxPeopleArchived,
     idxTransactionsPersonId,
@@ -16511,6 +20656,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     idxSavingsContributionsGoalId,
     idxSavingsContributionAuditsContributionId,
     idxFinanceAuditEntryId,
+    idxSmsPendingFingerprint,
+    idxSmsPendingStatusExpiry,
+    idxSmsPendingRefHash,
+    idxSmsPendingAmountPair,
+    idxSmsTombRefHash,
+    idxSmsTombRefAmount,
+    idxSmsTombSavedRecord,
+    idxSmsTombPurge,
   ];
 }
 
@@ -17654,6 +21807,7 @@ typedef $$MoneyTransactionsTableCreateCompanionBuilder =
       required int createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
+      Value<String?> importSource,
       Value<int> rowid,
     });
 typedef $$MoneyTransactionsTableUpdateCompanionBuilder =
@@ -17674,6 +21828,7 @@ typedef $$MoneyTransactionsTableUpdateCompanionBuilder =
       Value<int> createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
+      Value<String?> importSource,
       Value<int> rowid,
     });
 
@@ -17830,6 +21985,11 @@ class $$MoneyTransactionsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$PeopleTableFilterComposer get personId {
     final $$PeopleTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -17982,6 +22142,11 @@ class $$MoneyTransactionsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PeopleTableOrderingComposer get personId {
     final $$PeopleTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -18087,6 +22252,11 @@ class $$MoneyTransactionsTableAnnotationComposer
 
   GeneratedColumn<int> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => column,
+  );
 
   $$PeopleTableAnnotationComposer get personId {
     final $$PeopleTableAnnotationComposer composer = $composerBuilder(
@@ -18215,6 +22385,7 @@ class $$MoneyTransactionsTableTableManager
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> importSource = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MoneyTransactionsCompanion(
                 id: id,
@@ -18233,6 +22404,7 @@ class $$MoneyTransactionsTableTableManager
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
+                importSource: importSource,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -18253,6 +22425,7 @@ class $$MoneyTransactionsTableTableManager
                 required int createdAt,
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> importSource = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => MoneyTransactionsCompanion.insert(
                 id: id,
@@ -18271,6 +22444,7 @@ class $$MoneyTransactionsTableTableManager
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
+                importSource: importSource,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -19706,6 +23880,7 @@ typedef $$FinanceEntriesTableCreateCompanionBuilder =
       required int createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
+      Value<String?> importSource,
       Value<int> rowid,
     });
 typedef $$FinanceEntriesTableUpdateCompanionBuilder =
@@ -19721,6 +23896,7 @@ typedef $$FinanceEntriesTableUpdateCompanionBuilder =
       Value<int> createdAt,
       Value<int?> editedAt,
       Value<int?> deletedAt,
+      Value<String?> importSource,
       Value<int> rowid,
     });
 
@@ -19832,6 +24008,11 @@ class $$FinanceEntriesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$FinanceCategoriesTableFilterComposer get categoryId {
     final $$FinanceCategoriesTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -19940,6 +24121,11 @@ class $$FinanceEntriesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$FinanceCategoriesTableOrderingComposer get categoryId {
     final $$FinanceCategoriesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -20008,6 +24194,11 @@ class $$FinanceEntriesTableAnnotationComposer
 
   GeneratedColumn<int> get deletedAt =>
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get importSource => $composableBuilder(
+    column: $table.importSource,
+    builder: (column) => column,
+  );
 
   $$FinanceCategoriesTableAnnotationComposer get categoryId {
     final $$FinanceCategoriesTableAnnotationComposer composer =
@@ -20101,6 +24292,7 @@ class $$FinanceEntriesTableTableManager
                 Value<int> createdAt = const Value.absent(),
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> importSource = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FinanceEntriesCompanion(
                 id: id,
@@ -20114,6 +24306,7 @@ class $$FinanceEntriesTableTableManager
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
+                importSource: importSource,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -20129,6 +24322,7 @@ class $$FinanceEntriesTableTableManager
                 required int createdAt,
                 Value<int?> editedAt = const Value.absent(),
                 Value<int?> deletedAt = const Value.absent(),
+                Value<String?> importSource = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => FinanceEntriesCompanion.insert(
                 id: id,
@@ -20142,6 +24336,7 @@ class $$FinanceEntriesTableTableManager
                 createdAt: createdAt,
                 editedAt: editedAt,
                 deletedAt: deletedAt,
+                importSource: importSource,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -27826,6 +32021,1942 @@ typedef $$FinanceEntryAuditsTableProcessedTableManager =
       FinanceEntryAudit,
       PrefetchHooks Function({bool financeEntryId})
     >;
+typedef $$PendingSmsImportsTableCreateCompanionBuilder =
+    PendingSmsImportsCompanion Function({
+      required String id,
+      required String fingerprint,
+      Value<String?> parentImportId,
+      Value<String> status,
+      required String origin,
+      Value<String?> senderId,
+      required String bankId,
+      required String parserId,
+      required String ruleVersion,
+      required String kind,
+      required String direction,
+      Value<int?> amountMinorUnits,
+      Value<String?> currencyCode,
+      Value<int?> occurredOn,
+      Value<int?> timeMinutes,
+      Value<String?> merchant,
+      Value<String?> merchantKey,
+      Value<String?> counterparty,
+      Value<String?> cardLast4,
+      Value<String?> suggestedCategoryId,
+      Value<String?> suggestedPersonId,
+      Value<String> suggestedAction,
+      required String confidenceJson,
+      Value<String> warningsJson,
+      Value<String?> refHash,
+      Value<String?> refAmountHash,
+      Value<int?> receivedAt,
+      required int createdAt,
+      required int expiresAt,
+      Value<int?> decidedAt,
+      Value<String?> savedRecordId,
+      Value<String?> savedRecordType,
+      Value<Uint8List?> rawBlob,
+      Value<int> rowid,
+    });
+typedef $$PendingSmsImportsTableUpdateCompanionBuilder =
+    PendingSmsImportsCompanion Function({
+      Value<String> id,
+      Value<String> fingerprint,
+      Value<String?> parentImportId,
+      Value<String> status,
+      Value<String> origin,
+      Value<String?> senderId,
+      Value<String> bankId,
+      Value<String> parserId,
+      Value<String> ruleVersion,
+      Value<String> kind,
+      Value<String> direction,
+      Value<int?> amountMinorUnits,
+      Value<String?> currencyCode,
+      Value<int?> occurredOn,
+      Value<int?> timeMinutes,
+      Value<String?> merchant,
+      Value<String?> merchantKey,
+      Value<String?> counterparty,
+      Value<String?> cardLast4,
+      Value<String?> suggestedCategoryId,
+      Value<String?> suggestedPersonId,
+      Value<String> suggestedAction,
+      Value<String> confidenceJson,
+      Value<String> warningsJson,
+      Value<String?> refHash,
+      Value<String?> refAmountHash,
+      Value<int?> receivedAt,
+      Value<int> createdAt,
+      Value<int> expiresAt,
+      Value<int?> decidedAt,
+      Value<String?> savedRecordId,
+      Value<String?> savedRecordType,
+      Value<Uint8List?> rawBlob,
+      Value<int> rowid,
+    });
+
+class $$PendingSmsImportsTableFilterComposer
+    extends Composer<_$AppDatabase, $PendingSmsImportsTable> {
+  $$PendingSmsImportsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get parentImportId => $composableBuilder(
+    column: $table.parentImportId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get origin => $composableBuilder(
+    column: $table.origin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bankId => $composableBuilder(
+    column: $table.bankId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get parserId => $composableBuilder(
+    column: $table.parserId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ruleVersion => $composableBuilder(
+    column: $table.ruleVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get occurredOn => $composableBuilder(
+    column: $table.occurredOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get timeMinutes => $composableBuilder(
+    column: $table.timeMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get merchant => $composableBuilder(
+    column: $table.merchant,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get counterparty => $composableBuilder(
+    column: $table.counterparty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cardLast4 => $composableBuilder(
+    column: $table.cardLast4,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get suggestedCategoryId => $composableBuilder(
+    column: $table.suggestedCategoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get suggestedPersonId => $composableBuilder(
+    column: $table.suggestedPersonId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get suggestedAction => $composableBuilder(
+    column: $table.suggestedAction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get confidenceJson => $composableBuilder(
+    column: $table.confidenceJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get warningsJson => $composableBuilder(
+    column: $table.warningsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get refHash => $composableBuilder(
+    column: $table.refHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get decidedAt => $composableBuilder(
+    column: $table.decidedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get rawBlob => $composableBuilder(
+    column: $table.rawBlob,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$PendingSmsImportsTableOrderingComposer
+    extends Composer<_$AppDatabase, $PendingSmsImportsTable> {
+  $$PendingSmsImportsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get parentImportId => $composableBuilder(
+    column: $table.parentImportId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get origin => $composableBuilder(
+    column: $table.origin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bankId => $composableBuilder(
+    column: $table.bankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get parserId => $composableBuilder(
+    column: $table.parserId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get ruleVersion => $composableBuilder(
+    column: $table.ruleVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get occurredOn => $composableBuilder(
+    column: $table.occurredOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get timeMinutes => $composableBuilder(
+    column: $table.timeMinutes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get merchant => $composableBuilder(
+    column: $table.merchant,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get counterparty => $composableBuilder(
+    column: $table.counterparty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cardLast4 => $composableBuilder(
+    column: $table.cardLast4,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get suggestedCategoryId => $composableBuilder(
+    column: $table.suggestedCategoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get suggestedPersonId => $composableBuilder(
+    column: $table.suggestedPersonId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get suggestedAction => $composableBuilder(
+    column: $table.suggestedAction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get confidenceJson => $composableBuilder(
+    column: $table.confidenceJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get warningsJson => $composableBuilder(
+    column: $table.warningsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get refHash => $composableBuilder(
+    column: $table.refHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get decidedAt => $composableBuilder(
+    column: $table.decidedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get rawBlob => $composableBuilder(
+    column: $table.rawBlob,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PendingSmsImportsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PendingSmsImportsTable> {
+  $$PendingSmsImportsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get parentImportId => $composableBuilder(
+    column: $table.parentImportId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get origin =>
+      $composableBuilder(column: $table.origin, builder: (column) => column);
+
+  GeneratedColumn<String> get senderId =>
+      $composableBuilder(column: $table.senderId, builder: (column) => column);
+
+  GeneratedColumn<String> get bankId =>
+      $composableBuilder(column: $table.bankId, builder: (column) => column);
+
+  GeneratedColumn<String> get parserId =>
+      $composableBuilder(column: $table.parserId, builder: (column) => column);
+
+  GeneratedColumn<String> get ruleVersion => $composableBuilder(
+    column: $table.ruleVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<int> get amountMinorUnits => $composableBuilder(
+    column: $table.amountMinorUnits,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get currencyCode => $composableBuilder(
+    column: $table.currencyCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get occurredOn => $composableBuilder(
+    column: $table.occurredOn,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get timeMinutes => $composableBuilder(
+    column: $table.timeMinutes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get merchant =>
+      $composableBuilder(column: $table.merchant, builder: (column) => column);
+
+  GeneratedColumn<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get counterparty => $composableBuilder(
+    column: $table.counterparty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get cardLast4 =>
+      $composableBuilder(column: $table.cardLast4, builder: (column) => column);
+
+  GeneratedColumn<String> get suggestedCategoryId => $composableBuilder(
+    column: $table.suggestedCategoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get suggestedPersonId => $composableBuilder(
+    column: $table.suggestedPersonId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get suggestedAction => $composableBuilder(
+    column: $table.suggestedAction,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get confidenceJson => $composableBuilder(
+    column: $table.confidenceJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get warningsJson => $composableBuilder(
+    column: $table.warningsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get refHash =>
+      $composableBuilder(column: $table.refHash, builder: (column) => column);
+
+  GeneratedColumn<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get receivedAt => $composableBuilder(
+    column: $table.receivedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<int> get decidedAt =>
+      $composableBuilder(column: $table.decidedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<Uint8List> get rawBlob =>
+      $composableBuilder(column: $table.rawBlob, builder: (column) => column);
+}
+
+class $$PendingSmsImportsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PendingSmsImportsTable,
+          PendingSmsImportRow,
+          $$PendingSmsImportsTableFilterComposer,
+          $$PendingSmsImportsTableOrderingComposer,
+          $$PendingSmsImportsTableAnnotationComposer,
+          $$PendingSmsImportsTableCreateCompanionBuilder,
+          $$PendingSmsImportsTableUpdateCompanionBuilder,
+          (
+            PendingSmsImportRow,
+            BaseReferences<
+              _$AppDatabase,
+              $PendingSmsImportsTable,
+              PendingSmsImportRow
+            >,
+          ),
+          PendingSmsImportRow,
+          PrefetchHooks Function()
+        > {
+  $$PendingSmsImportsTableTableManager(
+    _$AppDatabase db,
+    $PendingSmsImportsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PendingSmsImportsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PendingSmsImportsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PendingSmsImportsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> fingerprint = const Value.absent(),
+                Value<String?> parentImportId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String> origin = const Value.absent(),
+                Value<String?> senderId = const Value.absent(),
+                Value<String> bankId = const Value.absent(),
+                Value<String> parserId = const Value.absent(),
+                Value<String> ruleVersion = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String> direction = const Value.absent(),
+                Value<int?> amountMinorUnits = const Value.absent(),
+                Value<String?> currencyCode = const Value.absent(),
+                Value<int?> occurredOn = const Value.absent(),
+                Value<int?> timeMinutes = const Value.absent(),
+                Value<String?> merchant = const Value.absent(),
+                Value<String?> merchantKey = const Value.absent(),
+                Value<String?> counterparty = const Value.absent(),
+                Value<String?> cardLast4 = const Value.absent(),
+                Value<String?> suggestedCategoryId = const Value.absent(),
+                Value<String?> suggestedPersonId = const Value.absent(),
+                Value<String> suggestedAction = const Value.absent(),
+                Value<String> confidenceJson = const Value.absent(),
+                Value<String> warningsJson = const Value.absent(),
+                Value<String?> refHash = const Value.absent(),
+                Value<String?> refAmountHash = const Value.absent(),
+                Value<int?> receivedAt = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> expiresAt = const Value.absent(),
+                Value<int?> decidedAt = const Value.absent(),
+                Value<String?> savedRecordId = const Value.absent(),
+                Value<String?> savedRecordType = const Value.absent(),
+                Value<Uint8List?> rawBlob = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PendingSmsImportsCompanion(
+                id: id,
+                fingerprint: fingerprint,
+                parentImportId: parentImportId,
+                status: status,
+                origin: origin,
+                senderId: senderId,
+                bankId: bankId,
+                parserId: parserId,
+                ruleVersion: ruleVersion,
+                kind: kind,
+                direction: direction,
+                amountMinorUnits: amountMinorUnits,
+                currencyCode: currencyCode,
+                occurredOn: occurredOn,
+                timeMinutes: timeMinutes,
+                merchant: merchant,
+                merchantKey: merchantKey,
+                counterparty: counterparty,
+                cardLast4: cardLast4,
+                suggestedCategoryId: suggestedCategoryId,
+                suggestedPersonId: suggestedPersonId,
+                suggestedAction: suggestedAction,
+                confidenceJson: confidenceJson,
+                warningsJson: warningsJson,
+                refHash: refHash,
+                refAmountHash: refAmountHash,
+                receivedAt: receivedAt,
+                createdAt: createdAt,
+                expiresAt: expiresAt,
+                decidedAt: decidedAt,
+                savedRecordId: savedRecordId,
+                savedRecordType: savedRecordType,
+                rawBlob: rawBlob,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String fingerprint,
+                Value<String?> parentImportId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                required String origin,
+                Value<String?> senderId = const Value.absent(),
+                required String bankId,
+                required String parserId,
+                required String ruleVersion,
+                required String kind,
+                required String direction,
+                Value<int?> amountMinorUnits = const Value.absent(),
+                Value<String?> currencyCode = const Value.absent(),
+                Value<int?> occurredOn = const Value.absent(),
+                Value<int?> timeMinutes = const Value.absent(),
+                Value<String?> merchant = const Value.absent(),
+                Value<String?> merchantKey = const Value.absent(),
+                Value<String?> counterparty = const Value.absent(),
+                Value<String?> cardLast4 = const Value.absent(),
+                Value<String?> suggestedCategoryId = const Value.absent(),
+                Value<String?> suggestedPersonId = const Value.absent(),
+                Value<String> suggestedAction = const Value.absent(),
+                required String confidenceJson,
+                Value<String> warningsJson = const Value.absent(),
+                Value<String?> refHash = const Value.absent(),
+                Value<String?> refAmountHash = const Value.absent(),
+                Value<int?> receivedAt = const Value.absent(),
+                required int createdAt,
+                required int expiresAt,
+                Value<int?> decidedAt = const Value.absent(),
+                Value<String?> savedRecordId = const Value.absent(),
+                Value<String?> savedRecordType = const Value.absent(),
+                Value<Uint8List?> rawBlob = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => PendingSmsImportsCompanion.insert(
+                id: id,
+                fingerprint: fingerprint,
+                parentImportId: parentImportId,
+                status: status,
+                origin: origin,
+                senderId: senderId,
+                bankId: bankId,
+                parserId: parserId,
+                ruleVersion: ruleVersion,
+                kind: kind,
+                direction: direction,
+                amountMinorUnits: amountMinorUnits,
+                currencyCode: currencyCode,
+                occurredOn: occurredOn,
+                timeMinutes: timeMinutes,
+                merchant: merchant,
+                merchantKey: merchantKey,
+                counterparty: counterparty,
+                cardLast4: cardLast4,
+                suggestedCategoryId: suggestedCategoryId,
+                suggestedPersonId: suggestedPersonId,
+                suggestedAction: suggestedAction,
+                confidenceJson: confidenceJson,
+                warningsJson: warningsJson,
+                refHash: refHash,
+                refAmountHash: refAmountHash,
+                receivedAt: receivedAt,
+                createdAt: createdAt,
+                expiresAt: expiresAt,
+                decidedAt: decidedAt,
+                savedRecordId: savedRecordId,
+                savedRecordType: savedRecordType,
+                rawBlob: rawBlob,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$PendingSmsImportsTable, PendingSmsImportRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $PendingSmsImportsTable,
+                    PendingSmsImportRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$PendingSmsImportsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PendingSmsImportsTable,
+      PendingSmsImportRow,
+      $$PendingSmsImportsTableFilterComposer,
+      $$PendingSmsImportsTableOrderingComposer,
+      $$PendingSmsImportsTableAnnotationComposer,
+      $$PendingSmsImportsTableCreateCompanionBuilder,
+      $$PendingSmsImportsTableUpdateCompanionBuilder,
+      (
+        PendingSmsImportRow,
+        BaseReferences<
+          _$AppDatabase,
+          $PendingSmsImportsTable,
+          PendingSmsImportRow
+        >,
+      ),
+      PendingSmsImportRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SmsImportTombstonesTableCreateCompanionBuilder =
+    SmsImportTombstonesCompanion Function({
+      required String fingerprint,
+      required String outcome,
+      required String bankId,
+      Value<String?> refHash,
+      Value<String?> refAmountHash,
+      Value<String?> savedRecordId,
+      Value<String?> savedRecordType,
+      required int createdAt,
+      required int purgeAfter,
+      Value<int> rowid,
+    });
+typedef $$SmsImportTombstonesTableUpdateCompanionBuilder =
+    SmsImportTombstonesCompanion Function({
+      Value<String> fingerprint,
+      Value<String> outcome,
+      Value<String> bankId,
+      Value<String?> refHash,
+      Value<String?> refAmountHash,
+      Value<String?> savedRecordId,
+      Value<String?> savedRecordType,
+      Value<int> createdAt,
+      Value<int> purgeAfter,
+      Value<int> rowid,
+    });
+
+class $$SmsImportTombstonesTableFilterComposer
+    extends Composer<_$AppDatabase, $SmsImportTombstonesTable> {
+  $$SmsImportTombstonesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bankId => $composableBuilder(
+    column: $table.bankId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get refHash => $composableBuilder(
+    column: $table.refHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get purgeAfter => $composableBuilder(
+    column: $table.purgeAfter,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SmsImportTombstonesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SmsImportTombstonesTable> {
+  $$SmsImportTombstonesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bankId => $composableBuilder(
+    column: $table.bankId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get refHash => $composableBuilder(
+    column: $table.refHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get purgeAfter => $composableBuilder(
+    column: $table.purgeAfter,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SmsImportTombstonesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SmsImportTombstonesTable> {
+  $$SmsImportTombstonesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get fingerprint => $composableBuilder(
+    column: $table.fingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<String> get bankId =>
+      $composableBuilder(column: $table.bankId, builder: (column) => column);
+
+  GeneratedColumn<String> get refHash =>
+      $composableBuilder(column: $table.refHash, builder: (column) => column);
+
+  GeneratedColumn<String> get refAmountHash => $composableBuilder(
+    column: $table.refAmountHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get savedRecordId => $composableBuilder(
+    column: $table.savedRecordId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get savedRecordType => $composableBuilder(
+    column: $table.savedRecordType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get purgeAfter => $composableBuilder(
+    column: $table.purgeAfter,
+    builder: (column) => column,
+  );
+}
+
+class $$SmsImportTombstonesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SmsImportTombstonesTable,
+          SmsImportTombstoneRow,
+          $$SmsImportTombstonesTableFilterComposer,
+          $$SmsImportTombstonesTableOrderingComposer,
+          $$SmsImportTombstonesTableAnnotationComposer,
+          $$SmsImportTombstonesTableCreateCompanionBuilder,
+          $$SmsImportTombstonesTableUpdateCompanionBuilder,
+          (
+            SmsImportTombstoneRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SmsImportTombstonesTable,
+              SmsImportTombstoneRow
+            >,
+          ),
+          SmsImportTombstoneRow,
+          PrefetchHooks Function()
+        > {
+  $$SmsImportTombstonesTableTableManager(
+    _$AppDatabase db,
+    $SmsImportTombstonesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SmsImportTombstonesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SmsImportTombstonesTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SmsImportTombstonesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> fingerprint = const Value.absent(),
+                Value<String> outcome = const Value.absent(),
+                Value<String> bankId = const Value.absent(),
+                Value<String?> refHash = const Value.absent(),
+                Value<String?> refAmountHash = const Value.absent(),
+                Value<String?> savedRecordId = const Value.absent(),
+                Value<String?> savedRecordType = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> purgeAfter = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SmsImportTombstonesCompanion(
+                fingerprint: fingerprint,
+                outcome: outcome,
+                bankId: bankId,
+                refHash: refHash,
+                refAmountHash: refAmountHash,
+                savedRecordId: savedRecordId,
+                savedRecordType: savedRecordType,
+                createdAt: createdAt,
+                purgeAfter: purgeAfter,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String fingerprint,
+                required String outcome,
+                required String bankId,
+                Value<String?> refHash = const Value.absent(),
+                Value<String?> refAmountHash = const Value.absent(),
+                Value<String?> savedRecordId = const Value.absent(),
+                Value<String?> savedRecordType = const Value.absent(),
+                required int createdAt,
+                required int purgeAfter,
+                Value<int> rowid = const Value.absent(),
+              }) => SmsImportTombstonesCompanion.insert(
+                fingerprint: fingerprint,
+                outcome: outcome,
+                bankId: bankId,
+                refHash: refHash,
+                refAmountHash: refAmountHash,
+                savedRecordId: savedRecordId,
+                savedRecordType: savedRecordType,
+                createdAt: createdAt,
+                purgeAfter: purgeAfter,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SmsImportTombstonesTable, SmsImportTombstoneRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SmsImportTombstonesTable,
+                    SmsImportTombstoneRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SmsImportTombstonesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SmsImportTombstonesTable,
+      SmsImportTombstoneRow,
+      $$SmsImportTombstonesTableFilterComposer,
+      $$SmsImportTombstonesTableOrderingComposer,
+      $$SmsImportTombstonesTableAnnotationComposer,
+      $$SmsImportTombstonesTableCreateCompanionBuilder,
+      $$SmsImportTombstonesTableUpdateCompanionBuilder,
+      (
+        SmsImportTombstoneRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SmsImportTombstonesTable,
+          SmsImportTombstoneRow
+        >,
+      ),
+      SmsImportTombstoneRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SmsSenderMutesTableCreateCompanionBuilder =
+    SmsSenderMutesCompanion Function({
+      required String senderId,
+      required int createdAt,
+      Value<int> rowid,
+    });
+typedef $$SmsSenderMutesTableUpdateCompanionBuilder =
+    SmsSenderMutesCompanion Function({
+      Value<String> senderId,
+      Value<int> createdAt,
+      Value<int> rowid,
+    });
+
+class $$SmsSenderMutesTableFilterComposer
+    extends Composer<_$AppDatabase, $SmsSenderMutesTable> {
+  $$SmsSenderMutesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SmsSenderMutesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SmsSenderMutesTable> {
+  $$SmsSenderMutesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get senderId => $composableBuilder(
+    column: $table.senderId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SmsSenderMutesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SmsSenderMutesTable> {
+  $$SmsSenderMutesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get senderId =>
+      $composableBuilder(column: $table.senderId, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+}
+
+class $$SmsSenderMutesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SmsSenderMutesTable,
+          SmsSenderMuteRow,
+          $$SmsSenderMutesTableFilterComposer,
+          $$SmsSenderMutesTableOrderingComposer,
+          $$SmsSenderMutesTableAnnotationComposer,
+          $$SmsSenderMutesTableCreateCompanionBuilder,
+          $$SmsSenderMutesTableUpdateCompanionBuilder,
+          (
+            SmsSenderMuteRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SmsSenderMutesTable,
+              SmsSenderMuteRow
+            >,
+          ),
+          SmsSenderMuteRow,
+          PrefetchHooks Function()
+        > {
+  $$SmsSenderMutesTableTableManager(
+    _$AppDatabase db,
+    $SmsSenderMutesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SmsSenderMutesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SmsSenderMutesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SmsSenderMutesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> senderId = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SmsSenderMutesCompanion(
+                senderId: senderId,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String senderId,
+                required int createdAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SmsSenderMutesCompanion.insert(
+                senderId: senderId,
+                createdAt: createdAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SmsSenderMutesTable, SmsSenderMuteRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SmsSenderMutesTable,
+                    SmsSenderMuteRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SmsSenderMutesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SmsSenderMutesTable,
+      SmsSenderMuteRow,
+      $$SmsSenderMutesTableFilterComposer,
+      $$SmsSenderMutesTableOrderingComposer,
+      $$SmsSenderMutesTableAnnotationComposer,
+      $$SmsSenderMutesTableCreateCompanionBuilder,
+      $$SmsSenderMutesTableUpdateCompanionBuilder,
+      (
+        SmsSenderMuteRow,
+        BaseReferences<_$AppDatabase, $SmsSenderMutesTable, SmsSenderMuteRow>,
+      ),
+      SmsSenderMuteRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SmsMerchantCategoryMappingsTableCreateCompanionBuilder =
+    SmsMerchantCategoryMappingsCompanion Function({
+      required String merchantKey,
+      required String entryType,
+      required String categoryId,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$SmsMerchantCategoryMappingsTableUpdateCompanionBuilder =
+    SmsMerchantCategoryMappingsCompanion Function({
+      Value<String> merchantKey,
+      Value<String> entryType,
+      Value<String> categoryId,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$SmsMerchantCategoryMappingsTableFilterComposer
+    extends Composer<_$AppDatabase, $SmsMerchantCategoryMappingsTable> {
+  $$SmsMerchantCategoryMappingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SmsMerchantCategoryMappingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SmsMerchantCategoryMappingsTable> {
+  $$SmsMerchantCategoryMappingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SmsMerchantCategoryMappingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SmsMerchantCategoryMappingsTable> {
+  $$SmsMerchantCategoryMappingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get merchantKey => $composableBuilder(
+    column: $table.merchantKey,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get entryType =>
+      $composableBuilder(column: $table.entryType, builder: (column) => column);
+
+  GeneratedColumn<String> get categoryId => $composableBuilder(
+    column: $table.categoryId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SmsMerchantCategoryMappingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SmsMerchantCategoryMappingsTable,
+          SmsMerchantCategoryMappingRow,
+          $$SmsMerchantCategoryMappingsTableFilterComposer,
+          $$SmsMerchantCategoryMappingsTableOrderingComposer,
+          $$SmsMerchantCategoryMappingsTableAnnotationComposer,
+          $$SmsMerchantCategoryMappingsTableCreateCompanionBuilder,
+          $$SmsMerchantCategoryMappingsTableUpdateCompanionBuilder,
+          (
+            SmsMerchantCategoryMappingRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SmsMerchantCategoryMappingsTable,
+              SmsMerchantCategoryMappingRow
+            >,
+          ),
+          SmsMerchantCategoryMappingRow,
+          PrefetchHooks Function()
+        > {
+  $$SmsMerchantCategoryMappingsTableTableManager(
+    _$AppDatabase db,
+    $SmsMerchantCategoryMappingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SmsMerchantCategoryMappingsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$SmsMerchantCategoryMappingsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SmsMerchantCategoryMappingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> merchantKey = const Value.absent(),
+                Value<String> entryType = const Value.absent(),
+                Value<String> categoryId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SmsMerchantCategoryMappingsCompanion(
+                merchantKey: merchantKey,
+                entryType: entryType,
+                categoryId: categoryId,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String merchantKey,
+                required String entryType,
+                required String categoryId,
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SmsMerchantCategoryMappingsCompanion.insert(
+                merchantKey: merchantKey,
+                entryType: entryType,
+                categoryId: categoryId,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $SmsMerchantCategoryMappingsTable,
+                    SmsMerchantCategoryMappingRow
+                  >(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SmsMerchantCategoryMappingsTable,
+                    SmsMerchantCategoryMappingRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SmsMerchantCategoryMappingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SmsMerchantCategoryMappingsTable,
+      SmsMerchantCategoryMappingRow,
+      $$SmsMerchantCategoryMappingsTableFilterComposer,
+      $$SmsMerchantCategoryMappingsTableOrderingComposer,
+      $$SmsMerchantCategoryMappingsTableAnnotationComposer,
+      $$SmsMerchantCategoryMappingsTableCreateCompanionBuilder,
+      $$SmsMerchantCategoryMappingsTableUpdateCompanionBuilder,
+      (
+        SmsMerchantCategoryMappingRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SmsMerchantCategoryMappingsTable,
+          SmsMerchantCategoryMappingRow
+        >,
+      ),
+      SmsMerchantCategoryMappingRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SmsImportSettingsTableCreateCompanionBuilder =
+    SmsImportSettingsCompanion Function({
+      required String id,
+      Value<bool> isEnabled,
+      Value<bool> onboardingDismissed,
+      Value<int> scanWindowDays,
+      Value<int?> cursorDate,
+      Value<int?> cursorId,
+      Value<int?> lastScanAt,
+      Value<int?> lastCatchUpAt,
+      Value<bool> countCashWithdrawals,
+      Value<bool> permissionRequested,
+      Value<int> scannedCount,
+      Value<int> recognizedCount,
+      Value<int> addedCount,
+      Value<int> ignoredCount,
+      Value<int?> expiredNoticeSeenAt,
+      Value<String> rulesSeen,
+      Value<int> rowid,
+    });
+typedef $$SmsImportSettingsTableUpdateCompanionBuilder =
+    SmsImportSettingsCompanion Function({
+      Value<String> id,
+      Value<bool> isEnabled,
+      Value<bool> onboardingDismissed,
+      Value<int> scanWindowDays,
+      Value<int?> cursorDate,
+      Value<int?> cursorId,
+      Value<int?> lastScanAt,
+      Value<int?> lastCatchUpAt,
+      Value<bool> countCashWithdrawals,
+      Value<bool> permissionRequested,
+      Value<int> scannedCount,
+      Value<int> recognizedCount,
+      Value<int> addedCount,
+      Value<int> ignoredCount,
+      Value<int?> expiredNoticeSeenAt,
+      Value<String> rulesSeen,
+      Value<int> rowid,
+    });
+
+class $$SmsImportSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $SmsImportSettingsTable> {
+  $$SmsImportSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get onboardingDismissed => $composableBuilder(
+    column: $table.onboardingDismissed,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get scanWindowDays => $composableBuilder(
+    column: $table.scanWindowDays,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cursorDate => $composableBuilder(
+    column: $table.cursorDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get cursorId => $composableBuilder(
+    column: $table.cursorId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastScanAt => $composableBuilder(
+    column: $table.lastScanAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastCatchUpAt => $composableBuilder(
+    column: $table.lastCatchUpAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get countCashWithdrawals => $composableBuilder(
+    column: $table.countCashWithdrawals,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get permissionRequested => $composableBuilder(
+    column: $table.permissionRequested,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get scannedCount => $composableBuilder(
+    column: $table.scannedCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recognizedCount => $composableBuilder(
+    column: $table.recognizedCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get addedCount => $composableBuilder(
+    column: $table.addedCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get ignoredCount => $composableBuilder(
+    column: $table.ignoredCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expiredNoticeSeenAt => $composableBuilder(
+    column: $table.expiredNoticeSeenAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rulesSeen => $composableBuilder(
+    column: $table.rulesSeen,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SmsImportSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SmsImportSettingsTable> {
+  $$SmsImportSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isEnabled => $composableBuilder(
+    column: $table.isEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get onboardingDismissed => $composableBuilder(
+    column: $table.onboardingDismissed,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get scanWindowDays => $composableBuilder(
+    column: $table.scanWindowDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cursorDate => $composableBuilder(
+    column: $table.cursorDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get cursorId => $composableBuilder(
+    column: $table.cursorId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastScanAt => $composableBuilder(
+    column: $table.lastScanAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastCatchUpAt => $composableBuilder(
+    column: $table.lastCatchUpAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get countCashWithdrawals => $composableBuilder(
+    column: $table.countCashWithdrawals,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get permissionRequested => $composableBuilder(
+    column: $table.permissionRequested,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get scannedCount => $composableBuilder(
+    column: $table.scannedCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recognizedCount => $composableBuilder(
+    column: $table.recognizedCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get addedCount => $composableBuilder(
+    column: $table.addedCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get ignoredCount => $composableBuilder(
+    column: $table.ignoredCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get expiredNoticeSeenAt => $composableBuilder(
+    column: $table.expiredNoticeSeenAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rulesSeen => $composableBuilder(
+    column: $table.rulesSeen,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SmsImportSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SmsImportSettingsTable> {
+  $$SmsImportSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<bool> get isEnabled =>
+      $composableBuilder(column: $table.isEnabled, builder: (column) => column);
+
+  GeneratedColumn<bool> get onboardingDismissed => $composableBuilder(
+    column: $table.onboardingDismissed,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get scanWindowDays => $composableBuilder(
+    column: $table.scanWindowDays,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cursorDate => $composableBuilder(
+    column: $table.cursorDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get cursorId =>
+      $composableBuilder(column: $table.cursorId, builder: (column) => column);
+
+  GeneratedColumn<int> get lastScanAt => $composableBuilder(
+    column: $table.lastScanAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastCatchUpAt => $composableBuilder(
+    column: $table.lastCatchUpAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get countCashWithdrawals => $composableBuilder(
+    column: $table.countCashWithdrawals,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get permissionRequested => $composableBuilder(
+    column: $table.permissionRequested,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get scannedCount => $composableBuilder(
+    column: $table.scannedCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recognizedCount => $composableBuilder(
+    column: $table.recognizedCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get addedCount => $composableBuilder(
+    column: $table.addedCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get ignoredCount => $composableBuilder(
+    column: $table.ignoredCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get expiredNoticeSeenAt => $composableBuilder(
+    column: $table.expiredNoticeSeenAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rulesSeen =>
+      $composableBuilder(column: $table.rulesSeen, builder: (column) => column);
+}
+
+class $$SmsImportSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SmsImportSettingsTable,
+          SmsImportSettingsRow,
+          $$SmsImportSettingsTableFilterComposer,
+          $$SmsImportSettingsTableOrderingComposer,
+          $$SmsImportSettingsTableAnnotationComposer,
+          $$SmsImportSettingsTableCreateCompanionBuilder,
+          $$SmsImportSettingsTableUpdateCompanionBuilder,
+          (
+            SmsImportSettingsRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SmsImportSettingsTable,
+              SmsImportSettingsRow
+            >,
+          ),
+          SmsImportSettingsRow,
+          PrefetchHooks Function()
+        > {
+  $$SmsImportSettingsTableTableManager(
+    _$AppDatabase db,
+    $SmsImportSettingsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SmsImportSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SmsImportSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SmsImportSettingsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<bool> isEnabled = const Value.absent(),
+                Value<bool> onboardingDismissed = const Value.absent(),
+                Value<int> scanWindowDays = const Value.absent(),
+                Value<int?> cursorDate = const Value.absent(),
+                Value<int?> cursorId = const Value.absent(),
+                Value<int?> lastScanAt = const Value.absent(),
+                Value<int?> lastCatchUpAt = const Value.absent(),
+                Value<bool> countCashWithdrawals = const Value.absent(),
+                Value<bool> permissionRequested = const Value.absent(),
+                Value<int> scannedCount = const Value.absent(),
+                Value<int> recognizedCount = const Value.absent(),
+                Value<int> addedCount = const Value.absent(),
+                Value<int> ignoredCount = const Value.absent(),
+                Value<int?> expiredNoticeSeenAt = const Value.absent(),
+                Value<String> rulesSeen = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SmsImportSettingsCompanion(
+                id: id,
+                isEnabled: isEnabled,
+                onboardingDismissed: onboardingDismissed,
+                scanWindowDays: scanWindowDays,
+                cursorDate: cursorDate,
+                cursorId: cursorId,
+                lastScanAt: lastScanAt,
+                lastCatchUpAt: lastCatchUpAt,
+                countCashWithdrawals: countCashWithdrawals,
+                permissionRequested: permissionRequested,
+                scannedCount: scannedCount,
+                recognizedCount: recognizedCount,
+                addedCount: addedCount,
+                ignoredCount: ignoredCount,
+                expiredNoticeSeenAt: expiredNoticeSeenAt,
+                rulesSeen: rulesSeen,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                Value<bool> isEnabled = const Value.absent(),
+                Value<bool> onboardingDismissed = const Value.absent(),
+                Value<int> scanWindowDays = const Value.absent(),
+                Value<int?> cursorDate = const Value.absent(),
+                Value<int?> cursorId = const Value.absent(),
+                Value<int?> lastScanAt = const Value.absent(),
+                Value<int?> lastCatchUpAt = const Value.absent(),
+                Value<bool> countCashWithdrawals = const Value.absent(),
+                Value<bool> permissionRequested = const Value.absent(),
+                Value<int> scannedCount = const Value.absent(),
+                Value<int> recognizedCount = const Value.absent(),
+                Value<int> addedCount = const Value.absent(),
+                Value<int> ignoredCount = const Value.absent(),
+                Value<int?> expiredNoticeSeenAt = const Value.absent(),
+                Value<String> rulesSeen = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SmsImportSettingsCompanion.insert(
+                id: id,
+                isEnabled: isEnabled,
+                onboardingDismissed: onboardingDismissed,
+                scanWindowDays: scanWindowDays,
+                cursorDate: cursorDate,
+                cursorId: cursorId,
+                lastScanAt: lastScanAt,
+                lastCatchUpAt: lastCatchUpAt,
+                countCashWithdrawals: countCashWithdrawals,
+                permissionRequested: permissionRequested,
+                scannedCount: scannedCount,
+                recognizedCount: recognizedCount,
+                addedCount: addedCount,
+                ignoredCount: ignoredCount,
+                expiredNoticeSeenAt: expiredNoticeSeenAt,
+                rulesSeen: rulesSeen,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SmsImportSettingsTable, SmsImportSettingsRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SmsImportSettingsTable,
+                    SmsImportSettingsRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SmsImportSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SmsImportSettingsTable,
+      SmsImportSettingsRow,
+      $$SmsImportSettingsTableFilterComposer,
+      $$SmsImportSettingsTableOrderingComposer,
+      $$SmsImportSettingsTableAnnotationComposer,
+      $$SmsImportSettingsTableCreateCompanionBuilder,
+      $$SmsImportSettingsTableUpdateCompanionBuilder,
+      (
+        SmsImportSettingsRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SmsImportSettingsTable,
+          SmsImportSettingsRow
+        >,
+      ),
+      SmsImportSettingsRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -27903,4 +34034,18 @@ class $AppDatabaseManager {
       );
   $$FinanceEntryAuditsTableTableManager get financeEntryAudits =>
       $$FinanceEntryAuditsTableTableManager(_db, _db.financeEntryAudits);
+  $$PendingSmsImportsTableTableManager get pendingSmsImports =>
+      $$PendingSmsImportsTableTableManager(_db, _db.pendingSmsImports);
+  $$SmsImportTombstonesTableTableManager get smsImportTombstones =>
+      $$SmsImportTombstonesTableTableManager(_db, _db.smsImportTombstones);
+  $$SmsSenderMutesTableTableManager get smsSenderMutes =>
+      $$SmsSenderMutesTableTableManager(_db, _db.smsSenderMutes);
+  $$SmsMerchantCategoryMappingsTableTableManager
+  get smsMerchantCategoryMappings =>
+      $$SmsMerchantCategoryMappingsTableTableManager(
+        _db,
+        _db.smsMerchantCategoryMappings,
+      );
+  $$SmsImportSettingsTableTableManager get smsImportSettings =>
+      $$SmsImportSettingsTableTableManager(_db, _db.smsImportSettings);
 }

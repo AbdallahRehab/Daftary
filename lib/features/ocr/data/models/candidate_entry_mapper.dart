@@ -1,6 +1,6 @@
 import '../../../../core/database/app_database.dart' as db;
 import '../../domain/entities/candidate_entry.dart';
-import '../../domain/entities/field_confidence.dart';
+import '../../../../core/confidence/field_confidence.dart';
 import 'ocr_scan_mapper.dart';
 
 /// Maps between the `candidate_entries` row and [CandidateEntry],

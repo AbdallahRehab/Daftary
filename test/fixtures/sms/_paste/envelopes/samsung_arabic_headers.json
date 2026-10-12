@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "unverifiedFormat": true,
+  "app": "Samsung Messages",
+  "mode": "Arabic system language, short-code sender, Arabic-Indic digits, 12 h",
+  "source": "paste",
+  "inboxBodies": [
+    "تم خصم 300.00 جنيه من بطاقتك المنتهية ب 0000 لدى Example Market يوم 05/03/2026",
+    "EGP 500.00 transferred to Mona via InstaPay on 06/03/2026. Fees EGP 2.50"
+  ]
+}

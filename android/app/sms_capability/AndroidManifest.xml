@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 023 Bank SMS Import: the READ_SMS capability overlay (research
+     Decision 3, CHK013). Merged only when the Gradle switch
+     DAFTARY_SMS_IMPORT=true (or -Pdaftary.smsImport=true) is on; see
+     app/build.gradle.kts. It declares READ_SMS and nothing else: never
+     RECEIVE_SMS, SEND_SMS, READ_PHONE_STATE, a receiver or a service
+     (FR-008a, FR-073; tool/check_merged_manifest.sh). -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.READ_SMS"/>
+</manifest>

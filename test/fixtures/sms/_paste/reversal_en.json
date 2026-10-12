@@ -1,0 +1,15 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "authorization_reversal",
+  "direction": "credit",
+  "amountMinor": 45000,
+  "suggestion": {
+    "type": "ignore"
+  },
+  "warnings": [
+    "reversal_hint"
+  ]
+}

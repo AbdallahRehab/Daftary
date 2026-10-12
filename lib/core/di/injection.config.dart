@@ -44,13 +44,13 @@ import '../../features/ai_assistant/domain/services/system_prompt_builder.dart'
 import '../../features/ai_assistant/domain/tools/ai_tool_registry.dart'
     as _i332;
 import '../../features/ai_assistant/domain/tools/compare_spending_across_periods.dart'
-    as _i924;
+    as _i925;
 import '../../features/ai_assistant/domain/tools/get_budget_status_tool.dart'
     as _i59;
 import '../../features/ai_assistant/domain/tools/get_category_spend.dart'
     as _i917;
 import '../../features/ai_assistant/domain/tools/get_occasion_totals_tool.dart'
-    as _i666;
+    as _i667;
 import '../../features/ai_assistant/domain/tools/get_owed_overview_tool.dart'
     as _i14;
 import '../../features/ai_assistant/domain/tools/get_person_balance_tool.dart'
@@ -85,7 +85,7 @@ import '../../features/ai_assistant/domain/usecases/update_provider_credentials.
 import '../../features/ai_assistant/presentation/cubit/ai_settings_cubit.dart'
     as _i742;
 import '../../features/ai_assistant/presentation/cubit/chat_cubit.dart'
-    as _i258;
+    as _i260;
 import '../../features/app_lock/data/datasources/secure_app_lock_storage.dart'
     as _i872;
 import '../../features/app_lock/data/repositories/app_lock_repository_impl.dart'
@@ -114,7 +114,7 @@ import '../../features/app_lock/domain/usecases/record_failed_pin_attempt.dart'
 import '../../features/app_lock/domain/usecases/recover_via_biometric.dart'
     as _i244;
 import '../../features/app_lock/domain/usecases/set_biometric_enabled.dart'
-    as _i561;
+    as _i562;
 import '../../features/app_lock/domain/usecases/set_inactivity_timeout.dart'
     as _i252;
 import '../../features/app_lock/domain/usecases/set_pin.dart' as _i557;
@@ -146,12 +146,12 @@ import '../../features/budgets/domain/usecases/create_budget.dart' as _i255;
 import '../../features/budgets/domain/usecases/delete_budget.dart' as _i150;
 import '../../features/budgets/domain/usecases/edit_budget.dart' as _i755;
 import '../../features/budgets/domain/usecases/edit_budget_category_allocation.dart'
-    as _i934;
+    as _i935;
 import '../../features/budgets/domain/usecases/get_budget_for_month.dart'
     as _i587;
 import '../../features/budgets/domain/usecases/get_budget_trend.dart' as _i438;
 import '../../features/budgets/domain/usecases/get_most_recent_budget_before.dart'
-    as _i654;
+    as _i655;
 import '../../features/budgets/domain/usecases/remove_budget_category_allocation.dart'
     as _i317;
 import '../../features/budgets/domain/usecases/watch_budget_for_month.dart'
@@ -161,15 +161,15 @@ import '../../features/budgets/domain/usecases/watch_budget_trend.dart'
 import '../../features/budgets/presentation/cubit/budget_form_cubit.dart'
     as _i722;
 import '../../features/budgets/presentation/cubit/budget_month_cubit.dart'
-    as _i1031;
+    as _i1033;
 import '../../features/budgets/presentation/cubit/budget_trend_cubit.dart'
-    as _i179;
+    as _i180;
 import '../../features/budgets/presentation/cubit/copy_budget_cubit.dart'
     as _i28;
 import '../../features/cloud_sync/data/repositories/cloud_sync_repository_impl.dart'
     as _i241;
 import '../../features/cloud_sync/data/services/supabase_cloud_copy_eraser.dart'
-    as _i223;
+    as _i224;
 import '../../features/cloud_sync/data/sync/conflict_resolution_sync_mapper.dart'
     as _i346;
 import '../../features/cloud_sync/domain/repositories/cloud_sync_repository.dart'
@@ -181,7 +181,7 @@ import '../../features/cloud_sync/domain/usecases/confirm_email_code.dart'
 import '../../features/cloud_sync/domain/usecases/request_email_code.dart'
     as _i861;
 import '../../features/cloud_sync/domain/usecases/resolve_sync_conflict.dart'
-    as _i1030;
+    as _i1031;
 import '../../features/cloud_sync/domain/usecases/retry_failed_sync.dart'
     as _i259;
 import '../../features/cloud_sync/domain/usecases/set_sync_enabled.dart'
@@ -192,9 +192,9 @@ import '../../features/cloud_sync/domain/usecases/watch_failed_sync_items.dart'
 import '../../features/cloud_sync/domain/usecases/watch_sync_conflicts.dart'
     as _i1039;
 import '../../features/cloud_sync/domain/usecases/watch_sync_status.dart'
-    as _i178;
+    as _i179;
 import '../../features/cloud_sync/presentation/cubit/email_link_cubit.dart'
-    as _i1005;
+    as _i1006;
 import '../../features/cloud_sync/presentation/cubit/sync_conflicts_cubit.dart'
     as _i273;
 import '../../features/cloud_sync/presentation/cubit/sync_notice_cubit.dart'
@@ -233,7 +233,7 @@ import '../../features/currency/domain/usecases/set_primary_currency.dart'
 import '../../features/currency/domain/usecases/watch_conversion_context.dart'
     as _i132;
 import '../../features/currency/domain/usecases/watch_exchange_rates.dart'
-    as _i166;
+    as _i167;
 import '../../features/currency/domain/usecases/watch_primary_currency.dart'
     as _i1028;
 import '../../features/currency/presentation/cubit/exchange_rate_form_cubit.dart'
@@ -251,9 +251,9 @@ import '../../features/data_privacy/data/services/share_plus_service.dart'
 import '../../features/data_privacy/data/services/temporary_export_directory_provider.dart'
     as _i612;
 import '../../features/data_privacy/domain/repositories/data_wipe_repository.dart'
-    as _i1004;
+    as _i1005;
 import '../../features/data_privacy/domain/services/cloud_copy_eraser.dart'
-    as _i222;
+    as _i223;
 import '../../features/data_privacy/domain/services/export_directory_provider.dart'
     as _i52;
 import '../../features/data_privacy/domain/services/secure_storage_wiper.dart'
@@ -261,7 +261,7 @@ import '../../features/data_privacy/domain/services/secure_storage_wiper.dart'
 import '../../features/data_privacy/domain/services/share_service.dart'
     as _i939;
 import '../../features/data_privacy/domain/usecases/delete_all_user_data.dart'
-    as _i431;
+    as _i432;
 import '../../features/data_privacy/domain/usecases/export_user_data.dart'
     as _i496;
 import '../../features/data_privacy/presentation/cubit/delete_account_cubit.dart'
@@ -316,7 +316,7 @@ import '../../features/finance/domain/usecases/watch_finance_summary.dart'
 import '../../features/finance/domain/usecases/watch_spending_trend.dart'
     as _i508;
 import '../../features/finance/presentation/cubit/category_form_cubit.dart'
-    as _i1033;
+    as _i1035;
 import '../../features/finance/presentation/cubit/category_management_cubit.dart'
     as _i109;
 import '../../features/finance/presentation/cubit/finance_entry_form_cubit.dart'
@@ -407,7 +407,7 @@ import '../../features/insights_notifications/domain/usecases/handle_notificatio
 import '../../features/insights_notifications/domain/usecases/notification_engine.dart'
     as _i553;
 import '../../features/insights_notifications/domain/usecases/request_notification_permission.dart'
-    as _i639;
+    as _i640;
 import '../../features/insights_notifications/domain/usecases/set_notification_preferences.dart'
     as _i203;
 import '../../features/insights_notifications/presentation/cubit/notification_settings_cubit.dart'
@@ -421,7 +421,7 @@ import '../../features/occasions/data/sync/occasion_sync_mapper.dart' as _i1001;
 import '../../features/occasions/domain/repositories/occasions_repository.dart'
     as _i72;
 import '../../features/occasions/domain/usecases/add_occasion_attachment.dart'
-    as _i247;
+    as _i248;
 import '../../features/occasions/domain/usecases/add_participant_contribution.dart'
     as _i415;
 import '../../features/occasions/domain/usecases/archive_occasion.dart'
@@ -433,7 +433,7 @@ import '../../features/occasions/domain/usecases/edit_occasion.dart' as _i712;
 import '../../features/occasions/domain/usecases/edit_participant_contribution.dart'
     as _i153;
 import '../../features/occasions/domain/usecases/get_occasion_detail.dart'
-    as _i432;
+    as _i433;
 import '../../features/occasions/domain/usecases/get_occasions_list.dart'
     as _i958;
 import '../../features/occasions/domain/usecases/remove_occasion_attachment.dart'
@@ -449,7 +449,7 @@ import '../../features/occasions/domain/usecases/watch_occasions_list.dart'
 import '../../features/occasions/presentation/cubit/archived_occasions_cubit.dart'
     as _i185;
 import '../../features/occasions/presentation/cubit/occasion_detail_cubit.dart'
-    as _i53;
+    as _i54;
 import '../../features/occasions/presentation/cubit/occasion_form_cubit.dart'
     as _i15;
 import '../../features/occasions/presentation/cubit/occasions_list_cubit.dart'
@@ -465,7 +465,7 @@ import '../../features/ocr/data/recognition/text_recognition_service_impl.dart'
 import '../../features/ocr/data/repositories/ocr_repository_impl.dart' as _i457;
 import '../../features/ocr/domain/repositories/image_preparation_service.dart'
     as _i235;
-import '../../features/ocr/domain/repositories/ocr_repository.dart' as _i578;
+import '../../features/ocr/domain/repositories/ocr_repository.dart' as _i579;
 import '../../features/ocr/domain/repositories/text_recognition_service.dart'
     as _i176;
 import '../../features/ocr/domain/usecases/cancel_scan.dart' as _i377;
@@ -477,13 +477,13 @@ import '../../features/ocr/domain/usecases/edit_candidate_entry.dart' as _i506;
 import '../../features/ocr/domain/usecases/get_candidate_entries.dart' as _i303;
 import '../../features/ocr/domain/usecases/get_possible_duplicate_for_candidate.dart'
     as _i20;
-import '../../features/ocr/domain/usecases/get_scan_detail.dart' as _i267;
+import '../../features/ocr/domain/usecases/get_scan_detail.dart' as _i268;
 import '../../features/ocr/domain/usecases/get_scan_history.dart' as _i331;
 import '../../features/ocr/domain/usecases/run_ocr_extraction.dart' as _i350;
 import '../../features/ocr/domain/usecases/set_batch_default_direction.dart'
     as _i1011;
 import '../../features/ocr/domain/usecases/start_scan.dart' as _i856;
-import '../../features/ocr/domain/usecases/tag_batch_to_occasion.dart' as _i237;
+import '../../features/ocr/domain/usecases/tag_batch_to_occasion.dart' as _i239;
 import '../../features/ocr/domain/usecases/watch_scan_detail.dart' as _i138;
 import '../../features/ocr/domain/usecases/watch_scan_history.dart' as _i130;
 import '../../features/ocr/presentation/cubit/image_prep_cubit.dart' as _i427;
@@ -507,7 +507,7 @@ import '../../features/people/data/repositories/people_repository_impl.dart'
 import '../../features/people/data/sync/person_sync_mapper.dart' as _i334;
 import '../../features/people/domain/repositories/people_repository.dart'
     as _i646;
-import '../../features/people/domain/usecases/archive_person.dart' as _i224;
+import '../../features/people/domain/usecases/archive_person.dart' as _i225;
 import '../../features/people/domain/usecases/create_person.dart' as _i789;
 import '../../features/people/domain/usecases/delete_person.dart' as _i907;
 import '../../features/people/domain/usecases/edit_person.dart' as _i101;
@@ -547,7 +547,7 @@ import '../../features/savings/domain/usecases/archive_savings_goal.dart'
 import '../../features/savings/domain/usecases/calculate_what_if_completion_date.dart'
     as _i691;
 import '../../features/savings/domain/usecases/calculate_what_if_monthly_contribution.dart'
-    as _i1027;
+    as _i1030;
 import '../../features/savings/domain/usecases/create_savings_goal.dart'
     as _i291;
 import '../../features/savings/domain/usecases/delete_contribution.dart'
@@ -581,7 +581,7 @@ import '../../features/savings/presentation/cubit/goal_form_cubit.dart'
 import '../../features/savings/presentation/cubit/savings_goal_actions_cubit.dart'
     as _i1059;
 import '../../features/savings/presentation/cubit/savings_overview_cubit.dart'
-    as _i986;
+    as _i989;
 import '../../features/savings/presentation/cubit/what_if_cubit.dart' as _i380;
 import '../../features/settings/data/datasources/settings_dao.dart' as _i586;
 import '../../features/settings/data/repositories/settings_repository_impl.dart'
@@ -593,15 +593,183 @@ import '../../features/settings/domain/usecases/change_glass_appearance.dart'
 import '../../features/settings/domain/usecases/change_language.dart' as _i90;
 import '../../features/settings/domain/usecases/change_theme_mode.dart' as _i46;
 import '../../features/settings/domain/usecases/get_glass_appearance_preference.dart'
-    as _i499;
+    as _i501;
 import '../../features/settings/domain/usecases/get_language_preference.dart'
     as _i1032;
 import '../../features/settings/domain/usecases/get_theme_mode_preference.dart'
     as _i333;
 import '../../features/settings/presentation/cubit/settings_cubit.dart'
     as _i794;
+import '../../features/sms_import/data/crypto/aes_gcm_raw_text_vault.dart'
+    as _i121;
+import '../../features/sms_import/data/crypto/hmac_fingerprint_hasher.dart'
+    as _i825;
+import '../../features/sms_import/data/crypto/secure_storage_sms_key_store.dart'
+    as _i267;
+import '../../features/sms_import/data/datasources/sms_duplicate_dao.dart'
+    as _i362;
+import '../../features/sms_import/data/datasources/sms_import_dao.dart'
+    as _i923;
+import '../../features/sms_import/data/datasources/sms_import_settings_dao.dart'
+    as _i786;
+import '../../features/sms_import/data/parsing/registry_bank_reference_policy.dart'
+    as _i578;
+import '../../features/sms_import/data/platform/app_external_activity_runner.dart'
+    as _i671;
+import '../../features/sms_import/data/platform/app_lock_status.dart' as _i166;
+import '../../features/sms_import/data/platform/flutter_lifecycle_state_source.dart'
+    as _i594;
+import '../../features/sms_import/data/platform/in_memory_review_lease_registry.dart'
+    as _i760;
+import '../../features/sms_import/data/platform/in_memory_scan_coordinator.dart'
+    as _i499;
+import '../../features/sms_import/data/platform/sms_channel_client.dart'
+    as _i689;
+import '../../features/sms_import/data/platform/sms_platform_module.dart'
+    as _i836;
+import '../../features/sms_import/data/platform/system_clipboard_reader.dart'
+    as _i258;
+import '../../features/sms_import/data/repositories/sms_import_repository_impl.dart'
+    as _i431;
+import '../../features/sms_import/data/repositories/sms_import_settings_repository_impl.dart'
+    as _i839;
+import '../../features/sms_import/data/sms_parsing_module.dart' as _i656;
+import '../../features/sms_import/domain/repositories/sms_duplicate_lookup.dart'
+    as _i1004;
+import '../../features/sms_import/domain/repositories/sms_import_repository.dart'
+    as _i204;
+import '../../features/sms_import/domain/repositories/sms_import_settings_repository.dart'
+    as _i589;
+import '../../features/sms_import/domain/services/app_lifecycle_state_source.dart'
+    as _i583;
+import '../../features/sms_import/domain/services/bank_reference_policy.dart'
+    as _i221;
+import '../../features/sms_import/domain/services/clipboard_reader.dart'
+    as _i762;
+import '../../features/sms_import/domain/services/external_activity_runner.dart'
+    as _i986;
+import '../../features/sms_import/domain/services/fingerprint_hasher.dart'
+    as _i977;
+import '../../features/sms_import/domain/services/fingerprint_normalizer.dart'
+    as _i644;
+import '../../features/sms_import/domain/services/lock_status.dart' as _i550;
+import '../../features/sms_import/domain/services/raw_text_vault.dart' as _i877;
+import '../../features/sms_import/domain/services/review_lease_registry.dart'
+    as _i1053;
+import '../../features/sms_import/domain/services/scan_coordinator.dart'
+    as _i876;
+import '../../features/sms_import/domain/services/shared_text_source.dart'
+    as _i497;
+import '../../features/sms_import/domain/services/sms_inbox_gateway.dart'
+    as _i835;
+import '../../features/sms_import/domain/services/sms_ingestion_service.dart'
+    as _i178;
+import '../../features/sms_import/domain/services/sms_key_store.dart' as _i634;
+import '../../features/sms_import/domain/services/sms_masker.dart' as _i356;
+import '../../features/sms_import/domain/services/sms_message_parser.dart'
+    as _i924;
+import '../../features/sms_import/domain/services/sms_message_splitter.dart'
+    as _i379;
+import '../../features/sms_import/domain/services/sms_permission_service.dart'
+    as _i1027;
+import '../../features/sms_import/domain/services/sms_text_normalizer.dart'
+    as _i934;
+import '../../features/sms_import/domain/usecases/acknowledge_expired_notice.dart'
+    as _i604;
+import '../../features/sms_import/domain/usecases/add_imported_transaction.dart'
+    as _i509;
+import '../../features/sms_import/domain/usecases/check_duplicates.dart'
+    as _i368;
+import '../../features/sms_import/domain/usecases/clear_learned_mappings.dart'
+    as _i920;
+import '../../features/sms_import/domain/usecases/clear_sms_import_data.dart'
+    as _i106;
+import '../../features/sms_import/domain/usecases/close_as_duplicate.dart'
+    as _i790;
+import '../../features/sms_import/domain/usecases/disable_sms_import.dart'
+    as _i666;
+import '../../features/sms_import/domain/usecases/enable_sms_import.dart'
+    as _i576;
+import '../../features/sms_import/domain/usecases/expire_pending_imports.dart'
+    as _i364;
+import '../../features/sms_import/domain/usecases/get_expired_notice.dart'
+    as _i396;
+import '../../features/sms_import/domain/usecases/get_pending_import.dart'
+    as _i181;
+import '../../features/sms_import/domain/usecases/get_pending_imports.dart'
+    as _i502;
+import '../../features/sms_import/domain/usecases/get_scan_counts.dart'
+    as _i1002;
+import '../../features/sms_import/domain/usecases/get_sms_capability.dart'
+    as _i561;
+import '../../features/sms_import/domain/usecases/get_sms_permission_status.dart'
+    as _i724;
+import '../../features/sms_import/domain/usecases/ignore_import.dart' as _i44;
+import '../../features/sms_import/domain/usecases/import_pasted_text.dart'
+    as _i981;
+import '../../features/sms_import/domain/usecases/import_shared_text.dart'
+    as _i705;
+import '../../features/sms_import/domain/usecases/load_parser_options.dart'
+    as _i638;
+import '../../features/sms_import/domain/usecases/mute_sender.dart' as _i246;
+import '../../features/sms_import/domain/usecases/open_sms_app_info.dart'
+    as _i160;
+import '../../features/sms_import/domain/usecases/parse_messages.dart' as _i95;
+import '../../features/sms_import/domain/usecases/purge_sms_import_keys.dart'
+    as _i828;
+import '../../features/sms_import/domain/usecases/read_clipboard_text.dart'
+    as _i2;
+import '../../features/sms_import/domain/usecases/remove_learned_mapping.dart'
+    as _i823;
+import '../../features/sms_import/domain/usecases/reparse_pending.dart'
+    as _i1034;
+import '../../features/sms_import/domain/usecases/request_sms_permission.dart'
+    as _i572;
+import '../../features/sms_import/domain/usecases/run_catch_up_scan.dart'
+    as _i660;
+import '../../features/sms_import/domain/usecases/run_inbox_scan.dart' as _i637;
+import '../../features/sms_import/domain/usecases/show_original_message.dart'
+    as _i1057;
+import '../../features/sms_import/domain/usecases/undo_ignore.dart' as _i411;
+import '../../features/sms_import/domain/usecases/unmute_sender.dart' as _i237;
+import '../../features/sms_import/domain/usecases/update_sms_import_preferences.dart'
+    as _i654;
+import '../../features/sms_import/domain/usecases/watch_learned_mappings.dart'
+    as _i711;
+import '../../features/sms_import/domain/usecases/watch_muted_senders.dart'
+    as _i247;
+import '../../features/sms_import/domain/usecases/watch_pending_import_count.dart'
+    as _i795;
+import '../../features/sms_import/domain/usecases/watch_pending_imports.dart'
+    as _i783;
+import '../../features/sms_import/domain/usecases/watch_sms_import_settings.dart'
+    as _i53;
+import '../../features/sms_import/domain/usecases/watch_undo_list.dart'
+    as _i869;
+import '../../features/sms_import/presentation/cubit/bank_messages_cubit.dart'
+    as _i829;
+import '../../features/sms_import/presentation/cubit/bank_messages_home_cubit.dart'
+    as _i320;
+import '../../features/sms_import/presentation/cubit/bank_messages_settings_cubit.dart'
+    as _i639;
+import '../../features/sms_import/presentation/cubit/enable_flow_cubit.dart'
+    as _i598;
+import '../../features/sms_import/presentation/cubit/ignored_imports_cubit.dart'
+    as _i768;
+import '../../features/sms_import/presentation/cubit/import_review_cubit.dart'
+    as _i979;
+import '../../features/sms_import/presentation/cubit/learned_categories_cubit.dart'
+    as _i529;
+import '../../features/sms_import/presentation/cubit/muted_senders_cubit.dart'
+    as _i568;
+import '../../features/sms_import/presentation/cubit/paste_cubit.dart' as _i978;
+import '../../features/sms_import/presentation/shared_text_inbox.dart' as _i188;
+import '../../features/sms_import/presentation/shared_text_router.dart'
+    as _i702;
+import '../../features/sms_import/presentation/sms_catch_up_trigger.dart'
+    as _i97;
 import '../../features/startup/presentation/cubit/app_startup_cubit.dart'
-    as _i248;
+    as _i257;
 import '../../features/transactions/data/datasources/transactions_dao.dart'
     as _i684;
 import '../../features/transactions/data/repositories/transactions_repository_impl.dart'
@@ -636,7 +804,7 @@ import '../../features/transactions/domain/usecases/record_repayment.dart'
 import '../../features/transactions/domain/usecases/watch_overview.dart'
     as _i615;
 import '../../features/transactions/domain/usecases/watch_person_balance.dart'
-    as _i221;
+    as _i222;
 import '../../features/transactions/domain/usecases/watch_person_balances.dart'
     as _i330;
 import '../../features/transactions/domain/usecases/watch_person_history.dart'
@@ -685,6 +853,8 @@ extension GetItInjectableX on _i174.GetIt {
     final registerModule = _$RegisterModule();
     final aIHttpModule = _$AIHttpModule();
     final appLockModule = _$AppLockModule();
+    final smsParsingModule = _$SmsParsingModule();
+    final smsPlatformModule = _$SmsPlatformModule();
     gh.factory<_i775.SystemPromptBuilder>(
       () => const _i775.SystemPromptBuilder(),
     );
@@ -755,11 +925,29 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1024.SavingsGoalSyncMapper>(
       () => const _i1024.SavingsGoalSyncMapper(),
     );
+    gh.lazySingleton<_i689.SmsChannelClient>(() => _i689.SmsChannelClient());
+    gh.lazySingleton<_i934.SmsTextNormalizer>(
+      () => smsParsingModule.smsTextNormalizer,
+    );
+    gh.lazySingleton<_i356.SmsMasker>(() => smsParsingModule.smsMasker);
+    gh.lazySingleton<_i379.SmsMessageSplitter>(
+      () => smsParsingModule.smsMessageSplitter,
+    );
+    gh.lazySingleton<_i644.FingerprintNormalizer>(
+      () => smsParsingModule.fingerprintNormalizer,
+    );
+    gh.lazySingleton<_i188.SharedTextInbox>(
+      () => _i188.SharedTextInbox(),
+      dispose: (i) => i.dispose(),
+    );
     gh.lazySingleton<_i315.MoneyTransactionSyncMapper>(
       () => const _i315.MoneyTransactionSyncMapper(),
     );
     gh.lazySingleton<_i92.TransactionAuditSyncMapper>(
       () => const _i92.TransactionAuditSyncMapper(),
+    );
+    gh.lazySingleton<_i1053.ReviewLeaseRegistry>(
+      () => _i760.InMemoryReviewLeaseRegistry(),
     );
     gh.lazySingleton<_i721.NotificationPhrasingService>(
       () => const _i266.TemplateNotificationPhrasingService(),
@@ -769,6 +957,10 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i371.EvaluateSavingsGoalNotifications>(
       () => const _i371.EvaluateSavingsGoalNotificationsImpl(),
+    );
+    gh.lazySingleton<_i634.SmsKeyStore>(() => _i267.SecureStorageSmsKeyStore());
+    gh.lazySingleton<_i583.AppLifecycleStateSource>(
+      () => _i594.FlutterLifecycleStateSource(),
     );
     gh.lazySingleton<_i822.SupabaseInitializer>(
       () => _i822.DefaultSupabaseInitializer(gh<_i558.FlutterSecureStorage>()),
@@ -781,6 +973,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i1042.ScreenshotProtectionService>(
       () => _i1042.PlatformScreenshotProtectionService(),
+    );
+    gh.lazySingleton<_i876.ScanCoordinator>(
+      () => _i499.InMemoryScanCoordinator(),
     );
     gh.lazySingleton<_i466.DoublingTimeCalculator>(
       () => const _i466.DoublingTimeCalculatorImpl(),
@@ -813,10 +1008,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i872.SecureAppLockStorage>(
       () => _i872.SecureAppLockStorageImpl(gh<_i558.FlutterSecureStorage>()),
     );
+    gh.factory<_i828.PurgeSmsImportKeys>(
+      () => _i828.PurgeSmsImportKeys(gh<_i634.SmsKeyStore>()),
+    );
     gh.lazySingleton<_i176.TextRecognitionService>(
       () => _i428.TextRecognitionServiceImpl(),
     );
+    gh.lazySingleton<_i977.FingerprintHasher>(
+      () => _i825.HmacFingerprintHasher(gh<_i634.SmsKeyStore>()),
+    );
     gh.lazySingleton<_i316.PinHasher>(() => _i316.Pbkdf2PinHasher());
+    gh.lazySingleton<_i762.ClipboardReader>(
+      () => const _i258.SystemClipboardReader(),
+    );
+    gh.lazySingleton<_i877.RawTextVault>(
+      () => _i121.AesGcmRawTextVault(gh<_i634.SmsKeyStore>()),
+    );
     gh.lazySingleton<_i585.CompoundGrowthCalculator>(
       () => const _i585.CompoundGrowthCalculatorImpl(),
     );
@@ -835,6 +1042,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i966.CurrencyConverter>(
       () => const _i966.CurrencyConverterImpl(),
+    );
+    gh.lazySingleton<_i221.BankReferencePolicy>(
+      () => _i578.RegistryBankReferencePolicy(),
     );
     gh.lazySingleton<_i414.SyncLogger>(() => _i414.DeveloperSyncLogger());
     gh.lazySingleton<_i220.NotificationLastRunStore>(
@@ -861,6 +1071,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i68.BiometricService>(
       () => _i791.LocalAuthBiometricService(gh<_i152.LocalAuthentication>()),
     );
+    gh.factory<_i2.ReadClipboardText>(
+      () => _i2.ReadClipboardText(gh<_i762.ClipboardReader>()),
+    );
     gh.lazySingleton<_i972.ConnectivityMonitor>(
       () => _i972.ConnectivityPlusMonitor(gh<_i895.Connectivity>()),
     );
@@ -871,6 +1084,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i217.CalculateCompoundGrowth>(
       () => _i217.CalculateCompoundGrowth(gh<_i585.CompoundGrowthCalculator>()),
+    );
+    gh.lazySingleton<_i835.SmsInboxGateway>(
+      () => smsPlatformModule.smsInboxGateway(gh<_i689.SmsChannelClient>()),
+    );
+    gh.lazySingleton<_i497.SharedTextSource>(
+      () => smsPlatformModule.sharedTextSource(gh<_i689.SmsChannelClient>()),
     );
     gh.lazySingleton<_i209.NotificationScheduler>(
       () => _i0.FlutterLocalNotificationsScheduler(
@@ -890,6 +1109,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i414.SyncLogger>(),
       ),
     );
+    gh.lazySingleton<_i924.SmsMessageParser>(
+      () => smsParsingModule.smsMessageParser(gh<_i956.AppClock>()),
+    );
     gh.lazySingleton<_i982.AppDatabase>(
       () => registerModule.appDatabase(gh<_i164.SyncBootstrap>()),
     );
@@ -901,6 +1123,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i897.CalculateSavingsRate>(),
         gh<_i999.EgpFormatter>(),
       ),
+    );
+    gh.factory<_i561.GetSmsCapability>(
+      () => _i561.GetSmsCapability(gh<_i835.SmsInboxGateway>()),
     );
     gh.factory<_i811.DoublingTimeCalculatorCubit>(
       () => _i811.DoublingTimeCalculatorCubit(
@@ -928,6 +1153,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i840.SyncOutbox>(
       () =>
           _i840.DriftSyncOutbox(gh<_i982.AppDatabase>(), gh<_i956.AppClock>()),
+    );
+    gh.lazySingleton<_i1004.SmsDuplicateLookup>(
+      () => _i362.SmsDuplicateDao(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i792.OccasionsDao>(
       () => _i792.OccasionsDao(
@@ -963,8 +1191,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i68.BiometricService>(),
       ),
     );
-    gh.factory<_i561.SetBiometricEnabled>(
-      () => _i561.SetBiometricEnabled(
+    gh.factory<_i562.SetBiometricEnabled>(
+      () => _i562.SetBiometricEnabled(
         gh<_i98.AppLockRepository>(),
         gh<_i68.BiometricService>(),
       ),
@@ -975,7 +1203,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i68.BiometricService>(),
       ),
     );
-    gh.lazySingleton<_i1004.DataWipeRepository>(
+    gh.lazySingleton<_i1005.DataWipeRepository>(
       () => _i913.DataWipeRepositoryImpl(gh<_i982.AppDatabase>()),
     );
     gh.factory<_i570.ChangePin>(
@@ -1002,6 +1230,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i557.SetPin>(() => _i557.SetPin(gh<_i98.AppLockRepository>()));
     gh.factory<_i229.VerifyPin>(
       () => _i229.VerifyPin(gh<_i98.AppLockRepository>()),
+    );
+    gh.factory<_i368.CheckDuplicates>(
+      () => _i368.CheckDuplicates(
+        gh<_i1004.SmsDuplicateLookup>(),
+        gh<_i221.BankReferencePolicy>(),
+      ),
     );
     gh.factory<_i684.TransactionsDao>(
       () => _i684.TransactionsDao(
@@ -1042,8 +1276,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i586.SettingsDao>(
       () => _i586.SettingsDao(gh<_i982.AppDatabase>()),
     );
+    gh.factory<_i923.SmsImportDao>(
+      () => _i923.SmsImportDao(gh<_i982.AppDatabase>()),
+    );
+    gh.factory<_i786.SmsImportSettingsDao>(
+      () => _i786.SmsImportSettingsDao(gh<_i982.AppDatabase>()),
+    );
     gh.factory<_i265.ContentLibraryCubit>(
       () => _i265.ContentLibraryCubit(gh<_i805.GetEducationCategories>()),
+    );
+    gh.factory<_i95.ParseMessages>(
+      () => _i95.ParseMessages(gh<_i924.SmsMessageParser>()),
     );
     gh.lazySingleton<_i754.AIAssistantRepository>(
       () => _i988.AIAssistantRepositoryImpl(
@@ -1060,7 +1303,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i68.BiometricService>(),
         gh<_i590.EnableAppLock>(),
         gh<_i643.DisableAppLock>(),
-        gh<_i561.SetBiometricEnabled>(),
+        gh<_i562.SetBiometricEnabled>(),
         gh<_i252.SetInactivityTimeout>(),
         gh<_i229.VerifyPin>(),
         gh<_i245.VerifyBiometric>(),
@@ -1128,6 +1371,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i500.AppLifecycleObserver>(),
       ),
     );
+    gh.lazySingleton<_i986.ExternalActivityRunner>(
+      () => _i671.AppExternalActivityRunner(gh<_i500.AppLifecycleObserver>()),
+    );
+    gh.lazySingleton<_i550.LockStatus>(
+      () => _i166.AppLockStatus(gh<_i500.AppLifecycleObserver>()),
+    );
     gh.factory<_i308.SavingsDao>(
       () => _i308.SavingsDao(
         gh<_i982.AppDatabase>(),
@@ -1156,6 +1405,12 @@ extension GetItInjectableX on _i174.GetIt {
         getConversionContext: gh<_i602.GetConversionContext>(),
       ),
     );
+    gh.lazySingleton<_i589.SmsImportSettingsRepository>(
+      () => _i839.SmsImportSettingsRepositoryImpl(
+        gh<_i786.SmsImportSettingsDao>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.lazySingleton<_i228.CategoryRepository>(
       () => _i816.CategoryRepositoryImpl(gh<_i443.FinanceDao>()),
     );
@@ -1182,6 +1437,36 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i68.BiometricService>(),
       ),
     );
+    gh.factory<_i920.ClearLearnedMappings>(
+      () => _i920.ClearLearnedMappings(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i1002.GetScanCounts>(
+      () => _i1002.GetScanCounts(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i246.MuteSender>(
+      () => _i246.MuteSender(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i823.RemoveLearnedMapping>(
+      () => _i823.RemoveLearnedMapping(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i237.UnmuteSender>(
+      () => _i237.UnmuteSender(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i654.UpdateSmsImportPreferences>(
+      () => _i654.UpdateSmsImportPreferences(
+        gh<_i589.SmsImportSettingsRepository>(),
+      ),
+    );
+    gh.factory<_i711.WatchLearnedMappings>(
+      () => _i711.WatchLearnedMappings(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i247.WatchMutedSenders>(
+      () => _i247.WatchMutedSenders(gh<_i589.SmsImportSettingsRepository>()),
+    );
+    gh.factory<_i53.WatchSmsImportSettings>(
+      () =>
+          _i53.WatchSmsImportSettings(gh<_i589.SmsImportSettingsRepository>()),
+    );
     gh.factory<_i602.GetConversionContext>(
       () => _i602.GetConversionContext(gh<_i87.CurrencyRepository>()),
     );
@@ -1203,8 +1488,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i132.WatchConversionContext>(
       () => _i132.WatchConversionContext(gh<_i87.CurrencyRepository>()),
     );
-    gh.factory<_i166.WatchExchangeRates>(
-      () => _i166.WatchExchangeRates(gh<_i87.CurrencyRepository>()),
+    gh.factory<_i167.WatchExchangeRates>(
+      () => _i167.WatchExchangeRates(gh<_i87.CurrencyRepository>()),
     );
     gh.factory<_i1028.WatchPrimaryCurrency>(
       () => _i1028.WatchPrimaryCurrency(gh<_i87.CurrencyRepository>()),
@@ -1218,6 +1503,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i939.ShareService>(
       () => _i664.SharePlusService(gh<_i500.AppLifecycleObserver>()),
+    );
+    gh.factory<_i568.MutedSendersCubit>(
+      () => _i568.MutedSendersCubit(
+        gh<_i247.WatchMutedSenders>(),
+        gh<_i237.UnmuteSender>(),
+      ),
     );
     gh.lazySingleton<_i253.SyncScheduler>(
       () => _i253.SyncScheduler(
@@ -1267,8 +1558,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i966.CurrencyConverter>(),
       ),
     );
-    gh.factory<_i924.CompareSpendingAcrossPeriodsTool>(
-      () => _i924.CompareSpendingAcrossPeriodsTool(
+    gh.lazySingleton<_i1027.SmsPermissionService>(
+      () => smsPlatformModule.smsPermissionService(
+        gh<_i689.SmsChannelClient>(),
+        gh<_i835.SmsInboxGateway>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+      ),
+    );
+    gh.factory<_i925.CompareSpendingAcrossPeriodsTool>(
+      () => _i925.CompareSpendingAcrossPeriodsTool(
         gh<_i844.GetFinanceSummary>(),
         gh<_i1038.AIPeriodResolver>(),
       ),
@@ -1311,6 +1609,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i338.NotificationsDao>(),
       ),
     );
+    gh.factory<_i572.RequestSmsPermission>(
+      () => _i572.RequestSmsPermission(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i1027.SmsPermissionService>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i986.ExternalActivityRunner>(),
+      ),
+    );
     gh.factory<_i5.AddTransaction>(
       () => _i5.AddTransaction(gh<_i957.TransactionsRepository>()),
     );
@@ -1344,8 +1650,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i615.WatchOverview>(
       () => _i615.WatchOverview(gh<_i957.TransactionsRepository>()),
     );
-    gh.factory<_i221.WatchPersonBalance>(
-      () => _i221.WatchPersonBalance(gh<_i957.TransactionsRepository>()),
+    gh.factory<_i222.WatchPersonBalance>(
+      () => _i222.WatchPersonBalance(gh<_i957.TransactionsRepository>()),
     );
     gh.factory<_i330.WatchPersonBalances>(
       () => _i330.WatchPersonBalances(gh<_i957.TransactionsRepository>()),
@@ -1360,9 +1666,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i65.GetProactiveObservationTool>(
       () => _i65.GetProactiveObservationTool(
-        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i925.CompareSpendingAcrossPeriodsTool>(),
         gh<_i1038.AIPeriodResolver>(),
       ),
+    );
+    gh.factory<_i160.OpenSmsAppInfo>(
+      () => _i160.OpenSmsAppInfo(gh<_i1027.SmsPermissionService>()),
     );
     gh.factory<_i577.ChangeGlassAppearance>(
       () => _i577.ChangeGlassAppearance(gh<_i674.SettingsRepository>()),
@@ -1373,8 +1682,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i46.ChangeThemeMode>(
       () => _i46.ChangeThemeMode(gh<_i674.SettingsRepository>()),
     );
-    gh.factory<_i499.GetGlassAppearancePreference>(
-      () => _i499.GetGlassAppearancePreference(gh<_i674.SettingsRepository>()),
+    gh.factory<_i501.GetGlassAppearancePreference>(
+      () => _i501.GetGlassAppearancePreference(gh<_i674.SettingsRepository>()),
     );
     gh.factory<_i1032.GetLanguagePreference>(
       () => _i1032.GetLanguagePreference(gh<_i674.SettingsRepository>()),
@@ -1388,8 +1697,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1038.AIPeriodResolver>(),
       ),
     );
-    gh.lazySingleton<_i222.CloudCopyEraser>(
-      () => _i223.SupabaseCloudCopyEraser(
+    gh.lazySingleton<_i223.CloudCopyEraser>(
+      () => _i224.SupabaseCloudCopyEraser(
         gh<_i822.SupabaseInitializer>(),
         gh<_i253.SyncScheduler>(),
         gh<_i339.SyncLocalStore>(),
@@ -1430,6 +1739,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i966.CurrencyConverter>(),
       ),
     );
+    gh.lazySingleton<_i204.SmsImportRepository>(
+      () => _i431.SmsImportRepositoryImpl(
+        gh<_i923.SmsImportDao>(),
+        gh<_i786.SmsImportSettingsDao>(),
+        gh<_i877.RawTextVault>(),
+        gh<_i356.SmsMasker>(),
+        gh<_i221.BankReferencePolicy>(),
+        gh<_i956.AppClock>(),
+        gh<_i957.TransactionsRepository>(),
+        gh<_i137.FinanceRepository>(),
+      ),
+    );
     gh.factory<_i917.GetCategorySpendTool>(
       () => _i917.GetCategorySpendTool(
         gh<_i854.GetCategoryBreakdown>(),
@@ -1465,6 +1786,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i854.GetCategoryBreakdown>(),
       ),
     );
+    gh.factory<_i638.LoadParserOptions>(
+      () => _i638.LoadParserOptions(
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i228.CategoryRepository>(),
+        gh<_i646.PeopleRepository>(),
+      ),
+    );
     gh.lazySingleton<_i117.SavingsRepository>(
       () => _i177.SavingsRepositoryImpl(
         gh<_i308.SavingsDao>(),
@@ -1495,6 +1823,12 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i323.GetSpendingTrend>(
       () => _i323.GetSpendingTrend(gh<_i844.GetFinanceSummary>()),
+    );
+    gh.factory<_i724.GetSmsPermissionStatus>(
+      () => _i724.GetSmsPermissionStatus(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i1027.SmsPermissionService>(),
+      ),
     );
     gh.factory<_i709.ArchiveSavingsGoal>(
       () => _i709.ArchiveSavingsGoal(gh<_i117.SavingsRepository>()),
@@ -1575,6 +1909,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
       ),
     );
+    gh.factory<_i1034.ReparsePending>(
+      () => _i1034.ReparsePending(
+        gh<_i204.SmsImportRepository>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i924.SmsMessageParser>(),
+        gh<_i95.ParseMessages>(),
+        gh<_i638.LoadParserOptions>(),
+        gh<_i1053.ReviewLeaseRegistry>(),
+      ),
+    );
+    gh.factory<_i432.DeleteAllUserData>(
+      () => _i432.DeleteAllUserData(
+        gh<_i1005.DataWipeRepository>(),
+        gh<_i763.PurgeAIAssistantCredentials>(),
+        gh<_i828.PurgeSmsImportKeys>(),
+        gh<_i193.SecureStorageWiper>(),
+        gh<_i223.CloudCopyEraser>(),
+      ),
+    );
     gh.factory<_i742.AISettingsCubit>(
       () => _i742.AISettingsCubit(
         gh<_i359.GetAIAssistantSettings>(),
@@ -1582,6 +1935,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i803.DisableAIAssistant>(),
         gh<_i739.UpdateProviderCredentials>(),
         gh<_i1023.AIProviderCatalog>(),
+      ),
+    );
+    gh.factory<_i666.DisableSmsImport>(
+      () => _i666.DisableSmsImport(
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i204.SmsImportRepository>(),
       ),
     );
     gh.lazySingleton<_i72.OccasionsRepository>(
@@ -1598,6 +1957,17 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i20.GetPossibleDuplicateForCandidate(
         gh<_i646.PeopleRepository>(),
         gh<_i769.FindPossibleDuplicatePerson>(),
+      ),
+    );
+    gh.factory<_i639.BankMessagesSettingsCubit>(
+      () => _i639.BankMessagesSettingsCubit(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i53.WatchSmsImportSettings>(),
+        gh<_i1002.GetScanCounts>(),
+        gh<_i654.UpdateSmsImportPreferences>(),
+        gh<_i160.OpenSmsAppInfo>(),
+        gh<_i666.DisableSmsImport>(),
       ),
     );
     gh.factory<_i496.ExportUserData>(
@@ -1620,14 +1990,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i490.RemoveCategory>(),
       ),
     );
-    gh.factory<_i431.DeleteAllUserData>(
-      () => _i431.DeleteAllUserData(
-        gh<_i1004.DataWipeRepository>(),
-        gh<_i763.PurgeAIAssistantCredentials>(),
-        gh<_i193.SecureStorageWiper>(),
-        gh<_i222.CloudCopyEraser>(),
-      ),
-    );
     gh.factory<_i103.GetProactiveObservation>(
       () => _i103.GetProactiveObservation(
         gh<_i754.AIAssistantRepository>(),
@@ -1640,7 +2002,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i398.ExchangeRateListCubit>(
       () => _i398.ExchangeRateListCubit(
         gh<_i1028.WatchPrimaryCurrency>(),
-        gh<_i166.WatchExchangeRates>(),
+        gh<_i167.WatchExchangeRates>(),
         gh<_i1025.RemoveExchangeRate>(),
       ),
     );
@@ -1656,6 +2018,19 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i646.PeopleRepository>(),
       ),
     );
+    gh.lazySingleton<_i178.SmsIngestionService>(
+      () => _i178.SmsIngestionService(
+        gh<_i95.ParseMessages>(),
+        gh<_i638.LoadParserOptions>(),
+        gh<_i644.FingerprintNormalizer>(),
+        gh<_i977.FingerprintHasher>(),
+        gh<_i356.SmsMasker>(),
+        gh<_i221.BankReferencePolicy>(),
+        gh<_i204.SmsImportRepository>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i987.FinanceHistoryCubit>(
       () => _i987.FinanceHistoryCubit(
         gh<_i240.WatchFinanceSummary>(),
@@ -1667,7 +2042,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i137.FinanceRepository>(),
       ),
     );
-    gh.lazySingleton<_i578.OcrRepository>(
+    gh.lazySingleton<_i579.OcrRepository>(
       () => _i457.OcrRepositoryImpl(
         gh<_i976.OcrDao>(),
         gh<_i176.TextRecognitionService>(),
@@ -1686,8 +2061,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i957.TransactionsRepository>(),
       ),
     );
-    gh.factory<_i224.ArchivePerson>(
-      () => _i224.ArchivePerson(gh<_i646.PeopleRepository>()),
+    gh.factory<_i225.ArchivePerson>(
+      () => _i225.ArchivePerson(gh<_i646.PeopleRepository>()),
     );
     gh.factory<_i789.CreatePerson>(
       () => _i789.CreatePerson(gh<_i646.PeopleRepository>()),
@@ -1710,16 +2085,24 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i462.WatchPerson>(
       () => _i462.WatchPerson(gh<_i646.PeopleRepository>()),
     );
+    gh.factory<_i529.LearnedCategoriesCubit>(
+      () => _i529.LearnedCategoriesCubit(
+        gh<_i711.WatchLearnedMappings>(),
+        gh<_i823.RemoveLearnedMapping>(),
+        gh<_i920.ClearLearnedMappings>(),
+        gh<_i1.GetCategories>(),
+      ),
+    );
     gh.factory<_i1018.PersonListCubit>(
       () => _i1018.PersonListCubit(
         gh<_i277.WatchActivePeople>(),
         gh<_i330.WatchPersonBalances>(),
-        gh<_i224.ArchivePerson>(),
+        gh<_i225.ArchivePerson>(),
         gh<_i49.RestorePerson>(),
       ),
     );
-    gh.factory<_i639.RequestNotificationPermission>(
-      () => _i639.RequestNotificationPermission(
+    gh.factory<_i640.RequestNotificationPermission>(
+      () => _i640.RequestNotificationPermission(
         gh<_i209.NotificationScheduler>(),
         gh<_i162.NotificationPreferenceRepository>(),
       ),
@@ -1730,6 +2113,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
+    gh.factory<_i106.ClearSmsImportData>(
+      () => _i106.ClearSmsImportData(
+        gh<_i204.SmsImportRepository>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+      ),
+    );
     gh.factory<_i691.CalculateWhatIfCompletionDate>(
       () => _i691.CalculateWhatIfCompletionDate(
         gh<_i720.GetGoalDetail>(),
@@ -1737,15 +2126,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i956.AppClock>(),
       ),
     );
-    gh.factory<_i1027.CalculateWhatIfMonthlyContribution>(
-      () => _i1027.CalculateWhatIfMonthlyContribution(
+    gh.factory<_i1030.CalculateWhatIfMonthlyContribution>(
+      () => _i1030.CalculateWhatIfMonthlyContribution(
         gh<_i720.GetGoalDetail>(),
         gh<_i784.SavingsCalculator>(),
         gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i613.WipeAllLocalData>(
-      () => _i613.WipeAllLocalData(gh<_i431.DeleteAllUserData>()),
+      () => _i613.WipeAllLocalData(gh<_i432.DeleteAllUserData>()),
     );
     gh.lazySingleton<_i794.SettingsCubit>(
       () => _i794.SettingsCubit(
@@ -1754,7 +2143,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i933.DeviceLocaleProvider>(),
         gh<_i333.GetThemeModePreference>(),
         gh<_i46.ChangeThemeMode>(),
-        gh<_i499.GetGlassAppearancePreference>(),
+        gh<_i501.GetGlassAppearancePreference>(),
         gh<_i577.ChangeGlassAppearance>(),
       ),
     );
@@ -1777,8 +2166,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i861.RequestEmailCode>(
       () => _i861.RequestEmailCode(gh<_i948.CloudSyncRepository>()),
     );
-    gh.factory<_i1030.ResolveSyncConflict>(
-      () => _i1030.ResolveSyncConflict(gh<_i948.CloudSyncRepository>()),
+    gh.factory<_i1031.ResolveSyncConflict>(
+      () => _i1031.ResolveSyncConflict(gh<_i948.CloudSyncRepository>()),
     );
     gh.factory<_i259.RetryFailedSync>(
       () => _i259.RetryFailedSync(gh<_i948.CloudSyncRepository>()),
@@ -1795,8 +2184,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1039.WatchSyncConflicts>(
       () => _i1039.WatchSyncConflicts(gh<_i948.CloudSyncRepository>()),
     );
-    gh.factory<_i178.WatchSyncStatus>(
-      () => _i178.WatchSyncStatus(gh<_i948.CloudSyncRepository>()),
+    gh.factory<_i179.WatchSyncStatus>(
+      () => _i179.WatchSyncStatus(gh<_i948.CloudSyncRepository>()),
     );
     gh.factory<_i451.GoalDetailCubit>(
       () => _i451.GoalDetailCubit(
@@ -1819,8 +2208,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i755.EditBudget>(
       () => _i755.EditBudget(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i934.EditBudgetCategoryAllocation>(
-      () => _i934.EditBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
+    gh.factory<_i935.EditBudgetCategoryAllocation>(
+      () => _i935.EditBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i587.GetBudgetForMonth>(
       () => _i587.GetBudgetForMonth(gh<_i855.BudgetsRepository>()),
@@ -1828,8 +2217,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i438.GetBudgetTrend>(
       () => _i438.GetBudgetTrend(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i654.GetMostRecentBudgetBefore>(
-      () => _i654.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
+    gh.factory<_i655.GetMostRecentBudgetBefore>(
+      () => _i655.GetMostRecentBudgetBefore(gh<_i855.BudgetsRepository>()),
     );
     gh.factory<_i317.RemoveBudgetCategoryAllocation>(
       () => _i317.RemoveBudgetCategoryAllocation(gh<_i855.BudgetsRepository>()),
@@ -1843,26 +2232,38 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i14.GetOwedOverviewTool>(
       () => _i14.GetOwedOverviewTool(gh<_i943.GetOverview>()),
     );
+    gh.factory<_i509.AddImportedTransaction>(
+      () => _i509.AddImportedTransaction(
+        gh<_i204.SmsImportRepository>(),
+        gh<_i368.CheckDuplicates>(),
+      ),
+    );
     gh.factory<_i273.SyncConflictsCubit>(
       () => _i273.SyncConflictsCubit(
         gh<_i1039.WatchSyncConflicts>(),
-        gh<_i1030.ResolveSyncConflict>(),
+        gh<_i1031.ResolveSyncConflict>(),
       ),
     );
-    gh.factory<_i1031.BudgetMonthCubit>(
-      () => _i1031.BudgetMonthCubit(gh<_i1021.WatchBudgetForMonth>()),
+    gh.factory<_i1033.BudgetMonthCubit>(
+      () => _i1033.BudgetMonthCubit(gh<_i1021.WatchBudgetForMonth>()),
     );
     gh.lazySingleton<_i423.BudgetInsightsSource>(
       () => _i582.BudgetsInsightsSource(gh<_i855.BudgetsRepository>()),
     );
-    gh.factory<_i1033.CategoryFormCubit>(
-      () => _i1033.CategoryFormCubit(
+    gh.factory<_i1035.CategoryFormCubit>(
+      () => _i1035.CategoryFormCubit(
         gh<_i24.CreateCategory>(),
         gh<_i611.EditCategory>(),
       ),
     );
-    gh.factory<_i179.BudgetTrendCubit>(
-      () => _i179.BudgetTrendCubit(
+    gh.factory<_i364.ExpirePendingImports>(
+      () => _i364.ExpirePendingImports(
+        gh<_i204.SmsImportRepository>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.factory<_i180.BudgetTrendCubit>(
+      () => _i180.BudgetTrendCubit(
         gh<_i621.WatchBudgetTrend>(),
         gh<_i520.WatchCategories>(),
       ),
@@ -1876,6 +2277,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i903.GetPrimaryCurrency>(),
       ),
     );
+    gh.factory<_i576.EnableSmsImport>(
+      () => _i576.EnableSmsImport(
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i572.RequestSmsPermission>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+      ),
+    );
     gh.factory<_i782.ExportCubit>(
       () => _i782.ExportCubit(
         gh<_i496.ExportUserData>(),
@@ -1883,46 +2291,79 @@ extension GetItInjectableX on _i174.GetIt {
       ),
     );
     gh.factory<_i377.CancelScan>(
-      () => _i377.CancelScan(gh<_i578.OcrRepository>()),
+      () => _i377.CancelScan(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i665.ConfirmScanBatch>(
-      () => _i665.ConfirmScanBatch(gh<_i578.OcrRepository>()),
+      () => _i665.ConfirmScanBatch(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i413.DeleteScan>(
-      () => _i413.DeleteScan(gh<_i578.OcrRepository>()),
+      () => _i413.DeleteScan(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i256.DiscardCandidateEntry>(
-      () => _i256.DiscardCandidateEntry(gh<_i578.OcrRepository>()),
+      () => _i256.DiscardCandidateEntry(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i506.EditCandidateEntry>(
-      () => _i506.EditCandidateEntry(gh<_i578.OcrRepository>()),
+      () => _i506.EditCandidateEntry(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i303.GetCandidateEntries>(
-      () => _i303.GetCandidateEntries(gh<_i578.OcrRepository>()),
+      () => _i303.GetCandidateEntries(gh<_i579.OcrRepository>()),
     );
-    gh.factory<_i267.GetScanDetail>(
-      () => _i267.GetScanDetail(gh<_i578.OcrRepository>()),
+    gh.factory<_i268.GetScanDetail>(
+      () => _i268.GetScanDetail(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i331.GetScanHistory>(
-      () => _i331.GetScanHistory(gh<_i578.OcrRepository>()),
+      () => _i331.GetScanHistory(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i350.RunOcrExtraction>(
-      () => _i350.RunOcrExtraction(gh<_i578.OcrRepository>()),
+      () => _i350.RunOcrExtraction(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i1011.SetBatchDefaultDirection>(
-      () => _i1011.SetBatchDefaultDirection(gh<_i578.OcrRepository>()),
+      () => _i1011.SetBatchDefaultDirection(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i856.StartScan>(
-      () => _i856.StartScan(gh<_i578.OcrRepository>()),
+      () => _i856.StartScan(gh<_i579.OcrRepository>()),
     );
-    gh.factory<_i237.TagBatchToOccasion>(
-      () => _i237.TagBatchToOccasion(gh<_i578.OcrRepository>()),
+    gh.factory<_i239.TagBatchToOccasion>(
+      () => _i239.TagBatchToOccasion(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i138.WatchScanDetail>(
-      () => _i138.WatchScanDetail(gh<_i578.OcrRepository>()),
+      () => _i138.WatchScanDetail(gh<_i579.OcrRepository>()),
     );
     gh.factory<_i130.WatchScanHistory>(
-      () => _i130.WatchScanHistory(gh<_i578.OcrRepository>()),
+      () => _i130.WatchScanHistory(gh<_i579.OcrRepository>()),
+    );
+    gh.factory<_i604.AcknowledgeExpiredNotice>(
+      () => _i604.AcknowledgeExpiredNotice(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i790.CloseAsDuplicate>(
+      () => _i790.CloseAsDuplicate(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i396.GetExpiredNotice>(
+      () => _i396.GetExpiredNotice(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i181.GetPendingImport>(
+      () => _i181.GetPendingImport(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i502.GetPendingImports>(
+      () => _i502.GetPendingImports(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i44.IgnoreImport>(
+      () => _i44.IgnoreImport(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i1057.ShowOriginalMessage>(
+      () => _i1057.ShowOriginalMessage(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i411.UndoIgnore>(
+      () => _i411.UndoIgnore(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i795.WatchPendingImportCount>(
+      () => _i795.WatchPendingImportCount(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i783.WatchPendingImports>(
+      () => _i783.WatchPendingImports(gh<_i204.SmsImportRepository>()),
+    );
+    gh.factory<_i869.WatchUndoList>(
+      () => _i869.WatchUndoList(gh<_i204.SmsImportRepository>()),
     );
     gh.factory<_i60.GetPrefillableSavingsGoalAmount>(
       () =>
@@ -1938,17 +2379,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i849.ArchivedGoalsCubit>(
       () => _i849.ArchivedGoalsCubit(gh<_i282.WatchSavingsOverview>()),
     );
-    gh.factory<_i986.SavingsOverviewCubit>(
-      () => _i986.SavingsOverviewCubit(gh<_i282.WatchSavingsOverview>()),
+    gh.factory<_i989.SavingsOverviewCubit>(
+      () => _i989.SavingsOverviewCubit(gh<_i282.WatchSavingsOverview>()),
     );
     gh.factory<_i28.CopyBudgetCubit>(
       () => _i28.CopyBudgetCubit(
-        gh<_i654.GetMostRecentBudgetBefore>(),
+        gh<_i655.GetMostRecentBudgetBefore>(),
         gh<_i809.CopyBudgetToMonth>(),
       ),
     );
-    gh.factory<_i1005.EmailLinkCubit>(
-      () => _i1005.EmailLinkCubit(
+    gh.factory<_i1006.EmailLinkCubit>(
+      () => _i1006.EmailLinkCubit(
         gh<_i861.RequestEmailCode>(),
         gh<_i394.ConfirmEmailCode>(),
       ),
@@ -1957,7 +2398,7 @@ extension GetItInjectableX on _i174.GetIt {
       (personId, _) => _i34.RepaymentFormCubit(
         gh<_i426.RecordRepayment>(),
         gh<_i903.GetPrimaryCurrency>(),
-        gh<_i221.WatchPersonBalance>(),
+        gh<_i222.WatchPersonBalance>(),
         gh<_i132.WatchConversionContext>(),
         gh<_i462.WatchPerson>(),
         personId,
@@ -1966,13 +2407,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i567.GetSavingsProjectionTool>(
       () => _i567.GetSavingsProjectionTool(
         gh<_i110.GetSavingsOverview>(),
-        gh<_i1027.CalculateWhatIfMonthlyContribution>(),
+        gh<_i1030.CalculateWhatIfMonthlyContribution>(),
         gh<_i691.CalculateWhatIfCompletionDate>(),
+      ),
+    );
+    gh.factory<_i981.ImportPastedText>(
+      () => _i981.ImportPastedText(
+        gh<_i379.SmsMessageSplitter>(),
+        gh<_i178.SmsIngestionService>(),
       ),
     );
     gh.factory<_i738.SyncNoticeCubit>(
       () => _i738.SyncNoticeCubit(
-        gh<_i178.WatchSyncStatus>(),
+        gh<_i179.WatchSyncStatus>(),
         gh<_i305.AcknowledgeSyncNotice>(),
       ),
     );
@@ -1989,14 +2436,21 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i430.OnboardingRepository>(),
       ),
     );
+    gh.factory<_i705.ImportSharedText>(
+      () => _i705.ImportSharedText(
+        gh<_i497.SharedTextSource>(),
+        gh<_i550.LockStatus>(),
+        gh<_i981.ImportPastedText>(),
+      ),
+    );
     gh.factory<_i1060.ApplyWhatIfScenario>(
       () => _i1060.ApplyWhatIfScenario(
         gh<_i720.GetGoalDetail>(),
         gh<_i847.EditSavingsGoal>(),
       ),
     );
-    gh.factory<_i247.AddOccasionAttachment>(
-      () => _i247.AddOccasionAttachment(gh<_i72.OccasionsRepository>()),
+    gh.factory<_i248.AddOccasionAttachment>(
+      () => _i248.AddOccasionAttachment(gh<_i72.OccasionsRepository>()),
     );
     gh.factory<_i415.AddParticipantContribution>(
       () => _i415.AddParticipantContribution(gh<_i72.OccasionsRepository>()),
@@ -2016,8 +2470,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i153.EditParticipantContribution>(
       () => _i153.EditParticipantContribution(gh<_i72.OccasionsRepository>()),
     );
-    gh.factory<_i432.GetOccasionDetail>(
-      () => _i432.GetOccasionDetail(gh<_i72.OccasionsRepository>()),
+    gh.factory<_i433.GetOccasionDetail>(
+      () => _i433.GetOccasionDetail(gh<_i72.OccasionsRepository>()),
     );
     gh.factory<_i958.GetOccasionsList>(
       () => _i958.GetOccasionsList(gh<_i72.OccasionsRepository>()),
@@ -2039,14 +2493,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i624.ScanReviewCubit>(
       () => _i624.ScanReviewCubit(
-        gh<_i267.GetScanDetail>(),
+        gh<_i268.GetScanDetail>(),
         gh<_i303.GetCandidateEntries>(),
         gh<_i506.EditCandidateEntry>(),
         gh<_i256.DiscardCandidateEntry>(),
         gh<_i665.ConfirmScanBatch>(),
         gh<_i377.CancelScan>(),
         gh<_i1011.SetBatchDefaultDirection>(),
-        gh<_i237.TagBatchToOccasion>(),
+        gh<_i239.TagBatchToOccasion>(),
         gh<_i20.GetPossibleDuplicateForCandidate>(),
         gh<_i999.EgpFormatter>(),
       ),
@@ -2083,19 +2537,64 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i220.NotificationLastRunStore>(),
       ),
     );
+    gh.lazySingleton<_i660.RunCatchUpScan>(
+      () => _i660.RunCatchUpScan(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i924.SmsMessageParser>(),
+        gh<_i835.SmsInboxGateway>(),
+        gh<_i178.SmsIngestionService>(),
+        gh<_i876.ScanCoordinator>(),
+        gh<_i583.AppLifecycleStateSource>(),
+        gh<_i550.LockStatus>(),
+        gh<_i956.AppClock>(),
+        gh<_i364.ExpirePendingImports>(),
+        gh<_i1034.ReparsePending>(),
+      ),
+    );
+    gh.factory<_i637.RunInboxScan>(
+      () => _i637.RunInboxScan(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i589.SmsImportSettingsRepository>(),
+        gh<_i924.SmsMessageParser>(),
+        gh<_i835.SmsInboxGateway>(),
+        gh<_i178.SmsIngestionService>(),
+        gh<_i876.ScanCoordinator>(),
+        gh<_i583.AppLifecycleStateSource>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
     gh.factory<_i668.PersonFormCubit>(
       () => _i668.PersonFormCubit(
         gh<_i646.PeopleRepository>(),
         gh<_i789.CreatePerson>(),
         gh<_i101.EditPerson>(),
-        gh<_i224.ArchivePerson>(),
+        gh<_i225.ArchivePerson>(),
         gh<_i907.DeletePerson>(),
+      ),
+    );
+    gh.lazySingleton<_i97.SmsCatchUpTrigger>(
+      () => _i97.SmsCatchUpTrigger(
+        gh<_i660.RunCatchUpScan>(),
+        gh<_i364.ExpirePendingImports>(),
+        gh<_i550.LockStatus>(),
+        gh<_i956.AppClock>(),
       ),
     );
     gh.factory<_i185.ArchivedOccasionsCubit>(
       () => _i185.ArchivedOccasionsCubit(
         gh<_i276.WatchOccasionsList>(),
         gh<_i154.RestoreOccasion>(),
+      ),
+    );
+    gh.factory<_i978.PasteCubit>(
+      () => _i978.PasteCubit(
+        gh<_i2.ReadClipboardText>(),
+        gh<_i981.ImportPastedText>(),
+        gh<_i705.ImportSharedText>(),
+        gh<_i188.SharedTextInbox>(),
       ),
     );
     gh.lazySingleton<_i548.NotificationRecomputeTrigger>(
@@ -2105,16 +2604,27 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i956.AppClock>(),
       ),
     );
-    gh.factory<_i666.GetOccasionTotalsTool>(
-      () => _i666.GetOccasionTotalsTool(
-        gh<_i432.GetOccasionDetail>(),
+    gh.factory<_i667.GetOccasionTotalsTool>(
+      () => _i667.GetOccasionTotalsTool(
+        gh<_i433.GetOccasionDetail>(),
         gh<_i958.GetOccasionsList>(),
+      ),
+    );
+    gh.factory<_i598.EnableFlowCubit>(
+      () => _i598.EnableFlowCubit(
+        gh<_i561.GetSmsCapability>(),
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i576.EnableSmsImport>(),
+        gh<_i160.OpenSmsAppInfo>(),
+        gh<_i654.UpdateSmsImportPreferences>(),
+        gh<_i637.RunInboxScan>(),
+        gh<_i502.GetPendingImports>(),
       ),
     );
     gh.factory<_i992.PersonDetailCubit>(
       () => _i992.PersonDetailCubit(
         gh<_i462.WatchPerson>(),
-        gh<_i221.WatchPersonBalance>(),
+        gh<_i222.WatchPersonBalance>(),
         gh<_i210.WatchPersonHistory>(),
         gh<_i645.DeleteTransaction>(),
         gh<_i1028.WatchPrimaryCurrency>(),
@@ -2125,7 +2635,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i39.NotificationSettingsCubit>(
       () => _i39.NotificationSettingsCubit(
         gh<_i203.SetNotificationPreferences>(),
-        gh<_i639.RequestNotificationPermission>(),
+        gh<_i640.RequestNotificationPermission>(),
       ),
     );
     gh.factory<_i944.ForgotPinCubit>(
@@ -2133,6 +2643,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i244.RecoverViaBiometric>(),
         gh<_i613.WipeAllLocalData>(),
         gh<_i807.OnboardingCubit>(),
+      ),
+    );
+    gh.factory<_i320.BankMessagesHomeCubit>(
+      () => _i320.BankMessagesHomeCubit(
+        gh<_i53.WatchSmsImportSettings>(),
+        gh<_i654.UpdateSmsImportPreferences>(),
+        gh<_i795.WatchPendingImportCount>(),
       ),
     );
     gh.factory<_i59.GetBudgetStatusTool>(
@@ -2143,7 +2660,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i324.SyncSettingsCubit>(
       () => _i324.SyncSettingsCubit(
-        gh<_i178.WatchSyncStatus>(),
+        gh<_i179.WatchSyncStatus>(),
         gh<_i389.WatchFailedSyncItems>(),
         gh<_i399.SyncNow>(),
         gh<_i676.SetSyncEnabled>(),
@@ -2157,7 +2674,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i755.EditBudget>(),
         gh<_i150.DeleteBudget>(),
         gh<_i552.AddBudgetCategoryAllocation>(),
-        gh<_i934.EditBudgetCategoryAllocation>(),
+        gh<_i935.EditBudgetCategoryAllocation>(),
         gh<_i317.RemoveBudgetCategoryAllocation>(),
         gh<_i1.GetCategories>(),
         gh<_i999.EgpFormatter>(),
@@ -2166,6 +2683,23 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i194.OccasionsListCubit>(
       () => _i194.OccasionsListCubit(gh<_i276.WatchOccasionsList>()),
+    );
+    gh.factory<_i979.ImportReviewCubit>(
+      () => _i979.ImportReviewCubit(
+        gh<_i181.GetPendingImport>(),
+        gh<_i502.GetPendingImports>(),
+        gh<_i509.AddImportedTransaction>(),
+        gh<_i368.CheckDuplicates>(),
+        gh<_i1057.ShowOriginalMessage>(),
+        gh<_i1053.ReviewLeaseRegistry>(),
+        gh<_i1.GetCategories>(),
+        gh<_i646.PeopleRepository>(),
+        gh<_i789.CreatePerson>(),
+        gh<_i790.CloseAsDuplicate>(),
+        ignoreImport: gh<_i44.IgnoreImport>(),
+        muteSender: gh<_i246.MuteSender>(),
+        watchSettings: gh<_i53.WatchSmsImportSettings>(),
+      ),
     );
     gh.factory<_i218.ParticipantFormCubit>(
       () => _i218.ParticipantFormCubit(
@@ -2188,13 +2722,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i332.AIToolRegistry(
         gh<_i917.GetCategorySpendTool>(),
         gh<_i1050.GetTopSpendingCategoryTool>(),
-        gh<_i924.CompareSpendingAcrossPeriodsTool>(),
+        gh<_i925.CompareSpendingAcrossPeriodsTool>(),
         gh<_i1049.GetPersonBalanceTool>(),
         gh<_i14.GetOwedOverviewTool>(),
         gh<_i59.GetBudgetStatusTool>(),
         gh<_i410.GetSavingsGoalStatusTool>(),
         gh<_i567.GetSavingsProjectionTool>(),
-        gh<_i666.GetOccasionTotalsTool>(),
+        gh<_i667.GetOccasionTotalsTool>(),
       ),
     );
     gh.factory<_i626.ScanHistoryCubit>(
@@ -2205,8 +2739,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i756.DeleteAccountCubit>(
       () => _i756.DeleteAccountCubit(
-        gh<_i431.DeleteAllUserData>(),
+        gh<_i432.DeleteAllUserData>(),
         gh<_i807.OnboardingCubit>(),
+      ),
+    );
+    gh.lazySingleton<_i702.SharedTextRouter>(
+      () => _i702.SharedTextRouter(
+        gh<_i705.ImportSharedText>(),
+        gh<_i188.SharedTextInbox>(),
       ),
     );
     gh.factory<_i480.HandleNotificationTap>(
@@ -2243,8 +2783,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i712.EditOccasion>(),
       ),
     );
-    gh.lazySingleton<_i248.AppStartupCubit>(
-      () => _i248.AppStartupCubit(
+    gh.factory<_i768.IgnoredImportsCubit>(
+      () => _i768.IgnoredImportsCubit(
+        gh<_i869.WatchUndoList>(),
+        gh<_i411.UndoIgnore>(),
+        gh<_i561.GetSmsCapability>(),
+        gh<_i956.AppClock>(),
+      ),
+    );
+    gh.lazySingleton<_i257.AppStartupCubit>(
+      () => _i257.AppStartupCubit(
         gh<_i794.SettingsCubit>(),
         gh<_i807.OnboardingCubit>(),
         gh<_i500.AppLifecycleObserver>(),
@@ -2253,21 +2801,35 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i380.WhatIfCubit>(
       () => _i380.WhatIfCubit(
         gh<_i720.GetGoalDetail>(),
-        gh<_i1027.CalculateWhatIfMonthlyContribution>(),
+        gh<_i1030.CalculateWhatIfMonthlyContribution>(),
         gh<_i691.CalculateWhatIfCompletionDate>(),
         gh<_i1060.ApplyWhatIfScenario>(),
       ),
     );
-    gh.factory<_i53.OccasionDetailCubit>(
-      () => _i53.OccasionDetailCubit(
+    gh.factory<_i54.OccasionDetailCubit>(
+      () => _i54.OccasionDetailCubit(
         gh<_i294.WatchOccasionDetail>(),
         gh<_i192.RemoveParticipantContribution>(),
-        gh<_i247.AddOccasionAttachment>(),
+        gh<_i248.AddOccasionAttachment>(),
         gh<_i191.RemoveOccasionAttachment>(),
         gh<_i848.ArchiveOccasion>(),
         gh<_i154.RestoreOccasion>(),
         gh<_i1046.DeleteOccasion>(),
         gh<_i780.AttachmentPickerService>(),
+      ),
+    );
+    gh.factory<_i829.BankMessagesCubit>(
+      () => _i829.BankMessagesCubit(
+        gh<_i783.WatchPendingImports>(),
+        gh<_i364.ExpirePendingImports>(),
+        gh<_i396.GetExpiredNotice>(),
+        gh<_i604.AcknowledgeExpiredNotice>(),
+        gh<_i561.GetSmsCapability>(),
+        gh<_i724.GetSmsPermissionStatus>(),
+        gh<_i53.WatchSmsImportSettings>(),
+        gh<_i637.RunInboxScan>(),
+        gh<_i160.OpenSmsAppInfo>(),
+        gh<_i44.IgnoreImport>(),
       ),
     );
     gh.factory<_i636.AskFinancialQuestion>(
@@ -2279,8 +2841,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1038.AIPeriodResolver>(),
       ),
     );
-    gh.factory<_i258.ChatCubit>(
-      () => _i258.ChatCubit(
+    gh.factory<_i260.ChatCubit>(
+      () => _i260.ChatCubit(
         gh<_i359.GetAIAssistantSettings>(),
         gh<_i970.GetConversation>(),
         gh<_i636.AskFinancialQuestion>(),
@@ -2297,3 +2859,7 @@ class _$RegisterModule extends _i292.RegisterModule {}
 class _$AIHttpModule extends _i88.AIHttpModule {}
 
 class _$AppLockModule extends _i850.AppLockModule {}
+
+class _$SmsParsingModule extends _i656.SmsParsingModule {}
+
+class _$SmsPlatformModule extends _i836.SmsPlatformModule {}

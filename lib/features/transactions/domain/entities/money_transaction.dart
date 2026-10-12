@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
+import '../../../../core/provenance/record_provenance.dart';
 
 /// Which way the money moved.
 enum TransactionDirection { given, received }
@@ -42,6 +44,7 @@ class MoneyTransaction extends Equatable {
     this.ocrScanId,
     this.editedAt,
     this.deletedAt,
+    this.importSource,
   });
 
   final String id;
@@ -96,6 +99,26 @@ class MoneyTransaction extends Equatable {
   /// Soft-delete tombstone; `null` means active.
   final DateTime? deletedAt;
 
+  /// 023: non-null only for a row the user confirmed from a bank message
+  /// (FR-057). Orthogonal to [source], which stays
+  /// [TransactionSource.manual] for such a row (FR-086). `null` means "not
+  /// imported".
+  final ImportProvenance? importSource;
+
+  /// How this row arrived, as one value (023 data-model §3.6, analysis M8):
+  /// [RecordProvenance.ocr] when [source] is [TransactionSource.ocr],
+  /// [RecordProvenance.sms] when [importSource] is SMS, else
+  /// [RecordProvenance.manual].
+  ///
+  /// Code that needs "how did this record arrive" must read this getter and
+  /// must not test `source == TransactionSource.manual` alone: an
+  /// SMS-confirmed row also has `source == manual`.
+  RecordProvenance get provenance {
+    if (source == TransactionSource.ocr) return RecordProvenance.ocr;
+    if (importSource?.isSms ?? false) return RecordProvenance.sms;
+    return RecordProvenance.manual;
+  }
+
   bool get isEdited => editedAt != null;
 
   /// Whether this row belongs to an `Occasion` (008) — the single condition
@@ -124,5 +147,6 @@ class MoneyTransaction extends Equatable {
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   ];
 }

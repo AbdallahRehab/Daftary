@@ -66,6 +66,15 @@ extension DataWipe on AppDatabase {
       await delete(syncConflicts).go();
       await delete(conflictResolutions).go();
       await delete(syncState).go();
+      // bank SMS import (023): staging rows, tombstones, mutes, learned
+      // mappings and the settings singleton, all local-only. No other table
+      // references them. The two secure-storage keys are not in the
+      // database; `DeleteAllUserData` purges them via `PurgeSmsImportKeys`.
+      await delete(pendingSmsImports).go();
+      await delete(smsImportTombstones).go();
+      await delete(smsSenderMutes).go();
+      await delete(smsMerchantCategoryMappings).go();
+      await delete(smsImportSettings).go();
       // single-row preference tables
       await delete(appSettings).go();
       await delete(onboardingStatus).go();

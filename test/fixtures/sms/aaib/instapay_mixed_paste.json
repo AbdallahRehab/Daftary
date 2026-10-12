@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "aaib",
+  "ruleVersion": "aaib@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 6000,
+  "currency": "EGP",
+  "date": "2026-03-08",
+  "dateInferred": false,
+  "counterparty": "مريم المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

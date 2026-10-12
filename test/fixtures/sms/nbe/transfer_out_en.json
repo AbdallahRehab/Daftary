@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sender": "NBE",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "nbe",
+  "ruleVersion": "nbe@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 150000,
+  "currency": "EGP",
+  "date": "2026-03-05",
+  "dateInferred": false,
+  "counterparty": "Ahmed Example",
+  "last4": "4821",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

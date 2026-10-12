@@ -9,10 +9,12 @@ import 'package:daftary/features/data_privacy/data/repositories/data_wipe_reposi
 import 'package:daftary/features/data_privacy/domain/usecases/delete_all_user_data.dart';
 import 'package:daftary/features/onboarding/data/datasources/onboarding_dao.dart';
 import 'package:daftary/features/onboarding/data/repositories/onboarding_repository_impl.dart';
+import 'package:daftary/features/sms_import/domain/usecases/purge_sms_import_keys.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/fake_cloud_copy_eraser.dart';
 import '../../ai_assistant/helpers/ai_assistant_harness.dart';
+import '../../sms_import/helpers/fakes.dart' show FakeSmsKeyStore;
 
 /// The real canonical wipe (`DeleteAllUserData` over a real in-memory
 /// drift database, the real `DataWipeRepositoryImpl` and the real
@@ -35,6 +37,7 @@ class WipeHarness {
       DeleteAllUserData(
         DataWipeRepositoryImpl(ai.db),
         PurgeAIAssistantCredentials(ai.repository),
+        PurgeSmsImportKeys(FakeSmsKeyStore()),
         AppLockSecureStorageWiper(storage),
         FakeCloudCopyEraser(),
       ),

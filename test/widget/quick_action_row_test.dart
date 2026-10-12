@@ -1,3 +1,4 @@
+import 'package:daftary/core/config/feature_flags.dart';
 import 'package:daftary/core/design_system/tokens.dart';
 import 'package:daftary/core/l10n/app_localizations.dart';
 import 'package:daftary/features/dashboard/presentation/widgets/quick_action_button.dart';
@@ -31,6 +32,8 @@ void main() {
     WidgetTester tester, {
     bool showOccasion = false,
     bool showScan = false,
+    bool showBankMessage = false,
+    Future<bool> Function()? smsCapabilityAvailable,
     Locale locale = const Locale('en'),
   }) async {
     returns = 0;
@@ -47,6 +50,8 @@ void main() {
               child: QuickActionRow(
                 showOccasion: showOccasion,
                 showScan: showScan,
+                showBankMessage: showBankMessage,
+                smsCapabilityAvailable: smsCapabilityAvailable,
                 onReturn: () => returns++,
               ),
             ),
@@ -58,6 +63,8 @@ void main() {
           '/transactions/new',
           '/occasions/new',
           '/ocr/scan',
+          '/bank-messages',
+          '/bank-messages/paste',
         ])
           GoRoute(path: path, builder: (context, state) => stub(state)),
       ],
@@ -200,6 +207,91 @@ void main() {
     });
   });
 
+  group('023 Bank message', () {
+    testWidgets('hidden when its flag is off', (tester) async {
+      await pumpRow(tester);
+      expect(find.text('Bank message'), findsNothing);
+    });
+
+    test('the flag defaults to kBankMessageImportFeatureEnabled', () {
+      expect(
+        const QuickActionRow().showBankMessage,
+        kBankMessageImportFeatureEnabled,
+      );
+    });
+
+    testWidgets('renders when its flag is on', (tester) async {
+      await pumpRow(tester, showBankMessage: true);
+      expect(find.byType(QuickActionButton), findsNWidgets(6));
+      expect(find.text('Bank message'), findsOneWidget);
+    });
+
+    testWidgets('with no capability resolver it opens Paste', (tester) async {
+      await pumpRow(tester, showBankMessage: true);
+      await tester.tap(find.text('Bank message'));
+      await tester.pumpAndSettle();
+      expect(currentLocation(), QuickActionRow.bankMessagePasteLocation);
+      expect(currentLocation(), '/bank-messages/paste');
+    });
+
+    testWidgets('without the SMS capability (iOS, macOS, SMS-free Android) '
+        'it opens Paste', (tester) async {
+      await pumpRow(
+        tester,
+        showBankMessage: true,
+        smsCapabilityAvailable: () async => false,
+      );
+      await tester.tap(find.text('Bank message'));
+      await tester.pumpAndSettle();
+      expect(currentLocation(), '/bank-messages/paste');
+    });
+
+    testWidgets('with the SMS capability (Android) it opens the hub and '
+        'reports the return', (tester) async {
+      await pumpRow(
+        tester,
+        showBankMessage: true,
+        smsCapabilityAvailable: () async => true,
+      );
+      await tester.tap(find.text('Bank message'));
+      await tester.pumpAndSettle();
+      expect(currentLocation(), '/bank-messages');
+      expect(returns, 0);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      expect(currentLocation(), isNull);
+      expect(returns, 1);
+    });
+
+    testWidgets('the capability is resolved on tap only', (tester) async {
+      var resolutions = 0;
+      await pumpRow(
+        tester,
+        showBankMessage: true,
+        smsCapabilityAvailable: () async {
+          resolutions++;
+          return false;
+        },
+      );
+      expect(resolutions, 0);
+      await tester.tap(find.text('Bank message'));
+      await tester.pumpAndSettle();
+      expect(resolutions, 1);
+    });
+
+    test('location rule', () {
+      expect(
+        QuickActionRow.bankMessageLocation(smsCapabilityAvailable: true),
+        '/bank-messages',
+      );
+      expect(
+        QuickActionRow.bankMessageLocation(smsCapabilityAvailable: false),
+        '/bank-messages/paste',
+      );
+    });
+  });
+
   group('layout', () {
     testWidgets('all seven actions fit a narrow phone without overflow', (
       tester,
@@ -209,6 +301,28 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.byType(QuickActionButton), findsNWidgets(7));
+      for (final finder in find.byType(QuickActionButton).evaluate()) {
+        final rect = tester.getRect(find.byWidget(finder.widget));
+        expect(rect.left, greaterThanOrEqualTo(0));
+        expect(rect.right, lessThanOrEqualTo(320));
+      }
+    });
+
+    testWidgets('all eight actions fit a narrow phone without overflow', (
+      tester,
+    ) async {
+      usePhoneSize(tester);
+      await pumpRow(
+        tester,
+        showOccasion: true,
+        showScan: true,
+        showBankMessage: true,
+        locale: const Locale('ar'),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(QuickActionButton), findsNWidgets(8));
+      expect(find.text('رسالة بنكية'), findsOneWidget);
       for (final finder in find.byType(QuickActionButton).evaluate()) {
         final rect = tester.getRect(find.byWidget(finder.widget));
         expect(rect.left, greaterThanOrEqualTo(0));

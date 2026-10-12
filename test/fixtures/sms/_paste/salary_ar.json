@@ -1,0 +1,13 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "salary",
+  "direction": "credit",
+  "amountMinor": 1500000,
+  "currency": "EGP",
+  "suggestion": {
+    "type": "income"
+  }
+}

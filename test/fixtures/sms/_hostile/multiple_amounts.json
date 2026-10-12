@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "amountMinor": null,
+  "amountCandidatesMinor": [
+    10000,
+    25000
+  ],
+  "warnings": [
+    "ambiguous_amount"
+  ]
+}

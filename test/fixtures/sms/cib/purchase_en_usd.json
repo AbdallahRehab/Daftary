@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "CIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "cib",
+  "ruleVersion": "cib@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 2000,
+  "currency": "USD",
+  "date": "2026-03-06",
+  "dateInferred": false,
+  "merchant": "Example Online",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

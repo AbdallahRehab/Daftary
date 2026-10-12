@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
 import 'finance_entry_type.dart';
 
 /// A single recorded income or expense event belonging to the user — never
@@ -18,6 +19,7 @@ class FinanceEntry extends Equatable {
     this.note,
     this.editedAt,
     this.deletedAt,
+    this.importSource,
   });
 
   final String id;
@@ -51,6 +53,11 @@ class FinanceEntry extends Equatable {
   /// Decision 8).
   final DateTime? deletedAt;
 
+  /// 023: non-null only for an entry the user confirmed from a bank message
+  /// (FR-057). `null` means "not imported". [FinanceEntry] still has no
+  /// `source` field.
+  final ImportProvenance? importSource;
+
   bool get isEdited => editedAt != null;
   bool get isDeleted => deletedAt != null;
   bool get isIncome => type == FinanceEntryType.income;
@@ -68,5 +75,6 @@ class FinanceEntry extends Equatable {
     createdAt,
     editedAt,
     deletedAt,
+    importSource,
   ];
 }

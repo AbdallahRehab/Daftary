@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "sender": "AAIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "aaib",
+  "ruleVersion": "aaib@1",
+  "kind": "card_purchase",
+  "direction": "debit",
+  "amountMinor": 36000,
+  "currency": "EGP",
+  "date": "2026-03-05",
+  "dateInferred": false,
+  "merchant": "سوق المثال",
+  "last4": "3318",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

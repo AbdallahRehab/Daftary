@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "unverifiedFormat": true,
+  "app": "Google Messages",
+  "mode": "Today/Yesterday headers",
+  "source": "paste",
+  "inboxBodies": [
+    "Purchase of EGP 125.50 at Example Cafe on 04/03/2026 10:15 with card ****0000.",
+    "Dear Customer,\nYour account was credited with EGP 1,000.00 on 07/03/2026."
+  ]
+}

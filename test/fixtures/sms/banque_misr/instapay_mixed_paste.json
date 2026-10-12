@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "banque_misr",
+  "ruleVersion": "banque_misr@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 12050,
+  "currency": "EGP",
+  "date": "2026-03-08",
+  "dateInferred": false,
+  "counterparty": "Nour Example",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

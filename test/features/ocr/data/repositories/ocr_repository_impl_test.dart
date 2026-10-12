@@ -8,7 +8,7 @@ import 'package:daftary/features/ocr/data/datasources/ocr_dao.dart';
 import 'package:daftary/features/ocr/data/parsing/candidate_entry_parser.dart';
 import 'package:daftary/features/ocr/data/repositories/ocr_repository_impl.dart';
 import 'package:daftary/features/ocr/domain/entities/candidate_entry.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_failures.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan.dart';
 import 'package:daftary/features/ocr/domain/repositories/text_recognition_service.dart';

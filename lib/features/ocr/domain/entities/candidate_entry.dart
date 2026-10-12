@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../transactions/domain/entities/money_transaction.dart';
-import 'field_confidence.dart';
+import '../../../../core/confidence/field_confidence.dart';
 
 /// Where one proposed entry stands in the review (009 data-model.md).
 ///

@@ -1,0 +1,11 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "kind": "card_purchase",
+  "amountMinor": 2000,
+  "currency": "USD",
+  "feeMinor": 50,
+  "merchant": "Example Online Store"
+}

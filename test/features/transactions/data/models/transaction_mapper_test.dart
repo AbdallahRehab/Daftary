@@ -1,4 +1,6 @@
 import 'package:daftary/core/database/app_database.dart' as db;
+import 'package:daftary/core/provenance/import_provenance.dart';
+import 'package:daftary/core/provenance/record_provenance.dart';
 import 'package:daftary/features/transactions/data/models/transaction_mapper.dart';
 import 'package:daftary/features/transactions/domain/entities/money_transaction.dart'
     as domain;
@@ -11,6 +13,7 @@ void main() {
     bool countsTowardBalance = true,
     String source = 'manual',
     String? ocrScanId,
+    String? importSource,
   }) {
     return db.MoneyTransaction(
       id: 't1',
@@ -26,6 +29,7 @@ void main() {
       source: source,
       ocrScanId: ocrScanId,
       createdAt: DateTime(2026, 1, 1).millisecondsSinceEpoch,
+      importSource: importSource,
     );
   }
 
@@ -68,6 +72,34 @@ void main() {
 
       expect(mapped.occasionId, isNull);
       expect(mapped.countsTowardBalance, isTrue);
+    });
+  });
+
+  group('import_source column (023)', () {
+    test('NULL reads as not imported, provenance manual', () {
+      final mapped = buildRow(kind: 'initialExchange').toDomain();
+      expect(mapped.importSource, isNull);
+      expect(mapped.provenance, RecordProvenance.manual);
+    });
+
+    test("'sms' reads as the SMS provenance; source stays manual", () {
+      final mapped = buildRow(
+        kind: 'initialExchange',
+        importSource: 'sms',
+      ).toDomain();
+      expect(mapped.importSource, ImportProvenance.sms);
+      expect(mapped.source, domain.TransactionSource.manual);
+      expect(mapped.provenance, RecordProvenance.sms);
+    });
+
+    test('an unknown value is kept unchanged and never throws', () {
+      final mapped = buildRow(
+        kind: 'initialExchange',
+        importSource: 'wallet',
+      ).toDomain();
+      expect(mapped.importSource!.isUnknown, isTrue);
+      expect(mapped.importSource!.wire, 'wallet');
+      expect(mapped.provenance, RecordProvenance.manual);
     });
   });
 }

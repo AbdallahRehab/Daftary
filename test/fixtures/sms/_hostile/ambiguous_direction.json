@@ -1,0 +1,14 @@
+{
+  "synthetic": true,
+  "sender": "BANKX",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "direction": "unknown",
+  "suggestion": {
+    "type": "unset"
+  },
+  "confidence": {
+    "overall": "low"
+  }
+}

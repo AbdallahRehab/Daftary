@@ -1,0 +1,21 @@
+{
+  "synthetic": true,
+  "sender": null,
+  "source": "paste",
+  "classification": "transaction",
+  "bankId": "banque_du_caire",
+  "ruleVersion": "banque_du_caire@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 9000,
+  "currency": "EGP",
+  "date": "2026-03-08",
+  "dateInferred": false,
+  "counterparty": "هبة المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

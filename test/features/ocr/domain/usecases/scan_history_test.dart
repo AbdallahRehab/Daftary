@@ -1,7 +1,7 @@
 import 'package:daftary/core/error/failure.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/features/ocr/domain/entities/candidate_entry.dart';
-import 'package:daftary/features/ocr/domain/entities/field_confidence.dart';
+import 'package:daftary/core/confidence/field_confidence.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan.dart';
 import 'package:daftary/features/ocr/domain/entities/ocr_scan_detail.dart';
 import 'package:daftary/features/ocr/domain/repositories/ocr_repository.dart';

@@ -3870,4 +3870,1406 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get changeHistoryNoValue => '(فاضي)';
+
+  @override
+  String get smsImportErrorCapabilityUnavailable =>
+      'قراءة الرسائل البنكية غير متاحة على هذا الجهاز. لا يزال بإمكانك لصق رسالة بنكية.';
+
+  @override
+  String get smsImportErrorPermissionDenied =>
+      'يحتاج دفتري إلى إذن قراءة الرسائل للعثور على رسائلك البنكية. لن يضيع شيء: يمكنك لصق رسالة بنكية بدلًا من ذلك.';
+
+  @override
+  String get smsImportErrorPermissionBlocked =>
+      'هاتفك يمنع إذن الرسائل لتطبيق دفتري. يمكنك السماح به من إعدادات التطبيق، أو لصق رسالة بنكية بدلًا من ذلك.';
+
+  @override
+  String get smsImportErrorPermissionRevoked =>
+      'الاستيراد التلقائي متوقف لأن إذن الرسائل أُوقف. العناصر المعلّقة محفوظة.';
+
+  @override
+  String get smsImportErrorInboxQuery =>
+      'تعذّرت قراءة رسائلك الآن. سيحاول دفتري مرة أخرى عند فتح التطبيق في المرة القادمة.';
+
+  @override
+  String get smsImportErrorTooLongCharacters =>
+      'هذا النص طويل جدًا. الصق حتى 10,000 حرف في المرة الواحدة.';
+
+  @override
+  String get smsImportErrorTooManyMessages =>
+      'هذا النص يحتوي على رسائل كثيرة جدًا. الصق حتى 50 رسالة في المرة الواحدة.';
+
+  @override
+  String get smsImportErrorNotRecognized =>
+      'لا يبدو هذا كرسالة بنكية مدعومة. يمكنك إضافة المعاملة يدويًا.';
+
+  @override
+  String get smsImportErrorIncomplete =>
+      'بعض البيانات المطلوبة ناقصة. أكمل الحقول المحددة لإضافتها.';
+
+  @override
+  String get smsImportErrorAmountAmbiguous =>
+      'الرسالة تحتوي على أكثر من مبلغ. تأكد من المبلغ الصحيح.';
+
+  @override
+  String get smsImportErrorUnsupportedCurrency =>
+      'هذه العملة غير مدعومة. اختر العملة وأدخل المبلغ مرة أخرى.';
+
+  @override
+  String get smsImportErrorClipboardEmpty =>
+      'لا يوجد شيء للصق. انسخ رسالة بنكية أولًا، أو اكتبها في المربع.';
+
+  @override
+  String get smsImportErrorOriginalUnavailable =>
+      'لا يمكن عرض الرسالة الأصلية. يمكنك المتابعة بالتفاصيل أدناه.';
+
+  @override
+  String get smsImportErrorSaveFailed =>
+      'لم يتم الحفظ، وما زال العنصر بانتظار مراجعتك. حاول مرة أخرى.';
+
+  @override
+  String smsImportErrorScanInterrupted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'توقف الفحص بعد التحقق من $count رسالة. افحص مرة أخرى للمتابعة.',
+      many: 'توقف الفحص بعد التحقق من $count رسالة. افحص مرة أخرى للمتابعة.',
+      few: 'توقف الفحص بعد التحقق من $count رسائل. افحص مرة أخرى للمتابعة.',
+      two: 'توقف الفحص بعد التحقق من رسالتين. افحص مرة أخرى للمتابعة.',
+      one: 'توقف الفحص بعد التحقق من رسالة واحدة. افحص مرة أخرى للمتابعة.',
+      zero: 'توقف الفحص قبل التحقق من أي رسالة. افحص مرة أخرى للمتابعة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportErrorStorageUnavailable =>
+      'تعذّر على دفتري حفظ هذا على جهازك. حاول مرة أخرى.';
+
+  @override
+  String get smsImportErrorMessageUnreadable =>
+      'تعذّرت قراءة رسالة واحدة وتم تخطيها. تم التحقق من باقي الرسائل.';
+
+  @override
+  String get smsImportErrorAlreadyDecided => 'تم التعامل مع هذا العنصر بالفعل.';
+
+  @override
+  String get smsImportErrorProbableDuplicate =>
+      'قد يكون هذا موجودًا بالفعل في دفتري. قارن قبل الإضافة.';
+
+  @override
+  String get smsImportErrorScanAlreadyRunning => 'هناك فحص جارٍ بالفعل.';
+
+  @override
+  String get smsImportErrorScanNotAllowed =>
+      'الفحص غير ممكن الآن. تأكد من أن استيراد الرسائل البنكية مفعّل ومسموح به.';
+
+  @override
+  String get smsImportProvenanceLabel => 'مستورد من رسالة بنكية';
+
+  @override
+  String get smsImportProvenanceSemantics => 'مستورد من رسالة بنكية راجعتها';
+
+  @override
+  String get smsImportPendingTitle => 'الرسائل البنكية';
+
+  @override
+  String get smsImportPendingEmptyTitle => 'لا توجد رسائل بنكية للمراجعة';
+
+  @override
+  String get smsImportPendingEmptyMessage =>
+      'تظهر هنا الرسائل البنكية التي تفحصها أو تلصقها أو تشاركها لتراجعها. لا يُحفظ شيء حتى تضغط «إضافة».';
+
+  @override
+  String get smsImportPendingLoadErrorTitle => 'تعذّر تحميل رسائلك البنكية';
+
+  @override
+  String get smsImportPendingRetry => 'حاول مرة أخرى';
+
+  @override
+  String smsImportPendingExpiredNotice(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'انتهت صلاحية $count اقتراح. يمكنك استعادتها من العناصر المتجاهلة.',
+      many:
+          'انتهت صلاحية $count اقتراحًا. يمكنك استعادتها من العناصر المتجاهلة.',
+      few:
+          'انتهت صلاحية $count اقتراحات. يمكنك استعادتها من العناصر المتجاهلة.',
+      two: 'انتهت صلاحية اقتراحين. يمكنك استعادتهما من العناصر المتجاهلة.',
+      one: 'انتهت صلاحية اقتراح واحد. يمكنك استعادته من العناصر المتجاهلة.',
+      zero: 'لم تنتهِ صلاحية أي اقتراح.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingExpiredDismiss => 'إخفاء';
+
+  @override
+  String get smsImportPendingChooseType => 'اختر النوع';
+
+  @override
+  String get smsImportPendingAmountNeedsCheck => 'المبلغ يحتاج إلى مراجعة';
+
+  @override
+  String smsImportPendingDateInferred(String date) {
+    return '$date، تاريخ مستنتج';
+  }
+
+  @override
+  String get smsImportPendingIgnoreSuggested => 'يُقترح التجاهل';
+
+  @override
+  String get smsImportPendingPossibleDuplicate => 'تكرار محتمل';
+
+  @override
+  String get smsImportPendingUnknownBank => 'بنك غير معروف';
+
+  @override
+  String smsImportBankName(String bank) {
+    String _temp0 = intl.Intl.selectLogic(bank, {
+      'nbe': 'البنك الأهلي المصري',
+      'banque_misr': 'بنك مصر',
+      'cib': 'البنك التجاري الدولي',
+      'qnb': 'بنك قطر الوطني الأهلي',
+      'banque_du_caire': 'بنك القاهرة',
+      'aaib': 'البنك العربي الأفريقي الدولي',
+      'instapay': 'إنستاباي',
+      'other': 'بنك',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportKindLabel(String kind) {
+    String _temp0 = intl.Intl.selectLogic(kind, {
+      'cardPurchase': 'شراء بالبطاقة',
+      'atmWithdrawal': 'سحب من ماكينة الصراف',
+      'cardOrLoanSettlement': 'سداد بطاقة أو قرض',
+      'billPayment': 'دفع فاتورة',
+      'fee': 'رسوم بنكية',
+      'salary': 'راتب',
+      'otherDeposit': 'إيداع',
+      'transferOut': 'تحويل صادر',
+      'transferIn': 'تحويل وارد',
+      'refund': 'استرداد',
+      'authorizationReversal': 'إلغاء حجز مبلغ',
+      'ownAccountTransfer': 'تحويل بين حساباتك',
+      'other': 'معاملة بنكية',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportReviewSourceLabel(String source) {
+    String _temp0 = intl.Intl.selectLogic(source, {
+      'inboxScan': 'من الرسائل القصيرة',
+      'catchUpScan': 'من الرسائل القصيرة',
+      'paste': 'تم لصقها',
+      'share': 'تمت مشاركتها',
+      'other': 'من الرسائل القصيرة',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportWarningText(String warning) {
+    String _temp0 = intl.Intl.selectLogic(warning, {
+      'atmIgnoredByDefault':
+          'لا تُحتسب عمليات السحب النقدي كمصروف إلا إذا فعّلت ذلك في إعدادات الرسائل البنكية.',
+      'refundHint':
+          'يبدو هذا استردادًا. تجاهله إذا كانت عملية الشراء الأصلية مسجلة في دفتري.',
+      'ownAccountSuggestedIgnore':
+          'يبدو هذا تحويلًا بين حساباتك، لذلك ليس دخلًا ولا مصروفًا.',
+      'cardSettlementSuggestedIgnore':
+          'هذا سداد بطاقة أو قرض. عمليات الشراء الأصلية تُحتسب وحدها.',
+      'genericParser': 'دفتري لا يعرف رسائل هذا البنك جيدًا. راجع كل الحقول.',
+      'unverifiedProfile': 'دعم هذا البنك جديد. راجع كل الحقول قبل الإضافة.',
+      'ambiguousAmount': 'في الرسالة أكثر من مبلغ. تأكد من المبلغ الصحيح.',
+      'unsupportedCurrency':
+          'هذه العملة غير مدعومة. اختر عملة وأدخل المبلغ بها.',
+      'dateInferred': 'لم يرد التاريخ في الرسالة. راجعه.',
+      'currencyInferred': 'لم ترد العملة في الرسالة. راجعها.',
+      'foreignCurrencyBilledAmount': 'المبلغ المعروض هو ما خُصم من حسابك.',
+      'feeSeparateItem': 'الرسوم الواردة في هذه الرسالة مدرجة كعنصر منفصل.',
+      'feeFromMessage': 'هذه الرسوم مأخوذة من رسالة بنكية أخرى.',
+      'reversalHint':
+          'لم يُخصم هذا المبلغ فعليًا. تجاهله أو افتح السجل المطابق للتحقق منه.',
+      'maskedReference': 'أُخفي الرقم المرجعي حفاظًا على خصوصيتك.',
+      'possibleDuplicate': 'قد يكون هذا مسجلًا في دفتري بالفعل.',
+      'possibleOwnTransfer':
+          'يبدو أن هذا مال نُقل بين حساباتك. تجاهل الاثنين إن كان كذلك.',
+      'other': 'راجع هذا العنصر قبل الإضافة.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportReviewTitle => 'مراجعة رسالة بنكية';
+
+  @override
+  String get smsImportReviewOverallConfidence => 'الثقة العامة';
+
+  @override
+  String get smsImportReviewTypeLabel => 'النوع';
+
+  @override
+  String get smsImportReviewChooseType => 'اختر نوعًا';
+
+  @override
+  String get smsImportReviewAmountLabel => 'المبلغ';
+
+  @override
+  String get smsImportReviewAmountInvalid =>
+      'أدخل مبلغًا أكبر من صفر، حتى 12 رقمًا.';
+
+  @override
+  String get smsImportReviewWhichAmount => 'أي مبلغ؟';
+
+  @override
+  String smsImportReviewUseAmount(String amount) {
+    return 'استخدم $amount';
+  }
+
+  @override
+  String get smsImportReviewChooseCurrency => 'اختر عملة';
+
+  @override
+  String get smsImportReviewCurrencyNeeded => 'اختر عملة وأدخل المبلغ بها.';
+
+  @override
+  String smsImportReviewOriginalAmount(String amount) {
+    return 'المبلغ الأصلي: $amount';
+  }
+
+  @override
+  String get smsImportReviewDateLabel => 'التاريخ';
+
+  @override
+  String get smsImportReviewChooseDate => 'اختر تاريخًا';
+
+  @override
+  String smsImportReviewMessageTime(String time) {
+    return 'وقت الرسالة $time. يُحفظ التاريخ فقط.';
+  }
+
+  @override
+  String get smsImportReviewPersonLabel => 'الشخص';
+
+  @override
+  String smsImportReviewRecordAsGiven(String name) {
+    return 'سجّلها كمبلغ أعطيته لـ $name';
+  }
+
+  @override
+  String smsImportReviewRecordAsReceived(String name) {
+    return 'سجّلها كمبلغ استلمته من $name';
+  }
+
+  @override
+  String get smsImportReviewNoteLabel => 'ملاحظة (اختيارية)';
+
+  @override
+  String get smsImportReviewUseMerchant => 'استخدم اسم التاجر كملاحظة';
+
+  @override
+  String get smsImportReviewShowOriginal => 'عرض الرسالة الأصلية';
+
+  @override
+  String smsImportReviewMissing(String fields) {
+    return 'بيانات ناقصة: $fields';
+  }
+
+  @override
+  String get smsImportReviewFieldType => 'النوع';
+
+  @override
+  String get smsImportReviewFieldAmount => 'المبلغ';
+
+  @override
+  String get smsImportReviewFieldCurrency => 'العملة';
+
+  @override
+  String get smsImportReviewFieldDate => 'التاريخ';
+
+  @override
+  String get smsImportReviewFieldCategory => 'الفئة';
+
+  @override
+  String get smsImportReviewFieldPerson => 'الشخص';
+
+  @override
+  String get smsImportReviewFieldNote => 'الملاحظة (حتى 500 حرف)';
+
+  @override
+  String get smsImportReviewListSeparator => '، ';
+
+  @override
+  String get smsImportReviewAdd => 'إضافة';
+
+  @override
+  String get smsImportReviewAdded => 'تمت الإضافة';
+
+  @override
+  String get smsImportReviewSaving => 'جارٍ الحفظ';
+
+  @override
+  String get smsImportReviewAlreadyHandledTitle =>
+      'تم التعامل مع هذا العنصر بالفعل';
+
+  @override
+  String get smsImportReviewAlreadyHandledMessage =>
+      'ربما أُضيف أو تم تجاهله أو انتهت صلاحيته.';
+
+  @override
+  String get smsImportReviewBackToList => 'العودة إلى الرسائل البنكية';
+
+  @override
+  String get smsImportReviewLoadErrorTitle => 'تعذّر فتح هذه الرسالة البنكية';
+
+  @override
+  String get smsImportReviewDiscardTitle => 'هل تريد إلغاء تعديلاتك؟';
+
+  @override
+  String get smsImportReviewDiscardMessage => 'سيبقى العنصر في انتظار مراجعتك.';
+
+  @override
+  String get smsImportReviewDiscardConfirm => 'إلغاء التعديلات';
+
+  @override
+  String get smsImportReviewKeepEditing => 'متابعة التعديل';
+
+  @override
+  String get smsImportDuplicateBanner => 'قد يكون هذا مسجلًا لديك';
+
+  @override
+  String get smsImportDuplicateCompare => 'قارن';
+
+  @override
+  String get smsImportDuplicateTitle => 'قد يكون هذا مسجلًا لديك';
+
+  @override
+  String get smsImportDuplicateMessage =>
+      'قارن بينهما قبل أن تقرر. لن يُضاف شيء حتى تختار.';
+
+  @override
+  String get smsImportDuplicateExisting => 'موجود في دفتري';
+
+  @override
+  String get smsImportDuplicateOtherPending => 'رسالة بنكية أخرى';
+
+  @override
+  String get smsImportDuplicateIncoming => 'هذه الرسالة';
+
+  @override
+  String get smsImportDuplicateSameAmount => 'نفس المبلغ';
+
+  @override
+  String get smsImportDuplicateSameOriginalAmount =>
+      'يساوي المبلغ الأصلي المذكور في الرسالة';
+
+  @override
+  String smsImportDuplicateDaysApart(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بفارق $count يوم',
+      many: 'بفارق $count يومًا',
+      few: 'بفارق $count أيام',
+      two: 'بفارق يومين',
+      one: 'بفارق يوم واحد',
+      zero: 'نفس اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportDuplicateNote(String note) {
+    return 'ملاحظة: $note';
+  }
+
+  @override
+  String get smsImportDuplicateSame => 'نفس المعاملة، لا تُضفها';
+
+  @override
+  String get smsImportDuplicateAddAnyway => 'مختلفة، أضفها على أي حال';
+
+  @override
+  String get smsImportDuplicateCancel => 'إلغاء';
+
+  @override
+  String get smsImportDuplicateFound => 'تم العثور على تكرار محتمل';
+
+  @override
+  String get smsImportDuplicateClosed =>
+      'لم تتم الإضافة. هو موجود بالفعل في دفتري.';
+
+  @override
+  String get smsImportReviewMatchedRecord => 'السجل المطابق في دفتري';
+
+  @override
+  String get smsImportReviewOpenRecord => 'افتحه';
+
+  @override
+  String smsImportReviewFeeFromParent(String date) {
+    return 'رسوم من الرسالة البنكية بتاريخ $date';
+  }
+
+  @override
+  String get smsImportReviewFeeFromParentNoDate =>
+      'رسوم من الرسالة البنكية المرتبطة';
+
+  @override
+  String get smsImportReviewNoCategories =>
+      'لا توجد فئة نشطة من هذا النوع. أضف واحدة من إدارة الفئات.';
+
+  @override
+  String smsImportSemanticsCardEnding(String last4) {
+    return 'بطاقة تنتهي بـ $last4';
+  }
+
+  @override
+  String get smsImportSemanticsOpenReview => 'افتح للمراجعة';
+
+  @override
+  String smsImportSemanticsAddUnavailable(String fields) {
+    return 'الإضافة غير متاحة. بيانات ناقصة: $fields';
+  }
+
+  @override
+  String get smsImportPasteTitle => 'لصق رسالة بنكية';
+
+  @override
+  String get smsImportPasteIntro =>
+      'انسخ رسالة من البنك ثم اضغط «لصق»، أو الصقها في المربع بنفسك. لا يُحفظ شيء حتى تراجعها وتضغط «إضافة».';
+
+  @override
+  String get smsImportPasteFieldLabel => 'نص الرسالة البنكية';
+
+  @override
+  String get smsImportPasteButton => 'لصق';
+
+  @override
+  String get smsImportPasteProcess => 'قراءة الرسالة';
+
+  @override
+  String get smsImportPasteLimits => 'حتى 10,000 حرف و50 رسالة.';
+
+  @override
+  String smsImportPasteCharacterCount(int count) {
+    return '$count من 10,000 حرف';
+  }
+
+  @override
+  String get smsImportPasteProcessing => 'جارٍ قراءة الرسالة…';
+
+  @override
+  String get smsImportPasteNothingTitle => 'لا يوجد شيء للصق';
+
+  @override
+  String get smsImportPasteNotRecognizedTitle => 'ليست رسالة بنكية مدعومة';
+
+  @override
+  String get smsImportPasteEnterManually => 'إدخال يدوي';
+
+  @override
+  String get smsImportPasteTryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get smsImportPasteTooLargeTitle => 'النص طويل جدًا';
+
+  @override
+  String get smsImportPasteUnreadableTitle => 'تعذّرت قراءة هذه الرسالة';
+
+  @override
+  String get smsImportPasteUnreadableMessage =>
+      'تم العثور على رسالة بنكية، لكن تعذّرت قراءة تفاصيلها. يمكنك إضافة المعاملة يدويًا.';
+
+  @override
+  String smsImportPasteRecognized(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم التعرّف على $count معاملة',
+      many: 'تم التعرّف على $count معاملة',
+      few: 'تم التعرّف على $count معاملات',
+      two: 'تم التعرّف على معاملتين',
+      one: 'تم التعرّف على معاملة واحدة',
+      zero: 'لم يتم التعرّف على أي معاملة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportPasteSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تخطي $count رسالة',
+      many: 'تم تخطي $count رسالة',
+      few: 'تم تخطي $count رسائل',
+      two: 'تم تخطي رسالتين',
+      one: 'تم تخطي رسالة واحدة',
+      zero: 'لم يتم تخطي أي رسالة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPasteAlreadyListed =>
+      'هذه الرسائل موجودة بالفعل في قائمتك. لم تتم إضافة شيء جديد.';
+
+  @override
+  String get smsImportPasteOpenList => 'فتح الرسائل البنكية';
+
+  @override
+  String get smsImportShareProcessing =>
+      'جارٍ قراءة الرسالة التي تمت مشاركتها…';
+
+  @override
+  String get smsImportShareReceived => 'تمت مشاركتها من تطبيق آخر';
+
+  @override
+  String get smsImportHomeQuickAction => 'رسالة بنكية';
+
+  @override
+  String get smsImportEnableTitle => 'قراءة الرسائل البنكية';
+
+  @override
+  String get smsImportEnableExplainTitle => 'أضف معاملاتك البنكية من رسائلك';
+
+  @override
+  String get smsImportEnableWhatIsReadTitle => 'ما يقرؤه دفتري';
+
+  @override
+  String get smsImportEnableWhatIsRead =>
+      'الرسائل الواردة من البنوك المعروفة فقط، على هذا الجهاز.';
+
+  @override
+  String get smsImportEnableNeverTitle => 'ما لا يحدث أبدًا';
+
+  @override
+  String get smsImportEnableNever =>
+      'لا يتم رفع أي شيء، ولا يُحفظ أي شيء حتى تراجعه وتضغط «إضافة».';
+
+  @override
+  String get smsImportEnableTurnOffTitle => 'كيف تُوقفه';
+
+  @override
+  String get smsImportEnableTurnOff =>
+      'في أي وقت من «الإعدادات» ثم «الرسائل البنكية».';
+
+  @override
+  String get smsImportEnableContinue => 'متابعة';
+
+  @override
+  String get smsImportEnableNotNow => 'ليس الآن';
+
+  @override
+  String get smsImportEnablePasteInstead => 'الصق بدلًا من ذلك';
+
+  @override
+  String get smsImportEnableRequesting => 'في انتظار إجابتك على سؤال أندرويد…';
+
+  @override
+  String get smsImportEnableWindowTitle =>
+      'إلى أي مدى يفحص دفتري الرسائل السابقة؟';
+
+  @override
+  String smsImportEnableWindowDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'آخر $count يوم',
+      many: 'آخر $count يومًا',
+      few: 'آخر $count أيام',
+      two: 'آخر يومين',
+      one: 'آخر يوم',
+      zero: 'آخر 0 يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportEnableScan => 'افحص';
+
+  @override
+  String get smsImportEnableDoneTitle => 'انتهى الفحص';
+
+  @override
+  String get smsImportEnableReviewNow => 'راجع الآن';
+
+  @override
+  String get smsImportEnableClose => 'إغلاق';
+
+  @override
+  String get smsImportEnableUnavailableTitle => 'قراءة الرسائل غير متاحة هنا';
+
+  @override
+  String get smsImportEnableUnavailableMessage =>
+      'ما زال بإمكانك لصق رسالة بنكية أو مشاركتها.';
+
+  @override
+  String get smsImportEnableErrorTitle => 'حدث خطأ ما';
+
+  @override
+  String get smsImportEnableRetry => 'إعادة المحاولة';
+
+  @override
+  String get smsImportPermissionDeniedBanner =>
+      'يحتاج استيراد الرسائل البنكية إلى إذن لقراءة رسائل بنكك.';
+
+  @override
+  String get smsImportPermissionDeniedDetail =>
+      'يحتاج دفتري إلى هذا الإذن ليجد المعاملات البنكية في رسائلك. لن تفقد شيئًا إن لم تسمح به: يمكنك لصق رسالة أو مشاركتها بدلًا من ذلك.';
+
+  @override
+  String get smsImportPermissionPermanentBanner => 'الإذن متوقف لتطبيق دفتري.';
+
+  @override
+  String get smsImportPermissionPermanentDetail =>
+      'للسماح به، افتح «معلومات التطبيق»، ثم «الأذونات»، ثم «الرسائل القصيرة»، واختر «السماح». ثم عد إلى دفتري.';
+
+  @override
+  String get smsImportPermissionRevokedBanner =>
+      'الاستيراد التلقائي متوقف لأن الإذن أُوقف. ما زالت العناصر المعلّقة هنا.';
+
+  @override
+  String get smsImportPermissionAllow => 'سماح';
+
+  @override
+  String get smsImportPermissionTryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get smsImportPermissionOpenAppInfo => 'افتح معلومات التطبيق';
+
+  @override
+  String get smsImportPermissionPasteInstead => 'الصق أو شارك بدلًا من ذلك';
+
+  @override
+  String get smsImportPermissionTurnOnAgain => 'شغّله مرة أخرى';
+
+  @override
+  String get smsImportPermissionShowMeHow => 'أرني الطريقة';
+
+  @override
+  String get smsImportRestrictedBanner =>
+      'قد يمنع أندرويد هذا الإذن للتطبيقات المثبتة من خارج المتجر.';
+
+  @override
+  String get smsImportRestrictedTitle => 'قد يكون أندرويد يمنع هذا الإذن';
+
+  @override
+  String get smsImportRestrictedIntro =>
+      'إن لم يظهر أي سؤال، فقد يكون أندرويد يمنعه لأن دفتري مثبت من خارج متجر التطبيقات. للسماح به:';
+
+  @override
+  String get smsImportRestrictedStep1 => '1. افتح «معلومات التطبيق».';
+
+  @override
+  String get smsImportRestrictedStep2 =>
+      '2. افتح القائمة (النقاط الثلاث) في الأعلى.';
+
+  @override
+  String get smsImportRestrictedStep3 =>
+      '3. اختر «السماح بالإعدادات المقيّدة».';
+
+  @override
+  String get smsImportRestrictedStep4 =>
+      '4. عد إلى دفتري واضغط «حاول مرة أخرى».';
+
+  @override
+  String get smsImportRestrictedAltPath =>
+      'إن لم تجد «السماح بالإعدادات المقيّدة»، فافتح «الأذونات» ثم «الرسائل القصيرة» في «معلومات التطبيق» واختر «سماح»، ثم عد واضغط «حاول مرة أخرى».';
+
+  @override
+  String get smsImportScanNow => 'افحص الآن';
+
+  @override
+  String smsImportScanProgress(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت معالجة $count رسالة',
+      many: 'تمت معالجة $count رسالة',
+      few: 'تمت معالجة $count رسائل',
+      two: 'تمت معالجة رسالتين',
+      one: 'تمت معالجة رسالة واحدة',
+      zero: 'لم تتم معالجة أي رسالة بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanCancel => 'إلغاء';
+
+  @override
+  String get smsImportScanCancelled =>
+      'توقف الفحص. تم الاحتفاظ بما وُجد حتى الآن.';
+
+  @override
+  String get smsImportScanSummaryTitle => 'ملخص الفحص';
+
+  @override
+  String smsImportScanFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم العثور على $count رسالة بنكية',
+      many: 'تم العثور على $count رسالة بنكية',
+      few: 'تم العثور على $count رسائل بنكية',
+      two: 'تم العثور على رسالتين بنكيتين',
+      one: 'تم العثور على رسالة بنكية واحدة',
+      zero: 'لم يتم العثور على أي رسالة بنكية',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanReady(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count جاهزة للإضافة',
+      many: '$count جاهزة للإضافة',
+      few: '$count جاهزة للإضافة',
+      two: 'اثنتان جاهزتان للإضافة',
+      one: 'واحدة جاهزة للإضافة',
+      zero: 'لا شيء جاهز للإضافة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanNeedReview(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تحتاج إلى مراجعتك',
+      many: '$count تحتاج إلى مراجعتك',
+      few: '$count تحتاج إلى مراجعتك',
+      two: 'اثنتان تحتاجان إلى مراجعتك',
+      one: 'واحدة تحتاج إلى مراجعتك',
+      zero: 'لا شيء يحتاج إلى مراجعتك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanAlreadyKnown(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count كانت موجودة بالفعل',
+      many: '$count كانت موجودة بالفعل',
+      few: '$count كانت موجودة بالفعل',
+      two: 'اثنتان كانتا موجودتين بالفعل',
+      one: 'واحدة كانت موجودة بالفعل',
+      zero: 'لا شيء كان موجودًا بالفعل',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanSkipped(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تخطي $count رسالة: ليست معاملات',
+      many: 'تم تخطي $count رسالة: ليست معاملات',
+      few: 'تم تخطي $count رسائل: ليست معاملات',
+      two: 'تم تخطي رسالتين: ليستا معاملتين',
+      one: 'تم تخطي رسالة واحدة: ليست معاملة',
+      zero: 'لم يتم تخطي أي رسالة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanUnreadable(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تعذّرت قراءة $count رسالة',
+      many: 'تعذّرت قراءة $count رسالة',
+      few: 'تعذّرت قراءة $count رسائل',
+      two: 'تعذّرت قراءة رسالتين',
+      one: 'تعذّرت قراءة رسالة واحدة',
+      zero: 'لا توجد رسائل تعذّرت قراءتها',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportScanInterrupted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت معالجة $count رسالة قبل التوقف',
+      many: 'تمت معالجة $count رسالة قبل التوقف',
+      few: 'تمت معالجة $count رسائل قبل التوقف',
+      two: 'تمت معالجة رسالتين قبل التوقف',
+      one: 'تمت معالجة رسالة واحدة قبل التوقف',
+      zero: 'لم تتم معالجة أي رسالة قبل التوقف',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanShowSkipped => 'عرض ما تم تخطيه';
+
+  @override
+  String get smsImportScanSkippedTitle => 'الرسائل التي تم تخطيها';
+
+  @override
+  String get smsImportScanSkippedNote => 'لا يُعرض نص الرسالة هنا أبدًا.';
+
+  @override
+  String smsImportScanSkipReason(String reason) {
+    String _temp0 = intl.Intl.selectLogic(reason, {
+      'notRecognized': 'ليست معاملة معروفة',
+      'noAmount': 'لم يتم العثور على مبلغ',
+      'amountUnreadable': 'تعذّرت قراءة المبلغ',
+      'tooLong': 'أطول من أن تُقرأ',
+      'empty': 'رسالة فارغة',
+      'nonText': 'ليست نصًا',
+      'parserError': 'تعذّرت القراءة',
+      'other': 'تعذّرت القراءة',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportScanSkippedNoDate => 'التاريخ غير معروف';
+
+  @override
+  String get smsImportScanDismiss => 'إخفاء الملخص';
+
+  @override
+  String get smsImportScanTurnOnTitle => 'اكتشف المعاملات البنكية في رسائلك';
+
+  @override
+  String get smsImportScanTurnOn => 'تشغيل';
+
+  @override
+  String get smsImportScanFailedTitle => 'توقف الفحص';
+
+  @override
+  String get smsImportScanRetry => 'إعادة المحاولة';
+
+  @override
+  String get smsImportScanMore => 'خيارات أخرى';
+
+  @override
+  String get smsImportSettingsTitle => 'الرسائل البنكية';
+
+  @override
+  String get smsImportSettingsEntrySubtitle =>
+      'أضف المعاملات من الرسائل البنكية';
+
+  @override
+  String get smsImportSettingsStatusTitle => 'الحالة';
+
+  @override
+  String smsImportSettingsStatusLabel(String status) {
+    String _temp0 = intl.Intl.selectLogic(status, {
+      'off': 'متوقف',
+      'on': 'يعمل',
+      'permissionOff': 'الإذن متوقف',
+      'blocked': 'يمنعه أندرويد',
+      'other': 'متوقف',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportSettingsTurnOn => 'تشغيل';
+
+  @override
+  String get smsImportSettingsScanTitle => 'الفحص';
+
+  @override
+  String get smsImportSettingsWindowTitle => 'مدة الفحص';
+
+  @override
+  String smsImportSettingsLastScan(String date) {
+    return 'آخر فحص: $date';
+  }
+
+  @override
+  String get smsImportSettingsNeverScanned => 'لم يتم الفحص بعد';
+
+  @override
+  String get smsImportSettingsCountsTitle => 'النشاط';
+
+  @override
+  String smsImportSettingsCountScanned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'قُرئت $count رسالة',
+      many: 'قُرئت $count رسالة',
+      few: 'قُرئت $count رسائل',
+      two: 'قُرئت رسالتان',
+      one: 'قُرئت رسالة واحدة',
+      zero: 'لم تُقرأ أي رسالة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountRecognized(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم التعرّف على $count معاملة',
+      many: 'تم التعرّف على $count معاملة',
+      few: 'تم التعرّف على $count معاملات',
+      two: 'تم التعرّف على معاملتين',
+      one: 'تم التعرّف على معاملة واحدة',
+      zero: 'لم يتم التعرّف على أي معاملة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت إضافة $count معاملة',
+      many: 'تمت إضافة $count معاملة',
+      few: 'تمت إضافة $count معاملات',
+      two: 'تمت إضافة معاملتين',
+      one: 'تمت إضافة معاملة واحدة',
+      zero: 'لم تتم إضافة أي معاملة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSettingsCountIgnored(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تجاهل $count معاملة',
+      many: 'تم تجاهل $count معاملة',
+      few: 'تم تجاهل $count معاملات',
+      two: 'تم تجاهل معاملتين',
+      one: 'تم تجاهل معاملة واحدة',
+      zero: 'لم يتم تجاهل أي معاملة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportSettingsPreferencesTitle => 'التفضيلات';
+
+  @override
+  String get smsImportSettingsCountCash => 'احسب السحب النقدي كمصروف';
+
+  @override
+  String get smsImportSettingsCountCashHelp =>
+      'عند التشغيل، يُقترح السحب من الصراف الآلي كمصروف بدلًا من تجاهله.';
+
+  @override
+  String get smsImportSettingsManageTitle => 'الإدارة';
+
+  @override
+  String get smsImportSettingsPending => 'رسائل بنكية بانتظار المراجعة';
+
+  @override
+  String get smsImportSettingsPrivacyTitle => 'الخصوصية';
+
+  @override
+  String get smsImportSettingsPrivacyText =>
+      'تُقرأ الرسائل على هذا الجهاز فقط. لا يُحفظ أي شيء دون أن تضغط «إضافة».';
+
+  @override
+  String get smsImportSettingsLoadErrorTitle =>
+      'تعذّر تحميل إعدادات الرسائل البنكية';
+
+  @override
+  String get smsImportSettingsRetry => 'إعادة المحاولة';
+
+  @override
+  String get smsImportSettingsSaveFailed => 'تعذّر الحفظ. حاول مرة أخرى.';
+
+  @override
+  String get smsImportHomeOnboardingTitle => 'الرسائل البنكية';
+
+  @override
+  String get smsImportHomeOnboardingText =>
+      'يمكن لدفتري أن يجد المعاملات في رسائل بنكك لتراجعها.';
+
+  @override
+  String get smsImportHomeOnboardingSetUp => 'إعداد';
+
+  @override
+  String get smsImportHomeOnboardingDismiss => 'إخفاء';
+
+  @override
+  String smsImportHomeCardCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count معاملة بنكية للمراجعة',
+      many: '$count معاملة بنكية للمراجعة',
+      few: '$count معاملات بنكية للمراجعة',
+      two: 'معاملتان بنكيتان للمراجعة',
+      one: 'معاملة بنكية واحدة للمراجعة',
+      zero: 'لا توجد معاملات بنكية للمراجعة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportHomeCardHint => 'يفتح الرسائل البنكية';
+
+  @override
+  String get smsImportPendingSelect => 'تحديد';
+
+  @override
+  String smsImportPendingSelectedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تحديد $count عنصر',
+      many: 'تم تحديد $count عنصرًا',
+      few: 'تم تحديد $count عناصر',
+      two: 'تم تحديد عنصرين',
+      one: 'تم تحديد عنصر واحد',
+      zero: 'لم يتم تحديد شيء',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingCancelSelection => 'إلغاء التحديد';
+
+  @override
+  String get smsImportPendingIgnoreSelected => 'تجاهل';
+
+  @override
+  String smsImportPendingIgnoreConfirmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تجاهل $count عنصر؟',
+      many: 'تجاهل $count عنصرًا؟',
+      few: 'تجاهل $count عناصر؟',
+      two: 'تجاهل عنصرين؟',
+      one: 'تجاهل عنصر واحد؟',
+      zero: 'لا شيء للتجاهل؟',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingIgnoreConfirmMessage =>
+      'لن تتم إضافة أي شيء، ولن تُقترح هذه الرسائل مرة أخرى. يمكنك استعادتها من العناصر المتجاهلة خلال 30 يومًا.';
+
+  @override
+  String get smsImportPendingIgnoreConfirm => 'تجاهل';
+
+  @override
+  String smsImportPendingIgnoredCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم تجاهل $count عنصر',
+      many: 'تم تجاهل $count عنصرًا',
+      few: 'تم تجاهل $count عناصر',
+      two: 'تم تجاهل عنصرين',
+      one: 'تم تجاهل عنصر واحد',
+      zero: 'لم يتم تجاهل أي شيء',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportPendingMenuIgnored => 'العناصر المتجاهلة';
+
+  @override
+  String get smsImportReviewIgnore => 'تجاهل';
+
+  @override
+  String get smsImportReviewIgnored => 'تم التجاهل';
+
+  @override
+  String get smsImportReviewMoreActions => 'إجراءات أخرى';
+
+  @override
+  String get smsImportMuteAction => 'إيقاف الاقتراحات من هذا المرسل';
+
+  @override
+  String get smsImportMuteConfirmTitle => 'إيقاف الاقتراحات من هذا المرسل؟';
+
+  @override
+  String smsImportMuteConfirmMessage(String sender) {
+    return 'سيتوقف دفتري عن اقتراح معاملات من $sender. ستتم إزالة العناصر المعلّقة منه. لن تتغير المعاملات المحفوظة. يمكنك التراجع عن ذلك من شاشة «المرسلون المكتومون».';
+  }
+
+  @override
+  String get smsImportMuteConfirm => 'إيقاف الاقتراحات';
+
+  @override
+  String smsImportMuteDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم كتم المرسل. أُزيل $count عنصر معلّق.',
+      many: 'تم كتم المرسل. أُزيل $count عنصرًا معلّقًا.',
+      few: 'تم كتم المرسل. أُزيلت $count عناصر معلّقة.',
+      two: 'تم كتم المرسل. أُزيل عنصران معلّقان.',
+      one: 'تم كتم المرسل. أُزيل عنصر معلّق واحد.',
+      zero: 'تم كتم المرسل.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportMuteTitle => 'المرسلون المكتومون';
+
+  @override
+  String get smsImportMuteHelp => 'لا يقترح دفتري معاملات من هؤلاء المرسلين.';
+
+  @override
+  String get smsImportMuteEmptyTitle => 'لا يوجد مرسلون مكتومون';
+
+  @override
+  String get smsImportMuteEmptyMessage =>
+      'عندما توقف الاقتراحات من مرسل في شاشة المراجعة، يظهر هنا.';
+
+  @override
+  String get smsImportMuteLoadError => 'تعذّر تحميل المرسلين المكتومين';
+
+  @override
+  String get smsImportMuteUnmute => 'إلغاء الكتم';
+
+  @override
+  String smsImportMuteUnmuteSemantics(String sender) {
+    return 'إلغاء كتم $sender';
+  }
+
+  @override
+  String get smsImportMuteUnmuted =>
+      'تم إلغاء الكتم. ستُقترح رسائله الجديدة بعد الفحص التالي.';
+
+  @override
+  String get smsImportIgnoredTitle => 'العناصر المتجاهلة';
+
+  @override
+  String get smsImportIgnoredHelp =>
+      'العناصر التي تجاهلتها أو انتهت صلاحيتها خلال آخر 30 يومًا.';
+
+  @override
+  String get smsImportIgnoredEmptyTitle => 'لا توجد عناصر متجاهلة مؤخرًا';
+
+  @override
+  String get smsImportIgnoredEmptyMessage =>
+      'تبقى العناصر التي تتجاهلها أو تنتهي صلاحيتها هنا لمدة 30 يومًا لتتمكن من التراجع.';
+
+  @override
+  String get smsImportIgnoredLoadError => 'تعذّر تحميل العناصر المتجاهلة';
+
+  @override
+  String get smsImportIgnoredStatusIgnored => 'متجاهل';
+
+  @override
+  String get smsImportIgnoredStatusExpired => 'منتهي الصلاحية';
+
+  @override
+  String get smsImportIgnoredNoAmount => 'بدون مبلغ';
+
+  @override
+  String smsImportIgnoredDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'يتبقى $count يوم',
+      many: 'يتبقى $count يومًا',
+      few: 'يتبقى $count أيام',
+      two: 'يتبقى يومان',
+      one: 'يتبقى يوم واحد',
+      zero: 'يتبقى أقل من يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportIgnoredUndo => 'تراجع';
+
+  @override
+  String get smsImportIgnoredComesBack =>
+      'سيعود عندما تضغط «افحص الآن»، أو تلصق هذه الرسالة أو تشاركها مرة أخرى.';
+
+  @override
+  String get smsImportIgnoredComesBackPasteOnly =>
+      'سيعود عندما تلصق هذه الرسالة أو تشاركها مرة أخرى.';
+
+  @override
+  String get smsImportIgnoredRestored =>
+      'تمت الاستعادة. اضغط «افحص الآن»، أو الصقها مرة أخرى، لتظهر.';
+
+  @override
+  String get smsImportIgnoredRestoredPasteOnly =>
+      'تمت الاستعادة. الصقها أو شاركها مرة أخرى لتظهر.';
+
+  @override
+  String smsImportSuggestHint(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'ignore': 'المقترح: تجاهل. لا يُحسب شيء دخلًا ولا مصروفًا.',
+      'unset': 'لم يُقترح نوع. اختر نوعًا أو تجاهل هذا العنصر.',
+      'other': 'راجع النوع المقترح قبل الإضافة.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestCashLink(String state) {
+    String _temp0 = intl.Intl.selectLogic(state, {
+      'on': 'السحب النقدي يُحسب مصروفًا. غيّر ذلك من الإعدادات',
+      'other': 'السحب النقدي لا يُحسب مصروفًا. غيّر ذلك من الإعدادات',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestSeveralPeople(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص في أشخاصك قد يكون أحدهم $name.',
+      many: '$count شخصًا في أشخاصك قد يكون أحدهم $name.',
+      few: '$count أشخاص في أشخاصك قد يكون أحدهم $name.',
+      two: 'شخصان في أشخاصك قد يكون أحدهما $name.',
+      one: 'شخص واحد في أشخاصك قد يكون $name.',
+      zero: 'لا أحد في أشخاصك يطابق $name.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestChoosePerson(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'received': 'اختر من أرسلها',
+      'other': 'اختر من استلمها',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String smsImportSuggestPersonNotInList(String name) {
+    return '$name ليس ضمن أشخاصك. لا يُنشأ شخص إلا إذا ضغطت «إنشاء شخص جديد».';
+  }
+
+  @override
+  String get smsImportMappingsTitle => 'الفئات المتعلَّمة';
+
+  @override
+  String get smsImportMappingsHelp =>
+      'عندما تغيّر فئة تاجر وتضيف المعاملة، يقترح دفتري هذه الفئة في المرة القادمة.';
+
+  @override
+  String smsImportMappingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فئة متعلَّمة',
+      many: '$count فئة متعلَّمة',
+      few: '$count فئات متعلَّمة',
+      two: 'فئتان متعلَّمتان',
+      one: 'فئة متعلَّمة واحدة',
+      zero: 'لا توجد فئات متعلَّمة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get smsImportMappingsCategoryRemoved => 'الفئة محذوفة';
+
+  @override
+  String smsImportMappingsRowSemantics(
+    String merchant,
+    String type,
+    String category,
+  ) {
+    return '$merchant: $type، $category';
+  }
+
+  @override
+  String get smsImportMappingsRemove => 'إزالة';
+
+  @override
+  String smsImportMappingsRemoveSemantics(String merchant) {
+    return 'إزالة الفئة المتعلَّمة لـ $merchant';
+  }
+
+  @override
+  String get smsImportMappingsRemoved =>
+      'أُزيلت. سيعود هذا التاجر إلى الاقتراح المعتاد.';
+
+  @override
+  String get smsImportMappingsClear => 'مسح الفئات المتعلَّمة';
+
+  @override
+  String get smsImportMappingsClearConfirmTitle => 'مسح الفئات المتعلَّمة؟';
+
+  @override
+  String get smsImportMappingsClearConfirmMessage =>
+      'سينسى دفتري كل الفئات المتعلَّمة. لن تتغير فئاتك ولا معاملاتك المحفوظة.';
+
+  @override
+  String get smsImportMappingsClearConfirm => 'مسح';
+
+  @override
+  String get smsImportMappingsCleared => 'تم مسح الفئات المتعلَّمة.';
+
+  @override
+  String get smsImportMappingsEmptyTitle => 'لا توجد فئات متعلَّمة';
+
+  @override
+  String get smsImportMappingsEmptyMessage =>
+      'عندما تغيّر فئة معاملة مستوردة وتضيفها، يظهر اختيارك هنا.';
+
+  @override
+  String get smsImportMappingsLoadError => 'تعذّر تحميل الفئات المتعلَّمة';
+
+  @override
+  String get smsImportSettingsTurnOff => 'إيقاف';
+
+  @override
+  String get smsImportSettingsTurnOffTitle => 'هل تحذف العناصر المعلّقة أيضًا؟';
+
+  @override
+  String get smsImportSettingsTurnOffMessage =>
+      'يتوقف استيراد الرسائل البنكية الآن. يمكن أن تبقى عناصرك المعلّقة لتراجعها لاحقًا، أو أن تُحذف. لن تتغير المعاملات المحفوظة ولا المرسلون المكتومون ولا الفئات المتعلَّمة.';
+
+  @override
+  String get smsImportSettingsTurnOffKeep => 'الإبقاء عليها';
+
+  @override
+  String get smsImportSettingsTurnOffDelete => 'حذفها';
+
+  @override
+  String get smsImportSettingsTurnedOffKept =>
+      'تم الإيقاف. عناصرك المعلّقة ما زالت هنا.';
+
+  @override
+  String smsImportSettingsTurnedOffDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم الإيقاف. حُذف $count عنصر معلّق.',
+      many: 'تم الإيقاف. حُذف $count عنصرًا معلّقًا.',
+      few: 'تم الإيقاف. حُذفت $count عناصر معلّقة.',
+      two: 'تم الإيقاف. حُذف عنصران معلّقان.',
+      one: 'تم الإيقاف. حُذف عنصر معلّق واحد.',
+      zero: 'تم الإيقاف. لم تكن هناك عناصر معلّقة.',
+    );
+    return '$_temp0';
+  }
 }

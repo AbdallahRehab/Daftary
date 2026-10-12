@@ -120,12 +120,13 @@ void main() {
   }
 
   /// Every pre-existing column value of [table], keyed by id, excluding
-  /// the new currency column — the snapshot the migration must preserve.
+  /// the new currency column (and 023's `import_source`, checked NULL by
+  /// [withoutImportSource]) — the snapshot the migration must preserve.
   Map<String, Map<String, Object?>> snapshot(Database raw, String table) => {
     for (final row in raw.select('SELECT * FROM $table'))
       row['id'] as String: {
-        for (final key in row.keys)
-          if (key != 'currency_code') key: row[key],
+        for (final entry in withoutImportSource(row).entries)
+          if (entry.key != 'currency_code') entry.key: entry.value,
       },
   };
 
@@ -305,7 +306,7 @@ void main() {
       expect(tx.amountMinorUnits, 25000);
       expect(columnsOf(raw, 'finance_entries'), contains('currency_code'));
       expect(await db.select(db.exchangeRates).get(), isEmpty);
-      expect(raw.select('PRAGMA user_version').single.values.single, 12);
+      expect(raw.select('PRAGMA user_version').single.values.single, 13);
     },
   );
 
@@ -347,15 +348,15 @@ void main() {
         "AND name = 'idx_exchange_rates_pair'",
       );
       expect(index.single['sql'] as String, contains('UNIQUE'));
-      expect(raw.select('PRAGMA user_version').single.values.single, 12);
+      expect(raw.select('PRAGMA user_version').single.values.single, 13);
     });
 
     test(
-      'schemaVersion is 10 (018 bumped it to 7; 020 to 8; 021 to 9; the 008-014 merge to 10)',
+      'schemaVersion is 13 (018 bumped it to 7; 020 to 8; 021 to 9; the 008-014 merge to 10; 011 to 11; 022 to 12; 023 to 13)',
       () {
         final db = AppDatabase.forTesting(NativeDatabase.memory());
         addTearDown(db.close);
-        expect(db.schemaVersion, 12);
+        expect(db.schemaVersion, 13);
       },
     );
   });

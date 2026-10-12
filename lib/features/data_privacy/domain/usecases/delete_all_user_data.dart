@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/error/failure.dart';
 import '../../../ai_assistant/domain/usecases/purge_ai_assistant_credentials.dart';
+import '../../../sms_import/domain/usecases/purge_sms_import_keys.dart';
 import '../repositories/data_wipe_repository.dart';
 import '../services/cloud_copy_eraser.dart';
 import '../services/secure_storage_wiper.dart';
@@ -17,12 +18,17 @@ class DeleteAllUserData {
   const DeleteAllUserData(
     this._dataWipeRepository,
     this._purgeAIAssistantCredentials,
+    this._purgeSmsImportKeys,
     this._secureStorageWiper,
     this._cloudCopyEraser,
   );
 
   final DataWipeRepository _dataWipeRepository;
   final PurgeAIAssistantCredentials _purgeAIAssistantCredentials;
+
+  /// 023: the bank-message encryption and MAC keys, which live in secure
+  /// storage where the table wipe cannot reach (data-model §10).
+  final PurgeSmsImportKeys _purgeSmsImportKeys;
 
   /// App Lock's `app_lock.*` keys (015 T085) — bound by that feature's
   /// data layer; this feature only sees the Domain abstraction.
@@ -42,6 +48,10 @@ class DeleteAllUserData {
   ///   before any user data is touched — the "nothing was removed" error
   ///   stays true. The reverse failure (key gone, table wipe rolled back)
   ///   is benign: the assistant then just asks for its key again.
+  /// - The bank-message keys (023) go right after it, for the same reason:
+  ///   a failure stops before any data is touched. The reverse failure is
+  ///   benign too: pending originals then read as unavailable (FR-074a)
+  ///   and a new key is made on next use.
   /// - App Lock's keys go next, snapshot-backed ([SecureStorageWiper]):
   ///   they are not benign to lose while the data survives (it would drop
   ///   the user's PIN protection), so if the table wipe then fails they are
@@ -64,6 +74,9 @@ class DeleteAllUserData {
   Future<Either<Failure, Unit>> call({bool eraseCloudCopy = true}) async {
     final purged = await _purgeAIAssistantCredentials();
     if (purged case Left(value: final failure)) return Left(failure);
+
+    final smsKeysPurged = await _purgeSmsImportKeys();
+    if (smsKeysPurged case Left(value: final failure)) return Left(failure);
 
     final SecureStorageRestore restoreSecureStorage;
     switch (await _secureStorageWiper.wipe()) {

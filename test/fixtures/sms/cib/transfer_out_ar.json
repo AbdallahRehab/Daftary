@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "CIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "cib",
+  "ruleVersion": "cib@1",
+  "kind": "transfer_out",
+  "direction": "debit",
+  "amountMinor": 125000,
+  "currency": "EGP",
+  "date": "2026-03-05",
+  "dateInferred": false,
+  "counterparty": "يوسف المثال",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

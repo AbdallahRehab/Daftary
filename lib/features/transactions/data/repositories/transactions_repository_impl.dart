@@ -9,6 +9,7 @@ import '../../../../core/database/balance_queries.dart';
 import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
 import '../../../currency/domain/entities/conversion_context.dart';
 import '../../../currency/domain/usecases/get_conversion_context.dart';
 import '../../domain/entities/money_transaction.dart';
@@ -577,6 +578,49 @@ class TransactionsRepositoryImpl implements TransactionsRepository {
       return Right(row.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to record scanned transaction: $e'));
+    }
+  }
+
+  /// Only the SMS repository calls this (`SmsImportRepositoryImpl.confirm`).
+  @override
+  Future<Either<Failure, MoneyTransaction>> addSmsSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  }) async {
+    assert(
+      idempotencyKey.startsWith('sms-import:'),
+      'SMS imports use the sms-import:<pendingId> key',
+    );
+    final validation = _validateAmountAndPerson(amount, personId);
+    if (validation != null) return Left(validation);
+    try {
+      final companion = db.MoneyTransactionsCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        personId: personId,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
+        direction: direction.dbValue,
+        kind: TransactionKind.initialExchange.dbValue,
+        date: _dateOnlyMillis(date),
+        note: db.Value(note),
+        // An SMS-confirmed row is an ordinary typed row (023 FR-086): the
+        // capture method stays `manual`, and only the orthogonal
+        // `import_source` says it came from a bank message (FR-057). It is
+        // set here, in the insert, so the queued sync payload carries it.
+        source: db.Value(TransactionSource.manual.dbValue),
+        importSource: db.Value(ImportProvenance.sms.wire),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _insertWithCreatedAudit(companion);
+      return Right(row.toDomain());
+    } catch (e) {
+      // The caller (SMS confirm) never passes this message on.
+      return Left(CacheFailure('Failed to record imported transaction: $e'));
     }
   }
 

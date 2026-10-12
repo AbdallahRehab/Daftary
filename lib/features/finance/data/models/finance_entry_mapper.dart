@@ -1,5 +1,6 @@
 import '../../../../core/database/app_database.dart' as db;
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
 import '../../domain/entities/finance_entry.dart' as domain;
 import '../../domain/entities/finance_entry_type.dart';
 
@@ -23,6 +24,8 @@ extension FinanceEntryMapper on db.FinanceEntry {
     deletedAt: deletedAt == null
         ? null
         : DateTime.fromMillisecondsSinceEpoch(deletedAt!),
+    // 023: never throws; an unknown string is kept as-is (FR-086).
+    importSource: ImportProvenance.fromWire(importSource),
   );
 }
 

@@ -1,0 +1,22 @@
+{
+  "synthetic": true,
+  "sender": "AAIB",
+  "receivedAt": "2026-03-09T18:30:00",
+  "source": "scan",
+  "classification": "transaction",
+  "bankId": "aaib",
+  "ruleVersion": "aaib@1",
+  "kind": "transfer_in",
+  "direction": "credit",
+  "amountMinor": 225000,
+  "currency": "EGP",
+  "date": "2026-03-03",
+  "dateInferred": false,
+  "counterparty": "Fady Example",
+  "warnings": [
+    "unverified_profile"
+  ],
+  "confidence": {
+    "overall": "medium"
+  }
+}

@@ -15,7 +15,7 @@ void main() {
 
   List<Map<String, Object?>> rows(Database raw, String table) => [
     for (final r in raw.select('SELECT * FROM "$table" ORDER BY rowid'))
-      Map<String, Object?>.of(r),
+      withoutImportSource(r),
   ];
 
   Database loadV11() {
@@ -33,10 +33,10 @@ void main() {
     return db;
   }
 
-  test('schemaVersion is 12', () async {
+  test('schemaVersion is 13', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(db.close);
-    expect(db.schemaVersion, 12);
+    expect(db.schemaVersion, 13);
   });
 
   test('v11 -> v12: the audit table and the repair flag exist, every '
@@ -65,7 +65,7 @@ void main() {
     final db = await open(raw);
     addTearDown(db.close);
 
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
     for (final t in tables) {
       expect(rows(raw, t), before[t], reason: t);
     }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/date/app_date_formatter.dart';
 import '../../../../core/design_system/change_history/app_edited_marker.dart';
 import '../../../../core/design_system/currency_indicator_chip.dart';
+import '../../../../core/design_system/imported_from_sms_label.dart';
 import '../../../../core/design_system/tokens.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/money/egp_formatter.dart';
@@ -121,10 +122,12 @@ class FinanceEntryListTile extends StatelessWidget {
           ],
         ],
       ),
-      subtitle: Text(
-        note != null && note.isNotEmpty ? '$dateLabel · $note' : dateLabel,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+      subtitle: _withProvenance(
+        Text(
+          note != null && note.isNotEmpty ? '$dateLabel · $note' : dateLabel,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       // Amount plus, at most, one overflow button. Two inline icon buttons
       // made `trailing` wide enough to squeeze the title to ~70px, which
@@ -174,6 +177,17 @@ class FinanceEntryListTile extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+
+  /// 023 FR-057: an entry added from a bank message carries the
+  /// "Imported from a bank message" label; every other row is unchanged.
+  Widget _withProvenance(Widget subtitle) {
+    if (entry.importSource?.isSms != true) return subtitle;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [subtitle, const ImportedFromSmsLabel()],
     );
   }
 }

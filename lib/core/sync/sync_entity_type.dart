@@ -74,4 +74,12 @@ const Set<String> localOnlyTables = {
   'sync_record_meta',
   'sync_conflicts',
   'sync_state',
+  // Bank SMS import (023): staging, decisions, mutes, learned mappings and
+  // settings never leave the device. Only a confirmed record's
+  // `import_source` syncs, on the record itself.
+  'pending_sms_imports',
+  'sms_import_tombstones',
+  'sms_sender_mutes',
+  'sms_merchant_category_mappings',
+  'sms_import_settings',
 };

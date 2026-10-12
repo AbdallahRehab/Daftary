@@ -61,10 +61,14 @@ class CategoryPickerField extends StatelessWidget {
                 ),
               ),
             ),
-            TextButton.icon(
-              onPressed: onManageCategories,
-              icon: const Icon(Icons.tune, size: 18),
-              label: Text(l10n.financeManageCategoriesAction),
+            // Flexible: at large text sizes the label wraps instead of
+            // overflowing the row (023 ui-contract §7.6).
+            Flexible(
+              child: TextButton.icon(
+                onPressed: onManageCategories,
+                icon: const Icon(Icons.tune, size: 18),
+                label: Text(l10n.financeManageCategoriesAction),
+              ),
             ),
           ],
         ),

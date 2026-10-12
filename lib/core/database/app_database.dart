@@ -14,6 +14,7 @@ import 'migrations/v7_currency_support.dart';
 import 'migrations/v9_sync_support.dart';
 import 'migrations/v10_merge_features.dart';
 import 'migrations/v12_finance_entry_audits.dart';
+import 'migrations/v13_sms_import.dart';
 import 'sync_tables.dart';
 
 export 'sync_tables.dart';
@@ -94,6 +95,14 @@ class MoneyTransactions extends Table {
   IntColumn get createdAt => integer()();
   IntColumn get editedAt => integer().nullable()();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// 023: `'sms'` for a row the user confirmed from a bank message, `NULL`
+  /// otherwise (FR-057). Stores the raw wire string, so a value written by a
+  /// newer client round-trips unchanged. Unrelated to [source], which stays
+  /// `'manual'` for such a row (FR-086). Added by v13 with no default, no
+  /// backfill and no index; declared last so a fresh install and an
+  /// upgraded file have the same column order.
+  TextColumn get importSource => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -330,6 +339,12 @@ class FinanceEntries extends Table {
   IntColumn get createdAt => integer()();
   IntColumn get editedAt => integer().nullable()();
   IntColumn get deletedAt => integer().nullable()();
+
+  /// 023: `'sms'` for an entry the user confirmed from a bank message,
+  /// `NULL` otherwise (FR-057); same treatment as
+  /// [MoneyTransactions.importSource]. Added by v13 with no default, no
+  /// backfill and no index.
+  TextColumn get importSource => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
@@ -701,6 +716,196 @@ class AiSettings extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+// ---------------------------------------------------------------------------
+// 023 Bank SMS Import (schema v13, data-model §4). All five tables are
+// local-only (`localOnlyTables`), wiped by `deleteAllUserData`, and never
+// exported. None of them references another table by FK: record, category
+// and person ids are plain text, like `ocr_scan_id`, so deleting a record or
+// category is never blocked. `@DataClassName('...Row')` keeps the Drift row
+// classes from clashing with the domain entities of the same names.
+// ---------------------------------------------------------------------------
+
+/// One suggestion staged from a bank message, before the user decides
+/// (data-model §4.1). Nothing here counts toward any balance: the only way a
+/// row becomes money is an explicit Add of that one item
+/// (`SmsImportRepository.confirm`, constitution X).
+///
+/// Content columns are nullable even where a pending row always has a value,
+/// because a decided row is scrubbed in place (data-model §6). Non-null
+/// columns (`kind`, `direction`, `suggested_action`, `confidence_json`,
+/// `warnings_json`) take their neutral values on scrub instead.
+@DataClassName('PendingSmsImportRow')
+@TableIndex(
+  name: 'idx_sms_pending_fingerprint',
+  columns: {#fingerprint},
+  unique: true,
+)
+@TableIndex(
+  name: 'idx_sms_pending_status_expiry',
+  columns: {#status, #expiresAt},
+)
+@TableIndex(name: 'idx_sms_pending_ref_hash', columns: {#refHash})
+@TableIndex(
+  name: 'idx_sms_pending_amount_pair',
+  columns: {#amountMinorUnits, #currencyCode, #status},
+)
+class PendingSmsImports extends Table {
+  TextColumn get id => text()();
+
+  /// HMAC-SHA256 hex over the frozen fingerprint normalizer's output; the
+  /// unique index makes ingestion idempotent (FR-023).
+  TextColumn get fingerprint => text()();
+
+  /// Set only on a fee item split from its parent message (FR-030a). A
+  /// display link only, no FK.
+  TextColumn get parentImportId => text().nullable()();
+
+  /// `SmsImportStatus.dbValue`.
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+
+  /// `SmsSource.dbValue`: `'scan'|'catchup'|'paste'|'share'`.
+  TextColumn get origin => text()();
+  TextColumn get senderId => text().nullable()();
+  TextColumn get bankId => text()();
+  TextColumn get parserId => text()();
+  TextColumn get ruleVersion => text()();
+
+  /// `SmsKind.dbValue`.
+  TextColumn get kind => text()();
+
+  /// `SmsDirection.dbValue`: `'debit'|'credit'|'unknown'`.
+  TextColumn get direction => text()();
+  IntColumn get amountMinorUnits => integer().nullable()();
+  TextColumn get currencyCode => text().nullable()();
+
+  /// Date-only, local midnight epoch millis.
+  IntColumn get occurredOn => integer().nullable()();
+
+  /// Minutes since local midnight, 0..1439.
+  IntColumn get timeMinutes => integer().nullable()();
+  TextColumn get merchant => text().nullable()();
+  TextColumn get merchantKey => text().nullable()();
+  TextColumn get counterparty => text().nullable()();
+  TextColumn get cardLast4 => text().named('card_last4').nullable()();
+  TextColumn get suggestedCategoryId => text().nullable()();
+  TextColumn get suggestedPersonId => text().nullable()();
+
+  /// `SuggestedRecordType.dbValue`.
+  TextColumn get suggestedAction =>
+      text().withDefault(const Constant('unset'))();
+  TextColumn get confidenceJson => text()();
+  TextColumn get warningsJson => text().withDefault(const Constant('{}'))();
+  TextColumn get refHash => text().nullable()();
+  TextColumn get refAmountHash => text().nullable()();
+  IntColumn get receivedAt => integer().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get expiresAt => integer()();
+  IntColumn get decidedAt => integer().nullable()();
+  TextColumn get savedRecordId => text().nullable()();
+
+  /// `SavedRecordType.dbValue`.
+  TextColumn get savedRecordType => text().nullable()();
+
+  /// The masked original sealed with AES-GCM:
+  /// `0x01 | nonce(12) | ciphertext | tag(16)`, AAD = [id] (research
+  /// Decision 6). Non-null only while `status = 'pending'`.
+  BlobColumn get rawBlob => blob().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Keyed-hash memory of a decided message (data-model §4.2), kept at least
+/// 97 days so a re-scan does not resurface it. No amount, text, name or
+/// digits.
+@DataClassName('SmsImportTombstoneRow')
+@TableIndex(name: 'idx_sms_tomb_ref_hash', columns: {#refHash})
+@TableIndex(name: 'idx_sms_tomb_ref_amount', columns: {#refAmountHash})
+@TableIndex(name: 'idx_sms_tomb_saved_record', columns: {#savedRecordId})
+@TableIndex(name: 'idx_sms_tomb_purge', columns: {#purgeAfter})
+class SmsImportTombstones extends Table {
+  TextColumn get fingerprint => text()();
+
+  /// `TombstoneOutcome.dbValue`.
+  TextColumn get outcome => text()();
+  TextColumn get bankId => text()();
+  TextColumn get refHash => text().nullable()();
+  TextColumn get refAmountHash => text().nullable()();
+  TextColumn get savedRecordId => text().nullable()();
+  TextColumn get savedRecordType => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get purgeAfter => integer()();
+
+  @override
+  Set<Column> get primaryKey => {fingerprint};
+}
+
+/// A sender the user asked to stop suggesting from (data-model §4.3,
+/// FR-065). Canonical upper-case sender id.
+@DataClassName('SmsSenderMuteRow')
+class SmsSenderMutes extends Table {
+  TextColumn get senderId => text()();
+  IntColumn get createdAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {senderId};
+}
+
+/// A learned merchant -> category mapping (data-model §4.4, FR-056).
+/// [categoryId] is plain text with no FK, so a category delete never
+/// blocks; a missing or archived category is skipped at suggestion time.
+@DataClassName('SmsMerchantCategoryMappingRow')
+class SmsMerchantCategoryMappings extends Table {
+  TextColumn get merchantKey => text()();
+
+  /// `'expense'|'income'`.
+  TextColumn get entryType => text()();
+  TextColumn get categoryId => text()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column> get primaryKey => {merchantKey, entryType};
+}
+
+/// The device-level bank-message import configuration (data-model §4.5).
+/// Single-row table under the fixed `id` `'singleton'`, same pattern as
+/// [NotificationPreferences]: an absent row means the defaults below, and
+/// the row is written on first save. The v13 migration does not insert it.
+@DataClassName('SmsImportSettingsRow')
+class SmsImportSettings extends Table {
+  TextColumn get id => text()();
+  BoolColumn get isEnabled => boolean().withDefault(const Constant(false))();
+  BoolColumn get onboardingDismissed =>
+      boolean().withDefault(const Constant(false))();
+
+  /// 7, 30 or 90; checked in the repository, not in SQL.
+  IntColumn get scanWindowDays => integer().withDefault(const Constant(30))();
+
+  /// Highest processed provider `(date, _id)` pair.
+  IntColumn get cursorDate => integer().nullable()();
+  IntColumn get cursorId => integer().nullable()();
+  IntColumn get lastScanAt => integer().nullable()();
+  IntColumn get lastCatchUpAt =>
+      integer().named('last_catchup_at').nullable()();
+  BoolColumn get countCashWithdrawals =>
+      boolean().withDefault(const Constant(false))();
+  BoolColumn get permissionRequested =>
+      boolean().withDefault(const Constant(false))();
+
+  /// Content-free, monotonic counters (FR-102).
+  IntColumn get scannedCount => integer().withDefault(const Constant(0))();
+  IntColumn get recognizedCount => integer().withDefault(const Constant(0))();
+  IntColumn get addedCount => integer().withDefault(const Constant(0))();
+  IntColumn get ignoredCount => integer().withDefault(const Constant(0))();
+  IntColumn get expiredNoticeSeenAt => integer().nullable()();
+
+  /// JSON map profileId -> rule version last evaluated.
+  TextColumn get rulesSeen => text().withDefault(const Constant('{}'))();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
 /// The app's single local SQLite database. Opened against a file in the
 /// app's sandboxed documents directory (OS-level storage protection —
 /// research.md Decision 11), never against a network resource: this
@@ -737,6 +942,12 @@ class AiSettings extends Table {
     SavingsContributions,
     SavingsContributionAudits,
     FinanceEntryAudits,
+    // 023 Bank SMS Import (local-only).
+    PendingSmsImports,
+    SmsImportTombstones,
+    SmsSenderMutes,
+    SmsMerchantCategoryMappings,
+    SmsImportSettings,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -753,7 +964,7 @@ class AppDatabase extends _$AppDatabase {
   final SyncBootstrap? _syncBootstrap;
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -831,6 +1042,13 @@ class AppDatabase extends _$AppDatabase {
         // sync_state.b1_repull_done), no existing row touched
         // (v12_finance_entry_audits.dart).
         await migrateToFinanceEntryAudits(this, m);
+      }
+      if (from < 13) {
+        // 023 Bank SMS Import: purely additive. Five local-only tables and
+        // their indexes, plus nullable `import_source` on money_transactions
+        // and finance_entries. No existing row is read or written
+        // (v13_sms_import.dart).
+        await migrateToSmsImport(this, m);
       }
     },
     beforeOpen: (details) async {

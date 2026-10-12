@@ -8,6 +8,7 @@ import '../../../../core/database/app_database.dart' as db;
 import '../../../../core/database/watch_tables.dart';
 import '../../../../core/error/failure.dart';
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
 import '../../../../core/sync/sync_mapper_registry.dart' show SyncWire;
 import '../../domain/entities/category_breakdown_item.dart';
 import '../../domain/entities/finance_entry.dart';
@@ -64,6 +65,59 @@ class FinanceRepositoryImpl implements FinanceRepository {
       return Right(row.toDomain());
     } catch (e) {
       return Left(CacheFailure('Failed to record entry: $e'));
+    }
+  }
+
+  /// Only the SMS repository calls this (`SmsImportRepositoryImpl.confirm`).
+  @override
+  Future<Either<Failure, FinanceEntry>> addSmsSourcedEntry({
+    required String idempotencyKey,
+    required String categoryId,
+    required FinanceEntryType type,
+    required Money amount,
+    required DateTime date,
+    String? note,
+  }) async {
+    assert(
+      idempotencyKey.startsWith('sms-import:'),
+      'SMS imports use the sms-import:<pendingId> key',
+    );
+    if (!amount.isPositive) {
+      return const Left(ValidationFailure('Amount must be greater than zero'));
+    }
+    if (categoryId.trim().isEmpty) {
+      return const Left(ValidationFailure('A category must be selected'));
+    }
+    try {
+      final mismatch = await _validateCategoryMatches(categoryId, type);
+      if (mismatch != null) return Left(mismatch);
+      // SMS-only: `addEntry` does not check this, and is left unchanged.
+      final category = await _dao.getCategoryById(categoryId);
+      if (category == null || category.isArchived) {
+        return const Left(ValidationFailure('Category is archived'));
+      }
+
+      final companion = db.FinanceEntriesCompanion.insert(
+        id: _uuid.v4(),
+        idempotencyKey: idempotencyKey,
+        categoryId: categoryId,
+        type: type.dbValue,
+        amountMinorUnits: amount.minorUnits,
+        currencyCode: db.Value(amount.currency.code),
+        date: dateOnlyMillis(date),
+        note: db.Value(note),
+        // Set in the insert so the queued sync payload carries it (FR-057).
+        importSource: db.Value(ImportProvenance.sms.wire),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      final row = await _dao.insertEntryIdempotent(
+        companion,
+        audit: _audit(FinanceAuditChange.created),
+      );
+      return Right(row.toDomain());
+    } catch (e) {
+      // The caller (SMS confirm) never passes this message on.
+      return Left(CacheFailure('Failed to record imported entry: $e'));
     }
   }
 

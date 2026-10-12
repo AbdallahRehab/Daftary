@@ -199,6 +199,26 @@ abstract class TransactionsRepository {
     String? note,
   });
 
+  /// Creates a people-ledger transaction the user confirmed from a bank
+  /// message (023 FR-052). Only the SMS repository calls this:
+  /// `SmsImportRepositoryImpl.confirm` is its single non-test caller, inside
+  /// its own database transaction, so the record and the pending item's
+  /// `added` status commit together (FR-075a).
+  ///
+  /// [kind] is always `initialExchange` (NG8: no repayment, no occasion).
+  /// Writes `source = manual` (FR-086: never a new enum value) and
+  /// `import_source = 'sms'` (FR-057). Same validation, idempotency
+  /// contract and `created` audit entry as [addTransaction];
+  /// [idempotencyKey] is `sms-import:<pendingId>`.
+  Future<Either<Failure, MoneyTransaction>> addSmsSourcedTransaction({
+    required String idempotencyKey,
+    required String personId,
+    required Money amount,
+    required TransactionDirection direction,
+    required DateTime date,
+    String? note,
+  });
+
   /// Every non-deleted transaction this scan produced, oldest first (009
   /// FR-018) — what the scan-detail screen lists. Read through
   /// `ocr_scan_id`, the one-way link described in 009 data-model.md.

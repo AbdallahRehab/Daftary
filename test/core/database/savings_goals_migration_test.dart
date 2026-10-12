@@ -105,8 +105,8 @@ void main() {
     expect(await db.select(db.savingsGoals).get(), isEmpty);
     expect(await db.select(db.savingsContributions).get(), isEmpty);
     expect(await db.select(db.savingsContributionAudits).get(), isEmpty);
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
-    expect(db.schemaVersion, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
+    expect(db.schemaVersion, 13);
     expect(namesOf(raw, 'index'), containsAll(savingsIndexes));
   });
 
@@ -120,7 +120,7 @@ void main() {
     final db = openUpgraded(raw);
 
     expect(await db.select(db.savingsGoals).get(), isEmpty);
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
     expect(namesOf(raw, 'index'), containsAll(savingsIndexes));
   });
 
@@ -204,6 +204,6 @@ void main() {
 
     expect(namesOf(raw, 'table'), containsAll(savingsTables));
     expect(namesOf(raw, 'index'), containsAll(savingsIndexes));
-    expect(raw.select('PRAGMA user_version').single.values.single, 12);
+    expect(raw.select('PRAGMA user_version').single.values.single, 13);
   });
 }

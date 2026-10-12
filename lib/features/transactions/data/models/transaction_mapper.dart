@@ -1,5 +1,6 @@
 import '../../../../core/database/app_database.dart' as db;
 import '../../../../core/money/money.dart';
+import '../../../../core/provenance/import_provenance.dart';
 import '../../domain/entities/money_transaction.dart' as domain;
 import '../../domain/entities/transaction_audit_entry.dart' as domain;
 
@@ -41,6 +42,8 @@ extension MoneyTransactionMapper on db.MoneyTransaction {
     deletedAt: deletedAt == null
         ? null
         : DateTime.fromMillisecondsSinceEpoch(deletedAt!),
+    // 023: never throws; an unknown string is kept as-is (FR-086).
+    importSource: ImportProvenance.fromWire(importSource),
   );
 }
 

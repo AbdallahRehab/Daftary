@@ -335,6 +335,81 @@ void main() {
     await db.customStatement(
       "INSERT INTO sync_state (id, device_id) VALUES ('singleton', 'd1')",
     );
+    // 023 Bank SMS Import: the five local-only tables (no FKs). The parent
+    // pending row goes first so the fee item's link points at a real row.
+    await db
+        .into(db.pendingSmsImports)
+        .insert(
+          PendingSmsImportsCompanion.insert(
+            id: 'imp1',
+            fingerprint: 'fp-1',
+            origin: 'scan',
+            bankId: 'nbe',
+            parserId: 'nbe',
+            ruleVersion: 'nbe@1',
+            kind: 'card_purchase',
+            direction: 'debit',
+            confidenceJson: '{}',
+            createdAt: t,
+            expiresAt: t + 30 * 86400000,
+            amountMinorUnits: const Value(150000),
+            currencyCode: const Value('EGP'),
+            rawBlob: Value(Uint8List.fromList([1, 2, 3])),
+          ),
+        );
+    await db
+        .into(db.pendingSmsImports)
+        .insert(
+          PendingSmsImportsCompanion.insert(
+            id: 'imp1-fee',
+            fingerprint: 'fp-1-fee',
+            parentImportId: const Value('imp1'),
+            origin: 'scan',
+            bankId: 'nbe',
+            parserId: 'nbe',
+            ruleVersion: 'nbe@1',
+            kind: 'fee',
+            direction: 'debit',
+            confidenceJson: '{}',
+            createdAt: t,
+            expiresAt: t + 30 * 86400000,
+          ),
+        );
+    await db
+        .into(db.smsImportTombstones)
+        .insert(
+          SmsImportTombstonesCompanion.insert(
+            fingerprint: 'fp-old',
+            outcome: 'added',
+            bankId: 'nbe',
+            savedRecordId: const Value('t1'),
+            savedRecordType: const Value('moneyTransaction'),
+            createdAt: t,
+            purgeAfter: t + 97 * 86400000,
+          ),
+        );
+    await db
+        .into(db.smsSenderMutes)
+        .insert(SmsSenderMutesCompanion.insert(senderId: 'NBE', createdAt: t));
+    await db
+        .into(db.smsMerchantCategoryMappings)
+        .insert(
+          SmsMerchantCategoryMappingsCompanion.insert(
+            merchantKey: 'carrefour',
+            entryType: 'expense',
+            categoryId: 'seed_food',
+            updatedAt: t,
+          ),
+        );
+    await db
+        .into(db.smsImportSettings)
+        .insert(
+          SmsImportSettingsCompanion.insert(
+            id: 'singleton',
+            isEnabled: const Value(true),
+            scannedCount: const Value(5),
+          ),
+        );
   }
 
   test('fixture populates every table in AppDatabase', () async {
@@ -369,6 +444,41 @@ void main() {
       for (final seed in defaultFinanceCategorySeeds) 'seed_${seed.key}',
     });
     expect(categories.every((c) => c.isDefault && !c.isArchived), isTrue);
+  });
+
+  test('empties every bank SMS import table (023 SC-011), and the '
+      'import_source values go with their rows', () async {
+    await populateEveryTable();
+    await db.customStatement(
+      "UPDATE money_transactions SET import_source = 'sms'",
+    );
+    await db.customStatement(
+      "UPDATE finance_entries SET import_source = 'sms'",
+    );
+
+    await db.deleteAllUserData();
+
+    for (final table in <TableInfo<Table, dynamic>>[
+      db.pendingSmsImports,
+      db.smsImportTombstones,
+      db.smsSenderMutes,
+      db.smsMerchantCategoryMappings,
+      db.smsImportSettings,
+    ]) {
+      expect(
+        await countRows(table),
+        0,
+        reason: '${table.actualTableName} still has rows',
+      );
+    }
+    final imported = await db
+        .customSelect(
+          'SELECT (SELECT COUNT(*) FROM money_transactions WHERE '
+          'import_source IS NOT NULL) + (SELECT COUNT(*) FROM '
+          'finance_entries WHERE import_source IS NOT NULL) AS c',
+        )
+        .getSingle();
+    expect(imported.read<int>('c'), 0);
   });
 
   test('post-wipe state equals a freshly created database', () async {

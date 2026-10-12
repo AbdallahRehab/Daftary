@@ -5,14 +5,23 @@ import 'package:daftary/features/ai_assistant/domain/usecases/purge_ai_assistant
 import 'package:daftary/features/data_privacy/domain/repositories/data_wipe_repository.dart';
 import 'package:daftary/features/data_privacy/domain/services/secure_storage_wiper.dart';
 import 'package:daftary/features/data_privacy/domain/usecases/delete_all_user_data.dart';
+import 'package:daftary/features/sms_import/domain/usecases/purge_sms_import_keys.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../helpers/fake_cloud_copy_eraser.dart';
 import '../../../ai_assistant/helpers/ai_assistant_harness.dart';
+import '../../../sms_import/helpers/fakes.dart' show FakeSmsKeyStore;
 
 class MockDataWipeRepository extends Mock implements DataWipeRepository {}
+
+/// 023: a bank-message key store whose purge fails, as a broken keystore
+/// does. Its error text must never reach the failure.
+class _FailingSmsKeyStore extends FakeSmsKeyStore {
+  @override
+  Future<void> purge() async => throw StateError('keystore broken 4111');
+}
 
 /// Records calls instead of touching real secure storage; App Lock's real
 /// wiper is covered in `test/features/app_lock/integration/`.
@@ -43,11 +52,13 @@ void main() {
   late FakeSecureStorageWiper wiper;
   late AIAssistantHarness ai;
   late FakeCloudCopyEraser cloud;
+  late FakeSmsKeyStore smsKeys;
   late DeleteAllUserData useCase;
 
   DeleteAllUserData buildUseCase() => DeleteAllUserData(
     repository,
     PurgeAIAssistantCredentials(ai.repository),
+    PurgeSmsImportKeys(smsKeys),
     wiper,
     cloud,
   );
@@ -56,6 +67,7 @@ void main() {
     repository = MockDataWipeRepository();
     wiper = FakeSecureStorageWiper();
     cloud = FakeCloudCopyEraser();
+    smsKeys = FakeSmsKeyStore();
     ai = AIAssistantHarness.open();
     useCase = buildUseCase();
     await ai.repository.enable(
@@ -189,6 +201,50 @@ void main() {
       expect(await useCase(), const Left<Failure, Unit>(failure));
       verifyNever(() => repository.deleteAllUserData());
       expect(wiper.log, ['wipe', 'restore']);
+    });
+  });
+
+  group('023 T144 — bank-message keys', () {
+    test('purges both bank-message keys on a successful wipe', () async {
+      when(
+        () => repository.deleteAllUserData(),
+      ).thenAnswer((_) async => const Right(unit));
+
+      expect(await useCase(), const Right<Failure, Unit>(unit));
+      expect(smsKeys.purges, 1);
+    });
+
+    test('purges them after the AI key and before secure storage and the '
+        'tables', () async {
+      ai.store.failDeletes = true;
+
+      await useCase();
+
+      // The AI key failed first: nothing after it ran.
+      expect(smsKeys.purges, 0);
+      expect(wiper.log, isEmpty);
+      verifyNever(() => repository.deleteAllUserData());
+    });
+
+    test('a key purge failure stops before secure storage and any table '
+        'is wiped, with a content-free failure', () async {
+      final failing = _FailingSmsKeyStore();
+      final useCase = DeleteAllUserData(
+        repository,
+        PurgeAIAssistantCredentials(ai.repository),
+        PurgeSmsImportKeys(failing),
+        wiper,
+        cloud,
+      );
+
+      final result = await useCase();
+
+      expect(result, const Left<Failure, Unit>(PurgeSmsImportKeys.purgeFailed));
+      final failure = result.getLeft().toNullable()!;
+      expect(failure.message, isNot(matches(RegExp('[0-9]'))));
+      expect(wiper.log, isEmpty);
+      expect(cloud.eraseRequests, isEmpty);
+      verifyNever(() => repository.deleteAllUserData());
     });
   });
 }

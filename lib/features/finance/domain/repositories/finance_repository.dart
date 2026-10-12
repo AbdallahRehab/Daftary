@@ -30,6 +30,25 @@ abstract class FinanceRepository {
     String? note,
   });
 
+  /// Records an income or expense entry the user confirmed from a bank
+  /// message (023 FR-052). Only the SMS repository calls this:
+  /// `SmsImportRepositoryImpl.confirm` is its single non-test caller, inside
+  /// its own database transaction, so the entry and the pending item's
+  /// `added` status commit together (FR-075a).
+  ///
+  /// Same validation, idempotency contract and `created` audit entry as
+  /// [addEntry], plus one SMS-only rule: an archived category is rejected
+  /// (a learned mapping may point at one). Writes `import_source = 'sms'`
+  /// (FR-057). [idempotencyKey] is `sms-import:<pendingId>`.
+  Future<Either<Failure, FinanceEntry>> addSmsSourcedEntry({
+    required String idempotencyKey,
+    required String categoryId,
+    required FinanceEntryType type,
+    required Money amount,
+    required DateTime date,
+    String? note,
+  });
+
   /// Edits amount/category/date/note of an existing entry (FR-019). `type`
   /// is re-derived from the (possibly new) category rather than accepted
   /// directly, so an edit can never leave type and category mismatched.

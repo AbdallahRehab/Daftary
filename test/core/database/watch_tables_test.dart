@@ -62,6 +62,29 @@ void main() {
     expect(events, hasLength(1));
   });
 
+  test('a write to a bank SMS import table (023) emits nothing on a '
+      'people/transactions watch', () async {
+    await db
+        .into(db.pendingSmsImports)
+        .insert(
+          PendingSmsImportsCompanion.insert(
+            id: 'imp1',
+            fingerprint: 'fp-1',
+            origin: 'paste',
+            bankId: 'generic',
+            parserId: 'generic',
+            ruleVersion: 'generic@1',
+            kind: 'unknown',
+            direction: 'unknown',
+            confidenceJson: '{}',
+            createdAt: 1,
+            expiresAt: 2,
+          ),
+        );
+    await Future<void>.delayed(settle);
+    expect(events, hasLength(1));
+  });
+
   test('five writes within 50 ms collapse into one event', () async {
     for (var i = 0; i < 5; i++) {
       await insertPerson('p$i');

@@ -28,3 +28,21 @@ Future<bool> _exists(AppDatabase db, String type, String name) async {
       .get();
   return rows.isNotEmpty;
 }
+
+/// Adds [column] to [table] unless `PRAGMA table_info` already lists it, so
+/// a step interrupted after adding it (but before the version advanced) can
+/// run again, and a table that an earlier step of the same upgrade created
+/// in today's shape is left alone. Drift generates the column DDL.
+Future<void> ensureColumn(
+  AppDatabase db,
+  Migrator m,
+  TableInfo<Table, dynamic> table,
+  GeneratedColumn<Object> column,
+) async {
+  final rows = await db
+      .customSelect('PRAGMA table_info("${table.actualTableName}")')
+      .get();
+  if (!rows.any((row) => row.read<String>('name') == column.name)) {
+    await m.addColumn(table, column);
+  }
+}

@@ -153,7 +153,7 @@ void main() {
   });
 
   test('the local-only list is the device settings, the device-file and AI '
-      'tables, and the sync tables', () {
+      'tables, the sync tables and the bank SMS import tables', () {
     expect(localOnlyTables, {
       'app_settings',
       'onboarding_status',
@@ -169,6 +169,11 @@ void main() {
       'sync_record_meta',
       'sync_conflicts',
       'sync_state',
+      'pending_sms_imports',
+      'sms_import_tombstones',
+      'sms_sender_mutes',
+      'sms_merchant_category_mappings',
+      'sms_import_settings',
     });
     expect(syncedTables(), contains('conflict_resolutions'));
   });

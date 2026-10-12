@@ -90,4 +90,84 @@ void main() {
       DateTime.utc(2026, 9, 30, 21).millisecondsSinceEpoch,
     );
   });
+
+  group('import_source (023, sync-wire-027 §3)', () {
+    final sms = row.copyWith(importSource: const Value('sms'));
+
+    /// The wire of a pre-027 server row of [r]: the key is absent.
+    Map<String, Object?> withoutKey(FinanceEntry r) =>
+        overTheWire(mapper.toWire(r))..remove('import_source');
+
+    test('toWire omits the key when the entry has no provenance', () {
+      expect(mapper.toWire(row).containsKey('import_source'), isFalse);
+    });
+
+    test("toWire adds exactly the key when the entry is 'sms'", () {
+      expect(mapper.toWire(sms), {
+        ...mapper.toWire(row),
+        'import_source': 'sms',
+      });
+    });
+
+    test("an 'sms' entry round-trips losslessly", () {
+      expect(
+        mapper.fromWire(overTheWire(mapper.toWire(sms))),
+        sms.copyWith(date: dayOf(sms.date)).toCompanion(false),
+      );
+    });
+
+    test('with no local row, an absent or null key reads as null', () {
+      expect(mapper.fromWire(withoutKey(row)).importSource, const Value(null));
+      expect(
+        mapper.fromWire({
+          ...withoutKey(row),
+          'import_source': null,
+        }).importSource,
+        const Value(null),
+      );
+    });
+
+    test("a pull with the key absent keeps a local 'sms'", () {
+      expect(
+        mapper.fromWire(withoutKey(row), existingLocal: sms).importSource,
+        const Value('sms'),
+      );
+    });
+
+    test("a pull with the key present and null keeps a local 'sms'", () {
+      expect(
+        mapper.fromWire({
+          ...withoutKey(row),
+          'import_source': null,
+        }, existingLocal: sms).importSource,
+        const Value('sms'),
+      );
+    });
+
+    test("a pull with 'sms' sets it over a local entry without provenance", () {
+      expect(
+        mapper
+            .fromWire(overTheWire(mapper.toWire(sms)), existingLocal: row)
+            .importSource,
+        const Value('sms'),
+      );
+    });
+
+    test('an unknown string is stored as-is, never rejected', () {
+      expect(
+        mapper.fromWire({
+          ...withoutKey(row),
+          'import_source': 'wallet',
+        }).importSource,
+        const Value('wallet'),
+      );
+    });
+
+    test('a non-string value is a FormatException like every other field', () {
+      expect(
+        () => mapper.fromWire({...withoutKey(row), 'import_source': 1}),
+        throwsFormatException,
+      );
+    });
+  });
 }

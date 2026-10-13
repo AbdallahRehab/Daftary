@@ -1,4 +1,5 @@
 import 'package:daftary/core/database/app_database.dart' as db;
+import 'package:daftary/core/design_system/change_history/app_edited_marker.dart';
 import 'package:daftary/core/di/injection.dart';
 import 'package:daftary/core/money/money.dart';
 import 'package:daftary/core/routing/app_router.dart';
@@ -11,6 +12,11 @@ import 'package:daftary/features/settings/domain/entities/app_language.dart';
 import 'package:daftary/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:daftary/features/settings/presentation/cubit/settings_cubit.dart';
 import 'package:daftary/features/settings/presentation/debug/debug_seed_tile.dart';
+import 'package:daftary/features/sms_import/domain/entities/sms_import_enums.dart';
+import 'package:daftary/features/sms_import/domain/usecases/import_pasted_text.dart';
+import 'package:daftary/features/sms_import/presentation/routes.dart';
+import 'package:daftary/features/transactions/domain/entities/money_transaction.dart';
+import 'package:daftary/features/transactions/domain/repositories/transactions_repository.dart';
 import 'package:daftary/features/startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:daftary/main.dart';
 import 'package:drift/native.dart';
@@ -54,6 +60,23 @@ void main() {
     await Future<void>.delayed(const Duration(seconds: 4));
   }
 
+  /// Opens the change-history sheet of the first edited transaction on
+  /// [personId]'s page, captures it, then closes it again.
+  Future<void> historyShot(
+    WidgetTester tester,
+    String personId,
+    String name,
+  ) async {
+    appRouter.go('/people/$personId');
+    await settle(tester);
+    await tester.tap(find.byType(AppEditedMarker).first);
+    await settle(tester);
+    debugPrint('README_SHOT:$name');
+    await Future<void>.delayed(const Duration(seconds: 4));
+    appRouter.go('/');
+    await settle(tester);
+  }
+
   testWidgets('README screenshots', (tester) async {
     await getIt<CurrencyRepository>().setExchangeRate(
       currencyCode: 'USD',
@@ -92,6 +115,58 @@ void main() {
     final people = (await getIt<PeopleRepository>().searchActivePeople())
         .getOrElse((f) => throw StateError(f.message));
     final ahmed = people.firstWhere((p) => p.name == 'أحمد مصطفى');
+
+    // One edited loan, so the person page shows "(edited)" and its change
+    // history has a before/after row.
+    final transactions = getIt<TransactionsRepository>();
+    final history = (await transactions.getPersonHistory(
+      ahmed.id,
+    )).getOrElse((f) => throw StateError(f.message));
+    final loan =
+        (history
+                .where((t) => t.kind == TransactionKind.initialExchange)
+                .toList()
+              ..sort((a, b) => b.date.compareTo(a.date)))
+            .first;
+    (await transactions.editTransaction(
+      transactionId: loan.id,
+      amount: Money.fromMinorUnits(
+        loan.amount.minorUnits + 50000,
+        loan.amount.currency,
+      ),
+      direction: loan.direction,
+      date: loan.date,
+      note: loan.note,
+    )).getOrElse((f) => throw StateError(f.message));
+
+    // Synthetic bank messages (the 023 test fixtures, with recent dates),
+    // staged through the real paste pipeline as pending suggestions.
+    String smsDate(int daysAgo) {
+      final d = now.subtract(Duration(days: daysAgo));
+      String two(int v) => v.toString().padLeft(2, '0');
+      return '${two(d.day)}/${two(d.month)}/${d.year}';
+    }
+
+    final pasted = <String>[];
+    for (final text in [
+      'NBE: Your card ending 4821 was charged EGP 250.00 at Example Market '
+          'on ${smsDate(1)} at 14:30. Available balance EGP 3,200.00',
+      'البنك الأهلي المصري: تم خصم 1,250.50 جنيه من بطاقتك المنتهية ب 4821 '
+          'لدى مطعم المثال يوم ${smsDate(2)} الساعة 21:10',
+      'البنك الأهلي المصري: تم إيداع 1200 جنيه في حسابك ****4821 من منى '
+          'المثال يوم ${smsDate(3)}',
+      'NBE: Salary of EGP 15,000.00 has been credited to your account '
+          '****4821 on ${smsDate(4)}.',
+    ]) {
+      final result = await getIt<ImportPastedText>()(
+        text: text,
+        source: SmsSource.paste,
+      );
+      pasted.addAll(
+        result.getOrElse((f) => throw StateError('paste: $f')).newIds,
+      );
+    }
+
     final occasions = (await getIt<OccasionsRepository>().getOccasionsList())
         .getOrElse((f) => throw StateError(f.message));
 
@@ -116,6 +191,13 @@ void main() {
     await shot(tester, '/finance/reports', 'en_reports');
     await shot(tester, '/financial-education', 'en_education');
     await shot(tester, '/settings', 'en_settings');
+    await shot(tester, BankMessagesRoutes.hub, 'en_bank_messages');
+    await shot(
+      tester,
+      BankMessagesRoutes.review(pasted.first),
+      'en_import_review',
+    );
+    await historyShot(tester, ahmed.id, 'en_change_history');
 
     await settings.changeLanguage(AppLanguage.arabic);
     await settle(tester);
@@ -123,6 +205,7 @@ void main() {
     await shot(tester, '/', 'ar_people');
     await shot(tester, '/people/${ahmed.id}', 'ar_person_detail');
     await shot(tester, '/budgets', 'ar_budget');
+    await shot(tester, BankMessagesRoutes.hub, 'ar_bank_messages');
 
     await settings.changeThemeMode(AppThemeMode.dark);
     await settle(tester);

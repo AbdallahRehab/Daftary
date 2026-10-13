@@ -47,15 +47,17 @@ It's designed for people **with no accounting background**: plain language, calm
 | 💸 **Income & expenses** | Personal entries with custom categories, filters, a date range and per-category breakdowns, kept separate from money between people. |
 | 📊 **Budgets** | Monthly planned vs. actual per category, over-budget warnings, and a trend chart across months. |
 | 🎯 **Savings goals** | Goals with contributions and withdrawals, projected completion dates, and a "what if" calculator. |
-| 📈 **Reports & export** | A 6-month income and expense trend, spending by category, and CSV export through the share sheet. |
+| 📈 **Reports & export** | A 6-month income and expense trend, spending by category, and a full CSV export through the share sheet: people, transactions, income and expenses, occasions, budgets, savings, exchange rates and every change log. |
 | 📷 **Scan paper (OCR)** | Photograph an old paper notebook. On-device ML Kit text recognition turns it into candidate entries for you to review. Images never leave the device. |
 | 🏦 **Bank messages (SMS import)** | Turns bank SMS into suggested records that you check and add one at a time. Nothing is saved until you tap Add on an item. Parsing is on-device and rule-based: no AI, no network. On Android you can scan your inbox (in the SMS-capable build), paste, or share a message into Daftary. On iPhone you paste. Message text is masked, encrypted on the device and deleted once you decide. |
+| 🧾 **Change history & money checks** | Every edit and delete of a transaction, an income or expense entry, or a savings contribution is logged, and you can open a record's change history from the record itself. Before you save, Daftary shows what will be left after a repayment, asks you to confirm a repayment bigger than what's owed, warns about a possible duplicate entry, and tells you how the balance will change if you delete a transaction that later repayments depend on. Records added from a paper scan or a bank message are labelled with where they came from. |
 | 🤖 **AI assistant** | Optional chat assistant that uses your own API key (OpenAI, Anthropic or Gemini), stored in secure storage. There is no Daftary backend in the middle. |
 | 🔔 **Insights & reminders** | Local notifications calculated from your real data, with quiet hours, cooldowns and per-category controls. No generic or made-up "tips". |
 | 📚 **Financial education** | A bundled offline library and calculators (compound growth, doubling time, savings rate). It's general education, never personalized advice. |
 | 💱 **Multi-currency** | Every amount has an ISO 4217 currency. You enter exchange rates yourself. If a rate is missing, the total is blocked instead of guessed. |
 | 🔒 **App lock** | PIN (hashed with PBKDF2) and biometrics, auto-lock on inactivity, and screenshot/recording protection. |
 | ☁️ **Offline-first cloud sync** | Optional Supabase backup and sync across devices, built on an outbox, revision guards and manual conflict resolution for financial records. |
+| 👋 **Onboarding** | A short first-run walkthrough and a splash screen while the app starts up. |
 | 🌍 **Arabic / English, light / dark, Liquid Glass** | Full RTL, Arabic-Indic digit input, dark theme and an optional Liquid Glass UI. |
 
 ## Screenshots
@@ -79,6 +81,12 @@ It's designed for people **with no accounting background**: plain language, calm
     <td align="center"><img src="docs/screenshots/en_person_detail_dark.png" width="200" /><br/><sub>Dark mode</sub></td>
     <td align="center"><img src="docs/screenshots/ar_savings_goal_dark.png" width="200" /><br/><sub>Savings goal (Arabic, dark)</sub></td>
   </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/en_bank_messages.png" width="200" /><br/><sub>Bank messages to review</sub></td>
+    <td align="center"><img src="docs/screenshots/en_import_review.png" width="200" /><br/><sub>Review a bank message</sub></td>
+    <td align="center"><img src="docs/screenshots/en_change_history.png" width="200" /><br/><sub>Change history</sub></td>
+    <td align="center"><img src="docs/screenshots/ar_bank_messages.png" width="200" /><br/><sub>الرسائل البنكية</sub></td>
+  </tr>
 </table>
 
 ### Arabic (RTL)
@@ -94,7 +102,7 @@ It's designed for people **with no accounting background**: plain language, calm
 
 ## Architecture
 
-Daftary follows **Clean Architecture, split by feature**. Each of the 18 feature modules has its own `data / domain / presentation` layers. Shared pieces such as the database, sync engine, DI, routing, design system and money types live in `lib/core`.
+Daftary follows **Clean Architecture, split by feature**. Each of the 19 feature modules has its own `data / domain / presentation` layers. Shared pieces such as the database, sync engine, DI, routing, design system and money types live in `lib/core`.
 
 ### High-level overview
 
@@ -215,13 +223,13 @@ sequenceDiagram
 | UI | Flutter 3.47, Material 3, `liquid_glass_widgets`, `fl_chart` |
 | State | `flutter_bloc` (Cubit), `equatable` |
 | Navigation | `go_router` (`StatefulShellRoute`) |
-| Persistence | `drift` + SQLite (schema v11, with tested migrations) |
+| Persistence | `drift` + SQLite (schema v13, with tested migrations) |
 | DI | `get_it` + `injectable` |
 | Functional errors | `fpdart` (`Either<Failure, T>`) |
 | Backend (optional) | Supabase: Auth, Postgres RPCs, Row-Level Security, SQL migrations + pgTAP tests |
-| Security | `flutter_secure_storage`, `local_auth`, PBKDF2 via `crypto` |
+| Security | `flutter_secure_storage`, `local_auth`, PBKDF2 via `crypto`, AES-GCM via `pointycastle` (bank message text at rest) |
 | On-device ML | `google_mlkit_text_recognition`, `image_cropper`, `image` |
-| i18n | `flutter_localizations` + `intl`, ~1,000 strings in each of Arabic and English |
+| i18n | `flutter_localizations` + `intl`, ~1,400 strings in each of Arabic and English |
 | Notifications | `flutter_local_notifications` + `timezone` |
 | Testing | `flutter_test`, `bloc_test`, `mocktail`, `fake_async`, `integration_test` |
 
@@ -236,12 +244,13 @@ lib/
 │   ├── money/           # Money (minor units + currency), formatters, Arabic-digit parser
 │   ├── routing/         # go_router config, main shell, notification deep links
 │   ├── security/        # App lock gate, lifecycle observer, screenshot protection
-│   └── di/  l10n/  config/  error/  date/  media/ …
+│   ├── provenance/      # Where a record came from (typed, paper scan, bank message)
+│   └── di/  l10n/  config/  error/  date/  media/  confidence/ …
 │
 └── features/
     ├── people/  transactions/  occasions/            # the people-first core
     ├── finance/  budgets/  savings/  dashboard/      # personal finance
-    ├── ocr/  ai_assistant/  insights_notifications/  financial_education/
+    ├── ocr/  sms_import/  ai_assistant/  insights_notifications/  financial_education/
     ├── currency/  data_privacy/  app_lock/  cloud_sync/
     └── settings/  onboarding/  startup/
         └── <feature>/{data, domain, presentation}
@@ -257,12 +266,12 @@ integration_test/        # End-to-end flows on a real device/simulator
 
 ## How it was built: spec-driven development
 
-Every feature (`001` to `021`) went through a written **spec → plan → research → tasks → implementation** cycle using [Spec Kit](https://github.com/github/spec-kit). All of it is in [`specs/`](specs/), from the core money-relationships tracker to offline-first sync. Each spec records the functional requirements, edge cases and design decisions behind the code, and the code comments point back to them (e.g. `FR-017`, `research.md Decision 7`).
+Every feature (`001` to `023`) went through a written **spec → plan → research → tasks → implementation** cycle using [Spec Kit](https://github.com/github/spec-kit). All of it is in [`specs/`](specs/), from the core money-relationships tracker to offline-first sync and bank SMS import. Feature `022` is a full financial trust audit of the shipped app (accounting rules, calculations, sync and wording), followed by the fixes it called for. Each spec records the functional requirements, edge cases and design decisions behind the code, and the code comments point back to them (e.g. `FR-017`, `research.md Decision 7`).
 
 ## Testing
 
-- **~380 unit / cubit / widget test files** covering domain logic, repositories, DAOs, cubits and screens, including RTL, dark mode and Liquid Glass variants.
-- **21 integration test flows** that run the real app, with real DI and real SQLite, end to end.
+- **~530 unit / cubit / widget test files** covering domain logic, repositories, DAOs, cubits and screens, including RTL, dark mode and Liquid Glass variants.
+- **24 integration test flows** that run the real app, with real DI and real SQLite, end to end.
 - **Performance tests** for large data sets (people list, overview, OCR batches, sync upload).
 - **Database tests** for Postgres RLS, the sync RPCs and revision guards (`supabase/tests`).
 

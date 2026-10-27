@@ -1,0 +1,204 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Kufi;src:url(fonts/noto-kufi-arabic-arabic-600-normal.woff2);font-weight:600}
+@font-face{font-family:Kufi;src:url(fonts/noto-kufi-arabic-arabic-800-normal.woff2);font-weight:800}
+@font-face{font-family:Naskh;src:url(fonts/noto-naskh-arabic-arabic-400-normal.woff2);font-weight:400}
+@font-face{font-family:Naskh;src:url(fonts/noto-naskh-arabic-arabic-700-normal.woff2);font-weight:700}
+:root{--primary:#1F6F5C;--deep:#0E3D32;--page:#FFFDF6;--shade:#F6EDD8;--edge:#E3D5B4;--coin:#F2B233;--coinLight:#FFD66B;--coinDeep:#D38E12;--coinInk:#8A5500;--ribbon:#F0735C;--pos:#1A7347;--posS:#E4F5EC;--neg:#AB4136;--negS:#FBEAE7;--neu:#646464;--neuS:#EDEDEA;--ink:#24305E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--page)}
+body{font-family:'Inter Display','Inter',sans-serif;color:var(--deep);-webkit-font-smoothing:antialiased}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--page)}
+.abs{position:absolute;will-change:transform,opacity}
+.bgtex{position:absolute;inset:0;background:
+ radial-gradient(900px 600px at 85% 20%, rgba(31,111,92,.07), transparent 70%),
+ radial-gradient(700px 500px at 10% 90%, rgba(242,178,51,.08), transparent 70%)}
+#green{position:absolute;inset:0;background:radial-gradient(1400px 900px at 30% 20%, #2A8A72 0%, #1F6F5C 40%, #0E3D32 100%)}
+.h1{font-weight:700;font-size:84px;line-height:1.08;letter-spacing:-2px}
+.h2{font-weight:700;font-size:76px;line-height:1.1;letter-spacing:-1.5px}
+.w{display:inline-block;white-space:pre}
+.phone{width:452px;height:945px;border-radius:66px;background:#101413;padding:16px;box-shadow:0 40px 90px rgba(14,61,50,.28),0 8px 24px rgba(14,61,50,.18),inset 0 0 0 2px #2b3330}
+.screen{position:relative;width:420px;height:913px;border-radius:52px;overflow:hidden;background:#F3FAF6}
+.screen img.s{position:absolute;left:0;top:0;width:420px;height:913px}
+.notch{position:absolute;left:50%;top:12px;width:118px;height:34px;margin-left:-59px;border-radius:20px;background:#101413;z-index:5}
+.glow{position:absolute;border-radius:18px;border:4px solid var(--coin);box-shadow:0 0 0 8px rgba(242,178,51,.25),0 0 40px rgba(242,178,51,.45);z-index:4}
+.chip{display:inline-flex;align-items:center;gap:12px;height:64px;padding:0 28px;border-radius:999px;font-weight:600;font-size:30px;margin-right:16px}
+.paper{width:640px;height:760px;border-radius:14px;background:
+ repeating-linear-gradient(to bottom, transparent 0 87px, rgba(31,111,92,.18) 87px 89px),
+ linear-gradient(160deg,var(--page),var(--shade));
+ box-shadow:0 30px 70px rgba(14,61,50,.22),0 0 0 2px var(--edge) inset}
+.paper:after{content:'';position:absolute;top:0;bottom:0;right:96px;width:3px;background:rgba(240,115,92,.55)}
+.scrib{position:absolute;right:130px;font-family:Naskh;font-weight:700;font-size:70px;color:var(--ink);direction:rtl;white-space:nowrap}
+.coin{width:150px;height:150px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--coinLight),var(--coin) 55%,var(--coinDeep));box-shadow:0 14px 30px rgba(58,38,0,.35);display:flex;align-items:center;justify-content:center}
+.coin:before{content:'';position:absolute;inset:12px;border-radius:50%;border:5px solid rgba(255,241,194,.8)}
+.coin span{font-family:Kufi;font-weight:800;font-size:70px;color:var(--coinInk);margin-top:-8px}
+.bubble{width:620px;border-radius:34px;background:#fff;padding:26px 32px;box-shadow:0 24px 60px rgba(14,61,50,.2)}
+.bubble .from{font-size:24px;font-weight:600;color:#6b7a75;margin-bottom:8px}
+.bubble .msg{font-size:31px;line-height:1.35;color:#1b2522;font-weight:500}
+.toggle{width:420px;height:72px;border-radius:999px;background:#fff;box-shadow:0 10px 30px rgba(14,61,50,.15);display:flex;align-items:center}
+.toggle .k{position:absolute;top:6px;width:204px;height:60px;border-radius:999px;background:var(--primary)}
+.toggle .o{position:relative;width:210px;text-align:center;font-weight:600;font-size:28px;z-index:2}
+.name{font-weight:800;font-size:132px;letter-spacing:-3px;color:var(--page);white-space:nowrap}
+.name .ar{font-family:Kufi;font-weight:800;letter-spacing:0;font-size:116px;color:var(--coinLight)}
+.tag{font-weight:600;font-size:54px;color:rgba(255,253,246,.92);text-align:center;white-space:nowrap}
+</style></head>
+<body><div id="stage">
+ <div class="bgtex"></div>
+ <div id="green"></div>
+
+ <!-- S1 hook -->
+ <div id="s1t" class="abs" style="left:130px;top:360px;width:1000px"></div>
+ <div id="paper" class="abs paper" style="left:1180px;top:150px">
+   <div id="sc1" class="scrib" style="top:118px">أحمد — ١٥٠٠</div>
+   <svg id="strike" style="position:absolute;right:318px;top:150px" width="200" height="60"><path d="M40 38 C 80 16, 130 44, 170 22" stroke="#AB4136" stroke-width="9" fill="none" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+   <div id="sc2" class="scrib" style="top:206px;color:#AB4136">١٠٠٠ ؟</div>
+   <div id="sc3" class="scrib" style="top:382px">عمر — ؟؟</div>
+   <div id="sc4" class="scrib" style="top:470px;font-weight:400;font-size:60px;opacity:.8">كريم … مش فاكر</div>
+ </div>
+ <div id="coin1" class="abs coin" style="left:1660px;top:790px"><span>د</span></div>
+
+ <!-- S2/S6 brand -->
+ <img id="icon" class="abs" src="assets/foreground.png" style="width:560px;height:560px;left:680px;top:20px">
+ <div id="name" class="abs name" style="left:0;width:1920px;text-align:center;top:520px"><span id="nameEn">Daftary</span> <span style="opacity:.55">·</span> <span class="ar">دفتري</span></div>
+ <div id="tag" class="abs tag" style="left:0;width:1920px;top:740px"></div>
+
+ <!-- S3 / S4 / S5 text -->
+ <div id="s3t" class="abs" style="left:150px;top:300px;width:900px"></div>
+ <div id="chips" class="abs" style="left:150px;top:640px;white-space:nowrap">
+   <span class="chip" id="c1" style="background:var(--posS);color:var(--pos)">↓ They owe you</span><span class="chip" id="c2" style="background:var(--negS);color:var(--neg)">↑ You owe them</span><span class="chip" id="c3" style="background:var(--neuS);color:var(--neu)">✓ Settled</span>
+ </div>
+ <div id="s4t" class="abs" style="left:130px;top:330px;width:690px"></div>
+ <div id="s4ar" class="abs" style="left:130px;top:650px;font-family:Kufi;font-weight:800;font-size:64px;color:var(--primary);direction:rtl">عربي أولاً</div>
+ <div id="toggle" class="abs toggle" style="left:1100px;top:28px"><div class="k" id="knob"></div><div class="o" id="oEn">English</div><div class="o" id="oAr" style="font-family:Kufi">العربية</div></div>
+ <div id="s5t" class="abs" style="left:150px;top:200px;width:900px"></div>
+ <div id="s5chip" class="abs chip" style="left:150px;top:440px;background:var(--posS);color:var(--pos);font-size:32px">🔒 On-device · You confirm each one</div>
+ <div id="bubble" class="abs bubble" style="z-index:20;left:150px;top:560px">
+   <div class="from">NBE · Bank message</div>
+   <div class="msg">Card ••••4821: purchase of 250.00 EGP at Example Market on 10/12/2026.</div>
+ </div>
+
+ <!-- phones -->
+ <div id="phAr" class="abs phone" style="left:0;top:0"><div class="screen"><div class="notch"></div><img class="s" src="assets/ar_person_detail.png"></div></div>
+ <div id="ph" class="abs phone" style="left:0;top:0"><div class="screen" id="scr">
+   <div class="notch"></div>
+   <img class="s" id="iPeople" src="assets/en_people.png">
+   <img class="s" id="iDetail" src="assets/en_person_detail.png">
+   <img class="s" id="iBank" src="assets/en_bank_messages.png">
+   <div class="glow" id="g1" style="left:8px;top:132px;width:300px;height:82px"></div>
+   <div class="glow" id="g2" style="left:4px;top:126px;width:308px;height:96px"></div>
+   <div id="ripple" style="position:absolute;width:40px;height:40px;border-radius:50%;background:rgba(31,111,92,.35);z-index:6"></div>
+ </div></div>
+ <div id="finger" class="abs" style="width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.55);border:4px solid rgba(14,61,50,.55);box-shadow:0 8px 24px rgba(0,0,0,.25)"></div>
+ <div id="coin2" class="abs coin" style="width:90px;height:90px"><span style="font-size:42px">د</span></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const p=(t,a,d)=>cl((t-a)/d);
+const oC=x=>1-Math.pow(1-x,3), iC=x=>x*x*x, ioC=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const oB=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const lerp=(a,b,k)=>a+(b-a)*k;
+const S=(el,o)=>{const e=typeof el==='string'?$(el):el;for(const k in o)e.style[k]=o[k];};
+function words(id,lines,cls){const el=$(id);el.innerHTML='';const out=[];lines.forEach(l=>{const d=document.createElement('div');d.className=cls;(l.ws||l.t.split(' ').map(w=>({w}))).forEach((o,i,arr)=>{const w=o.w;const s=document.createElement('span');s.className='w';s.textContent=w+(i<arr.length-1?' ':'');if(o.c)s.style.color=o.c;d.appendChild(s);out.push({s,start:l.at+i*0.07})});el.appendChild(d)});return out}
+const W1=words('s1t',[{t:'Lent Ahmed money.',at:0.15},{ws:[{w:'Was'},{w:'it'},{w:'1,500…',c:'#AB4136'},{w:'or'},{w:'1,000?',c:'#AB4136'}],at:0.75}],'h1');
+const W3=words('s3t',[{t:'One person.',at:6.2},{t:'One running balance.',at:6.4}],'h1');
+const W4=words('s4t',[{t:'Arabic first.',at:10.2},{t:'Real right-to-left, not a mirror.',at:10.45}],'h2');
+const W5=words('s5t',[{t:'Bank texts →',at:13.6},{t:'suggested entries.',at:13.8}],'h1');
+const tagEl=$('tag');
+function wordAnim(W,t,exitA,exitD){W.forEach(({s,start})=>{const k=oC(p(t,start,0.35));const x=exitA!=null?ioC(p(t,exitA,exitD)):0;s.style.opacity=k*(1-x);s.style.transform=`translateY(${(1-k)*40 - x*20}px)`;s.style.filter=`blur(${(1-k)*6}px)`;});}
+function setPhone(id,x,y,sc,op,rot=0){S(id,{left:x+'px',top:y+'px',transform:`scale(${sc}) rotate(${rot}deg)`,transformOrigin:'0 0',opacity:op,display:op<=0.001?'none':'block'})}
+
+window.render=function(t){
+ // ---------- green field (circle wipe) ----------
+ let r=0,cx=1735,cy=865;
+ if(t>=3&&t<5.95){r=oC(p(t,3.0,0.45))*2300;}
+ else if(t>=5.95&&t<6.45){r=lerp(2300,0,ioC(p(t,5.95,0.45)));cx=1406;cy=540;}
+ else if(t>=16.95){r=oC(p(t,16.95,0.5))*2300;cx=1406;cy=540;}
+ S('green',{clipPath:`circle(${r}px at ${cx}px ${cy}px)`,display:r<=0?'none':'block'});
+
+ // ---------- S1 hook ----------
+ const x1=ioC(p(t,2.75,0.25));
+ wordAnim(W1,t,2.75,0.25); $('s1t').style.display=t<3.05?'block':'none';
+ const pin=oC(p(t,0.0,0.4));
+ S('paper',{opacity:t<3?pin*(1-x1):0,transform:`translate(${(1-pin)*120}px,${x1*60}px) rotate(${-4+ (1-pin)*6 + x1*-3}deg)`});
+ const rev=(id,a,d)=>{const k=ioC(p(t,a,d));S(id,{clipPath:`inset(0 0 0 ${(1-k)*100}%)`});};
+ rev('sc1',0.3,0.4); rev('sc2',1.25,0.3); rev('sc3',1.75,0.35); rev('sc4',2.15,0.35);
+ $('strike').firstChild.setAttribute('stroke-dashoffset',1-oC(p(t,1.0,0.22)));
+ const sh=t>1.25&&t<2.75?Math.sin(t*28)*1.2:0; $('sc2').style.transform=`rotate(${sh}deg)`;
+ // coin bounce in at 2.5, becomes wipe origin at 3.0
+ const ck=oB(p(t,2.5,0.3)); const cg=p(t,3.0,0.25);
+ S('coin1',{opacity:t<3.3?cl(ck*3)*(1-cg):0,transform:`scale(${ck*(1+cg*1.5)}) rotate(${(1-ck)*-90}deg)`});
+
+ // ---------- S2 reveal & S6 outro (brand) ----------
+ let ik=0,nk=0,tk=0,ex=0,tagTxt='';
+ if(t>=3&&t<6.1){ik=oB(p(t,3.1,0.45));nk=oC(p(t,3.4,0.4));tk=oC(p(t,3.7,0.4));ex=ioC(p(t,5.75,0.25));tagTxt='A notebook that remembers who owes who.';}
+ if(t>=17){ik=oB(p(t,17.15,0.45));nk=oC(p(t,17.4,0.4));tk=oC(p(t,17.65,0.4));tagTxt='Offline-first · Arabic &amp; English · Android &amp; iOS';}
+ if(tagEl.dataset.v!==tagTxt){tagEl.innerHTML=tagTxt;tagEl.dataset.v=tagTxt;}
+ const fl=Math.sin(t*2.2)*6;
+ S('icon',{opacity:cl(ik*2)*(1-ex),transform:`translateY(${fl}px) scale(${(0.4+0.6*ik)*(1-ex*.2)}) rotate(${(1-ik)*-12}deg)`,display:ik>0?'block':'none'});
+ S('name',{opacity:nk*(1-ex),transform:`translateY(${(1-nk)*50}px) scale(${1-ex*.1})`,display:nk>0?'block':'none'});
+ S('tag',{opacity:tk*(1-ex),transform:`translateY(${(1-tk)*40}px)`,filter:`blur(${(1-tk)*6}px)`,display:tk>0?'block':'none'});
+
+ // ---------- S3 balances ----------
+ wordAnim(W3,t,9.7,0.3); $('s3t').style.display=(t>=6&&t<10.05)?'block':'none';
+ [['c1',8.0],['c2',8.25],['c3',8.5]].forEach(([id,a])=>{const k=oB(p(t,a,0.35));const x=ioC(p(t,9.7,0.3));S(id,{opacity:cl(k*2)*(1-x),transform:`scale(${0.6+0.4*k}) translateY(${x*-20}px)`,display:'inline-flex'});});
+ $('chips').style.display=(t>=7.9&&t<10.05)?'block':'none';
+
+ // main phone placement
+ let px=1180,py=67,ps=1,po=0;
+ if(t>=6&&t<10){const k=oC(p(t,6.05,0.5));py=lerp(1100,67,k);po=1;
+   // zoom toward balance at 8.0
+   const z=ioC(p(t,8.0,0.45))*(1-ioC(p(t,9.4,0.5)));ps=1+0.12*z;px=1180-0.12*z*120;py=py-0.12*z*150;}
+ if(t>=10&&t<13.5){const k=ioC(p(t,10.0,0.45));px=lerp(1180,1340,k);py=lerp(67,135,k);ps=lerp(1,0.9,k);po=1;
+   const xo=ioC(p(t,13.3,0.2)); }
+ if(t>=13.5&&t<17){const k=ioC(p(t,13.5,0.4));px=lerp(1340,1180,k);py=lerp(135,67,k);ps=lerp(.9,1,k);po=1;
+   const x=ioC(p(t,16.75,0.25));ps*=1-0.08*x;po=1-x;px+=x*18;py+=x*38;}
+ setPhone('ph',px,py,ps,po);
+ // screens inside
+ const push=ioC(p(t,7.25,0.3));
+ S('iPeople',{transform:`translateX(${-push*30}%)`,filter:`brightness(${1-push*.15})`,display:t<13.5?'block':'none'});
+ S('iDetail',{transform:`translateX(${(1-push)*100}%)`,display:t<13.9?'block':'none',zIndex:2});
+ const push2=ioC(p(t,13.5,0.35));
+ S('iDetail',{transform:t<13.5?`translateX(${(1-push)*100}%)`:`translateX(${-push2*30}%)`});
+ S('iBank',{transform:`translateX(${(1-push2)*100}%)`,display:t>=13.5?'block':'none',zIndex:3});
+ // ripple + finger (S3 tap on Ahmed row; row center ~ (150,465)/644*420)
+ const rx=95,ry=303; const rp=p(t,7.0,0.35);
+ S('ripple',{left:(rx-20)+'px',top:(ry-20)+'px',transform:`scale(${1+rp*9})`,opacity:t>=7&&t<7.4?(1-rp)*0.9:0});
+ const fIn=oC(p(t,6.6,0.35)), fOut=p(t,7.3,0.2);
+ const fx=px+16+rx*ps-37, fy=py+16+ry*ps-37;
+ const press=t>=6.95&&t<7.15?0.82:1;
+ S('finger',{left:lerp(fx+260,fx,fIn)+'px',top:lerp(fy+220,fy,fIn)+'px',opacity:(t>6.5&&t<7.6)?fIn*(1-fOut):0,transform:`scale(${press})`});
+ // balance glow
+ const gk=oB(p(t,8.0,0.35)),gx=ioC(p(t,9.6,0.3));
+ S('g2',{opacity:t>=8&&t<10?cl(gk)*(1-gx):0,transform:`scale(${0.9+0.1*gk})`});
+ // bank card glow at landing
+ const bk=oB(p(t,15.0,0.35)),bx=ioC(p(t,16.6,0.3));
+ S('g1',{left:'12px',top:'136px',width:'396px',height:'152px',opacity:t>=15&&t<17?cl(bk)*(1-bx):0,transform:`scale(${0.92+0.08*bk})`});
+
+ // ---------- S4 Arabic ----------
+ wordAnim(W4,t,13.25,0.25); $('s4t').style.display=(t>=10&&t<13.55)?'block':'none';
+ const ak=oC(p(t,10.75,0.4)),ax=ioC(p(t,13.25,0.25));
+ S('s4ar',{opacity:ak*(1-ax),transform:`translateX(${(1-ak)*-40}px)`,display:(t>=10&&t<13.55)?'block':'none'});
+ const ar=oC(p(t,10.05,0.5)),arx=ioC(p(t,13.25,0.3));
+ setPhone('phAr',lerp(-520,880,ar)-arx*700,135,0.9,(t>=10&&t<13.6)?1:0,(1-ar)*-6);
+ const tg=oB(p(t,10.3,0.35)), tsw=ioC(p(t,11.0,0.35)), tgx=ioC(p(t,13.25,0.25));
+ S('toggle',{opacity:t>=10&&t<13.55?cl(tg)*(1-tgx):0,transform:`translateY(${(1-tg)*-30}px)`});
+ S('knob',{left:(6+tsw*204)+'px'});
+ S('oEn',{color:tsw<.5?'#fff':'#0E3D32'}); S('oAr',{color:tsw>=.5?'#fff':'#0E3D32'});
+
+ // ---------- S5 bank SMS ----------
+ wordAnim(W5,t,16.75,0.25); $('s5t').style.display=(t>=13.5&&t<17.05)?'block':'none';
+ const bi=oB(p(t,13.9,0.4)), fly=ioC(p(t,14.5,0.5));
+ // bubble flies to phone card
+ const bx0=150,by0=560, bx1=1180+16+13, by1=67+16+138;
+ const bxx=lerp(bx0,bx1,oC(fly)), byy=lerp(by0,by1,iC(fly));
+ S('bubble',{left:bxx+'px',top:byy+'px',opacity:t>=13.9&&t<15.0?cl(bi*2)*(1-p(t,14.85,0.15)):0,transform:`scale(${(0.7+0.3*bi)*(1-fly*0.37)})`,transformOrigin:'0 0'});
+ const ck2=oB(p(t,15.0,0.35)),cx2=ioC(p(t,16.75,0.25));
+ S('s5chip',{opacity:t>=15&&t<17?cl(ck2*2)*(1-cx2):0,transform:`scale(${0.7+0.3*ck2})`,transformOrigin:'0 50%',display:'inline-flex'});
+
+ // ---------- outro coin flourish ----------
+ S('coin2',{opacity:0});
+};
+window.ready=Promise.all([document.fonts.ready,...[...document.images].map(i=>i.complete?1:new Promise(r=>i.onload=r))]).then(()=>document.fonts.load('800 50px Kufi')).then(()=>document.fonts.load('700 50px Naskh')).then(()=>document.fonts.load('400 50px Naskh')).then(()=>document.fonts.load('600 50px Kufi'));
+</script></body></html>

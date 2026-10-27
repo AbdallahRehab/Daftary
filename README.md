@@ -15,6 +15,10 @@ Track who owes you and who you owe, then manage your own income, budgets and sav
 ![i18n](https://img.shields.io/badge/i18n-Arabic%20(RTL)%20%7C%20English-orange)
 ![Platforms](https://img.shields.io/badge/Platforms-Android%20%7C%20iOS-lightgrey)
 
+<a href="docs/brag.mp4"><img src="docs/brag-poster.jpg" width="720" alt="Daftary launch video (20 seconds)" /></a>
+<br/>
+<sub>▶️ <a href="docs/brag.mp4">Watch the 20-second launch video</a></sub>
+
 <img src="docs/screenshots/en_home.png" width="230" alt="Home dashboard" />
 &nbsp;
 <img src="docs/screenshots/ar_person_detail.png" width="230" alt="Person balance in Arabic (RTL)" />
